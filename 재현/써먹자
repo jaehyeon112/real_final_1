@@ -1,0 +1,13 @@
+  리뷰 띄울때 간략하게..
+  
+  methods: {
+    newpage() {
+      window.open(
+        "http://www.naver.com",
+        "_blank",
+        "width=700px,height=800px,scrollbars=yes"
+      );
+    },
+  },  
+
+  테스트
