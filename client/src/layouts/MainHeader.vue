@@ -1,8 +1,8 @@
 <template>
   <div>
-    <ul class="nav justify-content-end bg-black" id="nav">
+    <ul class="nav justify-content-end" id="nav">
       <li class="nav-item">
-        <router-link class="nav-link" to="/join">회원가입</router-link>
+        <router-link class="nav-link" to="/join">회원가입 </router-link>
       </li>
       <li class="nav-item">
         <router-link class="nav-link" to="/myPage">님</router-link>
@@ -15,79 +15,74 @@
       </li>
     </ul>
 
-    <nav class="navbar navbar-expand-sm bg-body-tertiary">
-      <div class="container-fluid">
-        <router-link class="navbar-brand" to="/main">
-          <h1 id="e"><i>희망의1조</i></h1>
-        </router-link>
-        <button
-          class="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarNav"
-          aria-controls="navbarNav"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-        >
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-          <ul class="navbar-nav mx-auto">
-            <li class="nav-item">
-              <router-link class="nav-link" to="/introduction">
-                소개
-              </router-link>
-            </li>
-            <li class="nav-item">
-              <router-link class="nav-link" to="/menu"> 메뉴 </router-link>
-            </li>
-            <li class="nav-item">
-              <router-link class="nav-link" to="/review">리뷰 </router-link>
-            </li>
-            <li class="nav-item">
-              <router-link class="nav-link" to="/myPage"
-                >마이페이지</router-link
-              >
-            </li>
-          </ul>
-          <ul class="navbar-nav ml-auto">
-            <li>
-              <router-link
-                to="/"
-                class="btn position-relative"
-                style="--bs-btn-border-color: none"
-              ></router-link>
-              <router-link
-                to="/cart"
-                class="btn position-relative"
-                style="--bs-btn-border-color: none"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="30"
-                  height="30"
-                  fill="currentColor"
-                  class="bi bi-cart"
-                  viewBox="0 0 16 16"
-                >
-                  <path
-                    d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM3.102 4l1.313 7h8.17l1.313-7H3.102zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"
-                  />
-                </svg>
-                <p>장바구니</p>
-                <span
-                  id="cartAmounts"
-                  class="position-absolute top-20 start-80 badge rounded-pill bg-danger"
-                >
-                  <!-- 장바구니 갯수! -->
-                  {{ cartAmounts }}
-                </span>
-              </router-link>
-            </li>
-          </ul>
+    <div class="container text-center">
+      <div class="row">
+        <div class="col">
+          <router-link
+            to="/"
+            class="d-flex align-items-center mb-3 mb-lg-0 me-lg-auto link-body-emphasis text-decoration-none"
+          >
+            <!--이미지 찾아서 넣자-->
+            <svg class="bi me-2" width="40" height="32">
+              <use xlink:href="#bootstrap"></use>
+            </svg>
+            <span class="fs-4">1조 짱</span>
+          </router-link>
+        </div>
+        <div class="col-6">
+          <form class="col-12 col-lg-6 mb-3 mb-lg-0" role="search">
+            <input type="search" placeholder="Search..." />
+          </form>
+        </div>
+        <div class="col-2">
+          <router-link to="/">
+            <i class="bi bi-bell"></i>
+          </router-link>
+          <span style="color: #fff">　</span>
+          <router-link to="/">
+            <i class="bi bi-cart"> </i>
+          </router-link>
         </div>
       </div>
-    </nav>
+    </div>
+    <div
+      class="text-center"
+      style="border: 1px solid #ccc; padding-bottom: 20px"
+    >
+      <div
+        class="row"
+        style="font-size: 24px; font-weight: 700; margin-top: 20px"
+      >
+        <div class="col"></div>
+        <div class="col">
+          <router-link
+            to="/"
+            @mouseover="showCategoryList"
+            @mouseleave="hideCategoryList"
+            >카테고리</router-link
+          >
+          <div v-if="showCategory" class="category-list">
+            <!-- 카테고리?  -->
+            <h1>ddasf</h1>
+            <router-link class="nav-custom" to="/">카테고리 1</router-link>
+            <router-link class="nav-custom" to="/">카테고asdf리 2</router-link>
+          </div>
+        </div>
+        <div class="col">
+          <router-link class="nav-custom" to="/">소개</router-link>
+        </div>
+        <div class="col">
+          <router-link class="nav-custom" to="/">메뉴</router-link>
+        </div>
+        <div class="col">
+          <router-link class="nav-custom" to="/">리뷰</router-link>
+        </div>
+        <div class="col">
+          <router-link class="nav-custom" to="/">마이페이지</router-link>
+        </div>
+        <div class="col"></div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -96,22 +91,57 @@ export default {
   data() {
     return {
       cartAmounts: 0,
+      showCategory: false,
     };
+  },
+  methods: {
+    showCategoryList() {
+      this.showCategory = true;
+    },
+    hideCategoryList() {
+      this.showCategory = true;
+    },
   },
 };
 </script>
 
 <style scoped>
 #nav > li > a {
-  color: #ccc;
+  color: #bbb;
   font-size: 12px;
   font-weight: 600;
 }
 
-.navbar-nav.mx-auto > li > a {
-  font-weight: 700;
-  font-size: 22px;
-  padding-left: 32px !important;
-  padding-right: 32px !important;
+input {
+  width: 480px;
+  height: 60px;
+  border: 3px solid black;
+  border-radius: 30px;
+  padding-left: 30px;
+}
+
+#nav {
+  margin-right: 300px;
+}
+
+.items > ul > li {
+  list-style-type: none;
+}
+
+.bi {
+  font-size: 45px;
+  color: black;
+}
+
+.nav-custom {
+  text-decoration: none;
+  color: black;
+}
+.nav-custom:hover {
+  color: orange;
+}
+
+.bi:hover {
+  color: orange;
 }
 </style>
