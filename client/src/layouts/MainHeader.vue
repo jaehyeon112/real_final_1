@@ -47,25 +47,87 @@
     </div>
     <div
       class="text-center"
-      style="border: 1px solid #ccc; padding-bottom: 20px"
+      id="lnb"
+      :class="{ fixed: isLnbFixed }"
+      style="border: 1px solid #ccc; background-color: #fff"
+      ref="lnb"
     >
       <div
         class="row"
-        style="font-size: 24px; font-weight: 700; margin-top: 20px"
+        style="
+          font-size: 24px;
+          font-weight: 700;
+          margin-top: 20px;
+          padding-bottom: 10px;
+        "
       >
         <div class="col"></div>
-        <div class="col">
-          <router-link
-            to="/"
-            @mouseover="showCategoryList"
-            @mouseleave="hideCategoryList"
-            >카테고리</router-link
-          >
+        <div
+          class="col"
+          style="position: relative"
+          @mouseover="showCategoryList"
+          @mouseleave="hideCategoryList"
+        >
+          <router-link to="/">카테고리</router-link>
           <div v-if="showCategory" class="category-list">
             <!-- 카테고리?  -->
-            <h1>ddasf</h1>
-            <router-link class="nav-custom" to="/">카테고리 1</router-link>
-            <router-link class="nav-custom" to="/">카테고asdf리 2</router-link>
+            <ul>
+              <li
+                @mouseenter="showSecondCategoryList"
+                @mouseleave="hideSecondCategoryList"
+                class="test"
+              >
+                <router-link class="nav-custom" to="/">밀키트</router-link>
+              </li>
+
+              <li class="test">
+                <router-link class="nav-custom" to="/">신상품</router-link>
+              </li>
+              <li class="test">
+                <router-link class="nav-custom" to="/">베스트</router-link>
+              </li>
+              <li class="test">
+                <router-link class="nav-custom" to="/"
+                  >갑자기 땡긴다면?</router-link
+                >
+              </li>
+              <li class="test">
+                <router-link class="nav-custom" to="/">특가</router-link>
+              </li>
+              <li class="test">
+                <router-link class="nav-custom" to="/">냉동전문관</router-link>
+              </li>
+            </ul>
+          </div>
+          <div
+            v-if="showSecondCategory"
+            class="category-list second-category-list"
+            style="position: absolute; left: 200px"
+            @mouseenter="showSecondCategoryList"
+            @mouseleave="hideSecondCategoryList"
+          >
+            <ul>
+              <li class="test">
+                <router-link class="nav-custom" to="/"
+                  ><span style="width: 300px">전체</span></router-link
+                >
+              </li>
+              <li class="test">
+                <router-link to="/">양식</router-link>
+              </li>
+              <li class="test">
+                <router-link to="/">한식</router-link>
+              </li>
+              <li class="test">
+                <router-link to="/">중 일식</router-link>
+              </li>
+              <li class="test">
+                <router-link to="/">분식</router-link>
+              </li>
+              <li class="test">
+                <router-link to="/">동남아</router-link>
+              </li>
+            </ul>
           </div>
         </div>
         <div class="col">
@@ -92,14 +154,42 @@ export default {
     return {
       cartAmounts: 0,
       showCategory: false,
+      showSecondCategory: false,
+      lnbOffsetTop: 0,
+      isLnbFixed: false,
     };
   },
+  mounted() {
+    this.lnbOffsetTop = this.$refs.lnb.offsetTop;
+
+    window.addEventListener("scroll", this.handleScroll);
+  },
+  beforeDestroy() {
+    window.removeEventListener("scroll", this.handleScroll);
+  },
+
   methods: {
     showCategoryList() {
       this.showCategory = true;
     },
     hideCategoryList() {
-      this.showCategory = true;
+      this.showCategory = false;
+      this.showSecondCategory = false;
+    },
+    showSecondCategoryList() {
+      this.showSecondCategory = true;
+    },
+    hideSecondCategoryList() {
+      this.showSecondCategory = false;
+    },
+    handleScroll() {
+      const windowScroll = window.scrollY;
+
+      if (this.lnbOffsetTop <= windowScroll) {
+        this.isLnbFixed = true;
+      } else {
+        this.isLnbFixed = false;
+      }
     },
   },
 };
@@ -136,12 +226,46 @@ input {
 .nav-custom {
   text-decoration: none;
   color: black;
+  width: 100%;
 }
 .nav-custom:hover {
   color: orange;
 }
 
 .bi:hover {
+  color: orange;
+}
+
+.category-list {
+  border: 1px solid black;
+  width: 200px;
+  background-color: #fff;
+  position: absolute;
+  text-align: justify;
+}
+.category-list > ul {
+  margin: 0;
+  padding: 0;
+}
+.category-list > ul > li {
+  list-style-type: none;
+  padding-left: 30px;
+  height: 50px;
+  font-size: 20px;
+}
+
+.fixed {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+}
+
+a {
+  text-decoration: none;
+  color: black;
+}
+.test:hover a {
   color: orange;
 }
 </style>
