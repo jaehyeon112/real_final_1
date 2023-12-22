@@ -39,7 +39,7 @@
             <i class="bi bi-bell"></i>
           </router-link>
           <span style="color: #fff">　</span>
-          <router-link to="/">
+          <router-link to="/CartList">
             <i class="bi bi-cart"> </i>
           </router-link>
         </div>
