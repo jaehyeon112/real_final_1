@@ -1,13 +1,8 @@
 import { createRouter, createWebHistory } from "vue-router";
-import main from "@/views/MainHome.vue";
-const routes = [
-  {
-    path: "/",
-    name: "main",
-    component: main,
-    children: [{}],
-  },
-];
+import user from "../router/user.js";
+import admin from "../router/admin.js";
+
+const routes = [user, admin];
 
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
