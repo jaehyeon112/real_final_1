@@ -1,10 +1,16 @@
 import { createRouter, createWebHistory } from "vue-router";
 import main from "@/views/MainHome.vue";
+import detailPage from "@/views/detailPage.vue";
 const routes = [
   {
     path: "/",
     name: "main",
     component: main,
+  },
+  {
+    path:"/detailP",
+    name:"detailPage",
+    component: detailPage
   },
 ];
 

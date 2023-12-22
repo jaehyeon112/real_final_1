@@ -17,3 +17,11 @@ app.get("/test", async (req, res) => {
   let list = await mysql.query("test", "list");
   res.send(list);
 });
+
+//리뷰관련
+ //상세페이지에서 리뷰목록
+ app.get("/detailRiview/:pno", async(request, response)=>{
+  let pno = req.params.prod_no
+  let list = await mysql.query('review','detailList',pno)[0]
+  res.send(list);
+ })
