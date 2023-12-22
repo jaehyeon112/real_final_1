@@ -1,24 +1,10 @@
 import { createRouter, createWebHistory } from "vue-router";
-import main from "@/views/MainHome.vue";
-import admin from "@/views/AdminHome.vue";
+import user from '../router/user.js';
+import admin from '../router/admin.js';
+
 const routes = [
-  {
-    path: "/",
-    name: "main",
-    component: main,
-    children : [
-
-    ]
-  },
-  {
-    path : "/admin",
-    name : "admin",
-    component : admin,
-      children : [
-
-      ]
-  }
-
+user,
+admin
 ];
 
 const router = createRouter({
