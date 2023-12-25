@@ -1,47 +1,41 @@
 <template>
   <div>
-    <div
-      id="carouselExampleInterval"
-      class="carousel slide"
-      data-bs-ride="carousel"
-    >
-      <div class="carousel-inner">
-        <div class="carousel-item active" data-bs-interval="10000">
-          <img src="" class="d-block w-100" alt="..." />
-        </div>
-        <div class="carousel-item" data-bs-interval="2000">
-          <img src="" class="d-block w-100" alt="..." />
-        </div>
-        <div class="carousel-item">
-          <img src="" class="d-block w-100" alt="..." />
-        </div>
-      </div>
-      <button
-        class="carousel-control-prev"
-        type="button"
-        data-bs-target="#carouselExampleInterval"
-        data-bs-slide="prev"
-      >
-        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-        <span class="visually-hidden">Previous</span>
-      </button>
-      <button
-        class="carousel-control-next"
-        type="button"
-        data-bs-target="#carouselExampleInterval"
-        data-bs-slide="next"
-      >
-        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-        <span class="visually-hidden">Next</span>
-      </button>
-    </div>
-
-    <button @click="clickEvent">로딩 오버레이 테스트 버튼</button>
+    <carousel />
+    <v-container>
+      <h1>실시간 베스트</h1>
+      <v-row>
+        <v-col v-for="count in 6" :key="count" cols="4">
+          <menulist />
+        </v-col>
+      </v-row>
+      <h1>생생한 리뷰</h1>
+      <review />
+      <upload />
+      <button @click="clickEvent">로딩 오버레이 테스트 버튼</button>
+    </v-container>
   </div>
 </template>
 
 <script>
-export default {};
+import carousel from "@/components/main/MainCarousel.vue";
+import menulist from "@/components/menu/MenuList.vue";
+import review from "@/components/main/review.vue";
+import upload from "@/components/menu/upload.vue";
+export default {
+  components: {
+    carousel,
+    menulist,
+    review,
+    upload,
+  },
+  methods: {
+    async clickEvent() {
+      this.$showLoading();
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      this.$hideLoading();
+    },
+  },
+};
 </script>
 
 <style></style>

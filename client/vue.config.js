@@ -3,6 +3,7 @@ const target = "http://localhost:3000";
 module.exports = defineConfig({
   transpileDependencies: true,
   lintOnSave: false,
+
   devServer: {
     port: 8080,
     proxy: {
@@ -12,6 +13,12 @@ module.exports = defineConfig({
         ws: false,
         pathRewrite: { "^/api": "/" },
       },
+    },
+  },
+
+  pluginOptions: {
+    vuetify: {
+      // https://github.com/vuetifyjs/vuetify-loader/tree/next/packages/vuetify-loader
     },
   },
 });
