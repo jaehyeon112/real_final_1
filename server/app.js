@@ -17,3 +17,8 @@ app.get("/test", async (req, res) => {
   let list = await mysql.query("test", "list");
   res.send(list);
 });
+
+app.get("/user",async (req, res) => {
+  let list = await mysql.query("test", "order_list");
+  res.send(list);
+});
