@@ -150,6 +150,9 @@ export default {
 
   data() {
     return {
+      yyyyList: [],
+      mmlist: [],
+      
       userInfo : {
         userId : "",
         userPass : "",
@@ -172,7 +175,19 @@ export default {
   }, 
 
   created() {
+    //생년월일
+    const nowYear = new Date().getFullYear();
+    for (let i = 0; i < 100; i++) {
+      let date = nowYear - i;
+      this.yyyyList.push({ value: date, text: date });
+    }
 
+    for (let i = 1; i < 13; i++) {
+      this.mmlist.push({
+        value: i,
+        text: i,
+      });
+    }
   
 
 
