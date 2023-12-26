@@ -9,6 +9,7 @@ import finding from "../views/Finding.vue";
 import withdrawal from "../views/Withdrawal.vue";
 import emailnum from "../views/PutEmailNum.vue";
 import putpass from "../views/PutPassword.vue";
+import test from "../views/test.vue";
 
 const routes = [
   {
@@ -51,7 +52,15 @@ const routes = [
     path: "/putpass",
     name: "putpass",
     component: putpass
+  },
+
+  {
+    path: "/test",
+    name: "test",
+    component: test
   }
+
+
 ];
 
 const router = createRouter({

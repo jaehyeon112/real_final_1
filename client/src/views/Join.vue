@@ -1,7 +1,7 @@
 <template>
 <div class="login-wrap">
   <div class="login-html">
-    <input id="tab-1" type="radio" name="tab" class="sign-in" checked><label for="tab-1" class="tab">Sign In</label>
+    <!-- <input id="tab-1" type="radio" name="tab" class="sign-in" checked><label for="tab-1" class="tab">Sign In</label> -->
     <input id="tab-2" type="radio" name="tab" class="sign-up"><label for="tab-2" class="tab">Sign Up</label>
     <div class="login-form">
 
@@ -36,76 +36,82 @@
 
         <div class="group">
           <label for="user" class="label"> ID </label>
-          <input id="user" type="text" class="input">
-          <button type="button">중복체크</button>
+          <input id="user" type="text" class="input" v-model="userId" autofocus placeholder="영문+숫자 조합 6자이상 11자 이하" >
+          <button type="button" @click="checkId()">중복체크</button>
         </div>
 
         <div class="group">
           <label for="pass" class="label">Password</label>
-          <input id="pass" type="password" class="input" data-type="password">
+          <input id="pass" type="password" class="input" data-type="password" v-model="userPass">
         </div>
 
         <div class="group">
           <label for="pass" class="label"> Password CHECK</label>
-          <input id="pass" type="password" class="input" data-type="password">
+          <input id="pass" type="password" class="input" data-type="password" v-model="userChPass">
         </div>
 
         <div class="group">
-          <label for="pass" class="label">Name</label>
-          <input id="pass" type="text" class="input">
+          <label for="name" class="label" > Name </label>
+          <input id="name" type="text" class="input" v-model="userName">
         </div>
 
 
         <div class="group">
-          <label for="pass" class="label">Email Address</label>
-          <input id="pass" type="text" class="input">
+          <label for="email" class="label">Email Address</label>
+          <input id="email" type="text" class="input" v-model="userEmail">
           <button type="button">인증하기</button>
         </div>
 
          <div class="group">
-          <label for="pass" class="label">인증번호입력하기</label>
-          <input id="pass" type="text" class="input">
+          <label for="email" class="label">인증번호입력하기</label>
+          <input id="email" type="text" class="input" v-model="chEmail">
           <button type="button">확인</button>
         </div>
 
          <div class="group">
-          <label for="pass" class="label">TEL</label>
-          <input id="pass" type="text" class="input">
+          <label for="tel" class="label">TEL</label>
+          <input id="tel" type="text" class="input" v-model="userTel">
           <button type="button">휴대폰 인증</button>
         </div>
                             
 
 
         <div class="group">
-          <label for="pass" class="label">주소</label>
-          <input id="pass" type="text" class="input">
-          <button type="button">주소지찾기</button>
-
-<input type="text" v-model="postcode" placeholder="우편번호">
-<input type="button" @click="execDaumPostcode()" value="우편번호 찾기"><br>
-<input type="text" id="address" placeholder="주소"><br>
-<input type="text" id="detailAddress" placeholder="상세주소">
-<input type="text" id="extraAddress" placeholder="참고항목">
+          <label for="address" class="label">주소</label>
+            <div class="address">
+             
+              <input type="text" id="postcode" placeholder="우편번호">
+              <button @click="search()">우편번호 찾기</button><br>
+              <!--onclick이 아니라 @click으로 바꿔야한다. -->
+              <input type="text" id="roadAddress" placeholder="도로명주소">
+              <input type="text" id="jibunAddress" placeholder="지번주소">
+              <span id="guide" style="color:#000;display:none"></span>
+              <input type="text" id="detailAddress" placeholder="상세주소">
+              <!-- <input type="text" id="extraAddress" placeholder="참고항목"> -->
+  </div>
         </div>
 
          <div class="group">
-          <label for="pass" class="label">생년월일</label>
+          <label for="birth" class="select">생년월일</label>
 
-            <select>
+            <select v-model="bthYear">
                     <option value="year">년</option>
+                    <option v-for ="(item, index) in yyyyList" :key="index" :value="item.value" >
+                  {{ item.text }}
+                    </option> 
             </select>
 
-            <select>
+            <select v-model="bthMonth">
                     <option value="month">월</option>
             </select>
 
-           <select>
+           <select v-model="bthDate">
                     <option value="date">일</option>
             </select>
         </div>
 
         <div class="group">
-          <input id="check" type="checkbox" class="check" checked>
+          <input id="check" type="checkbox" class="check" checked v-model="allCh">
           <label for="check"><span class="icon"></span> 전체 동의합니다.</label>
         </div>
 
@@ -136,63 +142,159 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
+  //주소api때 쓴거
+  name: "Address",
+
   data() {
     return {
-      postcode: "",
-      address: "",
-      extraAddress: "",
+      userInfo : {
+        userId : "",
+        userPass : "",
+        userChPass : "",
+        userName : "",
+        userEmail : "",
+        chEmail : "",
+        userTel : "",
+        userAdd : "",
+        bthYear : "",
+        bthMonth : "",
+        bthDate : "",
+        allCh : "",
+      },
+      
+     
+
   }
+
   }, 
+
+  created() {
+
+  
+
+
+  },
+
   methods: {
-    execDaumPostcode() {
-      new window.daum.Postcode({
-        oncomplete: (data) => {
-          if (this.extraAddress !== "") {
-            this.extraAddress = "";
-          }
-          if (data.userSelectedType === "R") {
-            // 사용자가 도로명 주소를 선택했을 경우
-            this.address = data.roadAddress;
-          } else {
-            // 사용자가 지번 주소를 선택했을 경우(J)
-            this.address = data.jibunAddress;
-          }
- 
-          // 사용자가 선택한 주소가 도로명 타입일때 참고항목을 조합한다.
-          if (data.userSelectedType === "R") {
-            // 법정동명이 있을 경우 추가한다. (법정리는 제외)
-            // 법정동의 경우 마지막 문자가 "동/로/가"로 끝난다.
-            if (data.bname !== "" && /[동|로|가]$/g.test(data.bname)) {
-              this.extraAddress += data.bname;
-            }
-            // 건물명이 있고, 공동주택일 경우 추가한다.
-            if (data.buildingName !== "" && data.apartment === "Y") {
-              this.extraAddress +=
-                this.extraAddress !== ""
-                  ? `, ${data.buildingName}`
-                  : data.buildingName;
-            }
-            // 표시할 참고항목이 있을 경우, 괄호까지 추가한 최종 문자열을 만든다.
-            if (this.extraAddress !== "") {
-              this.extraAddress = `(${this.extraAddress})`;
-            }
-          } else {
-            this.extraAddress = "";
-          }
-          // 우편번호를 입력한다.
-          this.postcode = data.zonecode;
-        },
-      }).open();
+    //아이디 중복체크: db에 아이디 있으면 중복되는 아이디 있다고 메세지 띄우기! 
+    async getUserId(){
+      let result = await axios.get(`api/join`)
+                  .catch(err => console.log(err))
+      let list = result.data;
+
+      this.checkId(list);
+      console.log("getuserid함수" + list);
     },
+
+    checkId(id){
+
+      if(this.userInfo.userId == ""){
+        alert(`아이디를 입력해주세요`);
+      } else if(this.userInfo.userId == this.id){
+        alert(`중복된 아이디 입니다.`);
+      }
+
+    }, //checkID,
+
+  //유효성검사
+    validation(){
+      //id
+      if(this.userInfo.userId.length < 6 || this.iserInfo.userId.length > 17){
+        alert(`아이디는 6글자 이상 17자 이하로 입력해주세요`);
+        this.userInfo.userId.focus();
+        return false;
+      }else if(!idChVal(this.userId)){
+        alert(`영어 대·소문자와 숫자만 입력가능합니다.`);
+        this.userId.focus();
+        return false;
+      }
+
+ 
+
+    },
+
+  //유효성 검사 - 문자열 check
+  idChVal(id){
+    var count = 0;
+    //영어, 숫자 체크
+    for(let i=0; i<id.length; i++){
+      if((id.charCodeAt(i)>=65 && id.charCodeAt(i)<=90) || (id.charCodeAt(i)>=97 && value.charCodeAt(i)<=122) || (id.charCodeAt(i)>=48 && id.charCodeAt(i)<=57)){
+                count += 1;
+            }
+
+      if(count == id.length){
+        return true;
+      }else{
+        return false;
+      }
+    }
+  },
+
+
+    //주소api
+            search(){ //@click을 사용할 때 함수는 이렇게 작성해야 한다.
+            new window.daum.Postcode({
+            oncomplete: (data) => { //function이 아니라 => 로 바꿔야한다.
+                // 팝업에서 검색결과 항목을 클릭했을때 실행할 코드를 작성하는 부분.
+
+                // 도로명 주소의 노출 규칙에 따라 주소를 표시한다.
+                // 내려오는 변수가 값이 없는 경우엔 공백('')값을 가지므로, 이를 참고하여 분기 한다.
+                var roadAddr = data.roadAddress; // 도로명 주소 변수
+                var extraRoadAddr = ''; // 참고 항목 변수
+
+                // 법정동명이 있을 경우 추가한다. (법정리는 제외)
+                // 법정동의 경우 마지막 문자가 "동/로/가"로 끝난다.
+                if(data.bname !== '' && /[동|로|가]$/g.test(data.bname)){
+                    extraRoadAddr += data.bname;
+                }
+                // 건물명이 있고, 공동주택일 경우 추가한다.
+                if(data.buildingName !== '' && data.apartment === 'Y'){
+                   extraRoadAddr += (extraRoadAddr !== '' ? ', ' + data.buildingName : data.buildingName);
+                }
+                // 표시할 참고항목이 있을 경우, 괄호까지 추가한 최종 문자열을 만든다.
+                if(extraRoadAddr !== ''){
+                    extraRoadAddr = ' (' + extraRoadAddr + ')';
+                }
+
+                // 우편번호와 주소 정보를 해당 필드에 넣는다.
+                document.getElementById('postcode').value = data.zonecode;
+                document.getElementById("roadAddress").value = roadAddr;
+                document.getElementById("jibunAddress").value = data.jibunAddress;
+                
+                // 참고항목 문자열이 있을 경우 해당 필드에 넣는다.
+                // if(roadAddr !== ''){
+                //     document.getElementById("extraAddress").value = extraRoadAddr;
+                // } else {
+                //     document.getElementById("extraAddress").value = '';
+                // }
+
+                var guideTextBox = document.getElementById("guide");
+                // 사용자가 '선택 안함'을 클릭한 경우, 예상 주소라는 표시를 해준다.
+                if(data.autoRoadAddress) {
+                    var expRoadAddr = data.autoRoadAddress + extraRoadAddr;
+                    guideTextBox.innerHTML = '(예상 도로명 주소 : ' + expRoadAddr + ')';
+                    guideTextBox.style.display = 'block';
+
+                } else if(data.autoJibunAddress) {
+                    var expJibunAddr = data.autoJibunAddress;
+                    guideTextBox.innerHTML = '(예상 지번 주소 : ' + expJibunAddr + ')';
+                    guideTextBox.style.display = 'block';
+                } else {
+                    guideTextBox.innerHTML = '';
+                    guideTextBox.style.display = 'none';
+                }
+            }
+        }).open();
+        
+        
+        }
 
     
   }
 
-
-
-  
-  
   
 };
 
@@ -236,7 +338,7 @@ a{color:inherit;text-decoration:none}
   right:0;
   bottom:0;
   position:absolute;
-  transform:rotateY(180deg);
+  /* transform:rotateY(180deg); */
   backface-visibility:hidden;
   transition:all .4s linear;
 }
