@@ -55,8 +55,7 @@ app.get("/show", async (req, res) => {
 });
 
 app.get("/show/:no", async (req, res) => {
-  let data = Number(req.params.no)*6
-  console.log(data)
+  let data = Number(req.params.no) * 6;
   let list = await mysql.query("test", "list2", data);
   res.send(list);
-})
+});
