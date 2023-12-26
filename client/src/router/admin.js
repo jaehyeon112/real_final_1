@@ -2,7 +2,7 @@ import admin from '@/views/AdminHome.vue';
 import adminMain from "@/views/AdminMain.vue";
 import userList from "@/views/UserList.vue";
 import prodList from "@/views/ProductList.vue";
-
+import product from '@/components/Product.vue';
 
 export default{
     path : "/admin",
@@ -23,6 +23,11 @@ export default{
           path : "prodList",
           name : "prodList",
           component : prodList
+        },
+        {
+          path : "product",
+          name : "product",
+          component : product
         }
       ]
   }

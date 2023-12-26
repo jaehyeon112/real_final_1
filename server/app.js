@@ -19,6 +19,35 @@ app.get("/test", async (req, res) => {
 });
 
 app.get("/user",async (req, res) => {
-  let list = await mysql.query("test", "order_list");
+  let list = await mysql.query("admin", "userList");
   res.send(list);
+});
+
+app.get("/prod",async (req, res) => {
+  let list = await mysql.query("admin", "prodList");
+  res.send(list);
+});
+
+app.get("/prod/:pno",async (req, res) => {
+  let data = req.params.pno;
+  let result = await mysql.query("admin", "prodInfo",data);
+  res.send(result);
+});
+
+app.post("/prod",async (req, res) => {
+  let data = req.body.param;
+  let result = await mysql.query("admin","prodInsert",data);
+  res.send(result);
+});
+
+app.put("/prod/:pno",async (req, res) => {
+  let datas = [req.body.param,req.params.pno];
+  let result = await mysql.query("admin","prodDelete",datas);
+  res.send(result);
+});
+
+app.put("/prod/:pno",async (req, res) => {
+  let data = req.params.pno;
+  let result = await mysql.query("admin","prodDelete",data);
+  res.send(result);
 });

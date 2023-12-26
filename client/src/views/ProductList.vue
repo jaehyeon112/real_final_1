@@ -4,55 +4,58 @@
             <tr>
                 <th>상품번호</th>
                 <th>상품명</th>
-                <th>가격</th>
-                <th>할인 가격</th>
+                <th>판매 가격</th>
                 <th>재고</th>
                 <th>메인 카테고리</th>
             </tr>
         </thead>
-                        
         <tbody>
-            <tr>
-                <td>1</td>
-                <td>1</td>
-                <td>1</td>
-                <td>1</td>
-                <td>1</td>
-                <td>1</td>
-                <td><button>삭제</button></td>
+            <tr :key="idx" v-for="(prod,idx) in productList">
+                <td>{{ prod.prod_no }}</td>
+                <td>{{ prod.prod_name }}</td>
+                <td v-if="prod.discount_rate==0">{{ prod.price }}</td>
+                <td v-else>{{ prod.discount_price }}</td>
+                <td>{{ prod.stock }}</td>
+                <td>{{ prod.main_category }}</td>
+                <td><button style="border-radius: 10px;" @click="modProd(prod.prod_no)">수정</button>       <button style="border-radius: 10px;" @click="delProd(prod.prod_no)">삭제</button></td>
             </tr>
         </tbody>
     </list>
-    <v-row :style="{marginTop: '50px'}">
-    <v-col cols="12" md="2" />
-    <v-col cols="12" md="2">
-        <v-select
-              :items="searchoption"
-              v-model="searchoptionselected"
-              :style="{width:'90px', marginLeft:'90px'}" />
-    </v-col>
-    <v-col cols="12" md="4">
-        <v-text-field v-model="searchkeyword" dense outlined label="검색키워드" 
-        full-width :style="{marginTop:'10px'}"/>
-    </v-col>
-    <v-col cols="12" md="1">
-        <v-btn @click="searchstart" :style="{marginTop:'10px'}">검색</v-btn>
-    </v-col>
-    <v-col cols="12" md="3" />
-</v-row>
-<v-row v-if="searchfinish===true" :style="{marginTop:'0px'}">
-    <v-col cols="12" md="5"/>
-    <v-col cols="12" md="2">
-        <div style="font-size: x-large">검색결과 : {{searchcnt}} 개</div>
-    </v-col>
-    <v-col cols="12" md="5"/>
-</v-row>
     </template>
     <script>
     import list from '../components/List.vue';
+    import axios from 'axios';
+    
     export default {
+        data(){
+            return{
+                productList : []
+            }
+        },
         components : {
         list
+        },
+        created(){
+            this.prodList();
+        },
+        methods : {
+            async prodList(){
+                let list = await axios.get('/api/prod').catch(err=>console.log(err));
+                let result = list.data;
+                this.productList = result;
+            },
+            async modProd(pno){
+                this.$router.push({name : 'product',query : {pno : pno}})
+            },
+            async delProd(pno){
+                let result = await axios.put(`/api/prod/${pno}`).catch(err=>console.log(err));
+                console.log(result.data)
+                if(result.data.affectedRows==1){
+                    alert('삭제하시면 품절처리 됩니다');
+                }else{
+                    alert('삭제실패'); 
+                }
+            }
         }
     }
     </script>

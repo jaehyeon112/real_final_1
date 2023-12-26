@@ -45,19 +45,22 @@
                 회원관리
               </button>
             </li>
-            <li class="nav-item"  @click="product">
-                <button class="nav-link d-flex align-items-center gap-2 active">
+            <li class="nav-item">
+                <button class="nav-link d-flex align-items-center gap-2 active" @click="product">
                   <svg class="bi"><use xlink:href="#cart"/></svg>
                   상품관리
                 </button>
-                <ul slot="proList"></ul>
+                <ul class="centers" v-if="isOk">
+                  <li @click="prodList">상품 목록</li>
+                  <li @click="prodReg">상품 등록</li>
+                </ul>
             </li>
             <li class="nav-item">
               <button class="nav-link d-flex align-items-center gap-2 active">
                 <svg class="bi"><use xlink:href="#file-earmark"/></svg>
                 주문관리
               </button>
-              <ul slot="orderList"></ul>
+              <slot name="order"></slot>
             </li>
             <li class="nav-item">
               <button class="nav-link d-flex align-items-center gap-2 active">
@@ -97,12 +100,27 @@
 </template>
 <script>
 export default {
+  data(){
+    return{
+      isOk : false
+    }
+  }, 
   methods : {
     userList(){
       this.$router.push({name : 'userList'})
     },
     product(){
+      if(this.isOk==true){
+        this.isOk = false;
+      }else{
+        this.isOk = true;
+      }
+    },
+    prodList(){
       this.$router.push({name : 'prodList'})
+    },
+    prodReg(){
+      this.$router.push({name : 'product'})
     }
   }
 }
@@ -134,6 +152,8 @@ export default {
       .nav {
         --bs-nav-link-color : rgba;
       }
+
+
 
       .b-example-vr {
         flex-shrink: 0;
@@ -187,5 +207,14 @@ export default {
 
       .bd-mode-toggle .dropdown-menu .active .bi {
         display: block !important;
+      }
+
+      .centers{
+        text-align: left;
+      }
+
+      li{
+        list-style: none;
+        font-size: 20px;
       }
     </style>
