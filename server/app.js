@@ -5,9 +5,9 @@ const app = express();
 const fs = require("fs");
 const multer = require("multer");
 const path = require("path");
+
 // const cron = require("node-cron");
 
-// 나중에 이걸 이용해서 정해진 시간에 sql문 작동시킬 수 있을듯?
 //  *(분: 0-59) *(시: 0-23) *(일: 1-31) *(월 1-12) *(요일 0-7, 0or7은 일요일~)
 /* 
 cron.schedule("1-59 * * * * *", () => {
@@ -32,11 +32,6 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-app.post("/profile", upload.single("avatar"), (req, res) => {
-  console.log(req.file);
-  console.log(req.body);
-});
-
 app.post("/photos", upload.array("photos", 12), (req, res) => {
   for (let file of req.files) {
     console.log(file);
@@ -53,3 +48,15 @@ app.get("/test", async (req, res) => {
   const absolutePath = path.join(__dirname, imagePath);
   res.sendFile(absolutePath);
 });
+
+app.get("/show", async (req, res) => {
+  let data = await mysql.query("test", "list");
+  res.send(data);
+});
+
+app.get("/show/:no", async (req, res) => {
+  let data = Number(req.params.no)*6
+  console.log(data)
+  let list = await mysql.query("test", "list2", data);
+  res.send(list);
+})

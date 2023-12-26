@@ -101,13 +101,10 @@ export default {
     };
   },
   mounted() {
-    // lnbOffsetTop 값 설정
     this.lnbOffsetTop = this.$refs.lnb.offsetTop;
-    // 스크롤 이벤트 리스너 등록
     window.addEventListener("scroll", this.handleScroll);
   },
   beforeDestroy() {
-    // 스크롤 이벤트 리스너 해제
     window.removeEventListener("scroll", this.handleScroll);
   },
   methods: {

@@ -8,9 +8,8 @@
       </v-col>
       <v-img
         class="align-end text-white"
-        height="300"
+        height="400"
         src="https://cdn.vuetifyjs.com/images/cards/docks.jpg"
-        cover
         >리뷰사진<v-img
           class="align-center text-white float-right"
           height="200"

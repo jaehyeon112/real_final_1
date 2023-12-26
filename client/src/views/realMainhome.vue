@@ -1,11 +1,11 @@
 <template>
   <div>
     <carousel />
-    <v-container>
+    <v-container justify="center">
       <h1>실시간 베스트</h1>
       <v-row>
         <v-col v-for="count in 6" :key="count" cols="4">
-          <menulist />
+          <!--  <menulist /> -->
         </v-col>
       </v-row>
       <h1>생생한 리뷰</h1>
