@@ -1,5 +1,7 @@
 import main from "@/views/MainHome.vue";
 import realmain from "@/views/realMainhome.vue";
+import myPage from "@/views/MyPage.vue";
+import detailPage from "@/views/DetailPage.vue";
 export default {
   path: "/",
   name: "main",
@@ -8,7 +10,17 @@ export default {
     {
       path: "main",
       name: "realmain",
-      component: realmain,
+      component: realmain
     },
+    {
+      path:"myPage",
+      name:"myPage",
+      component:myPage
+    },
+    {
+      path:"detailPage",
+      name:"detailPage",
+      component:detailPage
+    }
   ],
 };

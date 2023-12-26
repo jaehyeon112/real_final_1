@@ -13,8 +13,11 @@ let point = {
 let coupon = {
   myCoupon:`select * from coupon where user_id=?`//마이페이지 보유 쿠폰
 };
-
+let orders = {
+  orderList:`select * from order where user_id=?`,
+  orderCancle:`update order set order_status=? where order_no=? and user_id=?`//주문 전체취소
+}
 
 module.exports = {
-  test,reviews,point,coupon
+  test,reviews,point,coupon,orders
 };

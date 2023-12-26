@@ -25,3 +25,17 @@ app.get("/test", async (req, res) => {
   let list = await mysql.query('review','detailList',pno)[0]
   res.send(list);
  })
+
+ //주문내역 관련
+ app.get("/orders/:id", async(req, res)=>{
+  let id = req.params.user_id
+  let list = await mysql.query('orders', 'orderList', id);
+  res.send(list);
+ });
+      //-주문취소
+ app.delete('/orders/:ono/:id',async (req,res)=>{
+  let datas = [req.body.param.order_status, req.params[ono],req.params[id]];
+  let result = await mysql.query('orders','orderCancle',datas)
+  res.send(result)
+})
+

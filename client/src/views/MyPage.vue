@@ -1,41 +1,73 @@
 <template>
-    <div class="myPageComponent">
-        <p>마이페이지</p>
-        <p>{{ member.ser_id }}님</p>
-        <p>잔여포인트 {{ point.used_point }}</p>
-        <p @click="modalOpen" >보유쿠폰</p>
-
-        <div class="modal-wrap" v-show="modalCheck">
-            <div class="modal-container">
-                <table>
-                    <tr>
-                        <th>쿠폰번호</th>
-                        <th>쿠폰내용</th>
-                        <th>쿠폰 발급일</th>
-                        <th>쿠폰 만료일</th>
-                        <th>쿠폰 사용 가능여부</th>
-                    </tr>
-                    <tr :key="idx" v-for="(coupon, idx) in couponList">
-                        <td>{{ coupon.coupon_no }}</td>
-                        <td>{{ coupon.coupon_title }}</td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                </table>
-                <div class="modal-btn">
-                    <button @click="modalOpen">닫기</button>
-                    <button @click="modalOpen">확인</button>
+<div>
+    <div class="container" >
+            <div class="col-md-8">
+                <div class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
+                    <div class="col p-4 d-flex flex-column position-static">
+                        <strong class="d-inline-block mb-2 text-success-emphasis"><!--{{ member.grade }}--></strong>
+                        <h3 class="mb-0"><!--{{ member.user_id*/ }}-->님</h3>
+                        <div class="mb-1 text-body-secondary">Nov 11</div>
+                        <p class="mb-auto"></p>
+                        <a href="#" class="icon-link gap-1 icon-link-hover stretched-link">
+                            다음달 소멸 포인트 조회
+                            <svg class="bi"><use xlink:href="#chevron-right"></use></svg>
+                        </a>
+                    </div>
                 </div>
             </div>
-        </div>
-        <!--자식 컴포넌트 자리-->
+
+            <div class="col-md-4">
+                <div class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
+                    <div class="col p-4 d-flex flex-column position-static">
+                        <strong class="d-inline-block mb-2 text-success-emphasis"><!--{{ 잔여포인트 }}--></strong>
+                        <h3 class="mb-0"><!--{{ 잔여포인트 }}--></h3>
+                        <div class="mb-1 text-body-secondary"><!--{{ xxxxp }}point--></div>
+                        <p class="mb-auto"></p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
+                    <div class="col p-4 d-flex flex-column position-static">
+                        <strong class="d-inline-block mb-2 text-success-emphasis"><!--{{ 잔여쿠폰 }}--></strong>
+                        <h3 class="mb-0" @click="modalOpen"><!--{{잔여쿠폰 }}--></h3>
+                            <div class="modal-wrap" v-show="modalCheck">
+                                <div class="modal-container">
+                                    <table>
+                                        <tr>
+                                            <th>쿠폰번호</th>
+                                            <th>쿠폰내용</th>
+                                            <th>쿠폰 발급일</th>
+                                            <th>쿠폰 만료일</th>
+                                            <th>쿠폰 사용 가능여부</th>
+                                        </tr>
+                                        <!--<tr :key="idx" v-for="(coupon, idx) in couponList">
+                                            <td>{{ coupon.coupon_no }}</td>
+                                            <td>{{ coupon.coupon_title }}</td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                        </tr>-->
+                                    </table>
+                                <div class="modal-btn">
+                                    <button @click="modalOpen">닫기</button>
+                                    <button @click="modalOpen">확인</button>
+                                </div>
+                                </div>
+                            </div>
+                    </div>
+                </div>
+            </div>
     </div>
+
+    <!--자식컴포넌트 자리-->
+</div>
     
 </template>
 
 <script>
 //import axious from 'axious'
+//import OrderList from'../components/orderList.vue'
 export default{
     data() {
         return {
@@ -44,6 +76,9 @@ export default{
             //point테이블의 table
         } 
     },
+    //components : {
+        //OrderList
+    //},
     created(){
 
     },
