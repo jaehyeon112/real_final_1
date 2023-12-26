@@ -1,15 +1,19 @@
 <template>
-<ddd/>
-<Footer/>
+  <Header/>
+<router-view/>
+  <Footer/>
   
 </template>
 <script>
+import Header from '../layouts/AdminHeader.vue';
 import Footer from '../layouts/MainFooter.vue';
-import ddd from '../layouts/ddd.vue';
 export default {
     components : {
-    Footer,
-    ddd
+    Header,
+    Footer
+  },
+  created() {
+    this.$router.push({path : "/admin/Main"})
   }
 }
 </script>
