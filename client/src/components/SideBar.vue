@@ -56,7 +56,7 @@
                 </ul>
             </li>
             <li class="nav-item">
-              <button class="nav-link d-flex align-items-center gap-2 active">
+              <button class="nav-link d-flex align-items-center gap-2 active" @click="chart">
                 <svg class="bi"><use xlink:href="#file-earmark"/></svg>
                 주문관리
               </button>
@@ -121,6 +121,9 @@ export default {
     },
     prodReg(){
       this.$router.push({name : 'product'})
+    },
+    chart(){
+      this.$router.push({name : 'chart'})
     }
   }
 }

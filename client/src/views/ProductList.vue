@@ -48,7 +48,7 @@
                 this.$router.push({name : 'product',query : {pno : pno}})
             },
             async delProd(pno){
-                let result = await axios.put(`/api/prod/${pno}`).catch(err=>console.log(err));
+                let result = await axios.patch(`/api/prod/${pno}`).catch(err=>console.log(err));
                 console.log(result.data)
                 if(result.data.affectedRows==1){
                     alert('삭제하시면 품절처리 됩니다');

@@ -3,6 +3,8 @@ import adminMain from "@/views/AdminMain.vue";
 import userList from "@/views/UserList.vue";
 import prodList from "@/views/ProductList.vue";
 import product from '@/components/Product.vue';
+import chart from '@/components/chart.vue';
+
 
 export default{
     path : "/admin",
@@ -28,6 +30,11 @@ export default{
           path : "product",
           name : "product",
           component : product
-        }
+        },
+        {
+          path : "chart",
+          name : "chart",
+          component : chart
+        },
       ]
   }

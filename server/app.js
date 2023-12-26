@@ -42,11 +42,11 @@ app.post("/prod",async (req, res) => {
 
 app.put("/prod/:pno",async (req, res) => {
   let datas = [req.body.param,req.params.pno];
-  let result = await mysql.query("admin","prodDelete",datas);
+  let result = await mysql.query("admin","productMod",datas);
   res.send(result);
 });
 
-app.put("/prod/:pno",async (req, res) => {
+app.patch("/prod/:pno",async (req, res) => {
   let data = req.params.pno;
   let result = await mysql.query("admin","prodDelete",data);
   res.send(result);

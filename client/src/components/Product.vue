@@ -83,7 +83,7 @@
               </div>
               <div id="buttonBox">
                 <button @click="refresh">초기화</button>
-                <button @click="saveProd(prodNo)">저장하기</button>
+                <button @click="saveProd()">저장하기</button>
               </div>
             </div>
     </main>
@@ -98,7 +98,6 @@
           return{
               prodNo: '',
               prod : {
-                prod_no : '',
                 prod_name : '',
                 price : '',
                 discount_price : '',
@@ -125,8 +124,40 @@
             let result = await axios.get(`/api/prod/${this.prodNo}`).catch(err=>console.log(err));
             this.prod = (result.data)[0];
           },
-          async saveProd(){
-            
+          saveProd(){
+            if(this.prodNo > 0){
+              this.modProduct();
+            }else{
+              this.insertProduct();
+            }
+          },
+          async modProduct(){
+            let datas = {
+                param : {
+                    "discount_price" : this.prod.discount_price,
+                    "main_category" : this.prod.main_category,
+                    "sub_category" : this.prod.sub_category,
+                    "cooking_time" : this.prod.cooking_time,
+                    "allergy" : this.prod.allergy
+                }
+              }
+              let result = await axios.put(`/api/prod/${this.prodNo}`,datas).catch(err=>console.log(err));
+              if(result.data.affectedRows > 0){
+                alert('수정성공!');
+              }else{
+                  alert('수정 실패')
+              }
+          },
+          async insertProduct(){
+            let data = {
+              param : this.prod
+            }
+            let result = await axios.post(`/api/prod`,data).catch(err=>console.log(err));
+            if(result.data.affectedRows > 0){
+                alert('등록성공!');
+              }else{
+                  alert('등록 실패')
+              }
           }
         },
         components : {
