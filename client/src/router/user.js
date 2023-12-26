@@ -1,6 +1,7 @@
 import main from "@/views/MainHome.vue";
 import cartList from "@/views/CartList.vue";
 import orderList from "@/views/OrderList.vue";
+import orderSuccess from "@/views/OrderSuccess.vue";
 
 export default{
     path: "/",
@@ -16,6 +17,11 @@ export default{
         path: "orderList",
         name: "orderList",
         component: orderList,
+      },
+      {
+        path: "orderSuccess",
+        name: "orderSuccess",
+        component: orderSuccess,
       }
     ],
   }

@@ -17,3 +17,21 @@ app.get("/test", async (req, res) => {
   let list = await mysql.query("test", "list");
   res.send(list);
 });
+
+app.get("/cartList/:id", async (req, res) => {
+  let id = req.params.id;
+  let list = await mysql.query("test","cartList", id);
+  res.send(list);
+});
+
+app.put("/cartList/:cno", async (request, res) => {
+  let data = request.params.cno;
+  res.send((await mysql.query("test","CheckboxUpdate", data)));
+});
+
+app.get("/orderList/:id", async (req, res) => {
+  let id = req.params.id;
+  let list = await mysql.query("test","orderList", id);
+  res.send(list);
+});
+
