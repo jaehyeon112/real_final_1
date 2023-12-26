@@ -102,7 +102,14 @@
             </select>
 
             <select v-model="bthMonth">
-                    <option value="month">월</option>
+                    <option value="">월</option>
+                <option
+                  v-for="(item, index) in mmlist"
+                  :key="index"
+                  :value="item.value"
+                >
+                  {{ item.text }}
+                </option>
             </select>
 
            <select v-model="bthDate">
