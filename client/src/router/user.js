@@ -15,7 +15,14 @@ export default {
     {
       path:"myPage",
       name:"myPage",
-      component:myPage
+      component:myPage, 
+      children:[
+        { path:"orderList",
+          name:"orderList",
+          component:orderList
+        }
+
+      ]
     },
     {
       path:"detailPage",

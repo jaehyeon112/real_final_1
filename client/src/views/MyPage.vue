@@ -1,36 +1,42 @@
 <template>
 <div>
-    <div class="container" >
-            <div class="col-md-8">
-                <div class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
+    
+  
+        <main class="d-flex flex-nowrap">
+        <sidebar/>
+        <div class="container">
+        <div class="row" style="width:900px;">
+            
+            <div class="col-sm-5">
+                
                     <div class="col p-4 d-flex flex-column position-static">
                         <strong class="d-inline-block mb-2 text-success-emphasis"><!--{{ member.grade }}--></strong>
-                        <h3 class="mb-0"><!--{{ member.user_id*/ }}-->님</h3>
-                        <div class="mb-1 text-body-secondary">Nov 11</div>
+                        <h3 class="mb-0"><!--{{ member.user_id*/ }}-->1조님</h3>
+                        <div class="mb-1 text-body-secondary">일반</div>
                         <p class="mb-auto"></p>
                         <a href="#" class="icon-link gap-1 icon-link-hover stretched-link">
                             다음달 소멸 포인트 조회
                             <svg class="bi"><use xlink:href="#chevron-right"></use></svg>
                         </a>
                     </div>
-                </div>
+               
             </div>
 
-            <div class="col-md-4">
-                <div class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
+            
+                <div class="col-sm-3 " style="background-color: lightgreen; margin:10px">
                     <div class="col p-4 d-flex flex-column position-static">
-                        <strong class="d-inline-block mb-2 text-success-emphasis"><!--{{ 잔여포인트 }}--></strong>
-                        <h3 class="mb-0"><!--{{ 잔여포인트 }}--></h3>
-                        <div class="mb-1 text-body-secondary"><!--{{ xxxxp }}point--></div>
+                        <strong class="d-inline-block mb-2 text-success-emphasis"><!--{{ 잔여포인트 }}-->잔여포인트</strong>
+                        <h3 class="mb-0"><!--{{ 잔여포인트 }}-->잔여포인트</h3>
+                        <div class="mb-1 text-body-secondary"><!--{{ xxxxp }}point-->xxxpoint</div>
                         <p class="mb-auto"></p>
                     </div>
                 </div>
-            </div>
-            <div class="col-md-4">
-                <div class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
+         
+           
+                <div class="col-sm-3"  style="background-color: lightgreen; margin:10px">
                     <div class="col p-4 d-flex flex-column position-static">
-                        <strong class="d-inline-block mb-2 text-success-emphasis"><!--{{ 잔여쿠폰 }}--></strong>
-                        <h3 class="mb-0" @click="modalOpen"><!--{{잔여쿠폰 }}--></h3>
+                        <strong class="d-inline-block mb-2 text-success-emphasis"><!--{{ 잔여쿠폰 }}--> 잔여쿠폰</strong>
+                        <h3 class="mb-0" @click="modalOpen"><!--{{잔여쿠폰 }}--> 잔여쿠폰</h3>
                             <div class="modal-wrap" v-show="modalCheck">
                                 <div class="modal-container">
                                     <table>
@@ -54,11 +60,16 @@
                                     <button @click="modalOpen">확인</button>
                                 </div>
                                 </div>
-                            </div>
+                            </div> <!--모달-->
                     </div>
                 </div>
             </div>
-    </div>
+        </div>
+        <!--자식컴포넌트 자리-->
+        <OrderList/>
+    
+    </main>
+    
 
     <!--자식컴포넌트 자리-->
 </div>
@@ -68,6 +79,7 @@
 <script>
 //import axious from 'axious'
 //import OrderList from'../components/orderList.vue'
+import sidebar from'../components/MyPage/sidebar.vue'
 export default{
     data() {
         return {
@@ -76,9 +88,10 @@ export default{
             //point테이블의 table
         } 
     },
-    //components : {
-        //OrderList
-    //},
+    components : {
+        //OrderList,
+        sidebar
+    },
     created(){
 
     },
@@ -122,5 +135,6 @@ export default{
   padding: 20px;
   box-sizing: border-box;
 }
+
 
 </style>

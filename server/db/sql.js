@@ -15,7 +15,7 @@ let coupon = {
 };
 let orders = {
   orderList:`select * from order where user_id=?`,
-  orderCancle:`update order set order_status=? where order_no=? and user_id=?`//주문 전체취소
+  orderCancle:`update order set order_status=1 where order_no=? and user_id=?`//주문 전체취소
 }
 
 module.exports = {
