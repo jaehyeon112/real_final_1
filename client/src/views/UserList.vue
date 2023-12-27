@@ -1,5 +1,6 @@
 <template>
-<list #dataList>
+<list @changeemit="changeChildData">
+    <template #dataList>
     <thead>
         <tr>
             <th>회원 아이디</th>
@@ -21,8 +22,8 @@
 
             <td v-if="user.user_grade=='i6'">사용정지 회원</td>
             <td v-else="user_grade=='i6'">{{ user.user_grade }}</td>
-            <td v-if="user.user_grade=='i6'"><button type="button" @click="">정지풀기</button></td>
-            <td v-else><button type="button" @click="modalCheck=true,userId=user.user_id">정지하기</button></td>
+            <td v-if="user.user_grade=='i6'"><v-btn style="border-radius: 10px;" type="button" @click="">정지풀기</v-btn></td>
+            <td v-else><v-btn style="border-radius: 10px;" type="button" @click="modalCheck=true,userId=user.user_id">정지하기</v-btn></td>
         </tr>
     </tbody>
     <div class="modal-wrap" v-show="modalCheck" @click="modalOpen">
@@ -32,11 +33,13 @@
             <input type="text" autofocus>
         </div>
         <div class="modal-btn">
-            <button @click="modalCheck = false">닫기</button>
-            <button @click="stopUser">회원에게 알리기</button>
+            <v-btn style="border-radius: 10px;" @click="modalCheck = false">닫기</v-btn>
+            <v-btn style="border-radius: 10px;" @click="stopUser">회원에게 알리기</v-btn>
         </div>
       </div>
     </div>
+    
+</template>
 </list>
 
 </template>
@@ -48,7 +51,8 @@ export default {
         return{
             userList : [],
             modalCheck: false,
-            userId : ''
+            userId : '',
+            nums : 0
         }
     },
     created(){
@@ -57,9 +61,13 @@ export default {
     methods : {
         async uList(){
             let list = await axios.get('/api/user').catch(err=>console.log(err));
+            console.log(list.data)
             let result = list.data;
-            console.log(result)
-            this.userList = result;
+            //let nums = this.changeemit();
+            for(let i=0;i<result.length;i++){
+                console.log(result[i])
+                this.userList.push(result[i]);
+            }
         },
         dateFormat(value,format){
             let date = value == '' ? new Date() : new Date(value);
@@ -79,10 +87,19 @@ export default {
        },
         modalOpen() {
             this.modalCheck = !this.modalCheck
+        },
+        changeChildData(childData){
+            console.log('받음');
+            this.nums = childData;
         }
     },
     components : {
-    list
+        list,
+    },
+    watch : {
+        nums(){
+            this.uList();
+        }
     }
 }
 </script>

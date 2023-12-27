@@ -15,9 +15,9 @@
                     <div class="datatable-top">
                         <div class="datatable-dropdown">
                         <label>
-                            <select class="datatable-selector">
+                            <select class="datatable-selector" v-model="changeemit">
                                 <option value="5">5</option>
-                                <option value="10" selected="">10</option>
+                                <option value="10">10</option>
                                 <option value="15">15</option>
                                 <option value="20">20</option>
                             </select> 
@@ -25,7 +25,7 @@
                         </label>
                         </div>
                         <div class="datatable-search">
-                                <input class="datatable-input" style="border-bottom: 1px black solid;" placeholder="Search..." type="search">
+                            <input class="datatable-input" @change="searchData(this.value)" style="border-bottom: 1px black solid;" placeholder="Search..." type="search">
                         </div>
                     </div>
                 <div class="card-body">                 
@@ -45,8 +45,30 @@
 <script>
 import side from '../admin/SideBar.vue';
 export default {
+    data(){
+        return {
+            changeemit : 10
+        }
+    },
     components : {
-    side
-}
+        side
+    },
+    created(){
+        this.changePagePer();
+    },
+    methods : {
+        searchData(data){
+
+        },
+        changePagePer(){
+            console.log('전달');
+            this.$emit('changeemit', this.changeemit);
+        }
+    },
+    watch : {
+        changeemit(){
+            this.changePagePer();
+        }
+    }
 }
 </script>

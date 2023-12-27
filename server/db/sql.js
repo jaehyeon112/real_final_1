@@ -4,9 +4,7 @@ let test = {
 };
 
 let admin = {
-  userList : `select user_id,user_name,user_email,user_tel,join_date,user_grade
-  from user
-  order by join_date desc`,
+  userList : `select user_id,user_name,user_email,user_tel,join_date,user_grade from user order by join_date desc`,
   prodList : `select prod_no,prod_name,price,discount_price,discount_rate,stock,main_category
   from product`,
   prodInsert : `insert into product set ?`,

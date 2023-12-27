@@ -15,12 +15,12 @@
                 </div>
     
                 <div class="col-sm-6">
-                  <label for="price" class="form-label">가격</label>
+                  <label for="price" class="form-label">원가</label>
                   <input type="number" v-model="prod.price" class="form-control" id="prod_name" placeholder="" value="" required>
                 </div>
     
                 <div class="col-sm-6">
-                  <label for="discount_price" class="form-label">할인 가격</label>
+                  <label for="discount_price" class="form-label">판매가</label>
                   <input type="number" v-model="prod.discount_price" class="form-control" id="price" placeholder="" value="">
                 </div>
     
