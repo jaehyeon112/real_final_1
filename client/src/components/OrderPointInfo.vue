@@ -1,16 +1,15 @@
 <template>
-    <div class="container">
+    <div class="">
         <h1>쿠폰정보</h1>
         <hr>
-        <select :key="idx" v-for="(list, idx) in couponList">
-            <option value="" disabled selected>사용가능 쿠폰 / {{ list.count }} 장</option>
-            <option>{{ '쿠폰 ' + list.coupon_name + ' ' + list.coupon_content + '발급일자' + getDateFormat(list.start_coupon) + '만료일자' + getDateFormat(list.end_coupon) }}</option>
-        </select>
+        <v-select :items="coupons" label="사용가능 쿠폰"></v-select>
         <h1>포인트정보</h1>
-        <p>포인트 <span v-if="pointList.length > 0">{{ pointList[0].point }} 원</span></p>
-        <input v-if="pointList.length > 0" type="number" v-model="inputValue" @input="updateInputValue" :disabled="pointList[0].point == 0" />
-        <button v-if="pointList.length > 0" id="target_btn" @click="useAllPoints" :disabled="pointList[0].point == 0">모두 사용</button>
         <hr>
+        <p>포인트 <span v-if="pointList.length > 0">{{ pointList[0].point }} 원</span></p>
+        <input style="border-bottom: 1px solid black;" v-if="pointList.length > 0" type="number" v-model="inputValue" @input="updateInputValue"/>
+        <v-btn v-if="pointList.length > 0" id="target_btn" @click="useAllPoints" :disabled="pointList[0].point == 0">모두 사용</v-btn>
+        <hr>
+        <p>{{ couponList }}</p>
     </div>
 </template>
 <script>
@@ -20,17 +19,16 @@ export default {
 	name: 'OrderPointInfo',
     data(){
         return {
-            inputValue: 0
+            inputValue: 0,
+            coupons: []
         }
     },
     props : {
         couponList: {
             type: Array,
-            required: true,
         },
         pointList: {
             type: Array,
-            required: true,
         },
     },
     methods : {
@@ -50,6 +48,17 @@ export default {
             if(this.pointList[0].point > 0 ){
                 this.inputValue = this.pointList[0].point
             }
+        },
+        getlocations(){
+            for(let i = 0; i < this.couponList.length; i++){
+                console.log(i);
+                this.coupons.push(this.couponList[i].coupon_name + ' ' + this.couponList[i].coupon_content + ' 만료날짜' + this.getDateFormat(this.couponList[i].end_coupon));
+            }
+        }
+    },
+    watch : {
+        couponList(){
+            this.getlocations();
         }
     }
 };

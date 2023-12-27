@@ -1,13 +1,13 @@
 <template>
-  <div class="container">
+  <v-container>
     <h1>결제정보</h1>
-    <button :class="{ active: selectedPaymentMethod === 'kakaopay' }" @click="selectPaymentMethod('kakaopay')" :style="{ backgroundColor: selectedPaymentMethod === 'kakaopay' ? 'yellow' : 'gray' }">카카오페이</button>
-    <button :class="{ active: selectedPaymentMethod === 'toss' }" @click="selectPaymentMethod('toss')" :style="{ backgroundColor: selectedPaymentMethod === 'toss' ? 'blue' : 'gray' }">토스페이</button>
-    <button :class="{ active: selectedPaymentMethod === 'kg' }" @click="selectPaymentMethod('kg')" :style="{ backgroundColor: selectedPaymentMethod === 'kg' ? 'purple' : 'gray' }">신용카드</button>
-    <button @click="openPaymentWindow" :disabled="!selectedPaymentMethod" style="background-color: green;">결제창 열기</button>
+    <v-btn :class="{ active: selectedPaymentMethod === 'kakaopay' }" @click="selectPaymentMethod('kakaopay')" :style="{ backgroundColor: selectedPaymentMethod === 'kakaopay' ? 'yellow' : 'gray' }">카카오페이</v-btn>
+    <v-btn :class="{ active: selectedPaymentMethod === 'toss' }" @click="selectPaymentMethod('toss')" :style="{ backgroundColor: selectedPaymentMethod === 'toss' ? 'blue' : 'gray' }">토스페이</v-btn>
+    <v-btn :class="{ active: selectedPaymentMethod === 'kg' }" @click="selectPaymentMethod('kg')" :style="{ backgroundColor: selectedPaymentMethod === 'kg' ? 'purple' : 'gray' }">신용카드</v-btn>
+    <v-btn @click="openPaymentWindow" :disabled="!selectedPaymentMethod" style="background-color: green;">결제창 열기</v-btn>
     <p v-if="paymentUrl">결제창 URL: {{ paymentUrl }}</p>
     <p v-if="errorMessage">에러 메시지: {{ errorMessage }}</p>
-  </div>
+  </v-container>
 </template>
 
 <script>

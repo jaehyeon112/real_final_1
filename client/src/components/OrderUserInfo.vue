@@ -1,5 +1,5 @@
 <template>
-    <div class="container">
+    <v-container>
         <h1>주문자정보</h1>
         <hr>
         <ul v-if="cartList.length > 0">
@@ -9,7 +9,7 @@
                 <p>이메일 <span>{{ cartList[0].user_email }}</span></p>
             </li>
         </ul>
-    </div>
+    </v-container>
 </template>
 <script>
 export default {

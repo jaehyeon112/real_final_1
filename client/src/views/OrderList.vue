@@ -1,20 +1,29 @@
 <template>
-    <div class="container">
-      <h1 style="text-align: center;">주문서</h1>
-        <OrderProdInfo
-        :cartList="cartList"/>
-        <OrderUserInfo
-        :cartList="cartList"/>
-        <OrderAddrInfo
-        :cartList="cartList"/>
-        <OrderPointInfo
-        :couponList="couponList"
-        :pointList="pointList"/>
-        <OrderPayment
-        :cartList="cartList"/>
+    
+    <v-container>
+    <v-row>
+      <v-col cols="8">
+        <h1 style="text-align: center;">주문서</h1>
+        <v-card>
+          <OrderProdInfo
+          :cartList="cartList"/>
+          <OrderUserInfo
+          :cartList="cartList"/>
+          <OrderAddrInfo
+          :cartList="cartList"/>
+          <OrderPointInfo
+          :couponList="couponList"
+          :pointList="pointList"/>
+          <OrderPayment
+          :cartList="cartList"/>
+        </v-card>
+      </v-col>
+      <v-col>
         <OrderPrice
         :cartList="cartList"/>
-    </div>
+      </v-col>
+    </v-row>
+    </v-container>
 </template>
 <script>
 import axios from 'axios';
@@ -44,7 +53,7 @@ export default {
       pointList: []
     };
   },
-  mounted() {
+  created() {
     this.fetchCartList(); // 컴포넌트가 마운트되면 주문 목록을 가져옴
     this.fetchCouponList();
     this.fetchPointList();
@@ -66,7 +75,8 @@ export default {
       axios.get('/api/coupon/test', {
       })
       .then(response => {
-        this.couponList = response.data; // 가져온 주문 목록 데이터를 컴포넌트의 orderList에 저장
+        this.couponList = response.data;
+        console.log(response.data) // 가져온 주문 목록 데이터를 컴포넌트의 orderList에 저장
       })
       .catch(error => {
         console.error(error);

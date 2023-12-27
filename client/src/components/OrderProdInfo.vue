@@ -1,5 +1,5 @@
 <template>
-    <div class="container">
+    <v-container>
       <h1>주문 상품</h1>
       <hr>
       <table class="rwd-table" :key="idx" v-for="(list, idx) in cartList">
@@ -15,7 +15,7 @@
           </td>
         </tr>
       </table>
-    </div>
+    </v-container>
   </template>
 <script>
 export default {
@@ -47,7 +47,7 @@ export default {
   padding: .5em 1em;
 }
 .rwd-table td:nth-child(1) {
-  width: 10%; 
+  width: 5%; 
 }
 
 .rwd-table td:nth-child(2) {
@@ -59,7 +59,7 @@ export default {
 }
 
 .rwd-table td:nth-child(4) {
-  width: 5%; /* 수량 칼럼의 너비 조정 */
+  width: 10%; /* 수량 칼럼의 너비 조정 */
 }
 .discount {
     display: block;

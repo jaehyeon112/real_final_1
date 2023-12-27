@@ -1,17 +1,18 @@
 <template>
-    <div class="container">
-        <p>주문 금액 <span>{{ totalprice - discountprice }} 원</span></p>
-        <ul>
-            <li>상품 전체금액 <span>{{ totalprice }} 원</span></li>
-            <li>상품 할인금액 <span>{{ discountprice }}</span>원</li>
-        </ul>
-        <p>배송비{{ delivery }} 원</p>
-        <p>쿠폰 할인 원</p>
-        <p>포인트 {{ $store.state.inputValue }} 원</p>
-        <hr>
-        <p>최종 결제금액 <span style="color: red;">25,000 원</span></p>
-
-    </div>
+    <v-container>
+            <v-card>
+                <p>주문 금액 <span>{{ totalprice - discountprice }} 원</span></p>
+                <ul>
+                    <li>상품 전체금액 <span>{{ totalprice }} 원</span></li>
+                    <li>상품 할인금액 <span>{{ discountprice }}</span>원</li>
+                </ul>
+                <p>배송비{{ delivery }} 원</p>
+                <p>쿠폰 할인 원</p>
+                <p>포인트 {{ $store.state.inputValue }} 원</p>
+                <hr>
+                <p>최종 결제금액 <span style="color: red;">25,000 원</span></p>
+            </v-card>
+    </v-container>
 </template>
 <script>
 

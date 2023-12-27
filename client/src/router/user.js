@@ -2,6 +2,8 @@ import main from "@/views/MainHome.vue";
 import cartList from "@/views/CartList.vue";
 import orderList from "@/views/OrderList.vue";
 import orderSuccess from "@/views/OrderSuccess.vue";
+import menu from "@/views/MenuPage.vue";
+import realmain from "@/views/realMainhome.vue";
 
 export default{
     path: "/",
