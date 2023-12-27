@@ -93,9 +93,9 @@
                                 <div class="card mb-4">
                                     <div class="card-header">
                                         <i class="fas fa-chart-area me-1"></i>
-                                        매출내역
+                                        최근 3개월 매출내역
                                     </div>
-                                    <div class="card-body"><canvas id="myAreaChart" width="100%" height="40"></canvas></div>
+                                    <div style="width: 600px;height: 600px;"><canvas id="myChart"></canvas></div>
                                 </div>
                             </div>
                             <div class="col-xl-6">
@@ -117,9 +117,72 @@
 </template>
 <script>
 import side from '../components/SideBar.vue';
+import Chart from 'chart.js/auto';
+import axios from 'axios';
   export default {
-      components : {
+    data(){
+      return{
+        months : [this.dateFormat()-2+'월',this.dateFormat()-1+'월',this.dateFormat()+'월'],
+        datas : []
+      }
+    },
+    components : {
       side
-  }
+    },
+    created(){
+      this.getSum();
+    },
+    watch : {
+      datas : function(){
+        this.getSum();
+      }
+    },
+    mounted(){
+            const ctx = document.getElementById('myChart');
+            const myChart = new Chart(ctx,{
+            type: 'line',
+            data: {
+                labels : this.months,
+                datasets: [{
+                    label : '최근 3개월 매출액',
+                    data: this.datas.sum,
+                    // backgroundColor: [
+                    //     'rgb(255, 99, 132)',
+                    //     'rgb(54, 162, 235)',
+                    //     'rgb(255, 205, 86)'
+                    // ],
+                    //hoverOffset: 3
+                    fill: false,
+                    borderColor: 'rgb(75, 192, 192)',
+                    tension: 0.1    //선을 부드럽게
+                }]
+            },
+            options : {
+              scales: {
+                xAxes: [{
+                  ticks: {
+                    min: 0,
+                    stepSize : 100000,
+                    fontSize : 18,
+                  }
+                }]
+			        }
+            }
+            })
+            myChart;
+      },
+      methods : {
+        dateFormat(){
+        let date = new Date();
+        let month = ('0'+(date.getMonth()+1)).slice(-2);
+        return month;
+       },
+       async getSum(){
+        let result = await axios.get(`/api/sum`).catch(err=>console.log(err));
+        for(let i=0;i<result.data.length;i++){
+          this.datas.push(result.data[i]);
+        }
+       }
+      }
 }
 </script>

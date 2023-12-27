@@ -51,3 +51,8 @@ app.patch("/prod/:pno",async (req, res) => {
   let result = await mysql.query("admin","prodDelete",data);
   res.send(result);
 });
+
+app.get("/sum",async (req, res) => {
+  let result = await mysql.query("admin", "monthsIncome");
+  res.send(result);
+});

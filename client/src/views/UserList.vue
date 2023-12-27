@@ -40,6 +40,7 @@ export default {
         async uList(){
             let list = await axios.get('/api/user').catch(err=>console.log(err));
             let result = list.data;
+            console.log(result)
             this.userList = result;
         },
         dateFormat(value,format){
