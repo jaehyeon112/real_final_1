@@ -104,7 +104,7 @@ export default {
     this.lnbOffsetTop = this.$refs.lnb.offsetTop;
     window.addEventListener("scroll", this.handleScroll);
   },
-  beforeDestroy() {
+  beforeUnmount() {
     window.removeEventListener("scroll", this.handleScroll);
   },
   methods: {

@@ -59,3 +59,42 @@ app.get("/show/:no", async (req, res) => {
   let list = await mysql.query("test", "list2", data);
   res.send(list);
 });
+
+app.get("/user",async (req, res) => {
+  let list = await mysql.query("admin", "userList");
+  res.send(list);
+});
+
+app.get("/prod",async (req, res) => {
+  let list = await mysql.query("admin", "prodList");
+  res.send(list);
+});
+
+app.get("/prod/:pno",async (req, res) => {
+  let data = req.params.pno;
+  let result = await mysql.query("admin", "prodInfo",data);
+  res.send(result);
+});
+
+app.post("/prod",async (req, res) => {
+  let data = req.body.param;
+  let result = await mysql.query("admin","prodInsert",data);
+  res.send(result);
+});
+
+app.put("/prod/:pno",async (req, res) => {
+  let datas = [req.body.param,req.params.pno];
+  let result = await mysql.query("admin","productMod",datas);
+  res.send(result);
+});
+
+app.patch("/prod/:pno",async (req, res) => {
+  let data = req.params.pno;
+  let result = await mysql.query("admin","prodDelete",data);
+  res.send(result);
+});
+
+app.get("/sum",async (req, res) => {
+  let result = await mysql.query("admin", "monthsIncome");
+  res.send(result);
+});
