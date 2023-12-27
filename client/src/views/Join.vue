@@ -102,7 +102,14 @@
             </select>
 
             <select v-model="bthMonth">
-                    <option value="month">월</option>
+                    <option value="">월</option>
+                <option
+                  v-for="(item, index) in mmlist"
+                  :key="index"
+                  :value="item.value"
+                >
+                  {{ item.text }}
+                </option>
             </select>
 
            <select v-model="bthDate">
@@ -150,6 +157,9 @@ export default {
 
   data() {
     return {
+      yyyyList: [],
+      mmlist: [],
+      
       userInfo : {
         userId : "",
         userPass : "",
@@ -172,7 +182,19 @@ export default {
   }, 
 
   created() {
+    //생년월일
+    const nowYear = new Date().getFullYear();
+    for (let i = 0; i < 100; i++) {
+      let date = nowYear - i;
+      this.yyyyList.push({ value: date, text: date });
+    }
 
+    for (let i = 1; i < 13; i++) {
+      this.mmlist.push({
+        value: i,
+        text: i,
+      });
+    }
   
 
 

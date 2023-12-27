@@ -27,32 +27,16 @@ app.get("/join", async(req, res)=> {
 
 
 //회원가입용(insert)
-const userTable = ['user_id','user_password','user_name','user_email', 'user_tel', 'postcode', 'address', 'birth'];
-
-app.post("/join", async(request, res)=> {
-  let info = request.body.param;
-  let joinData = [];
-  for (let col of userTable){
-    let value = joinData[col];
-    if(value == '') continue;
-    joinData.push(value);
-  }
-
-  let result = await mysql.query("user","join",joinData);
-
+app.post("/join", async (req, res) => {
+  let data = req.body.param;
+  let result = await mysql.query("user","join",data);
   res.send(result);
+});
 
-})
 
 
-// let deptEmpData = [];
-// for(let column of deptEmpTable){
-//   let value = empInfo[column];
-//   if(value == '') continue;
-//   deptEmpData.push(value);
-// }
 
-// result = await mysql.query('empDept','insert', deptEmpData);
+
 
 
 
