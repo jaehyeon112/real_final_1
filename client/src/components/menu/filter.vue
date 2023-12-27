@@ -1,7 +1,11 @@
 <template>
   <div style="width: 300px; margin-left: 40px">
     <v-container>
-      <h3>필터</h3>
+      <v-row>
+        <v-col>
+          <h3>필터</h3>
+        </v-col>
+      </v-row>
       <hr />
       <p>상품명</p>
       <v-btn
@@ -15,6 +19,7 @@
       <hr />
       <p>가격</p>
       <v-radio-group>
+        <v-radio value="reset" label="초기화"></v-radio>
         <v-radio value="Radio One" label="10,000원 미만"></v-radio>
         <v-radio value="Radio Two" label="10,000~20,000원"></v-radio>
         <v-radio value="Radio Three" label="20,000원 이상"></v-radio>
@@ -24,6 +29,7 @@
 </template>
 
 <script>
+import axios from 'axios';
 export default {
   data() {
     return {
@@ -45,19 +51,28 @@ export default {
         "ㅍ",
         "ㅎ",
         "A-Z",
-      ], // 여기에 원하는 페이지 번호를 넣으세요.
+      ], 
       currentIndex: null,
     };
   },
   methods: {
-    handleClick(index) {
-      this.currentIndex = index;
+    async handleClick(index) {
+      let first = '';
+      let last = '';
+
+      if(index == 1){
+        first = '가'
+        last = '나'
+        let filterWord = await axios.get('/api/filter/'+first/last).catch(err=>{console.log(err)})
+        this.$emit(filterWord.data)
+        console.log(filterWord.data);
+      }
     },
   },
 };
 </script>
 
-<style>
+<style scoped>
 button {
   background-color: #ccc;
 }

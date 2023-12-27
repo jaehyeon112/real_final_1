@@ -11,7 +11,6 @@
           <span aria-hidden="true">&laquo;</span>
         </button>
       </li>
-      {{ this.currentPage }}
       <li
         v-for="page in visiblebutton"
         :key="page"

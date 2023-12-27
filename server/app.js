@@ -59,3 +59,11 @@ app.get("/show/:no", async (req, res) => {
   let list = await mysql.query("test", "list2", data);
   res.send(list);
 });
+
+app.get('/filter/:first/:last', async (req, res) => {
+  let data = [];
+  data.push(req.params.first);
+  data.push(req.params.last);
+  let list = await mysql.query('test','filter',data)
+  res.send(list)
+})
