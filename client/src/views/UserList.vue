@@ -25,7 +25,7 @@
 </list>  
 </template>
 <script>
-import list from '../components/List.vue';
+import list from '../components/admin/List.vue';
 import axios from 'axios';
 export default {
     data(){
