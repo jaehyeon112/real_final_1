@@ -2,8 +2,8 @@ import admin from '@/views/AdminHome.vue';
 import adminMain from "@/views/AdminMain.vue";
 import userList from "@/views/UserList.vue";
 import prodList from "@/views/ProductList.vue";
-import product from '@/components/Product.vue';
-import chart from '@/components/chart.vue';
+import product from '@/components/admin/Product.vue';
+import chart from '@/components/admin/chart.vue';
 
 
 export default{

@@ -92,7 +92,7 @@
     </template>
     <script>
     import axios from 'axios';
-    import side from '../components/SideBar.vue';
+    import side from '../admin/SideBar.vue';
       export default {
         data(){
           return{
