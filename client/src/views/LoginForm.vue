@@ -32,17 +32,27 @@
 
         </div>
 
+    
+
         <div class="foot-lnk" >
             <img class="img" src="../assets/kakaoLogo.jpg">카카오
             <img class="img" src="../assets/naverLogo.png">네이버
         </div>
 
-        
+      <div>
+      <router-link to="/finding" class="button"> 아이디비번찾기페이지로 </router-link> 
+      <router-link to="/test" class="button"> test 페이지로 </router-link> 
+      </div>  
+
       </div>
 
     </div>
   </div>
+
+
 </div>
+
+
 </template>
 
 <script>

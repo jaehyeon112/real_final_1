@@ -37,19 +37,24 @@
         <div class="group">
           <label for="user" class="label"> ID </label>
           <input id="user" type="text" class="input" v-model="userInfo.userId" autofocus placeholder="영문+숫자 조합 6자이상 11자 이하" >
-          <button type="button" @click="checkId(userInfo.userId)">중복체크</button>
+          <v-btn type="button" @click="checkId(userInfo.userId)">중복체크</v-btn >
         </div>
 
         <div class="group">
           <label for="pass" class="label">Password</label>
-          <input id="pass" type="password" class="input" data-type="password" maxlength=16 v-model="userInfo.userPass">
-          <!-- <div v-if="!passVal"> 비번유효성검사오류날때뜨는메세지 </div> -->
+          <input id="pass" type="password" class="input" data-type="password" maxlength=16 v-model="userInfo.userPass" @blur="passwordValid">
+          <div v-if="!passwordValidFlag">
+            유효하지 않은 비밀번호 입니다.
+          </div>
         </div>
 
         <div class="group">
           <label for="pass" class="label"> Password CHECK</label>
-          <input id="pass" type="password" class="input" data-type="password" maxlength=16 v-model="userInfo.userChPass">
-          <div><button type="button" @click="!secPass()">비번체크</button>  </div>
+          <input id="pass" type="password" class="input" data-type="password" maxlength=16 v-model="userInfo.userChPass" @blur="passwordCheckValid">
+          
+            <div v-if="!passwordCheckFlag">
+              비밀번호가 동일하지 않습니다.
+            </div>
         </div>
 
         <div class="group">
@@ -82,13 +87,13 @@
           <label for="address" class="label">주소</label>
             <div class="address">
              
-              <input type="text" id="postcode" placeholder="우편번호">
+              <input type="text" id="postcode" placeholder="우편번호" v-model="userInfo.postcode">
               <button @click="search()">우편번호 찾기</button><br>
               <!--onclick이 아니라 @click으로 바꿔야한다. -->
-              <input type="text" id="roadAddress" placeholder="도로명주소">
-              <input type="text" id="jibunAddress" placeholder="지번주소">
+              <input type="text" id="roadAddress" placeholder="도로명주소" v-model="userInfo.AddressD">
+              <input type="text" id="jibunAddress" placeholder="지번주소" v-model="userInfo.AddressJ">
               <span id="guide" style="color:#000;display:none"></span>
-              <input type="text" id="detailAddress" placeholder="상세주소">
+              <input type="text" id="detailAddress" placeholder="상세주소" v-model="userInfo.detailAdd">
               <!-- <input type="text" id="extraAddress" placeholder="참고항목"> -->
   </div>
         </div>
@@ -181,7 +186,10 @@ export default {
         userEmail : "",
         chEmail : "",
         userTel : "",
-        userAdd : "",
+        postcode : "",
+        AddressD : "",
+        AddressJ : "",
+        detailAdd : "",
         bthYear : "",
         bthMonth : "",
         bthDate : "",
@@ -192,8 +200,9 @@ export default {
       },
 
       //비밀번호
-      passCh : "",
-      passChFlag : true
+     passwordValidFlag: true,
+      passwordCheck: '',
+      passwordCheckFlag: true
       
      
   }
@@ -296,11 +305,21 @@ export default {
   // },
 
 //2) 비밀번호랑 비밀번호확인이랑 일치해야함
-  secPass(){
-    if(this.userInfo.userPass == this.userInfo.userChpass){
-      return passChFlag = false;
-    }
-  },
+   passwordValid () {
+      if (/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9]).{8,16}$/.test(this.userInfo.userPass)) {
+        this.passwordValidFlag = true
+      } else {
+        this.passwordValidFlag = false
+      }
+    },
+
+     passwordCheckValid () {
+      if (this.userInfo.userPass === this.userInfo.userChPass) {
+        this.passwordCheckFlag = true
+      } else {
+        this.passwordCheckFlag = false
+      }
+    },
  
 
 
@@ -322,6 +341,8 @@ export default {
 
     //주소api
             search(){ //@click을 사용할 때 함수는 이렇게 작성해야 한다.
+            const vueObj = this;
+            
             new window.daum.Postcode({
             oncomplete: (data) => { //function이 아니라 => 로 바꿔야한다.
                 // 팝업에서 검색결과 항목을 클릭했을때 실행할 코드를 작성하는 부분.
@@ -346,7 +367,7 @@ export default {
                 }
 
                 // 우편번호와 주소 정보를 해당 필드에 넣는다.
-                document.getElementById('postcode').value = data.zonecode;
+                vueObj.userInfo.postcode = data.zonecode;
                 document.getElementById("roadAddress").value = roadAddr;
                 document.getElementById("jibunAddress").value = data.jibunAddress;
                 
