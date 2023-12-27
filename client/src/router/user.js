@@ -1,5 +1,6 @@
 //import VueRouter from 'vue-router'
 import main from "@/views/MainHome.vue";
+import menu from "@/views/MenuPage.vue";
 import realmain from "@/views/realMainhome.vue";
 import myPage from "@/views/MyPage.vue";
 import detailPage from "@/views/DetailPage.vue";
@@ -14,6 +15,11 @@ export default {
       path: "main",
       name: "realmain",
       component: realmain
+    },
+    {
+    path: "menu",
+      name: "menu",
+      component: menu,
     },
     {
       path:"myPage",
