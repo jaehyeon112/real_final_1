@@ -15,11 +15,11 @@
       </li>
     </ul>
 
-    <div class="container text-center">
+    <div class="container text-center" style="margin-bottom: 20px">
       <div class="row">
-        <div class="col">
+        <div class="col-4">
           <router-link
-            to="/"
+            to="/main"
             class="d-flex align-items-center mb-3 mb-lg-0 me-lg-auto link-body-emphasis text-decoration-none"
           >
             <!--이미지 찾아서 넣자-->
@@ -34,13 +34,20 @@
             <input type="search" placeholder="Search..." />
           </form>
         </div>
-        <div class="col-2">
+        <div class="col-1" style="width: 45px; padding-top: 15px">
           <router-link to="/">
-            <i class="bi bi-bell"></i>
+            <!-- 장바구니 갯수 조절해야함 -->
+            <v-badge color="error" content="0">
+              <span class="mdi mdi-bell-outline" style="font-size: 30px"></span>
+            </v-badge>
           </router-link>
-          <span style="color: #fff">　</span>
+        </div>
+        <div class="col-1" style="padding-top: 15px">
           <router-link to="/">
-            <i class="bi bi-cart"> </i>
+            <!-- 알람 갯수 조절해야함 -->
+            <v-badge color="error" content="0">
+              <span class="mdi mdi-cart-minus" style="font-size: 30px"></span>
+            </v-badge>
           </router-link>
         </div>
       </div>
@@ -62,79 +69,14 @@
         "
       >
         <div class="col"></div>
-        <div
-          class="col"
-          style="position: relative"
-          @mouseover="showCategoryList"
-          @mouseleave="hideCategoryList"
-        >
-          <router-link to="/">카테고리</router-link>
-          <div v-if="showCategory" class="category-list">
-            <!-- 카테고리?  -->
-            <ul>
-              <li
-                @mouseenter="showSecondCategoryList"
-                @mouseleave="hideSecondCategoryList"
-                class="test"
-              >
-                <router-link class="nav-custom" to="/">밀키트</router-link>
-              </li>
-
-              <li class="test">
-                <router-link class="nav-custom" to="/">신상품</router-link>
-              </li>
-              <li class="test">
-                <router-link class="nav-custom" to="/">베스트</router-link>
-              </li>
-              <li class="test">
-                <router-link class="nav-custom" to="/"
-                  >갑자기 땡긴다면?</router-link
-                >
-              </li>
-              <li class="test">
-                <router-link class="nav-custom" to="/">특가</router-link>
-              </li>
-              <li class="test">
-                <router-link class="nav-custom" to="/">냉동전문관</router-link>
-              </li>
-            </ul>
-          </div>
-          <div
-            v-if="showSecondCategory"
-            class="category-list second-category-list"
-            style="position: absolute; left: 200px"
-            @mouseenter="showSecondCategoryList"
-            @mouseleave="hideSecondCategoryList"
-          >
-            <ul>
-              <li class="test">
-                <router-link class="nav-custom" to="/"
-                  ><span style="width: 300px">전체</span></router-link
-                >
-              </li>
-              <li class="test">
-                <router-link to="/">양식</router-link>
-              </li>
-              <li class="test">
-                <router-link to="/">한식</router-link>
-              </li>
-              <li class="test">
-                <router-link to="/">중 일식</router-link>
-              </li>
-              <li class="test">
-                <router-link to="/">분식</router-link>
-              </li>
-              <li class="test">
-                <router-link to="/">동남아</router-link>
-              </li>
-            </ul>
-          </div>
+        <div class="col">
+          <category id="ca" />
         </div>
         <div class="col">
           <router-link class="nav-custom" to="/">소개</router-link>
         </div>
         <div class="col">
-          <router-link class="nav-custom" to="/">메뉴</router-link>
+          <router-link class="nav-custom" to="/menu">메뉴</router-link>
         </div>
         <div class="col">
           <router-link class="nav-custom" to="/">리뷰</router-link>
@@ -149,39 +91,23 @@
 </template>
 
 <script>
+import category from "../components/menu/category.vue";
 export default {
+  components: { category },
   data() {
     return {
-      cartAmounts: 0,
-      showCategory: false,
-      showSecondCategory: false,
       lnbOffsetTop: 0,
       isLnbFixed: false,
     };
   },
   mounted() {
     this.lnbOffsetTop = this.$refs.lnb.offsetTop;
-
     window.addEventListener("scroll", this.handleScroll);
   },
-  beforeDestroy() {
+  beforeUnmount() {
     window.removeEventListener("scroll", this.handleScroll);
   },
-
   methods: {
-    showCategoryList() {
-      this.showCategory = true;
-    },
-    hideCategoryList() {
-      this.showCategory = false;
-      this.showSecondCategory = false;
-    },
-    showSecondCategoryList() {
-      this.showSecondCategory = true;
-    },
-    hideSecondCategoryList() {
-      this.showSecondCategory = false;
-    },
     handleScroll() {
       const windowScroll = window.scrollY;
 
@@ -195,7 +121,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style scope>
 #nav > li > a {
   color: #bbb;
   font-size: 12px;
@@ -227,6 +153,7 @@ input {
   text-decoration: none;
   color: black;
   width: 100%;
+  z-index: 999;
 }
 .nav-custom:hover {
   color: orange;
@@ -234,24 +161,6 @@ input {
 
 .bi:hover {
   color: orange;
-}
-
-.category-list {
-  border: 1px solid black;
-  width: 200px;
-  background-color: #fff;
-  position: absolute;
-  text-align: justify;
-}
-.category-list > ul {
-  margin: 0;
-  padding: 0;
-}
-.category-list > ul > li {
-  list-style-type: none;
-  padding-left: 30px;
-  height: 50px;
-  font-size: 20px;
 }
 
 .fixed {
@@ -265,7 +174,11 @@ a {
   text-decoration: none;
   color: black;
 }
-.test:hover a {
-  color: orange;
+#lnb {
+  z-index: 9999;
+}
+
+#ca {
+  z-index: 9999;
 }
 </style>

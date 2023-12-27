@@ -1,11 +1,12 @@
-import { createApp } from "vue";
-import App from "./App.vue";
-import router from "./router";
-import LoadingPlugin from "./module/Overlay.js";
-import BootstrapVue3 from 'bootstrap-vue-3';
-import 'bootstrap/dist/css/bootstrap.css'
-import 'bootstrap-vue-3/dist/bootstrap-vue-3.css'
+import { createApp } from 'vue'
+import App from './App.vue'
+import router from './router'
+import vuetify from './plugins/vuetify'
+import { loadFonts } from './plugins/webfontloader'
 
-createApp(App).use(BootstrapVue3).use(router).use(LoadingPlugin).mount("#app");
+loadFonts()
 
-window.Kakao.init("c07e37433eff3182e800ac4515df7b42");
+createApp(App)
+  .use(router)
+  .use(vuetify)
+  .mount('#app')
