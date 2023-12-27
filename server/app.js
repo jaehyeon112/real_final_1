@@ -60,13 +60,25 @@ app.get("/show/:no", async (req, res) => {
   res.send(list);
 });
 
-app.get("/user",async (req, res) => {
-  let list = await mysql.query("admin", "userList");
+app.get("/user", async (req, res) => {
+  let data = await mysql.query("admin", "AlluserList");
+  res.send(data);
+});
+
+app.get("/user/:startNo/:no",async (req, res) => {
+  let data = [Number(req.params.startNo)*Number(req.params.no),Number(req.params.no)];
+  let list = await mysql.query("admin", "userList",data);
   res.send(list);
 });
 
-app.get("/prod",async (req, res) => {
-  let list = await mysql.query("admin", "prodList");
+app.get("/prod", async (req, res) => {
+  let data = await mysql.query("admin", "AllprodList");
+  res.send(data);
+});
+
+app.get("/prod/:startNo/:no",async (req, res) => {
+  let datas = [Number(req.params.startNo)*Number(req.params.no),Number(req.params.no)];
+  let list = await mysql.query("admin", "prodList",datas);
   res.send(list);
 });
 

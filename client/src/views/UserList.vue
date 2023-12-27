@@ -38,7 +38,9 @@
         </div>
       </div>
     </div>
-    
+    <v-container>
+        <page @changePage="changePage" :list="totalList" :totals="this.nums"></page>
+    </v-container>
 </template>
 </list>
 
@@ -46,27 +48,43 @@
 <script>
 import list from '../components/admin/List.vue';
 import axios from 'axios';
+import page from '../components/common/Pagination.vue';
 export default {
     data(){
         return{
             userList : [],
             modalCheck: false,
             userId : '',
-            nums : 0
+            nums : 0,
+            startNum : 0,
+            totalList: "",
+            totals :'',
         }
     },
     created(){
-        this.uList();
+        this.total();
     },
     methods : {
-        async uList(){
-            let list = await axios.get('/api/user').catch(err=>console.log(err));
-            console.log(list.data)
+        async total() {
+                let total = await axios.get("/api/user").catch((err) => {
+                    console.log(err);
+                });
+                this.totalList = total.data;
+                console.log('총길이'+this.totalList);
+            },
+        async uList(no){
+            let list = await axios.get(`/api/user/${this.startNum}/${no}`).catch(err=>console.log(err));
             let result = list.data;
-            //let nums = this.changeemit();
-            for(let i=0;i<result.length;i++){
-                console.log(result[i])
-                this.userList.push(result[i]);
+            this.userList = result;
+        },
+        async changePage(no) {
+            try {
+                let page = await axios.get(`/api/user/${no}/${this.nums}`);
+                this.userList = page.data;
+                this.totals = this.nums;
+                console.log('페이지'+page.data);
+            } catch (error) {
+                console.error("Error fetching page data:", error);
             }
         },
         dateFormat(value,format){
@@ -89,16 +107,18 @@ export default {
             this.modalCheck = !this.modalCheck
         },
         changeChildData(childData){
-            console.log('받음');
+            console.log('받음'+childData);
             this.nums = childData;
+            this.totals = childData;
         }
     },
     components : {
         list,
+        page
     },
     watch : {
         nums(){
-            this.uList();
+            this.uList(this.nums);
         }
     }
 }
