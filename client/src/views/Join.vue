@@ -36,41 +36,43 @@
 
         <div class="group">
           <label for="user" class="label"> ID </label>
-          <input id="user" type="text" class="input" v-model="userId" autofocus placeholder="영문+숫자 조합 6자이상 11자 이하" >
-          <button type="button" @click="checkId()">중복체크</button>
+          <input id="user" type="text" class="input" v-model="userInfo.userId" autofocus placeholder="영문+숫자 조합 6자이상 11자 이하" >
+          <button type="button" @click="checkId(userInfo.userId)">중복체크</button>
         </div>
 
         <div class="group">
           <label for="pass" class="label">Password</label>
-          <input id="pass" type="password" class="input" data-type="password" v-model="userPass">
+          <input id="pass" type="password" class="input" data-type="password" maxlength=16 v-model="userInfo.userPass">
+          <!-- <div v-if="!passVal"> 비번유효성검사오류날때뜨는메세지 </div> -->
         </div>
 
         <div class="group">
           <label for="pass" class="label"> Password CHECK</label>
-          <input id="pass" type="password" class="input" data-type="password" v-model="userChPass">
+          <input id="pass" type="password" class="input" data-type="password" maxlength=16 v-model="userInfo.userChPass">
+          <div><button type="button" @click="!secPass()">비번체크</button>  </div>
         </div>
 
         <div class="group">
           <label for="name" class="label" > Name </label>
-          <input id="name" type="text" class="input" v-model="userName">
+          <input id="name" type="text" class="input" v-model="userInfo.userName">
         </div>
 
 
         <div class="group">
           <label for="email" class="label">Email Address</label>
-          <input id="email" type="text" class="input" v-model="userEmail">
+          <input id="email" type="text" class="input" v-model="userInfo.userEmail">
           <button type="button">인증하기</button>
         </div>
 
          <div class="group">
           <label for="email" class="label">인증번호입력하기</label>
-          <input id="email" type="text" class="input" v-model="chEmail">
+          <input id="email" type="text" class="input" v-model="userInfo.chEmail">
           <button type="button">확인</button>
         </div>
 
          <div class="group">
           <label for="tel" class="label">TEL</label>
-          <input id="tel" type="text" class="input" v-model="userTel">
+          <input id="tel" type="text" class="input" v-model="userInfo.userTel">
           <button type="button">휴대폰 인증</button>
         </div>
                             
@@ -94,14 +96,14 @@
          <div class="group">
           <label for="birth" class="select">생년월일</label>
 
-            <select v-model="bthYear">
-                    <option value="year">년</option>
+            <select v-model="userInfo.bthYear">
+                    <option value="">년</option>
                     <option v-for ="(item, index) in yyyyList" :key="index" :value="item.value" >
                   {{ item.text }}
                     </option> 
             </select>
 
-            <select v-model="bthMonth">
+            <select v-model="userInfo.bthMonth">
                     <option value="">월</option>
                 <option
                   v-for="(item, index) in mmlist"
@@ -112,29 +114,37 @@
                 </option>
             </select>
 
-           <select v-model="bthDate">
-                    <option value="date">일</option>
+           <select v-model="userInfo.bthDate">
+                    <option value="">일</option>
+                    <option
+                  v-for="(item, index) in ddList"
+                  :key="index"
+                  :value="item.value"
+                >
+                  {{ item.text }}
+                    </option>
             </select>
         </div>
 
         <div class="group">
-          <input id="check" type="checkbox" class="check" checked v-model="allCh">
+          <input id="check" type="checkbox" class="check" checked v-model="userInfo.allCh">
           <label for="check"><span class="icon"></span> 전체 동의합니다.</label>
         </div>
 
+
         <div class="group">
-          <input id="check" type="checkbox" class="check" >
+          <input id="check" type="checkbox" class="check" checked  v-model="userInfo.ch1">
           <label for="check"><span class="icon"></span> 약관1</label>
         </div>
 
         <div class="group">
-          <input id="check" type="checkbox" class="check" checked>
+          <input id="check" type="checkbox" class="check" checked  v-model="userInfo.ch2">
           <label for="check"><span class="icon"></span> 약관2</label>
         </div>
 
 
         <div class="group">
-          <input type="submit" class="button" value="Sign Up">
+          <input type="submit" class="button" @click="joinInsert()" value="Sign Up">
         </div>
 
 
@@ -157,9 +167,12 @@ export default {
 
   data() {
     return {
+      //생년월일
       yyyyList: [],
       mmlist: [],
+      ddList: [],
       
+      //회원가입 v-model
       userInfo : {
         userId : "",
         userPass : "",
@@ -173,18 +186,25 @@ export default {
         bthMonth : "",
         bthDate : "",
         allCh : "",
+        ch1 : "",
+        ch2 : "",
+
       },
+
+      //비밀번호
+      passCh : "",
+      passChFlag : true
       
      
-
   }
 
   }, 
 
   created() {
+
     //생년월일
     const nowYear = new Date().getFullYear();
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < 124; i++) {
       let date = nowYear - i;
       this.yyyyList.push({ value: date, text: date });
     }
@@ -195,47 +215,60 @@ export default {
         text: i,
       });
     }
+
+    for (let i = 1; i <= 31; i++) {
+      this.ddList.push({
+        value: i,
+        text: i,
+      });
+    }
   
 
 
-  },
+  }, //created
 
   methods: {
     //아이디 중복체크: db에 아이디 있으면 중복되는 아이디 있다고 메세지 띄우기! 
-    async getUserId(){
-      let result = await axios.get(`api/join`)
-                  .catch(err => console.log(err))
-      let list = result.data;
+   
+    async checkId(id){
 
-      this.checkId(list);
-      console.log("getuserid함수" + list);
-    },
+      let result = await axios.get(`/api/join/${this.id}`)
+                  .catch(err => console.log(err));
+                  console.log("result.data" + result.data)
+      let list = result.data.length;
+      console.log(list);
 
-    checkId(id){
-
-      if(this.userInfo.userId == ""){
+      // if(id == ""){
+      //   alert(`아이디를 입력해주세요`);
+      // } else if(list != 0){
+      //   alert(`중복된 아이디 입니다.`);
+      // }
+      // else{
+      //   alert(`사용가능 아이디 입니다.`);
+      // }
+      
+      if(id == ""){
         alert(`아이디를 입력해주세요`);
-      } else if(this.userInfo.userId == this.id){
+      } else if(list != 0){
         alert(`중복된 아이디 입니다.`);
+      }else if(id == !this.validation()){
+        alert(`사용가능 아이디 입니다.`);
       }
-
     }, //checkID,
+
 
   //유효성검사
     validation(){
       //id
-      if(this.userInfo.userId.length < 6 || this.iserInfo.userId.length > 17){
+      if(this.userInfo.userId.length < 6 || this.userInfo.userId.length > 17){
         alert(`아이디는 6글자 이상 17자 이하로 입력해주세요`);
-        this.userInfo.userId.focus();
+        //this.userInfo.userId.focus();
         return false;
-      }else if(!idChVal(this.userId)){
+      }else if(!this.idChVal(this.userInfo.userId)){
         alert(`영어 대·소문자와 숫자만 입력가능합니다.`);
-        this.userId.focus();
+        //this.userId.focus();
         return false;
       }
-
- 
-
     },
 
   //유효성 검사 - 문자열 check
@@ -243,10 +276,9 @@ export default {
     var count = 0;
     //영어, 숫자 체크
     for(let i=0; i<id.length; i++){
-      if((id.charCodeAt(i)>=65 && id.charCodeAt(i)<=90) || (id.charCodeAt(i)>=97 && value.charCodeAt(i)<=122) || (id.charCodeAt(i)>=48 && id.charCodeAt(i)<=57)){
+      if((id.charCodeAt(i)>=65 && id.charCodeAt(i)<=90) || (id.charCodeAt(i)>=97 && id.charCodeAt(i)<=122) || (id.charCodeAt(i)>=48 && id.charCodeAt(i)<=57)){
                 count += 1;
             }
-
       if(count == id.length){
         return true;
       }else{
@@ -254,6 +286,38 @@ export default {
       }
     }
   },
+
+  //비밀번호 체크
+  //1) 문자유효성 - 영문 대소문자, 숫자 특수문자 최소 한 개씩 포함하는 10자 이상의 비밀번호
+  // passVal(){
+  //   if
+  //   //영문 대소문자, 숫자 특수문자 최소 한 개씩 포함하는 10자 이상의 비밀번호
+  //   (^(?=.?[A-Z])(?=.?[a-z])(?=.?[0-9])(?=.?[#?!@$ %^&*-]).{10,}$/.
+  // },
+
+//2) 비밀번호랑 비밀번호확인이랑 일치해야함
+  secPass(){
+    if(this.userInfo.userPass == this.userInfo.userChpass){
+      return passChFlag = false;
+    }
+  },
+ 
+
+
+  async joinInsert(){
+    let info = this.userInfo;
+    let data ={
+      param : this.userInfo
+    };
+
+    let result = await axios.post('/api/join', data);
+    if(result.data.affectedRows > 0 ){
+      alert('가입 성공');
+    }else{
+      alert('가입 실패');
+  }
+  },
+
 
 
     //주소api

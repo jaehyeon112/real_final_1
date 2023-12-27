@@ -19,11 +19,13 @@ app.get("/test", async (req, res) => {
 });
 
 
-// 로그인 - 아이디 중복체크용 아이디 리스트
-app.get("/join", async(req, res)=> {
-  let list = await mysql.query("user", "id");
+// 로그인 - 아이디 중복체크용
+app.get("/join/:id", async(req, res)=> {
+  let uid = req.params.id;
+  let list = await mysql.query("user", "duplicateId", uid);
   res.send(list);
 })
+
 
 
 //회원가입용(insert)

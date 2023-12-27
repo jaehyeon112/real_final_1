@@ -7,3 +7,5 @@ import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue-3/dist/bootstrap-vue-3.css'
 
 createApp(App).use(BootstrapVue3).use(router).use(LoadingPlugin).mount("#app");
+
+window.Kakao.init("c07e37433eff3182e800ac4515df7b42");
