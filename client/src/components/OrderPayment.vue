@@ -38,7 +38,7 @@ export default {
         pg: '',
         pay_method: '',
         name: this.cartList[0].prod_name, // 상품 이름 입력
-        merchant_uid: '11155555213', // 가맹점에서 생성한 고유 주문번호 입력
+        merchant_uid: '111555525213', // 가맹점에서 생성한 고유 주문번호 입력
         amount: this.cartList[0].price, // 결제 금액 입력
         buyer_name: this.cartList[0].user_name, // 구매자 이름 입력
         buyer_tel: this.cartList[0].user_tel, // 구매자 전화번호 입력

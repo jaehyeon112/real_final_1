@@ -9,7 +9,7 @@
           <td>{{ list.quantity }} 개</td>
           <td>
             <ul>
-              <li>{{ list.price }} 원</li>
+              <li>{{ list.price * list.quantity }} 원</li>
               <li v-if="list.discount_price !== list.price" class="discount">{{ list.discount_price }} 원</li>
             </ul>
           </td>

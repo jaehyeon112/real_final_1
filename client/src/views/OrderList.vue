@@ -12,6 +12,7 @@
           <OrderAddrInfo
           :cartList="cartList"/>
           <OrderPointInfo
+          :cartList="cartList"
           :couponList="couponList"
           :pointList="pointList"/>
           <OrderPayment
