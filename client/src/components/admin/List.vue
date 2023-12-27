@@ -25,7 +25,7 @@
                         </label>
                         </div>
                         <div class="datatable-search">
-                            <input class="datatable-input" placeholder="Search..." type="search">
+                                <input class="datatable-input" style="border-bottom: 1px black solid;" placeholder="Search..." type="search">
                         </div>
                     </div>
                 <div class="card-body">                 
@@ -43,7 +43,7 @@
 </div>    
 </template>
 <script>
-import side from '../components/SideBar.vue';
+import side from '../admin/SideBar.vue';
 export default {
     components : {
     side

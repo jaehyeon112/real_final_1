@@ -116,7 +116,7 @@
 </div>
 </template>
 <script>
-import side from '../components/SideBar.vue';
+import side from '../components/admin/SideBar.vue';
 import Chart from 'chart.js/auto';
 import axios from 'axios';
   export default {
