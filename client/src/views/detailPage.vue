@@ -39,7 +39,9 @@
                <p style="margin-left:20px;margin-bottom:0;color:black">무료배송 (40,000원 이상 구매 시)</p>
                <br>
             </div>
-            
+            <div>
+               <button @click="goToCart">장바구니 담기</button> <button @click="likes">♡</button>
+            </div>
          </div>
       </div>
       <!--선택하는 바?-->
@@ -150,7 +152,8 @@ export default {
             let list = await axios.get(`api/detailReview/${this.pno}`)
                                   .catch(err=>console.log(err));
             this.reviewList =list.data;                      
-        }
+        },
+        
     }
 }
 </script>

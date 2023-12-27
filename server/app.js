@@ -28,7 +28,7 @@ app.get("/test", async (req, res) => {
 
  //주문내역 관련
   app.get("/orders/:id", async(req, res)=>{
-    let id = req.params.user_id
+    let id = req.params.id
     let list = await mysql.query('orders', 'orderList', id);
     res.send(list);
   });
@@ -66,4 +66,12 @@ app.get("/test", async (req, res) => {
     let result = await mysql.query('delivery', deleteDelivery)
     res.send(result);
   })
+
+  //찜하기 리스트
+    app.get("/like/:id",async(req,res)=>{
+      let id = req.params;
+      let result = await mysql.query('like', likeList)
+      res.send(result);
+    })
+
 

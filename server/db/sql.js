@@ -24,7 +24,10 @@ let delivery = {
   updateDelivery:`update add_delivery set? where delivery_no=? and user_id=?`,
   deleteDelivery: `delete from add_delivery where delivery_no=?`
 }
+let like = {
+  likeList : `select* from likes where user_id=?`
+}
 
 module.exports = {
-  test,reviews,point,coupon,orders, delivery
+  test,reviews,point,coupon,orders, delivery,like
 };
