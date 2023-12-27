@@ -104,3 +104,9 @@ app.put("/user/:uid",async(req,res)=>{
   let result = await mysql.query("admin","stopUser",data);
   res.send(result);
 });
+
+app.get("/filter/:first/:last/",async (req, res) => {
+  let data= [req.params.first, req.params.last];
+  let result = await mysql.query("test", "filter",data);
+  res.send(result)
+})

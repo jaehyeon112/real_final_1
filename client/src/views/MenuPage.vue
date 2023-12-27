@@ -2,7 +2,7 @@
   <div>
     <v-row>
       <v-col cols="3">
-        <filterSide />
+        <filterSide @wordFilter="wordFilter" />
       </v-col>
       <v-col cols="8">
         <v-row>
@@ -15,7 +15,11 @@
     <v-container>
       <pagination @changePage="changePage" :list="totalList"></pagination>
     </v-container>
-    <button @click="changePage(5)">리스트 다르게?</button>
+
+    <v-select
+  label="Select"
+  :items="test"
+></v-select>
   </div>
 </template>
 
@@ -31,6 +35,9 @@ export default {
       totalList: "",
       list: "",
       pageNo: 0,
+      test : [
+      ]
+      
     };
   },
   methods: {
@@ -61,10 +68,19 @@ export default {
         console.error("Error fetching page data:", error);
       }
     },
+    async wordFilter(arr){
+      this.list = arr;
+    },
+    select(){
+      for(let i = 0 ; i < 5; i++){
+        this.test.push(i)
+      }
+    }
   },
   created() {
     this.productList();
     this.total();
+    this.select();
   },
   components: {
     filterSide,

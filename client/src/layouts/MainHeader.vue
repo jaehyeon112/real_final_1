@@ -121,7 +121,7 @@ export default {
 };
 </script>
 
-<style scope>
+<style scoped>
 #nav > li > a {
   color: #bbb;
   font-size: 12px;

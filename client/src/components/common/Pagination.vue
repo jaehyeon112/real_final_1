@@ -75,7 +75,7 @@ export default {
 };
 </script>
 
-<style scope>
+<style scoped>
 .pagination {
   justify-content: center;
 }
