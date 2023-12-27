@@ -63,8 +63,7 @@ export default {
       if(index == 1){
         first = '가'
         last = '나'
-        let filterWord = await axios.get('/api/filter/'+first/last).catch(err=>{console.log(err)})
-        this.$emit(filterWord.data)
+        let filterWord = await axios.get(`/api/filter/${first}/${last}`).catch(err=>{console.log(err)})
         console.log(filterWord.data);
       }
     },

@@ -1,6 +1,7 @@
 <template>
-    <list #dataList>
-        <thead>
+    <list> 
+        <template #dataList>
+            <thead>
             <tr>
                 <th>상품번호</th>
                 <th>상품명</th>
@@ -20,6 +21,7 @@
                 <td><button style="border-radius: 10px;" @click="modProd(prod.prod_no)">수정</button>       <button style="border-radius: 10px;" @click="delProd(prod.prod_no)">삭제</button></td>
             </tr>
         </tbody>
+        </template>
     </list>
     </template>
     <script>
