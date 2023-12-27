@@ -98,3 +98,9 @@ app.get("/sum",async (req, res) => {
   let result = await mysql.query("admin", "monthsIncome");
   res.send(result);
 });
+
+app.put("/user/:uid",async(req,res)=>{
+  let data = req.params.uid;
+  let result = await mysql.query("admin","stopUser",data);
+  res.send(result);
+});

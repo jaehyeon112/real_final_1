@@ -16,7 +16,8 @@ let admin = {
   from product where prod_no = ?`,
   productMod : `update product set ? where prod_no = ?`,
   weekIncome : `select sum(total_payment) from orders where order_date BETWEEN DATE_ADD(NOW(), INTERVAL -1 week ) AND NOW()`,
-  monthsIncome : `select month(order_date) as month,sum(total_payment) as sum from orders group by month order by month;`
+  monthsIncome : `select month(order_date) as month,sum(total_payment) as sum from orders group by month order by month;`,
+  stopUser : `update user set user_grade = 'i6' where user_id = ?`
 }
 
 module.exports = {
