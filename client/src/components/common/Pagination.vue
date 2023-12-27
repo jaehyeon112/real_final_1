@@ -11,18 +11,20 @@
           <span aria-hidden="true">&laquo;</span>
         </button>
       </li>
-
+      {{ this.currentPage }}
       <li
         v-for="page in visiblebutton"
         :key="page"
         :class="{ active: page === currentPage }"
       >
-        <a class="page-link btn" @click="changePage(page)">{{ page }}</a>
+      
+        <a class="page-link btn" @click="changePage(page)" :disabled="this.currentPage == page">{{ page }}</a>
       </li>
       <li class="page-item">
         <button
           class="page-link"
           aria-label="Next"
+          :disabled="this.currentPage == totalpage"
           @click="changePage(totalpage)"
         >
           <span aria-hidden="true">&raquo;</span>
@@ -43,7 +45,7 @@ export default {
   computed: {
     // 페이지의 총 갯수
     totalpage() {
-      return Math.floor(this.list.length / this.total);
+      return Math.ceil(this.list.length / this.total);
     },
     visiblebutton() {
       let pageCount = Math.min(this.totalpage, 5); //보여지는 페이지 버튼 수, 보통은 5이지만 만약 총갯수가 5보다 작으면.. 토탈 페이지갯수 보여줌
@@ -68,7 +70,7 @@ export default {
   methods: {
     changePage(index) {
       this.currentPage = index;
-      this.$emit("changePage", index);
+      this.$emit("changePage", index-1);
     },
   },
 };
