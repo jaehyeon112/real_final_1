@@ -43,7 +43,7 @@
 </div>    
 </template>
 <script>
-import side from '../components/SideBar.vue';
+import side from '../admin/SideBar.vue';
 export default {
     components : {
     side
