@@ -81,14 +81,15 @@ app.get("/show/:no", async (req, res) => {
     res.send(result)
   })
 //추가 배송지 관련
-  app.get('/addDelivery', async(req,res)=>{
-    const list = await mysql.query('delivery',deliveryList);
+  app.get('/addDelivery/:id', async(req,res)=>{
+    let id = req.params.id;
+    const list = await mysql.query('delivery','deliveryList',id);
     res.send(list);
   })
   //정보수정
   app.put("/addDelivery/:dno/:id", async(req,res)=>{
     let datas = [req.body.param, req.params[dno], req.params[id]]
-    let result =  await mysql.query('delivery', updateDelivery,datas);
+    let result =  await mysql.query('delivery', 'updateDelivery',datas);
     res.send(result)
   })
   //정보삽입
@@ -101,19 +102,19 @@ app.get("/show/:no", async (req, res) => {
     if(value == '') continue;
     delData[column] = value;    
   }
-    let result = await mysql.query('delivery', addDelivery)
+    let result = await mysql.query('delivery', 'addDelivery')
     res.send(result);
   })
   app.delete("/addDelivery", async(req,res)=>{
-    let result = await mysql.query('delivery', deleteDelivery)
+    let result = await mysql.query('delivery', 'deleteDelivery')
     res.send(result);
   })
 
   //찜하기 리스트
     app.get("/like/:id",async(req,res)=>{
-      let id = req.params;
-      let result = await mysql.query('like', likeList)
-      res.send(result);
+      let id = req.params.id;
+      let list = await mysql.query('like', "likeList",id)
+      res.send(list);
     })
 
 

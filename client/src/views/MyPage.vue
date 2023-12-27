@@ -66,7 +66,10 @@
             </div>
             <!--자식컴포넌트 자리-->
         <router-view :key="$route.fullPath" />
-        <router-view orderList/>
+        <router-view><orderList/></router-view>
+        <router-view><like/></router-view>
+        <router-view><delivery/></router-view>
+      
         </div>
         
         <!--detailOrder/-->
@@ -83,7 +86,8 @@
 //import axious from 'axious'
 import orderList from'../components/MyPage/orderList.vue'
 //import DetailOrder from'../components/Mypage/orderDetail.vue'
-//import like from '../components/MyPage/likeBasket.vue'
+import like from '../components/MyPage/likeBasket.vue'
+import delivery from '../components/MyPage/delivery.vue'
 import sidebar from'../components/MyPage/sidebar.vue'
 export default{
     data() {
@@ -96,7 +100,8 @@ export default{
     components : {
         orderList,
         //DetailOrder,
-        //like
+        like,
+        delivery,
         sidebar
     },
     created(){

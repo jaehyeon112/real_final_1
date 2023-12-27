@@ -1,11 +1,14 @@
-//import VueRouter from 'vue-router'
+
 import main from "@/views/MainHome.vue";
 import menu from "@/views/MenuPage.vue";
 import realmain from "@/views/realMainhome.vue";
 import myPage from "@/views/MyPage.vue";
 import detailPage from "@/views/DetailPage.vue";
-import orderList from "@/components/MyPage/orderList.vue"
-import detailOrder from "@/components/MyPage/orderDetail.vue"
+import orderList from "@/components/MyPage/orderList.vue";
+import detailOrder from "@/components/MyPage/orderDetail.vue";
+import like from  "@/components/MyPage/likeBasket.vue";
+import delivery from "@/components/MyPage/delivery.vue"
+
 export default {
   path: "/",
   name: "main",
@@ -34,8 +37,16 @@ export default {
           path:"detailOrder",
           name:"detailOrder",
           component:detailOrder
-        }
-
+        },
+         {path:"like",
+          name:"like",
+          component:like
+        },
+         {path:"delivery",
+          name:"delivery",
+          component:delivery
+        } 
+ 
       ]
     },
     {
