@@ -1,5 +1,6 @@
 let test = {
-  list: `select * from employee`
+  list: `select * from  product`,
+  list2 : `select * from product limit ? , 6`
 };
 
 let admin = {
