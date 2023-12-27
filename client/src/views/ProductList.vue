@@ -17,7 +17,7 @@
                 <td v-else>{{ prod.discount_price }}</td>
                 <td>{{ prod.stock }}</td>
                 <td>{{ prod.main_category }}</td>
-                <td><button style="border-radius: 10px;" @click="modProd(prod.prod_no)">수정</button>       <button style="border-radius: 10px;" @click="delProd(prod.prod_no)">삭제</button></td>
+                <td><v-btn style="border-radius: 10px;" @click="modProd(prod.prod_no)">수정</v-btn>       <v-btn style="border-radius: 10px;" @click="delProd(prod.prod_no)">삭제</v-btn></td>
             </tr>
         </tbody>
     </list>
