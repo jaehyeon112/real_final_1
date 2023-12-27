@@ -15,11 +15,11 @@
         <tr :key="idx" v-for="(user,idx) in userList">
             <td>{{ user.user_id }}</td>
             <td>{{ user.user_name }}</td>
-            <td>{{ user.user_mail }}</td>
+            <td>{{ user.user_email }}</td>
             <td>{{ user.user_tel }}</td>
             <td>{{ dateFormat(user.join_date,'yyyy년 MM월 dd일') }}</td>
             <td>{{ user.user_grade }}</td>
-            <td><button>이용 제한</button></td>
+            <td><v-btn>이용 제한</v-btn></td>
         </tr>
     </tbody>
 </list>  

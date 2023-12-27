@@ -40,7 +40,7 @@ export default {
 };
 </script>
 
-<style scope>
+<style scoped>
 #type-time {
   background-color: coral;
   border-radius: 50px;

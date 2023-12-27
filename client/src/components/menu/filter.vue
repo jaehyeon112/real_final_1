@@ -57,7 +57,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 button {
   background-color: #ccc;
 }
