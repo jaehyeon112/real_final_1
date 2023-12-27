@@ -362,8 +362,8 @@ a{color:inherit;text-decoration:none}
 }
 .login-html .sign-in:checked + .tab,
 .login-html .sign-up:checked + .tab{
-  color:#ee7e06;
-  border-color:#ee7e06;
+  color:#0a0601;
+  border-color:#0e0701;
 }
 .login-form{
   min-height:345px;
