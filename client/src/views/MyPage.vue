@@ -66,19 +66,22 @@
             </div>
         </div>
         <!--자식컴포넌트 자리-->
-        <OrderList/>
+        <router-view :key="$route.fullPath" />
+        <orderList/>
+        <!--detailOrder/-->
     
     </main>
     
 
-    <!--자식컴포넌트 자리-->
+    
 </div>
     
 </template>
 
 <script>
 //import axious from 'axious'
-//import OrderList from'../components/orderList.vue'
+import orderList from'../components/MyPage/orderList.vue'
+//import DetailOrder from'../components/Mypage/orderDetail.vue'
 import sidebar from'../components/MyPage/sidebar.vue'
 export default{
     data() {
@@ -89,7 +92,8 @@ export default{
         } 
     },
     components : {
-        //OrderList,
+        orderList,
+        //DetailOrder,
         sidebar
     },
     created(){
@@ -97,7 +101,7 @@ export default{
     },
     watch: {
         modalCheck: function () {
-        const html = document.querySelector('.html-overflow');
+        const html = document.querySelector('.mb-0');
         if( this.modalCheck === true ){
         html.style.overflow = 'hidden'
         } else {
@@ -113,7 +117,7 @@ export default{
 }
 </script>
 
-<style>
+<style scope>
 /* dimmed */
 .modal-wrap {
   position: fixed;
