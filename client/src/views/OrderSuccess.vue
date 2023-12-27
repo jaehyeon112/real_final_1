@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="container">
         <h1>주문완료</h1>
     </div>
 </template>

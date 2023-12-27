@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="container">
     <h1>결제정보</h1>
     <button :class="{ active: selectedPaymentMethod === 'kakaopay' }" @click="selectPaymentMethod('kakaopay')" :style="{ backgroundColor: selectedPaymentMethod === 'kakaopay' ? 'yellow' : 'gray' }">카카오페이</button>
     <button :class="{ active: selectedPaymentMethod === 'toss' }" @click="selectPaymentMethod('toss')" :style="{ backgroundColor: selectedPaymentMethod === 'toss' ? 'blue' : 'gray' }">토스페이</button>
@@ -20,6 +20,12 @@ export default {
       errorMessage: '',
     };
   },
+  props: {
+        cartList: {
+            type: Array,
+            required: true,
+        }
+  },
   methods: {
     selectPaymentMethod(paymentMethod) {
       this.selectedPaymentMethod = paymentMethod;
@@ -31,12 +37,12 @@ export default {
       const paymentInfo = {
         pg: '',
         pay_method: '',
-        name: '테스트 상품', // 상품 이름 입력
-        merchant_uid: '111112', // 가맹점에서 생성한 고유 주문번호 입력
-        amount: 1000, // 결제 금액 입력
-        buyer_name: 'test', // 구매자 이름 입력
-        buyer_tel: '010-1111-1111', // 구매자 전화번호 입력
-        buyer_email: 'test@email.com', // 구매자 이메일 입력
+        name: this.cartList[0].prod_name, // 상품 이름 입력
+        merchant_uid: '11155555213', // 가맹점에서 생성한 고유 주문번호 입력
+        amount: this.cartList[0].price, // 결제 금액 입력
+        buyer_name: this.cartList[0].user_name, // 구매자 이름 입력
+        buyer_tel: this.cartList[0].user_tel, // 구매자 전화번호 입력
+        buyer_email: this.cartList[0].user_email, // 구매자 이메일 입력
         // 기타 필요한 결제 정보 입력
       };
 

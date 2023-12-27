@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="container">
         <h1>주문자정보</h1>
         <hr>
         <ul v-if="cartList.length > 0">

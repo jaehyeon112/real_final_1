@@ -24,8 +24,19 @@ app.get("/cartList/:id", async (req, res) => {
   res.send(list);
 });
 
+app.get("/coupon/:id", async (req, res) => {
+  let id = req.params.id;
+  let list = await mysql.query("test","couponList", id);
+  res.send(list);
+});
+app.get("/point/:id", async (req, res) => {
+  let id = req.params.id;
+  let list = await mysql.query("test","pointList", id);
+  res.send(list);
+});
+
 app.put("/cartList/:cno", async (request, res) => {
-  let data = request.params.cno;
+  let data = [request.body.param, request.params.cno];
   res.send((await mysql.query("test","CheckboxUpdate", data)));
 });
 

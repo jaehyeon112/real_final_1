@@ -1,12 +1,12 @@
 <template>
-    <div class="daummap">
+    <div class="container">
       <h1>배송지 정보</h1>
       <hr>
       <div v-if="cartList.length > 0">
         <p>배송지 <span style="font-size: 30px;">{{ cartList[0].address }}  {{ cartList[0].detail_address }} {{ cartList[0].postcode }}</span></p>
       </div>
       <div style="text-align: center;">
-        <input type="checkbox" ref="checkbox" @change="handleCheckboxChange">
+        <input type="checkbox" ref="checkbox" @change="handleCheckboxChange"> 배송지가 동일한 경우 선택
         <p><span style="text-align: left;">주소 </span>
           <input type="text" v-model="zip" style="width: 60px; margin-right: 10px;">
           <button @click="showApi">우편번호 찾기</button>
