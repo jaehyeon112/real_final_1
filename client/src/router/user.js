@@ -22,6 +22,16 @@ export default{
         path: "orderSuccess",
         name: "orderSuccess",
         component: orderSuccess,
-      }
+      },
+      {
+        path: "main",
+        name: "realmain",
+        component: realmain,
+      },
+      {
+        path: "menu",
+        name: "menu",
+        component: menu,
+      },
     ],
   }
