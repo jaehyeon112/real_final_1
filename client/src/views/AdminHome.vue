@@ -1,24 +1,19 @@
 <template>
-  
-  <div>
-    <Header/>
-    <div>
-    <side/>
-  </div>
-관리자 페이지입니다
-<Footer/>
-  </div>
+  <Header/>
+<router-view/>
+  <Footer/>
   
 </template>
 <script>
 import Header from '../layouts/AdminHeader.vue';
 import Footer from '../layouts/MainFooter.vue';
-import side from '../layouts/SideBar.vue';
 export default {
     components : {
     Header,
-    Footer,
-    side
+    Footer
+  },
+  created() {
+    this.$router.push({path : "/admin/Main"})
   }
 }
 </script>
