@@ -7,20 +7,22 @@
       <div class="sign-in-htm">
         <div class="group">
           <label for="user" class="label">ID</label>
-          <input id="user" type="text" class="input">
+          <input id="user" type="text" class="input" v-model="user_id">
         </div>
         <div class="group">
           <label for="pass" class="label">PASSWORD</label>
-          <input id="pass" type="password" class="input" data-type="password">
+          <input id="pass" type="password" class="input" data-type="password" v-model="user_password">
         </div>
 
-        <div class="group">
+        <!-- <div class="group">
           <input id="check" type="checkbox" class="check" checked>
           <label for="check"><span class="icon"></span> Keep me Signed in</label>
-        </div>
+        </div> -->
 
         <div class="group">
-          <input type="submit" class="button" @click="loginSuccess()" value="로그인버튼">
+            <b-button variant="link" a href="finding">ID/PASSWORD 찾기</b-button>
+          <input type="submit" class="button" @click="doLogin()" value="로그인버튼">
+          
  
         </div>
 
@@ -28,16 +30,27 @@
         
         <div class="foot-lnk">
         <b-button variant="link" a href="finding">ID/PASSWORD 찾기</b-button>
-           <b-button squared variant="success" a href="join">회원가입</b-button>
+          <router-link to="/join"> <v-btn squared variant="success" a href="join">회원가입</v-btn></router-link>
 
         </div>
 
     
 
         <div class="foot-lnk" >
-            <img class="img" src="../assets/kakaoLogo.jpg">카카오
-            <img class="img" src="../assets/naverLogo.png">네이버
+
+      <a id="custom-login-btn" @click="kakaoLogin()">
+      <router-link to="/join">카카오회원가입하고회원가입페이지로<img
+        src="https://k.kakaocdn.net/14/dn/btroDszwNrM/I6efHub1SN5KCJqLm1Ovx1/o.jpg"
+        width="222"
+        alt="카카오 로그인 버튼"
+      /></router-link></a>
+      <div><v-btn @click="kakaoLogout()">카카오 로그아웃</v-btn></div>
+
+        <img src="../assets/naverLogo.png" @click="naverLogin" />
+
+            
         </div>
+
 
       <div>
       <router-link to="/finding" class="button"> 아이디비번찾기페이지로 </router-link> 
@@ -56,7 +69,76 @@
 </template>
 
 <script>
+import axios from 'axios';
 
+export default {
+
+  data(){
+    return{
+        user_id : "",
+        user_password : ""
+    }
+  },
+
+  methods: {
+
+//Login 버튼
+async doLogin(){
+let ipList = await axios.get(`api/dologin`)  
+                .catch(err => conosole.log(err));
+     let users = ipList.data;
+      console.log(users);
+       console.log("users: " + users);
+       console.log("ipList: " + ipList);
+
+if(this.user_id == "" || this.user_password==""){
+  alert(`아이디와 비밀번호 모두 입력해`);}
+},
+
+
+
+
+
+
+
+
+//1. 카카오
+    kakaoLogin() {
+      window.Kakao.Auth.login({
+     
+        scope: "profile_nickname",
+        success: this.getKakaoAccount,
+      });
+    },
+    getKakaoAccount() {
+      window.Kakao.API.request({
+        url: "/v2/user/me",
+        success: (res) => {
+          const kakao_account = res.kakao_account;
+          const ninkname = kakao_account.profile.ninkname;
+          console.log("ninkname", ninkname);
+
+          //로그인처리구현
+          alert("로그인 성공!");
+          
+        },
+        fail: (error) => {
+          console.log(error);
+        },
+      });
+    }, //end getKakaoAccount
+
+    kakaoLogout() {
+      window.Kakao.Auth.logout((res) => {
+        console.log(res);
+      });
+    },
+
+  //네이버로그인
+   
+
+  } //methods
+};
 </script>
 
 
@@ -77,7 +159,7 @@ a{color:inherit;text-decoration:none}
   width:100%;
   margin:auto;
   max-width:525px;
-  min-height:670px;
+  min-height:1000px;
   position:relative;
   
   box-shadow:0 12px 15px 0 rgba(0,0,0,.24),0 17px 50px 0 rgba(0,0,0,.19);

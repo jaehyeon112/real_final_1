@@ -27,7 +27,7 @@ export default {
       component: menu,
     },
 
-    //박현아
+  //h
     {
       path: "login",
       name: "login",

@@ -4,14 +4,17 @@ let test = {
 };
 
 let user = {
-  //아이디 체크할 때
-  id : `select user_id from user`,
-
-  
+  //아이디 중복 체크할 때
   duplicateId : `select user_id from user where user_id=?`,
   
   //회원가입
-  join : `INSERT INTO user SET ?`
+  join : `INSERT INTO user SET ?`, 
+
+  // 이메일 중복체크용
+  duplicateEmail : `select user_email from user where user_email = ?`,
+
+  //로그인(일단)
+  forLogin : `select user_id, user_password from user;`
 }
 
 let admin = {

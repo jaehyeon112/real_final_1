@@ -66,7 +66,8 @@
         <div class="group">
           <label for="email" class="label">Email Address</label>
           <input id="email" type="text" class="input" v-model="userInfo.userEmail">
-          <button type="button">인증하기</button>
+          
+          <button type="button" @click="checkEmail(userInfo.userEmail)">인증하기</button>
         </div>
 
          <div class="group">
@@ -238,10 +239,9 @@ export default {
 
   methods: {
     //아이디 중복체크: db에 아이디 있으면 중복되는 아이디 있다고 메세지 띄우기! 
-   
     async checkId(id){
 
-      let result = await axios.get(`/api/join/${this.id}`)
+      let result = await axios.get(`/api/join-id/${this.id}`)
                   .catch(err => console.log(err));
                   console.log("result.data" + result.data)
       let list = result.data.length;
@@ -322,6 +322,25 @@ export default {
     },
  
 
+ //Email
+    async checkEmail(email){
+      let result = await axios.get(`/api/join-email/${email}`)
+                  .catch(err => console.log(err));
+                  console.log("result.data" + result.data)
+      let list = result.data.length;
+      console.log(list);
+
+      if(email == ""){
+        alert(`이메일을 입력해주세요`);
+      } else if(list != 0){
+        alert(`중복된 이메일 입니다.`);
+      }else{ alert(`사용가능한 이메일입니다.`)};
+    },
+
+    
+
+
+
 
   async joinInsert(){
     let info = this.userInfo;
@@ -342,7 +361,7 @@ export default {
     //주소api
             search(){ //@click을 사용할 때 함수는 이렇게 작성해야 한다.
             const vueObj = this;
-            
+
             new window.daum.Postcode({
             oncomplete: (data) => { //function이 아니라 => 로 바꿔야한다.
                 // 팝업에서 검색결과 항목을 클릭했을때 실행할 코드를 작성하는 부분.
@@ -368,8 +387,8 @@ export default {
 
                 // 우편번호와 주소 정보를 해당 필드에 넣는다.
                 vueObj.userInfo.postcode = data.zonecode;
-                document.getElementById("roadAddress").value = roadAddr;
-                document.getElementById("jibunAddress").value = data.jibunAddress;
+                vueObj.userInfo.AddressD = roadAddr;
+                vueObj.userInfo.AddressJ = data.jibunAddress;
                 
                 // 참고항목 문자열이 있을 경우 해당 필드에 넣는다.
                 // if(roadAddr !== ''){
@@ -395,14 +414,10 @@ export default {
                 }
             }
         }).open();
-        
-        
+      
         }
-
-    
   }
 
-  
 };
 
 </script>
