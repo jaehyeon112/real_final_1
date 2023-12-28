@@ -16,7 +16,9 @@
           :couponList="couponList"
           @discountRate="discountRate"
           @inputValue="inputValue"
-          :pointList="pointList"/>
+          :pointList="pointList"
+          :delivery="delivery"
+          :coupon="coupon"/>
           <OrderPayment
           :cartList="cartList"/>
         </v-card>
@@ -30,11 +32,12 @@
         :total="total"
         :discount="discount"
         :delivery="delivery"
-        :point="point"/>
+        :point="point"
+        :final="final"/>
       </v-col>
     </v-row>
     {{ pointInput }}
-    {{ couponRate }}
+    {{ this.couponRate }}
     </v-container>
 </template>
 <script>
@@ -63,14 +66,13 @@ export default {
       cartList: [],
       couponList: [],
       pointList: [],
-      couponRate: 0,
-      pointInput: 0,
+      couponRate: 0, // 쿠폰 할인율 계산
+      pointInput: 0, // inputValue 계산
       total: 0, // 전체할인금액 계산
       discount: 0, // 상품할인금액 계산
       delivery: 0, // 배송비 계산
       coupon: 0, // 쿠폰할인금액 계산
       point: 0, // 포인트 계산
-      realpay: 0, // 최종 결제금액계산
     };
   },
   created() {
@@ -78,14 +80,17 @@ export default {
     this.fetchCouponList();
     this.fetchPointList();
   },
-  computed(){
-    this.inputValue();
-    this.discountRate();
-    this.totalPrice();
-    this.discountPrice();
-    this.pointPrice();
-    this.deliveryPrice();
-    this.couponPrice();
+  watch: {
+    cartList: {
+      handler() {
+        this.totalPrice();
+        this.discountPrice();
+        this.deliveryPrice();
+        this.couponPrice();
+        this.pointPrice();
+      },
+      deep: true,
+  },
   },
   methods: {
     fetchCartList() {
@@ -118,18 +123,21 @@ export default {
         console.error(error);
       });
     },
-    discountRate(coupona){
-      this.couponRate = coupona;
+    discountRate(coupon){
+      this.couponRate = coupon;
+      this.couponPrice();
     },
     inputValue(point){
       this.pointInput = point;
     },
     totalPrice() {
+        this.total = 0;
         for (let i = 0; i < this.cartList.length; i++) {
           this.total += (this.cartList[i].price * this.cartList[i].quantity) * this.cartList[i].quantity;
         }
       },
     discountPrice() {
+        this.discount = 0;
         for (let i = 0; i < this.cartList.length; i++) {
           if (this.cartList[i].discount_price != null) {
             this.discount += (this.cartList[i].discount_price * this.cartList[i].quantity) * this.cartList[i].quantity;
@@ -137,18 +145,14 @@ export default {
         }
     },
     deliveryPrice() {
-        this.total < 40000 ? 3000 : 0;
+      this.delivery = this.discount < 40000 ? 3000 : 0;
     },
     couponPrice(){
-      
+      this.coupon = Math.ceil(this.discount * (this.couponRate / 100));
     },
     pointPrice(){
         this.point += this.pointInput;
     },
-    realPrice(){
-        this.realpay = this.discount - this.delivery - this.coupon - this.point
-        this.realpay += Math.ceil(this.realpay);
-    }
   },
 };
 </script>
