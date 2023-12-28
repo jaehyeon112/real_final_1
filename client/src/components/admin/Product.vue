@@ -144,6 +144,7 @@
               let result = await axios.put(`/api/prod/${this.prodNo}`,datas).catch(err=>console.log(err));
               if(result.data.affectedRows > 0){
                 alert('수정성공!');
+                this.$router.push({name : 'prodList'});
               }else{
                   alert('수정 실패')
               }
@@ -152,12 +153,19 @@
             let data = {
               param : this.prod
             }
-            let result = await axios.post(`/api/prod`,data).catch(err=>console.log(err));
-            if(result.data.affectedRows > 0){
-                alert('등록성공!');
-              }else{
+            console.log(this.prod.prod_name)
+            if(this.prod.prod_name==''||this.prod.price==''||this.prod.stock==''||this.prod.main_category==''||this.prod.refrigeration==''){
+              alert('필수정보를 채워주세요')
+            }else if(this.prod.discount_price==''){
+              data.param.discount_price = data.param.price;
+              let result = await axios.post(`/api/prod`,data).catch(err=>console.log(err));
+              if(result.data.affectedRows > 0){
+                  alert('등록성공!');
+                  this.$router.push({name : 'prodList'});
+                }else{
                   alert('등록 실패')
-              }
+                }
+            }
           }
         },
         components : {

@@ -1,7 +1,7 @@
 <template>
 <list @changeemit="changeChildData" @search="search">
     <template #filterSearch>
-        <div><a @click="this.uod='user_id'">기본순 | </a><a @click="this.uod='join_date'">가입날짜순 | </a><a @click="this.uod='user_grade'">등급 높은순</a></div>
+        <div><a @click="this.order='user_id'">기본순 | </a><a @click="this.order='join_date'">가입날짜순 | </a><a @click="this.order='user_grade'">등급 높은순</a></div>
     </template>
     <template #dataList>
     <thead>
@@ -64,7 +64,8 @@ export default {
             startNum : 0,
             totalList: "",
             totals :'',
-            conetnt:''
+            conetnt:'',
+            order : 'user_grade'
         }
     },
     created(){
@@ -72,20 +73,21 @@ export default {
     },
     methods : {
         async total() {
-                let total = await axios.get("/api/user").catch((err) => {
+                let total = await axios.get(`/api/user/${this.order}`).catch((err) => {
                     console.log(err);
                 });
                 this.totalList = total.data;
                 console.log('총길이'+this.totalList);
             },
         async uList(no){
-            let list = await axios.get(`/api/user/${this.startNum}/${no}`).catch(err=>console.log(err));
+            let list = await axios.get(`/api/user/${this.order}/${this.startNum}/${no}`).catch(err=>console.log(err));
             let result = list.data;
             this.userList = result;
+            console.log(this.order)
         },
         async changePage(no) {
             try {
-                let page = await axios.get(`/api/user/${no}/${this.nums}`);
+                let page = await axios.get(`/api/user/${this.order}/${no}/${this.nums}`);
                 this.userList = page.data;
                 this.totals = this.nums;
                 console.log('페이지'+page.data);
@@ -102,41 +104,49 @@ export default {
             return result;
         },
         async stopUser(){
-            let result = await axios.put(`/api/user/i6/${this.userId}`).catch(err=>console.log(err));
-            if(result.data.affectedRows==1){
+            if(confirm('정말 제한하시겠습니까?')){
+                let result = await axios.put(`/api/user/i6/${this.userId}`).catch(err=>console.log(err));
+                if(result.data.affectedRows==1){
                     alert('이용제한이 되었습니다');
                     this.uList(this.nums);
                     this.modalCheck = false;
+                    //스케쥴러 사용--한달동안 정지시킴
+                }else{
+                        alert('오류가 남'); 
+                }
             }else{
-                    alert('오류가 남'); 
+                alert('취소되었습니다');
+                this.modalCheck = false;
             }
         },
         async NonStop(id){
-            let result = await axios.put(`/api/user/i1/${id}`).catch(err=>console.log(err));
-            if(result.data.affectedRows==1){
+            if(confirm('아직 정지 기한이 남아있습니다\n정말 해제하시겠습니까?')){
+                let result = await axios.put(`/api/user/i1/${id}`).catch(err=>console.log(err));
+                if(result.data.affectedRows==1){
                     alert('정지가 해제되었습니다');
                     this.uList(this.nums);
-            }else{
+                }else{
                     alert('오류가 남'); 
+                }
+            }else{
+                alert('이용제한이 해지되었습니다');
+                this.uList(this.nums);
             }
         },
         modalOpen() {
             this.modalCheck = !this.modalCheck
         },
         changeChildData(childData){
-            console.log('받음'+childData);
             this.nums = childData;
             this.totals = childData;
         },
         search(searchData){
-            console.log('받음'+searchData);
             this.content = searchData;
             this.searchList(this.content);
         },
         async searchList(cont){
-            let list = await axios.get(`/api/user/${cont}/${cont}/${cont}`).catch(err=>console.log(err));
+            let list = await axios.get(`/api/user/${cont}/${cont}/${cont}/${this.order}/${this.startNum}/${this.nums}`).catch(err=>console.log(err));
             let result = list.data;
-            console.log('리스트 : '+result)
             this.userList = result;
         }
     },
@@ -151,7 +161,7 @@ export default {
         content(){
             this.searchList(this.content);
         },
-        orders(){
+        order(){
             this.uList(this.nums);
         },
     }

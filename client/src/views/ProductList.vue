@@ -8,7 +8,8 @@
             <tr>
                 <th>상품번호</th>
                 <th>상품명</th>
-                <th>판매 가격</th>
+                <th>원가</th>
+                <th>판매가</th>
                 <th>재고</th>
                 <th>메인 카테고리</th>
             </tr>
@@ -17,8 +18,8 @@
             <tr :key="idx" v-for="(prod,idx) in productList">
                 <td>{{ prod.prod_no }}</td>
                 <td>{{ prod.prod_name }}</td>
-                <td v-if="prod.discount_rate==0">{{ prod.price }}</td>
-                <td v-else>{{ prod.discount_price }}</td>
+                <td>{{ prod.price }}</td>
+                <td>{{ prod.discount_price }}</td>
                 <td>{{ prod.stock }}</td>
                 <td>{{ prod.main_category }}</td>
                 <td><v-btn style="border-radius: 10px;" @click="modProd(prod.prod_no)">수정</v-btn>       <v-btn style="border-radius: 10px;" @click="delProd(prod.prod_no)">삭제</v-btn></td>
@@ -83,12 +84,14 @@
                 this.$router.push({name : 'product',query : {pno : pno}})
             },
             async delProd(pno){
-                let result = await axios.patch(`/api/prod/${pno}`).catch(err=>console.log(err));
-                console.log(result.data)
-                if(result.data.affectedRows==1){
-                    alert('삭제하시면 품절처리 됩니다');
-                }else{
-                    alert('삭제실패'); 
+                if(confirm('삭제하시면 품절처리 됩니다\n정말 품절처리 하시겠습니까?')){
+                    let result = await axios.patch(`/api/prod/${pno}`).catch(err=>console.log(err));
+                    console.log(result.data)
+                    if(result.data.affectedRows==1){
+                        alert('상품이 품절되었습니다');
+                    }else{
+                        alert('삭제실패'); 
+                    }
                 }
             },
             changeChildData(childData){

@@ -60,19 +60,21 @@ app.get("/show/:no", async (req, res) => {
   res.send(list);
 });
 
-app.get("/user", async (req, res) => {
-  let data = await mysql.query("admin", "AlluserList");
+app.get("/user/:order", async (req, res) => {
+  let result = req.params.order;
+  let data = await mysql.query("admin", "AlluserList",result);
   res.send(data);
 });
 
-app.get("/user/:startNo/:no",async (req, res) => {
-  let data = [Number(req.params.startNo)*Number(req.params.no),Number(req.params.no)];
+app.get("/user/:order/:startNo/:no",async (req, res) => {
+  let data = [req.params.order,Number(req.params.startNo)*Number(req.params.no),Number(req.params.no)];
   let list = await mysql.query("admin", "userList",data);
+  console.log(list);
   res.send(list);
 });
 
-app.get("/user/:id/:name/:join",async (req, res) => {
-  let list = [req.params.id,req.params.name,req.params.join];
+app.get("/user/:id/:name/:join/:order/:startNo/:no",async (req, res) => {
+  let list = [req.params.id,req.params.name,req.params.join,req.params.order,Number(req.params.startNo)*Number(req.params.no),Number(req.params.no)];
   let data = await mysql.query("admin", "searchUser",list);
   res.send(data);
 });
