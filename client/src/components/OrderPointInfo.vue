@@ -7,7 +7,8 @@
                 :items="couponOptions"
                 label="사용가능 쿠폰"
                 :disabled="!hasCoupons"
-                @change="updateSelectedCoupon"></v-select>
+                @change="updateSelectedCoupon"
+                return-object></v-select>
       <h1>포인트정보</h1>
       <hr>
       <p>포인트 <span v-if="hasPoints">{{ pointList[0].point }} 원</span></p>
@@ -25,14 +26,12 @@
   </template>
   
   <script>
-  import { mapActions } from 'vuex';
-  
   export default {
     name: 'OrderPointInfo',
     data() {
       return {
         inputValue: 0,
-        selectedCouponIndex: 0 // 기본 쿠폰 선택값은 '선택안함'
+        selectedCouponIndex: 0
       };
     },
     props: {
@@ -47,22 +46,19 @@
         type: Array
       }
     },
-    created() {
-      this.initializeCoupons();
-    },
     methods: {
         getDateFormat(date) {
             return this.$dateFormat(date);
         },
-        ...mapActions(['saveInputValue', 'saveCouponDiscountAmount']),
         updateInputValue() {
-            let totalDiscountPrice = this.cartList.reduce((total, item) => total + item.discount_price, 0);
+            let totalDiscountPrice = this.cartList.reduce((total,item) => total + (item.quantity * (item.discount_price * item.quantity)),0);
         if (this.inputValue > totalDiscountPrice) {
             alert('입력값이 상품값보다 큽니다. 올바른 값을 입력해주세요.');
             this.inputValue = 0;
         } else {
             if (this.inputValue < this.pointList[0].point) {
-                this.saveInputValue(this.inputValue);
+                let data = this.inputValue;
+                this.$emit('inputValue', data);
             } else {
                 console.log(this.cartList);
                 alert('입력값이 현재 포인트보다 많습니다. 올바른 값을 입력해주세요.');
@@ -71,57 +67,40 @@
         }
     },
     useAllPoints() {
-        let totalDiscountPrice = this.cartList.reduce((total, item) => total + item.discount_price, 0);
+        let total = this.cartList.reduce((total,item) => total + (item.quantity * (item.discount_price * item.quantity)),0);
+        console.log(total);
         if (this.pointList[0].point > 0) {
-            if (totalDiscountPrice < this.pointList[0].point) {
-                this.inputValue = totalDiscountPrice;
-                this.saveInputValue(this.inputValue);
+            if (total < this.pointList[0].point) {
+                let data = this.inputValue = total;
+                this.$emit('inputValue', data);
             }
         }
     },
-    initializeCoupons() {
-      if (this.hasCoupons) {
-        this.updateSelectedCoupon(); // 선택된 쿠폰 정보 업데이트
-      }
-    },
     updateSelectedCoupon() {
-        const selectedCoupon = this.couponList[this.selectedCouponIndex];
-        if (selectedCoupon) {
-            const couponDiscountRate = selectedCoupon.coupon_discount_rate / 100;
-            const totalDiscountPrice = this.cartList.reduce((total, item) => total + item.discount_price, 0);
-            const discountAmount = Math.floor(totalDiscountPrice * couponDiscountRate);
-            this.saveCouponDiscountAmount(discountAmount);
-            this.selectedCouponInfo = `${this.getCouponLabel(selectedCoupon)} 할인 금액: ${discountAmount}원`;
-            this.discountAmount = discountAmount;
-            console.log("할인 금액:", discountAmount);
-        } else {
-            this.discountAmount = 0;
-        }
+      let selectedCouponIndex = this.couponOptions.indexOf(this.selectedCouponIndex);
+      let discount_rate = this.couponList[selectedCouponIndex -1].coupon_discount_rate
+      this.$emit('discountRate', discount_rate);
+      //첫번째값은 메서드 명 
+
+
     },
       getLocations() {
-        const coupons = ["선택안함"];
+        let conpons = ["선택안함"];
         for (let i = 0; i < this.couponList.length; i++) {
-          const couponLabel = this.getCouponLabel(this.couponList[i]);
-          const couponStart = this.getDateFormat(this.couponList[i].start_coupon);
-          const couponEnd = this.getDateFormat(this.couponList[i].end_coupon);
-          const couponInfo = `${couponLabel} 발급날짜 ${couponStart} 만료날짜 ${couponEnd}`;
-          coupons.push(couponInfo);
+          let couponNo = this.couponList[i].coupon_no;
+          let couponName = this.couponList[i].coupon_name;
+          let couponStart = this.getDateFormat(this.couponList[i].start_coupon);
+          let couponEnd = this.getDateFormat(this.couponList[i].end_coupon);
+          let couponrate = this.couponList[i].coupon_discount_rate;
+          let couponInfo = `쿠폰번호 ${couponNo} ${couponName} 발급날짜 ${couponStart} 만료날짜 ${couponEnd} 할인율 ${couponrate} %`;
+          conpons.push(couponInfo);
         }
-        return coupons;
+        return conpons;
       },
-      getCouponLabel(coupon) {
-        if (coupon && coupon.coupon_name) {
-          return coupon.coupon_name;
-        }
-        return null;
-      }
     },
     watch: {
-      couponList: {
-        immediate: true,
-        handler() {
-          this.initializeCoupons();
-        }
+      selectedCouponIndex() {
+        this.updateSelectedCoupon();
       }
     },
     computed: {
@@ -137,17 +116,6 @@
       couponOptions() {
         return this.getLocations();
       },
-      selectedCouponInfo() {
-        if (this.selectedCouponIndex !== null) {
-          const selectedCoupon = this.couponList[this.selectedCouponIndex];
-          if (selectedCoupon) {
-            const couponLabel = this.getCouponLabel(selectedCoupon);
-            const couponExpiration = this.getDateFormat(selectedCoupon.end_coupon);
-            return `${couponLabel} 만료날짜 ${couponExpiration}`;
-          }
-        }
-        return '';
-      }
     }
   };
   </script>

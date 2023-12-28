@@ -14,6 +14,8 @@
           <OrderPointInfo
           :cartList="cartList"
           :couponList="couponList"
+          @discountRate="discountRate"
+          @inputValue="inputValue"
           :pointList="pointList"/>
           <OrderPayment
           :cartList="cartList"/>
@@ -21,9 +23,18 @@
       </v-col>
       <v-col>
         <OrderPrice
-        :cartList="cartList"/>
+        :cartList="cartList"
+        :pointInput="pointInput"
+        :couponRate="couponRate"
+        :coupon="coupon"
+        :total="total"
+        :discount="discount"
+        :delivery="delivery"
+        :point="point"/>
       </v-col>
     </v-row>
+    {{ pointInput }}
+    {{ couponRate }}
     </v-container>
 </template>
 <script>
@@ -40,61 +51,105 @@ import OrderPrice from '../components/OrderPrice.vue';
 export default {
   name: 'OrderList',
   components: {
-    OrderProdInfo, // 상품정보
-    OrderUserInfo, // 주문자정보
-    OrderAddrInfo, // 배송지정보
-    OrderPointInfo, // 쿠폰/포인트 정보
-    OrderPayment, // 결제수단
-    OrderPrice // 결제금액
+    OrderProdInfo,
+    OrderUserInfo, 
+    OrderAddrInfo, 
+    OrderPointInfo, 
+    OrderPayment, 
+    OrderPrice
   },
   data() {
     return {
-      cartList: [], // 주문 목록을 저장할 배열
+      cartList: [],
       couponList: [],
-      pointList: []
+      pointList: [],
+      couponRate: 0,
+      pointInput: 0,
+      total: 0, // 전체할인금액 계산
+      discount: 0, // 상품할인금액 계산
+      delivery: 0, // 배송비 계산
+      coupon: 0, // 쿠폰할인금액 계산
+      point: 0, // 포인트 계산
+      realpay: 0, // 최종 결제금액계산
     };
   },
   created() {
-    this.fetchCartList(); // 컴포넌트가 마운트되면 주문 목록을 가져옴
+    this.fetchCartList();
     this.fetchCouponList();
     this.fetchPointList();
   },
+  computed(){
+    this.inputValue();
+    this.discountRate();
+    this.totalPrice();
+    this.discountPrice();
+    this.pointPrice();
+    this.deliveryPrice();
+    this.couponPrice();
+  },
   methods: {
     fetchCartList() {
-      // axios를 사용하여 주문 목록 데이터를 서버로부터 가져옴
       axios.get('/api/cartList/test', {
       })
       .then(response => {
-        this.cartList = response.data; // 가져온 주문 목록 데이터를 컴포넌트의 orderList에 저장
+        this.cartList = response.data;
       })
       .catch(error => {
         console.error(error);
       });
     },
     fetchCouponList() {
-      // axios를 사용하여 주문 목록 데이터를 서버로부터 가져옴
       axios.get('/api/coupon/test', {
       })
       .then(response => {
         this.couponList = response.data;
-        console.log(response.data) // 가져온 주문 목록 데이터를 컴포넌트의 orderList에 저장
       })
       .catch(error => {
         console.error(error);
       });
     },
     fetchPointList() {
-      // axios를 사용하여 주문 목록 데이터를 서버로부터 가져옴
       axios.get('/api/point/test', {
       })
       .then(response => {
-        this.pointList = response.data; // 가져온 주문 목록 데이터를 컴포넌트의 orderList에 저장
+        this.pointList = response.data; 
       })
       .catch(error => {
         console.error(error);
       });
     },
-  }
+    discountRate(coupona){
+      this.couponRate = coupona;
+    },
+    inputValue(point){
+      this.pointInput = point;
+    },
+    totalPrice() {
+        for (let i = 0; i < this.cartList.length; i++) {
+          this.total += (this.cartList[i].price * this.cartList[i].quantity) * this.cartList[i].quantity;
+        }
+      },
+    discountPrice() {
+        for (let i = 0; i < this.cartList.length; i++) {
+          if (this.cartList[i].discount_price != null) {
+            this.discount += (this.cartList[i].discount_price * this.cartList[i].quantity) * this.cartList[i].quantity;
+          }
+        }
+    },
+    deliveryPrice() {
+        this.total < 40000 ? 3000 : 0;
+    },
+    couponPrice(){
+      
+    },
+    pointPrice(){
+        this.point += this.pointInput;
+    },
+    realPrice(){
+        this.realpay = this.discount - this.delivery - this.coupon - this.point
+        this.realpay += Math.ceil(this.realpay);
+    }
+  },
 };
 </script>
 

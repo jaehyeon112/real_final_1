@@ -9,8 +9,8 @@
           <td>{{ list.quantity }} 개</td>
           <td>
             <ul>
-              <li>{{ list.price * list.quantity }} 원</li>
-              <li v-if="list.discount_price !== list.price" class="discount">{{ list.discount_price }} 원</li>
+              <li >{{ list.discount_price * list.quantity }} 원</li>
+              <li v-if="list.discount_price !== list.price" class="discount">{{ list.price * list.quantity }} 원</li>
             </ul>
           </td>
         </tr>
@@ -35,8 +35,7 @@ export default {
 }
 .rwd-table {
   margin: auto;
-  min-width: 50%;
-  max-width: 100%;
+  width: 100%;
   border-collapse: collapse;
 }
 
@@ -44,22 +43,23 @@ export default {
   border-top: 1px solid #ddd;
   border-bottom: 1px solid #ddd;
   background-color: #f5f9fc;
-  padding: .5em 1em;
+  padding: .5em 3em;
 }
+
 .rwd-table td:nth-child(1) {
-  width: 5%; 
+  width: 10%; 
 }
 
 .rwd-table td:nth-child(2) {
-  width: 40%; /* 이미지 칼럼의 너비 조정 */
+  width: 40%; 
 }
 
 .rwd-table td:nth-child(3) {
-  width: 5%; /* 상품명 칼럼의 너비 조정 */
+  width: 5%; 
 }
 
 .rwd-table td:nth-child(4) {
-  width: 10%; /* 수량 칼럼의 너비 조정 */
+  width: 10%; 
 }
 .discount {
     display: block;
@@ -67,5 +67,7 @@ export default {
     color: rgb(181, 181, 181);
     word-break: break-all;
     text-decoration: line-through;
+    font-size: 14px;
+    padding-left: 8px;
 }
 </style>
