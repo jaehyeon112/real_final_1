@@ -4,7 +4,7 @@
     <v-card class="mx-auto" max-width="300">
       <!--해당 제품으로 이동-->
       <router-link to="/">
-        <v-img class="align-end text-white" height="300" src="/api/test" cover>
+        <v-img class="align-end text-white" height="300" src="/api/test" cover :class="{ active: isActive, 'text-danger': hasError}">
           <v-row justify="end" style="margin-right: 30px; margin-bottom: 30px">
             <v-btn icon="mdi mdi-cart" variant="tonal"> </v-btn>
           </v-row>
@@ -34,6 +34,11 @@
 
 <script>
 export default {
+  data() {
+    return {
+      isActive:false
+    }
+  },
   props: ["prodList"],
   created() {
   },

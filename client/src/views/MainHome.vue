@@ -15,7 +15,7 @@ export default {
     Footer,
   },
   created() {
-    this.$router.push({ path: "/main" });
+    // this.$router.push({ path: "/main" });
   },
 };
 </script>

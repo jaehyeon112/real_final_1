@@ -20,14 +20,14 @@
         >
         <hr />
         <p>가격</p>
-        <v-radio-group>
-          <v-radio @click="priceCheck" value="bottom" label="10,000원 미만"></v-radio>
+        <v-radio-group v-model="price">
+          <v-radio  value="bottom" label="10,000원 미만"></v-radio>
           <v-radio value="middle" label="10,000~20,000원"></v-radio>
-          <v-radio :price="price" value="top" label="20,000원 이상"></v-radio>
+          <v-radio  value="top" label="20,001원 이상"></v-radio>
       </v-radio-group>
-      <v-btn :click="result">검색</v-btn>
+      <v-btn @click="onEmit">검색</v-btn>
+      <v-btn @click="reset">초기화</v-btn>
     </v-card>
-    {{ price }}asdf
       
     </v-container>
   </div>
@@ -40,7 +40,7 @@ export default {
     return {
       first : '',
       last : '',
-      price : 5,
+      price : '',
       select: false,
       items: [
         "전체",
@@ -64,10 +64,17 @@ export default {
     };
   },
   methods: {
-    async priceCheck(){
-      let vaule = asdf;
+    onEmit(){
+      this.$emit('getSearch',this.first, this.last, this.price);
     },
-
+    reset(){
+      this.first = '',
+      this.last ='',
+      this.price = '',
+      this.select= false,
+      this.currentIndex= null
+    }
+    ,
     async handleClick(index) {
       this.currentIndex = index;
       // let filterWord = await axios.get(`/api/filter/${first}/${last}`).catch(err=>{console.log(err)})
@@ -115,13 +122,12 @@ export default {
         this.first = '하'
         this.last = '힣'
       }else if(index == 15){
-        this.first = 'a'
-        this.last = 'Z'
+        this.first = 'A'
+        this.last = 'z'
       }else{
-        this.first = '가'
-        this.last = 'Z'
+        this.first = ''
+        this.last = '힣'
       }
-      console.log(this.first, this.last);
 
     },
   },

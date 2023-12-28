@@ -2,7 +2,7 @@
   <div>
     <v-row>
       <v-col cols="3">
-        <filterSide @wordFilter="wordFilter" />
+        <filterSide @getSearch="setinput" />
       </v-col>
       <v-col cols="8">
         <v-row>
@@ -13,13 +13,10 @@
       </v-col>
     </v-row>
     <v-container>
-      <pagination @changePage="changePage" :list="totalList"></pagination>
+      <pagination @changePage="changePage" v-bind:list="totalList" :totals="totals" ></pagination>
     </v-container>
 
-    <v-select
-  label="Select"
-  :items="test"
-></v-select>
+  
   </div>
 </template>
 
@@ -32,12 +29,18 @@ import axios from "axios";
 export default {
   data() {
     return {
+      totals:6,
       totalList: "",
       list: "",
       pageNo: 0,
-      test : [
-      ]
-      
+      test : [],
+      first:'',
+      last:'',
+      price:'',
+      isWord : false,
+      isFilter : false,
+      betweenA : '',
+      betweenB : '',
     };
   },
   methods: {
@@ -45,12 +48,54 @@ export default {
       let total = await axios.get("/api/show").catch((err) => {
         console.log(err);
       });
-
-      console.log("Total");
       this.totalList = total.data;
-      console.log(this.totalList);
     },
+    async setinput(first,last,price){
+      this.first = first;
+      this.last = last;
+      this.price = price;
+      if(price == 'top'){
+          this.betweenA = 20001;
+          this.betweenB = 100000000;
+        }else if(price == 'middle'){
+          this.betweenA = 10000;
+          this.betweenB = 20000;
+        }else{
+          this.betweenA = 0;
+          this.betweenB = 9999;
+        }
+      console.log(first,last,price);
+      if(first == '' && price ==''){
+        this.total();
+        this.productList();
+        return;
+      }
+      if(price == '' && first != ''){
+        this.pageNo = 0;
+        let pageResult = await axios.get(`/api/wordFilter/${first}/${last}`).catch((err) => {console.log(err)});
+        let listResult = await axios.get(`/api/wordFilter/${first}/${last}/${this.pageNo}`).catch((err) => {console.log(err)});
+        this.totalList = pageResult.data; // 페이징맞추고..
+        this.list = listResult.data; // 리스트를 맞추자..
 
+      }
+      if(first=='' && price != ''){
+      this.pageNo = 0;
+        
+          let pageResult = await axios.get(`/api/priceFilter/${this.betweenA}/${this.betweenB}`).catch((err) => {console.log(err)});
+          let listResult = await axios.get(`/api/priceFilter/${this.betweenA}/${this.betweenB}/${this.pageNo}`).catch((err) => {console.log(err)});
+          this.totalList = pageResult.data; // 페이징맞추고..
+          this.list = listResult.data; // 리스트를 맞추자..
+          return;
+      }
+      if(price != '' && first != ''){
+          let pageResult = await axios.get(`/api/bothFilter/${first}/${last}/${this.betweenA}/${this.betweenB}`).catch((err) => {console.log(err)});
+          let listResult = await axios.get(`/api/bothFilter/${first}/${last}/${this.betweenA}/${this.betweenB}/${this.pageNo}`).catch((err) => {console.log(err)});
+          this.totalList = pageResult.data; // 페이징맞추고..
+          this.list = listResult.data; // 리스트를 맞추자..
+      }
+
+}
+    ,
     async productList() {
       try {
         let proList = await axios.get("/api/show/" + this.pageNo);
@@ -60,27 +105,30 @@ export default {
       }
     },
     async changePage(no) {
-      try {
-        let page = await axios.get("/api/show/" + no);
+      if(this.first == '' && this.price == ''){
+        let page = await axios.get("/api/show/" + no).catch (err=>{console.log(err)})
         this.list = page.data;
-        console.log(page.data);
-      } catch (error) {
-        console.error("Error fetching page data:", error);
+        return;
       }
-    },
-    async wordFilter(arr){
-      this.list = arr;
-    },
-    select(){
-      for(let i = 0 ; i < 5; i++){
-        this.test.push(i)
+      if(this.first != '' && this.price == ''){
+        let page = await axios.get(`/api/wordFilter/${this.first}/${this.last}/${no}`).catch(err=>{console.log(err)})
+        this.list=page.data;
+        return;
       }
-    }
+      if(this.first == '' && this.price != ''){
+        let page = await axios.get(`/api/priceFilter/${this.betweenA}/${this.betweenB}/${no}`).catch((err) => {console.log(err)});
+        this.list = page.data;
+        return;
+      }
+
+
+    },
+  
+    
   },
   created() {
     this.productList();
     this.total();
-    this.select();
   },
   components: {
     filterSide,
