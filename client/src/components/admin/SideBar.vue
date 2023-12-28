@@ -123,7 +123,7 @@ export default {
       this.$router.push({name : 'product'})
     },
     chart(){
-      this.$router.push({name : 'chart'})
+      this.$router.push({name : 'dash'})
     }
   }
 }

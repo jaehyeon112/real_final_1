@@ -71,6 +71,18 @@ app.get("/user/:startNo/:no",async (req, res) => {
   res.send(list);
 });
 
+app.get("/user/:id/:name/:join",async (req, res) => {
+  let list = [req.params.id,req.params.name,req.params.join];
+  let data = await mysql.query("admin", "searchUser",list);
+  res.send(data);
+});
+
+app.get("/prod/:name/:startNo/:no",async (req, res) => {
+  let list = [req.params.name,Number(req.params.startNo)*Number(req.params.no),Number(req.params.no)];
+  let data = await mysql.query("admin", "searchProd",list);
+  res.send(data);
+});
+
 app.get("/prod", async (req, res) => {
   let data = await mysql.query("admin", "AllprodList");
   res.send(data);
@@ -111,8 +123,8 @@ app.get("/sum",async (req, res) => {
   res.send(result);
 });
 
-app.put("/user/:uid",async(req,res)=>{
-  let data = req.params.uid;
+app.put("/user/:grade/:uid",async(req,res)=>{
+  let data = [req.params.grade,req.params.uid];
   let result = await mysql.query("admin","stopUser",data);
   res.send(result);
 });

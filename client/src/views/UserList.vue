@@ -1,5 +1,8 @@
 <template>
-<list @changeemit="changeChildData">
+<list @changeemit="changeChildData" @search="search">
+    <template #filterSearch>
+        <div><a @click="this.uod='user_id'">기본순 | </a><a @click="this.uod='join_date'">가입날짜순 | </a><a @click="this.uod='user_grade'">등급 높은순</a></div>
+    </template>
     <template #dataList>
     <thead>
         <tr>
@@ -21,8 +24,10 @@
             <td>{{ dateFormat(user.join_date,'yyyy년 MM월 dd일') }}</td>
 
             <td v-if="user.user_grade=='i6'">사용정지 회원</td>
-            <td v-else="user_grade=='i6'">{{ user.user_grade }}</td>
-            <td v-if="user.user_grade=='i6'"><v-btn style="border-radius: 10px;" type="button" @click="">정지풀기</v-btn></td>
+            <td v-else-if="user.user_grade=='i1'">일반 회원</td>
+            <td v-else-if="user.user_grade=='i2'">실버 회원</td>
+            <td v-else-if="user.user_grade=='i3'">골드 회원</td>
+            <td v-if="user.user_grade=='i6'"><v-btn style="border-radius: 10px;" type="button" @click="NonStop(user.user_id)">정지풀기</v-btn></td>
             <td v-else><v-btn style="border-radius: 10px;" type="button" @click="modalCheck=true,userId=user.user_id">정지하기</v-btn></td>
         </tr>
     </tbody>
@@ -59,6 +64,7 @@ export default {
             startNum : 0,
             totalList: "",
             totals :'',
+            conetnt:''
         }
     },
     created(){
@@ -94,15 +100,26 @@ export default {
             let day = ('0'+date.getDate()).slice(-2);
             let result = format.replace('yyyy',year).replace('MM',month).replace('dd',day);
             return result;
-       },
+        },
         async stopUser(){
-            let result = await axios.put(`/api/user/${this.userId}`).catch(err=>console.log(err));
+            let result = await axios.put(`/api/user/i6/${this.userId}`).catch(err=>console.log(err));
             if(result.data.affectedRows==1){
                     alert('이용제한이 되었습니다');
-                }else{
+                    this.uList(this.nums);
+                    this.modalCheck = false;
+            }else{
                     alert('오류가 남'); 
-                }
-       },
+            }
+        },
+        async NonStop(id){
+            let result = await axios.put(`/api/user/i1/${id}`).catch(err=>console.log(err));
+            if(result.data.affectedRows==1){
+                    alert('정지가 해제되었습니다');
+                    this.uList(this.nums);
+            }else{
+                    alert('오류가 남'); 
+            }
+        },
         modalOpen() {
             this.modalCheck = !this.modalCheck
         },
@@ -110,6 +127,17 @@ export default {
             console.log('받음'+childData);
             this.nums = childData;
             this.totals = childData;
+        },
+        search(searchData){
+            console.log('받음'+searchData);
+            this.content = searchData;
+            this.searchList(this.content);
+        },
+        async searchList(cont){
+            let list = await axios.get(`/api/user/${cont}/${cont}/${cont}`).catch(err=>console.log(err));
+            let result = list.data;
+            console.log('리스트 : '+result)
+            this.userList = result;
         }
     },
     components : {
@@ -119,7 +147,13 @@ export default {
     watch : {
         nums(){
             this.uList(this.nums);
-        }
+        },
+        content(){
+            this.searchList(this.content);
+        },
+        orders(){
+            this.uList(this.nums);
+        },
     }
 }
 </script>

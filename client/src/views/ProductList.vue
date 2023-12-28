@@ -1,5 +1,8 @@
 <template>
-    <list @changeemit="changeChildData">
+    <list @changeemit="changeChildData" @search="search">
+        <template #filterSearch>
+            <div><a>기본순 | </a><a>최근 등록순 | </a><a>높은 가격순 | </a><a>낮은 가격순</a></div>
+        </template>
         <template #dataList>
         <thead>
             <tr>
@@ -40,6 +43,7 @@
                 startNum : 0,
                 totalList: "",
                 totals :'',
+                content:''
             }
         },
         components : {
@@ -91,12 +95,25 @@
                 console.log('받음'+childData);
                 this.nums = childData;
                 this.totals = childData;
+            },
+            search(searchData){
+                    this.content = searchData;
+                    this.searchList(this.content);
+            },
+            async searchList(cont){
+                let list = await axios.get(`/api/prod/${cont}/${this.startNum}/${this.nums}`).catch(err=>console.log(err));
+                let result = list.data;
+                console.log('리스트 : '+result)
+                this.productList = result;
             }
         },
         watch : {
             nums(){
                 this.prodList(this.nums);
-            }
+            },
+            content(){
+                this.searchList(this.content);
+            },
     }
         
     }
