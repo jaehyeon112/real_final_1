@@ -59,6 +59,12 @@ app.get("/show/:no", async (req, res) => {
   let list = await mysql.query("test", "list2", data);
   res.send(list);
 });
+//시험용 멤버
+  app.get("/member/:id", async (req,res)=>{
+    let id = req.params.id;
+    let info= await mysql.query("member", "memberInfo", id);
+    res.send(info)
+  })
 
 //리뷰관련
   //상세페이지에서 리뷰목록
@@ -117,7 +123,12 @@ app.get("/show/:no", async (req, res) => {
       res.send(list);
     })
 
-
+//쿠폰
+    app.get("/coupon/:id", async(req,res)=>{
+      let id = req.params.id;
+      let list = await mysql.query('coupon','myCoupon',id)
+      res.send(list);
+    })
 app.get("/user",async (req, res) => {
   let list = await mysql.query("admin", "userList");
   res.send(list);

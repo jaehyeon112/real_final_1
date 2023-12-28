@@ -10,34 +10,30 @@
             <div class="col-sm-5">
                 
                     <div class="col p-4 d-flex flex-column position-static">
-                        <strong class="d-inline-block mb-2 text-success-emphasis"><!--{{ member.grade }}--></strong>
-                        <h3 class="mb-0"><!--{{ member.user_id*/ }}-->1조님</h3>
+                        <strong class="d-inline-block mb-2 text-success-emphasis"> 등급 : {{ member.user_grade }}</strong>
+                        <h3 class="mb-0">{{ member.user_id}}님</h3>
                         <div class="mb-1 text-body-secondary">일반</div>
                         <p class="mb-auto"></p>
-                        <a href="#" class="icon-link gap-1 icon-link-hover stretched-link">
+                        <a href="#" class="icon-link gap-1 icon-link-hover ">
                             다음달 소멸 포인트 조회
                             <svg class="bi"><use xlink:href="#chevron-right"></use></svg>
                         </a>
                     </div>
                
             </div>
-
-            
                 <div class="col-sm-3 " style="background-color: lightgreen; margin:10px">
                     <div class="col p-4 d-flex flex-column position-static">
                         <strong class="d-inline-block mb-2 text-success-emphasis"><!--{{ 잔여포인트 }}-->잔여포인트</strong>
-                        <h3 class="mb-0"><!--{{ 잔여포인트 }}-->잔여포인트</h3>
-                        <div class="mb-1 text-body-secondary"><!--{{ xxxxp }}point-->xxxpoint</div>
+                        <h3 class="mb-0">{{ member.point }} p</h3>
                         <p class="mb-auto"></p>
                     </div>
                 </div>
-         
            
                 <div class="col-sm-3"  style="background-color: lightgreen; margin:10px">
                     <div class="col p-4 d-flex flex-column position-static">
-                        <strong class="d-inline-block mb-2 text-success-emphasis"><!--{{ 잔여쿠폰 }}--> 잔여쿠폰</strong>
-                        <h3 class="mb-0" @click="modalOpen"><!--{{잔여쿠폰 }}--> 잔여쿠폰</h3>
-                            <div class="modal-wrap" v-show="modalCheck">
+                        <strong class="d-inline-block mb-2 text-success-emphasis">잔여쿠폰</strong>
+                        <h3 class="mb-0" @click="modalOpen"> 잔여쿠폰</h3>
+                            <!-- <div class="modal-wrap" v-show="modalCheck">
                                 <div class="modal-container">
                                     <table>
                                         <tr>
@@ -47,28 +43,30 @@
                                             <th>쿠폰 만료일</th>
                                             <th>쿠폰 사용 가능여부</th>
                                         </tr>
-                                        <!--<tr :key="idx" v-for="(coupon, idx) in couponList">
-                                            <td>{{ coupon.coupon_no }}</td>
-                                            <td>{{ coupon.coupon_title }}</td>
+                                        <tr :key="idx" v-for="(coupon, idx) in couponList">
+                                            <td>{{ coupon.couponinfo_no }}</td>
+                                            <td>{{ coupon.start_coupon }}</td>
+                                            <td>{{ coupon.end_coupon }}</td>
                                             <td></td>
                                             <td></td>
                                             <td></td>
-                                        </tr>-->
+                                        </tr>
                                     </table>
                                 <div class="modal-btn">
                                     <button @click="modalOpen">닫기</button>
                                     <button @click="modalOpen">확인</button>
                                 </div>
                                 </div>
-                            </div> <!--모달-->
+                            </div> <모달> -->
                     </div>
                 </div>
             </div>
             <!--자식컴포넌트 자리-->
         <router-view :key="$route.fullPath" />
-        <router-view><orderList/></router-view>
-        <router-view><like/></router-view>
+         <router-view><orderList/></router-view>
+        <router-view><like/></router-view> 
         <router-view><delivery/></router-view>
+        <router-view><coupon/></router-view>
       
         </div>
         
@@ -83,50 +81,60 @@
 </template>
 
 <script>
-//import axious from 'axious'
 import orderList from'../components/MyPage/orderList.vue'
-//import DetailOrder from'../components/Mypage/orderDetail.vue'
+// import detailOrder from '../components/Mypage/orderDetail.vue'
 import like from '../components/MyPage/likeBasket.vue'
 import delivery from '../components/MyPage/delivery.vue'
+import coupon from '../components/MyPage/couponList.vue'
 import sidebar from'../components/MyPage/sidebar.vue'
+import axios from 'axios'
+
 export default{
     data() {
         return {
-            modalCheck: false,
-            //member의 user_id
+            //modalCheck: false,
+            member:[],
             //point테이블의 table
+            couponList:[]
         } 
     },
     components : {
         orderList,
-        //DetailOrder,
+       // detailOrder,
         like,
         delivery,
+        coupon,
         sidebar
     },
     created(){
-
+        this.getMember();
     },
     watch: {
-        modalCheck: function () {
+       /*  modalCheck: function () {
         const html = document.querySelector('.mb-0');
         if( this.modalCheck === true ){
         html.style.overflow = 'hidden'
         } else {
         html.style.overflow = 'auto'
         }
-        },
+        }, */
     },
     methods: {
+       
         modalOpen() {
             this.modalCheck = !this.modalCheck
+        },
+        //일단 멤버 정보를 셀렉트 해오는걸로 시험 중 나중에 로그인 세션그걸로 바꿔야 함
+        async getMember(){
+            this.member = (await axios.get(`/api/member/test`)
+                                      .catch(err=>{console.log(err)})).data[0]
+            console.log( 'member' + this.member)                            
         }
     }
 }
 </script>
 
 <style scope>
-/* dimmed */
 .modal-wrap {
   position: fixed;
   left: 0;
