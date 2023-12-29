@@ -18,10 +18,16 @@ let coupon = {
             where c1.user_id=?;`//마이페이지 보유 쿠폰
 };
 let orders = {
-  orderList:`select order_no, order_date, total_payment, real_payment, payment_method, order_status,(select prod_name from product pr right join order_detail ord on pr.prod_no = ord.prod_no)as prod_name
-              from orders where user_id=?;`,
-  orderCancle:`update orders set order_status=m3 where order_no=? and user_id=?`,//주문 전체취소
-  detailOrderLists:`select * from order_detail o1 left join orders o2 on o1.order_no = o2.order_no`//주문창에서 상세주문내역으로 이동시 불러올 값
+  orderList:`select order_no, order_date, total_payment, real_payment, payment_method, order_status
+             from orders where user_id=?`,
+   orderListCount:`select prod_name from product pr join order_detail ord on pr.prod_no = ord.prod_no 
+                  join user us
+                   where ord.order_no=? and us.user_id=? limit 1`,        
+  orderCancle:`update orders set order_status=m3 where order_no=? and user_id=?`,//주문전체취소
+  detailOrderLists:`select * from order_detail od join product pr on od.prod_no = pr.prod_no	
+                                                  join orders ods on ods.order_no = od.order_no
+                     where od.order_no=?
+                     where user_id=?`//주문창에서 상세주문내역으로 이동시 불러올 값
 }
 let delivery = {
   addDelivery: `insert into add_delivery set?`,

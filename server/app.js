@@ -77,9 +77,34 @@ app.get("/show/:no", async (req, res) => {
  //주문내역 관련
   app.get("/orders/:id", async(req, res)=>{
     let id = req.params.id
-    let list = await mysql.query('orders', 'orderList', id);
+    //let list = await mysql.query('orders', 'orderList', id);
+    // 가공
+    let list = await getOrderInfos(id);
     res.send(list);
   });
+
+  async function getOrderInfos(id){
+    let list = await mysql.query('orders', 'orderList', id); // group_concat 사용 쿼리
+    
+    let newList = list.map((info)=>{
+      let tempList = info.prod_name_list.split(',');
+      let newData = `${tempList[0]} 외 ${tempList.length-1}건`;
+      info.prod_name_list = newData;
+      return info;
+    })
+    return newList;
+  }
+   app.get("/ordersName/:ono/:id", async(req,res)=>{
+     let datas = [Number(req.params.ono),req.params.id]
+     let info = await mysql.query('orders', 'orderListCount',datas);
+     res.send(info);
+   })
+  //주문 상세내역
+  app.get("/orders/:ono/:id", async(req,res)=>{
+    let datas = [req.params.ono,req.params.id]
+    let list = await mysql.query('orders', 'detailOrderLists', datas);
+    res.send(list);
+  })
   //-주문취소
   app.delete('/orders/:ono/:id',async (req,res)=>{
     let datas = [req.body.param.order_status, req.params[ono],req.params[id]];
