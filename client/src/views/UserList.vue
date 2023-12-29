@@ -43,9 +43,6 @@
         </div>
       </div>
     </div>
-    <v-container>
-        <page @changePage="changePage" :list="totalList" :totals="this.nums"></page>
-    </v-container>
 </template>
 </list>
 
@@ -65,7 +62,7 @@ export default {
             totalList: "",
             totals :'',
             conetnt:'',
-            order : 'user_grade'
+            order : 'user_id',
         }
     },
     created(){
@@ -112,7 +109,7 @@ export default {
                     this.modalCheck = false;
                     //스케쥴러 사용--한달동안 정지시킴
                 }else{
-                        alert('오류가 남'); 
+                    alert('오류가 남'); 
                 }
             }else{
                 alert('취소되었습니다');

@@ -42,6 +42,10 @@ app.listen(3000, () => {
   console.log("재현 서버 on");
 });
 
+app.get('/prod',async (req, res) => {
+  let data = await mysql.query("admin", "proList");
+  res.send(data);
+})
 app.get("/test", async (req, res) => {
   // 여기서 imagePath를 db에 저장하고 불러와야할듯...
   const imagePath = "uploads\\1703396889842스크린샷 2023-11-12 215622.png";
@@ -69,7 +73,6 @@ app.get("/user/:order", async (req, res) => {
 app.get("/user/:order/:startNo/:no",async (req, res) => {
   let data = [req.params.order,Number(req.params.startNo)*Number(req.params.no),Number(req.params.no)];
   let list = await mysql.query("admin", "userList",data);
-  console.log(list);
   res.send(list);
 });
 
@@ -79,28 +82,36 @@ app.get("/user/:id/:name/:join/:order/:startNo/:no",async (req, res) => {
   res.send(data);
 });
 
-app.get("/prod/:name/:startNo/:no",async (req, res) => {
-  let list = [req.params.name,Number(req.params.startNo)*Number(req.params.no),Number(req.params.no)];
+app.get("/prod/:name/:order/:startNo/:no",async (req, res) => {
+  let list = [req.params.name,req.params.order,Number(req.params.startNo)*Number(req.params.no),Number(req.params.no)];
   let data = await mysql.query("admin", "searchProd",list);
   res.send(data);
 });
 
-app.get("/prod", async (req, res) => {
-  let data = await mysql.query("admin", "AllprodList");
+app.get("/prod/:order", async (req, res) => {
+  let result = req.params.order;
+  let data = await mysql.query("admin", "AllprodList",result);
   res.send(data);
 });
 
-app.get("/prod/:startNo/:no",async (req, res) => {
-  let datas = [Number(req.params.startNo)*Number(req.params.no),Number(req.params.no)];
+app.get("/prod/:order/:startNo/:no",async (req, res) => {
+  let datas = [req.params.order,Number(req.params.startNo)*Number(req.params.no),Number(req.params.no)];
   let list = await mysql.query("admin", "prodList",datas);
   res.send(list);
 });
 
-app.get("/prod/:pno",async (req, res) => {
+app.get("/prods/:pno",async (req, res) => {
   let data = req.params.pno;
   let result = await mysql.query("admin", "prodInfo",data);
   res.send(result);
 });
+
+app.get("/prod/:startNo/:no",async (req, res) => {
+  let datas = [Number(req.params.startNo)*Number(req.params.no),Number(req.params.no)];
+  let result = await mysql.query("admin", "pricehigh",datas);
+  res.send(result);
+});
+
 
 app.post("/prod",async (req, res) => {
   let data = req.body.param;

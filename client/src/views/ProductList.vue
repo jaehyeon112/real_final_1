@@ -1,7 +1,7 @@
 <template>
     <list @changeemit="changeChildData" @search="search">
         <template #filterSearch>
-            <div><a>기본순 | </a><a>최근 등록순 | </a><a>높은 가격순 | </a><a>낮은 가격순</a></div>
+            <div><a @click="this.order='prod_no'">기본순 | </a><a @click="this.order='registration'">최근 등록순 | </a><a @click="this.order='high'">높은 가격순(판매가 기준) | </a><a @click="this.order='discount_price'">낮은 가격순(판매가 기준)</a></div>
         </template>
         <template #dataList>
         <thead>
@@ -44,7 +44,8 @@
                 startNum : 0,
                 totalList: "",
                 totals :'',
-                content:''
+                content:'',
+                order : 'prod_no',
             }
         },
         components : {
@@ -57,27 +58,33 @@
         },
         methods : {
             async total() {
-                let total = await axios.get("/api/prod").catch((err) => {
+                let total = await axios.get(`/api/prod/${this.order}`).catch((err) => {
                     console.log(err);
                 });
 
-                console.log("Total");
                 this.totalList = total.data;
-                console.log(this.totalList);
             },
             async prodList(pno){
-                let list = await axios.get(`/api/prod/${this.startNum}/${pno}`).catch(err=>console.log(err));
-                let result = list.data;
-                this.productList = result;
+                if(this.order=='high'){
+                    let list = await axios.get(`/api/prod/${this.startNum}/${pno}`).catch(err=>console.log(err));
+                    let result = list.data;
+                    this.productList = result;
+                }else{
+                    let list = await axios.get(`/api/prod/${this.order}/${this.startNum}/${pno}`).catch(err=>console.log(err));
+                    let result = list.data;
+                    this.productList = result;
+                }
             },
             async changePage(no) {
-                try {
-                    let page = await axios.get(`/api/prod/${no}/${this.nums}`);
+                if(this.order=='high'){
+                    let list = await axios.get(`/api/prod/${no}/${this.nums}`).catch(err=>console.log(err));
+                    let result = list.data;
+                    this.productList = result;
+                }else{
+                    let page = await axios.get(`/api/prod/${this.order}/${no}/${this.nums}`).catch(err=>console.log(err));
                     this.productList = page.data;
                     this.totals = this.nums;
                     console.log('페이지'+page.data);
-                } catch (error) {
-                    console.error("Error fetching page data:", error);
                 }
             },
             async modProd(pno){
@@ -104,7 +111,7 @@
                     this.searchList(this.content);
             },
             async searchList(cont){
-                let list = await axios.get(`/api/prod/${cont}/${this.startNum}/${this.nums}`).catch(err=>console.log(err));
+                let list = await axios.get(`/api/prod/${cont}/${this.order}/${this.startNum}/${this.nums}`).catch(err=>console.log(err));
                 let result = list.data;
                 console.log('리스트 : '+result)
                 this.productList = result;
@@ -117,6 +124,9 @@
             content(){
                 this.searchList(this.content);
             },
+            order(){
+            this.prodList(this.nums);
+            }
     }
         
     }

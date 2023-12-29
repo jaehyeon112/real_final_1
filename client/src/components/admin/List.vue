@@ -24,7 +24,12 @@
                         <div class="card-body">
                             <slot name="filterSearch"></slot>
                         </div>
-                        <input class="datatable-input" v-model="word" @change="searchData" style="border-bottom: 1px black solid;float: right;" placeholder="Search...">
+                        <template>
+                        <div class="d-flex justify-space-around">
+                            <v-icon icon="fa:fas fa-search"></v-icon>
+                        </div>
+                    </template>
+                    <input class="datatable-input" v-model="word" @change="searchData" style="border-bottom: 1px black solid;float: right;">
                     </div>
                 <div class="card-body">                 
                 <table id="datatablesSimple" class="table">
@@ -39,6 +44,7 @@
   </div>
 </div>    
 </template>
+
 <script>
 import side from '../admin/SideBar.vue';
 export default {
@@ -82,4 +88,5 @@ export default {
         width: 100px;
         text-align: center;
     }
+
 </style>
