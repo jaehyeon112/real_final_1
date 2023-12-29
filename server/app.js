@@ -48,7 +48,7 @@ app.get('/prod',async (req, res) => {
 })
 app.get("/test", async (req, res) => {
   // 여기서 imagePath를 db에 저장하고 불러와야할듯...
-  const imagePath = "uploads\\1703396889842스크린샷 2023-11-12 215622.png";
+  const imagePath = "uploads\\1703574590403스페인식_감바스_상세페이지3.jpg";
   const absolutePath = path.join(__dirname, imagePath);
   res.sendFile(absolutePath);
 });
@@ -100,8 +100,9 @@ app.post("/join", async (req, res) => {
 
 
 //로그인 - 아이디비번 일치해야 로그인 (5회 오류시 보안프로그램실행)
-app.get("/dologin", async(req, res)=> {
-  let list = await mysql.query("user", "forLogin");
+app.get("/dologin/:id/:password", async(req, res)=> {
+  let data = [req.params.id, req.params.password]
+  let list = await mysql.query("user", "forLogin",data);
   res.send(list);
 });
 
@@ -186,3 +187,41 @@ app.put("/user/:grade/:uid",async(req,res)=>{
   let result = await mysql.query("admin","stopUser",data);
   res.send(result);
 });
+
+app.get("/wordFilter/:first/:last/",async (req, res) => {
+  let data= [req.params.first, req.params.last];
+  let result = await mysql.query("test", "wordFilterPage",data);
+  res.send(result)
+})
+
+
+app.get("/wordFilter/:first/:last/:no",async (req, res) => {
+  let data= [req.params.first, req.params.last, Number(req.params.no) * 6];
+  
+  let result = await mysql.query("test", "wordFilter",data);
+  res.send(result)
+})
+
+app.get("/priceFilter/:A/:B",async (req, res) => {
+  let data = [Number(req.params.A), Number(req.params.B)];
+  let result = await mysql.query("test", "priceFilterPage", data);
+  res.send(result)
+})
+
+app.get("/priceFilter/:A/:B/:no",async (req, res) => {
+  let data = [Number(req.params.A), Number(req.params.B),Number(req.params.no) * 6];
+  let result = await mysql.query("test", "priceFilter", data);
+  res.send(result)
+})
+
+app.get("/bothFilter/:first/:last/:A/:B",async (req, res) => {
+  let data = [req.params.first, req.params.last,Number(req.params.A), Number(req.params.B)];
+  let result = await mysql.query("test", "bothFilterPage", data);
+  res.send(result)
+})
+
+app.get("/bothFilter/:first/:last/:A/:B/:no",async (req, res) => {
+  let data = [req.params.first, req.params.last,Number(req.params.A), Number(req.params.B),Number(req.params.no) * 6];
+  let result = await mysql.query("test", "bothFilter", data);
+  res.send(result)
+})

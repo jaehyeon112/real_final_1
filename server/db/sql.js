@@ -1,6 +1,14 @@
 let test = {
   list: `select * from  product`,
-  list2 : `select * from product limit ? , 6`
+  list2 : `select * from product limit ? , 6`,
+  categoryList : `select * from where ?? = ?`,
+  wordFilterPage : `select * from product where  prod_name >= ? and prod_name < ?`,
+  wordFilter : `select * from product where  prod_name >= ? and prod_name < ? limit ? , 6`,
+  priceFilterPage : `select * from product where discount_price between ? and ?`,
+  priceFilter : `select * from product where discount_price between ? and ? limit ? , 6`,
+  bothFilterPage : `select * from product where prod_name >= ? and prod_name < ? and discount_price between ? and ?`,
+  bothFilter : `select * from product where prod_name >= ? and prod_name < ? and discount_price between ? and ? limit ? , 6`,
+
 };
 
 let user = {
@@ -14,7 +22,7 @@ let user = {
   duplicateEmail : `select user_email from user where user_email = ?`,
 
   //로그인(일단)
-  forLogin : `select user_id, user_password from user;`
+  forLogin : `select * from user where user_id = ? and user_password = ?;`
  
 }
 
