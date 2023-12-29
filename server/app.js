@@ -60,33 +60,41 @@ app.get("/show/:no", async (req, res) => {
   res.send(list);
 });
 
-app.get("/cartList/:id", async (req, res) => {
-  let id = req.params.id;
-  let list = await mysql.query("test","cartList", id);
-  res.send(list);
-});
 
-app.get("/coupon/:id", async (req, res) => {
+app.get("/coupon/:id", async (req, res) => { // 쿠폰 리스트
   let id = req.params.id;
   let list = await mysql.query("test","couponList", id);
   res.send(list);
 });
-app.get("/point/:id", async (req, res) => {
+app.get("/point/:id", async (req, res) => {  // 포인트 리스트 
   let id = req.params.id;
   let list = await mysql.query("test","pointList", id);
   res.send(list);
 });
 
-app.put("/cartList/:cno", async (request, res) => {
-  let data = [request.body.param, request.params.cno];
-  res.send((await mysql.query("test","CheckboxUpdate", data)));
+app.get("/cartList/:id", async (req, res) => { //주문 리스트
+  let id = req.params.id;
+  let list = await mysql.query("test","cartList", id);
+  res.send(list);
 });
 
-app.get("/orderList/:id", async (req, res) => {
+app.get("/orderList/:id", async (req, res) => { // 주문완료 리스트
   let id = req.params.id;
   let list = await mysql.query("test","orderList", id);
   res.send(list);
 });
+
+app.post("/orderInsert", async (request, res)=>{ // orders 등록
+  let data = request.body.param;
+  res.send((await mysql.query("test","orderInsert", data)));
+});
+
+app.post("/orderdetailInsert", async (request, res)=>{ // order_detail 등록
+  let data = request.body.param;
+  res.send((await mysql.query("orderInsert", data)));
+});
+
+
 
 app.get("/user",async (req, res) => {
   let list = await mysql.query("admin", "userList");

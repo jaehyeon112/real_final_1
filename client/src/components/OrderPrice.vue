@@ -18,7 +18,7 @@
       <p class="discount">쿠폰 할인 <span>{{ coupon }} 원</span></p>
       <p class="discount">포인트 <span>{{ pointInput }} 원</span></p>
       <hr>
-      <p>최종 결제금액<span style="color: red; font-size: 40px;">{{ finalPrice }} 원</span></p>
+      <p>최종 결제금액<span style="color: red; font-size: 40px;">{{ final }} 원</span></p>
       <span class="a">적립 </span><span class="b">구매 시 </span><span class="b">{{ savePoint }} 원 </span>
     </v-card>
   </v-container>
@@ -39,11 +39,9 @@ export default {
     delivery: 0,
     coupon: 0,
     final: 0,
+
   },
   computed: {
-    finalPrice() {
-      return this.discount + this.delivery - this.coupon - this.pointInput;
-    },
     savePoint() {
       let userGrade = this.getUserGrade(); 
       let ponitRate = 0;
@@ -55,11 +53,8 @@ export default {
       } else if (userGrade === 'i3') {
         ponitRate = 0.05; // 5% 
       }
-      return Math.floor(this.finalPrice * ponitRate);
+      return Math.floor(this.final * ponitRate);
     },
-  },
-  created() {
-    this.$emit('final', this.final);
   },
   methods: {
     getUserGrade() {

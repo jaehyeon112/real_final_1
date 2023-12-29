@@ -18,9 +18,12 @@
           @inputValue="inputValue"
           :pointList="pointList"
           :delivery="delivery"
+          :discount="discount"
           :coupon="coupon"/>
           <OrderPayment
-          :cartList="cartList"/>
+          :cartList="cartList"
+          :final="final"
+          :orderInsert="orderInsert"/>
         </v-card>
       </v-col>
       <v-col>
@@ -36,8 +39,6 @@
         :final="final"/>
       </v-col>
     </v-row>
-    {{ pointInput }}
-    {{ this.couponRate }}
     </v-container>
 </template>
 <script>
@@ -73,24 +74,32 @@ export default {
       delivery: 0, // 배송비 계산
       coupon: 0, // 쿠폰할인금액 계산
       point: 0, // 포인트 계산
+      final : 0,
+      Number : 0 // 주문번호 생성
     };
   },
   created() {
     this.fetchCartList();
     this.fetchCouponList();
     this.fetchPointList();
+    this.orderNumber();
   },
   watch: {
-    cartList: {
-      handler() {
-        this.totalPrice();
-        this.discountPrice();
-        this.deliveryPrice();
+    cartList() {
+      this.getBill();
+    },
+    couponRate() {
+        // 1. 포인트 셋팅
+        this.pointInput = 0;    
+        // 2. 할인되는 금액을 계산
         this.couponPrice();
-        this.pointPrice();
-      },
-      deep: true,
-  },
+        // 3. 실제 결제되는 금액을 계산
+        this.getBill();
+    },
+    pointInput(){
+      this.pointPrice();
+      this.getBill();
+    }
   },
   methods: {
     fetchCartList() {
@@ -123,9 +132,8 @@ export default {
         console.error(error);
       });
     },
-    discountRate(coupon){
+    discountRate(coupon){ 
       this.couponRate = coupon;
-      this.couponPrice();
     },
     inputValue(point){
       this.pointInput = point;
@@ -133,14 +141,14 @@ export default {
     totalPrice() {
         this.total = 0;
         for (let i = 0; i < this.cartList.length; i++) {
-          this.total += (this.cartList[i].price * this.cartList[i].quantity) * this.cartList[i].quantity;
+          this.total += (this.cartList[i].price * this.cartList[i].quantity);
         }
       },
     discountPrice() {
         this.discount = 0;
         for (let i = 0; i < this.cartList.length; i++) {
           if (this.cartList[i].discount_price != null) {
-            this.discount += (this.cartList[i].discount_price * this.cartList[i].quantity) * this.cartList[i].quantity;
+            this.discount += (this.cartList[i].discount_price * this.cartList[i].quantity);
           }
         }
     },
@@ -153,6 +161,60 @@ export default {
     pointPrice(){
         this.point += this.pointInput;
     },
+    finalPrice() {
+        this.final = this.discount + this.delivery - this.coupon - this.pointInput;
+    },
+    getBill(){
+        this.totalPrice(); // 상품 총 금액
+        this.discountPrice(); // 상품 총 금액 중 할인 금액
+        this.deliveryPrice(); // 배송비 금액
+        this.finalPrice();  // 실제 결제금액
+    },
+    orderNumber() {
+      let date = new Date();
+        
+        let year = date.getFullYear();
+        let month = date.getMonth() + 1;
+        let day = date.getDate();
+        let hours = date.getHours();
+        let minutes = date.getMinutes();
+        let seconds = date.getSeconds();
+        this.Number = year + month + day + hours + minutes + seconds + parseInt(Math.random() * 100000) + 100000 ;
+        //
+        console.log(this.Number);
+      },
+      async orderInsert(){
+        this.orderNumber();
+            let obj = {
+                param : {
+                    order_no : this.Number,
+                    user_id : this.cartList[0].user_id,
+                    delivery_charge : this.delivery ,
+                    recipient: this.cartList[0].user_name,
+                    recipient_address : 'this.addr1',
+                    recipient_detail_address : 'this.addr2',
+                    recipient_tel : 'hh',
+                    recipient_postcode : 'this.zip',
+                    total_payment : this.discount,
+                    coupon_discount_rate : this.couponRate,
+                    point_use : this.point,
+                    point_save_rate : 0,
+                    point_save: 0,
+                    real_payment: this.final,
+                    payment_method : this.payment_method,
+                    payment_no : 1,
+                    order_status : '주문완료'
+                }
+            }
+            console.log(this.order_no,'order_no')
+            let result = await axios.post("/api/orderInsert", obj)
+                               .catch(err => console.log(err));
+            
+            if(result.data.insertId > 0){
+                alert('주문완료');
+            }
+        },
+    
   },
 };
 </script>

@@ -5,15 +5,15 @@
       <div v-if="cartList.length > 0">
         <p>배송지 <span style="font-size: 30px;">{{ cartList[0].address }}  {{ cartList[0].detail_address }} {{ cartList[0].postcode }}</span></p>
       </div>
-      <div style="text-align: center;">
-        <v-checkbox ref="checkbox" @change="handleCheckboxChange" label="배송지가 동일한 경우 선택"></v-checkbox>
-        <p><span style="text-align: left;">주소 </span>
-          <input type="text" v-model="zip" style="width: 60px; margin-right: 10px;">
-          <v-btn @click="showApi">우편번호 찾기</v-btn>
-        </p>
-        <p><input type="text" v-model="addr1" style="width: 500px;"></p>
-        <p><input type="text" v-model="addr2" style="width: 500px;"></p>
-      </div>
+        <v-checkbox v-model="checkbox" @change="CheckboxChange" label="배송지가 동일한 경우 선택"></v-checkbox>
+        <form>
+          <p><span class="address">우편번호 </span>
+            <input type="text" v-model="zip" style="width: 130px;">
+            <v-btn @click="showApi">우편번호 찾기</v-btn>
+          </p>
+          <p><span class="address">주소 </span><input type="text" v-model="addr1" style="width: 500px;"></p>
+          <p><span class="address">상세주소 </span><input type="text" v-model="addr2" style="width: 500px;"></p>
+        </form>
     </v-container>
   </template>
   
@@ -25,6 +25,7 @@
         zip: '',
         addr1: '',
         addr2: '',
+        checkbox : []
       }
     },
     props : {
@@ -34,8 +35,8 @@
         }
     },
     methods: {
-        handleCheckboxChange() {
-        if (this.$refs.checkbox.checked) {
+        CheckboxChange() {
+        if (this.checkbox.checked) {
             this.address1 = this.address1;
             this.addr2 = this.address2;
             this.zip = this.postcode;
@@ -85,6 +86,24 @@
   
   <style scoped>
   input {
-    border: 1.2px black solid;
+    border: 1.2px solid black;
+    padding: 5px;
+    width: 100%;
   }
-  </style>
+  
+  .address {
+    text-align: left;
+  }
+  
+  .container {
+    text-align: center;
+  }
+  
+  .container p {
+    margin: 10px 0;
+  }
+  
+  .container button {
+    margin-top: 10px;
+  }
+</style>

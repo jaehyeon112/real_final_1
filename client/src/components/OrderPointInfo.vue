@@ -2,19 +2,12 @@
   <div>
     <h1>쿠폰정보</h1>
     <hr />
-    <v-select
-      v-if="Coupons"
-      v-model="selectedCouponIndex"
-      :items="coupons"
-      label="사용가능 쿠폰"
-      :disabled="!Coupons"
-      @change="updateSelectedCoupon"
-      return-object
-    ></v-select>
+    <v-select v-if="Coupons"
+      v-model="selectedCouponIndex" :items="coupons" label="사용가능 쿠폰" :disabled="!Coupons" @change="updateSelectedCoupon"
+      return-object></v-select>
     <h1>포인트정보</h1>
     <hr />
     <p>포인트 <span v-if="Points">{{ pointList[0].point }} 원</span></p>
-    <p>사용가능 잔액 {{ total }} 원</p>
     <input
   style="border-bottom: 1px solid black;"
   v-if="Points || CartItems"
@@ -42,7 +35,6 @@
         inputValue: 0,
         selectedCouponIndex: '쿠폰 선택안함', // 쿠폰의 기본값은 선택안함
         CheckCoupon: false, // 선택된 쿠폰이 있는지 확인하기 위한 변수
-        total: 0, // 사용가능잔액알려주고 만든함수
       };
     },
     props: {
@@ -61,7 +53,7 @@
       },
       delivery : {
         type: Number
-      }
+      },
     },
     methods: {
         getDateFormat(date) {
@@ -70,7 +62,7 @@
         updateInputValue() {
       let totalDiscountPrice = this.cartList.reduce(
         (total, item) =>
-          total + item.quantity * (item.discount_price * item.quantity),
+          total + (item.quantity * item.discount_price),
         0
       );
       this.total = totalDiscountPrice + this.delivery - this.coupon;
@@ -91,7 +83,7 @@
     useAllPoints() {
       let totalDiscountPrice = this.cartList.reduce(
         (total, item) =>
-          total + item.quantity * (item.discount_price * item.quantity),
+          total + (item.quantity * item.discount_price),
         0
       );
       this.total = totalDiscountPrice + this.delivery - this.coupon;
@@ -107,9 +99,9 @@
       }
     },
     updateSelectedCoupon() {
-  let selectedCouponIndex = this.couponOptions.indexOf(this.selectedCouponIndex);
-  let discount_rate = selectedCouponIndex !== 0 ? this.couponList[selectedCouponIndex - 1].coupon_discount_rate : 0;
-  this.$emit('discountRate', discount_rate);
+    let selectedCouponIndex = this.coupons.indexOf(this.selectedCouponIndex);
+    let discount_rate = selectedCouponIndex !== 0 ? this.couponList[selectedCouponIndex - 1].coupon_discount_rate : 0;
+    this.$emit('discountRate', discount_rate);
   
   if (selectedCouponIndex !== 0) {
     this.CheckCoupon = true;
