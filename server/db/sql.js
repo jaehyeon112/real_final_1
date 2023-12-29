@@ -10,6 +10,21 @@ let test = {
 
 };
 
+let user = {
+  //아이디 중복 체크할 때
+  duplicateId : `select user_id from user where user_id=?`,
+  
+  //회원가입
+  join : `INSERT INTO user SET ?`, 
+
+  // 이메일 중복체크용
+  duplicateEmail : `select user_email from user where user_email = ?`,
+
+  //로그인(일단)
+  forLogin : `select user_id, user_password from user;`, 
+  idToken : `insert into login_state set ?`,
+}
+
 let admin = {
   userList : `select user_id,user_name,user_email,user_tel,join_date,user_grade
   from user
@@ -28,5 +43,6 @@ let admin = {
 
 module.exports = {
   test,
+  user,
   admin
 };
