@@ -1,3 +1,4 @@
+
 import { createRouter, createWebHistory } from "vue-router";
 import user from "../router/user.js";
 import admin from "../router/admin.js";
