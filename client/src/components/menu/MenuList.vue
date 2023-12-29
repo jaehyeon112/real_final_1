@@ -15,19 +15,20 @@
               <v-btn icon="mdi mdi-cart" variant="tonal" @click.prevent="goToCart"> </v-btn>
             </v-row>
           </v-img>
-          <div v-if="isSoldOut" class="soldout-overlay">상품 준비 중</div>
+          <div v-if="isSoldOut" class="soldout-overlay">품절</div>
+          <div v-if="isStock" class="isStock-overlay">상품준비중</div>
         </div>
       </router-link>
 
       <v-card-subtitle class="pt-4"> 1조꺼 </v-card-subtitle>
 
       <v-card-text>
-        <div>{{ prodList.prod_name }}</div>
+        <div class="title">{{ prodList.prod_name }}</div>
         <!-- 상품 부가 정보 -->
         <div>
-          <span>{{ prodList.discount_rate }}%</span>
-          <span>{{ prodList.discount_price }}원(판매가)</span
-          ><span>{{ prodList.price }}원(원가)</span>
+          <span id="rate" v-if="prodList.discount_rate!=0">{{ prodList.discount_rate }}<span class="text">%</span></span>
+          <span id="discount">{{ $wonComma(prodList.discount_price) }}<span class="text">원</span></span
+          ><span id="price" v-if="prodList.discount_price != prodList.price">{{  $wonComma(prodList.price) }}<span class="text">원</span></span>
         </div>
         <div id="type-time">
           <span>냉동 | 조리시간</span>
@@ -43,18 +44,27 @@ export default {
   data() {
     return {
       isSoldOut: false,
+      isStock: false,
     };
   },
   props: ["prodList"],
+  created(){
+    this.soldout();
+  }
+  ,
+
   methods: {
     soldout() {
       if (this.prodList.soldout == 1) {
         this.isSoldOut = true;
+        return;
+      }else if(this.prodList.stock < 1){
+        this.isStock=true;
       }
+
+      
     },
-    imageLoaded() {
-      this.soldout();
-    },
+  
     goToCart(){
       alert("장바구니 만들고 난 뒤에~")
     }
@@ -70,6 +80,33 @@ export default {
   font-size: 12px;
   width: 100px;
   text-align: center;
+  margin-top: 10px;
+}
+.title{
+  margin-bottom:10px;
+}
+
+#rate{
+font-size: 20px;
+color: coral;
+font-weight: 600;
+margin-right: 10px;
+}
+
+#discount{
+  font-weight: 600;
+margin-right: 10px;
+font-size: 16px;
+}
+#price{
+  font-weight: 500;
+  text-decoration:line-through;
+  color:gray;
+font-size: 16px;
+}
+.text{
+  font-weight: 400;
+  font-size:15px;
 }
 
 .image-container {
@@ -81,6 +118,15 @@ export default {
 }
 
 .soldout-overlay {
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 2;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  position: absolute;
+}
+.isStock-overlay {
   background-color: rgba(0, 0, 0, 0.5);
   z-index: 2;
   top: 0;
