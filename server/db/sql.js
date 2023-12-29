@@ -1,6 +1,7 @@
 let test = {
   list: `select * from  product`,
   list2 : `select * from product limit ? , 6`,
+  categoryList : `select * from where ?? = ?`,
   wordFilterPage : `select * from product where  prod_name >= ? and prod_name < ?`,
   wordFilter : `select * from product where  prod_name >= ? and prod_name < ? limit ? , 6`,
   priceFilterPage : `select * from product where discount_price between ? and ?`,

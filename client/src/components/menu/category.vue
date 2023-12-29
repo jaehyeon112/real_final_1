@@ -9,6 +9,9 @@
     <div v-if="showCategory" class="category-list">
       <!-- 카테고리?  -->
       <ul>
+        <li class="test">
+          <router-link class="nav-custom" to="/menu">전체상품</router-link>
+        </li>
         <li
           @mouseenter="showSecondCategoryList"
           @mouseleave="hideSecondCategoryList"
@@ -23,7 +26,9 @@
         <li class="test">
           <router-link class="nav-custom" to="/">베스트</router-link>
         </li>
-        <li class="test">
+        <li class="test"
+        @mouseenter="showSecondCategoryList2"
+          @mouseleave="hideSecondCategoryList2">
           <router-link class="nav-custom" to="/">갑자기 땡긴다면?</router-link>
         </li>
         <li class="test">
@@ -37,7 +42,7 @@
     <div
       v-if="showSecondCategory"
       class="category-list second-category-list"
-      style="position: absolute; left: 200px"
+      style="position: absolute; left: 220px"
       @mouseenter="showSecondCategoryList"
       @mouseleave="hideSecondCategoryList"
     >
@@ -64,6 +69,28 @@
         </li>
       </ul>
     </div>
+    <div
+      v-if="showSecondCategory2"
+      class="category-list second-category-list"
+      style="position: absolute; left: 220px; top:220px"
+      @mouseenter="showSecondCategoryList"
+      @mouseleave="hideSecondCategoryList"
+    >
+      <ul>
+        <li class="test">
+          <router-link to="/">바삭한맛</router-link>
+        </li>
+        <li class="test">
+          <router-link to="/">매콤한맛</router-link>
+        </li>
+        <li class="test">
+          <router-link to="/">국물</router-link>
+        </li>
+        <li class="test">
+          <router-link to="/">건강한맛</router-link>
+        </li>
+      </ul>
+    </div>
   </div>
 </template>
 
@@ -73,6 +100,7 @@ export default {
     return {
       showCategory: false,
       showSecondCategory: false,
+      showSecondCategory2 : false,
     };
   },
   methods: {
@@ -88,6 +116,12 @@ export default {
     },
     hideSecondCategoryList() {
       this.showSecondCategory = false;
+    },
+    showSecondCategoryList2() {
+      this.showSecondCategory2 = true;
+    },
+    hideSecondCategoryList2() {
+      this.showSecondCategory2 = false;
     },
   },
 };
@@ -138,6 +172,7 @@ input {
   width: 200px;
   background-color: #fff;
   position: absolute;
+  left:30px;
   text-align: justify;
 }
 .category-list > ul {

@@ -4,6 +4,7 @@ import router from './router'
 import vuetify from './plugins/vuetify'
 import { loadFonts } from './plugins/webfontloader'
 import mixin from './mixin.js'
+import module from '@/module/Overlay'
 
 loadFonts()
 
@@ -13,5 +14,6 @@ window.Kakao.init("8acdd93f5a6fa89a6d2fe9190ea23ff1");
 createApp(App)
   .use(router)
   .use(vuetify)
+  .use(module)
   .mixin(mixin)
   .mount('#app')

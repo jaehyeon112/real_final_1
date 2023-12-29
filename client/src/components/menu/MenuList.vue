@@ -125,6 +125,7 @@ font-size: 16px;
   right: 0;
   bottom: 0;
   position: absolute;
+
 }
 .isStock-overlay {
   background-color: rgba(0, 0, 0, 0.5);

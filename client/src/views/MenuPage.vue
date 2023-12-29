@@ -64,16 +64,18 @@ export default {
           this.betweenA = 0;
           this.betweenB = 9999;
         }
-      console.log(first,last,price);
-      if(first == '' && price ==''){
-        this.total();
-        this.productList();
-        return;
-      }
-      if(price == '' && first != ''){
-        this.pageNo = 0;
+        console.log(first,last,price);
+        if(first == '' && price ==''){
+          this.total();
+          this.productList();
+          return;
+        }
+        if(price == '' && first != ''){
+          this.pageNo = 0;
+        this.$showLoading();
         let pageResult = await axios.get(`/api/wordFilter/${first}/${last}`).catch((err) => {console.log(err)});
         let listResult = await axios.get(`/api/wordFilter/${first}/${last}/${this.pageNo}`).catch((err) => {console.log(err)});
+        this.$hideLoading();
         this.totalList = pageResult.data; // 페이징맞추고..
         this.list = listResult.data; // 리스트를 맞추자..
 
