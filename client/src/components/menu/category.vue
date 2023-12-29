@@ -73,7 +73,7 @@
       v-if="showSecondCategory2"
       class="category-list second-category-list"
       style="position: absolute; left: 220px; top:220px"
-      @mouseenter="showSecondCategoryList"
+      @mouseenter="showSecondCategoryList2"
       @mouseleave="hideSecondCategoryList"
     >
       <ul>

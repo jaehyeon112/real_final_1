@@ -86,7 +86,7 @@ app.post("/join", async (req, res) => {
 
 
 //로그인 - 아이디비번 일치해야 로그인 (5회 오류시 보안프로그램실행)
-app.get("/dologin", async(req, res)=> {
+app.post("/dologin", async(req, res)=> {
   let list = await mysql.query("user", "forLogin");
   res.send(list);
 });

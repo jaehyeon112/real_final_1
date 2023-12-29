@@ -13,6 +13,9 @@ export default {
       return result;
     },
     $wonComma(number){
+      if(number < 1000){
+        return number
+      }
       return number.toLocaleString();
     }
     ,

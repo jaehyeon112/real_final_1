@@ -70,7 +70,9 @@
       >
         <div class="col"></div>
         <div class="col">
+          
           <category id="ca" />
+        
         </div>
         <div class="col">
           <router-link class="nav-custom" to="/">소개</router-link>

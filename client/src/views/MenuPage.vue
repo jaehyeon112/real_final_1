@@ -7,8 +7,12 @@
       <v-col cols="8">
         <v-row>
           <v-col cols="4" v-for="test in list" :key="test">
-            <menulist :prodList="test"> </menulist>
+            <menulist :prodList="test">
+            </menulist>
           </v-col>
+          <v-container v-if="list.length==0" justify="">
+            <p >찾는 상품이 없습니다.</p> 
+          </v-container>
         </v-row>
       </v-col>
     </v-row>
@@ -94,6 +98,7 @@ export default {
           let listResult = await axios.get(`/api/bothFilter/${first}/${last}/${this.betweenA}/${this.betweenB}/${this.pageNo}`).catch((err) => {console.log(err)});
           this.totalList = pageResult.data; // 페이징맞추고..
           this.list = listResult.data; // 리스트를 맞추자..
+          return;
       }
 
 }
@@ -121,6 +126,10 @@ export default {
         let page = await axios.get(`/api/priceFilter/${this.betweenA}/${this.betweenB}/${no}`).catch((err) => {console.log(err)});
         this.list = page.data;
         return;
+      }
+      if(this.first != '' && this.price != ''){
+        let listResult = await axios.get(`/api/bothFilter/${this.first}/${this.last}/${this.betweenA}/${this.betweenB}/${no}`).catch((err) => {console.log(err)});
+        this.list = listResult.data;
       }
 
 
