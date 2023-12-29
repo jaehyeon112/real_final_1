@@ -14,7 +14,8 @@ let user = {
   duplicateEmail : `select user_email from user where user_email = ?`,
 
   //로그인(일단)
-  forLogin : `select user_id, user_password from user;`
+  forLogin : `select user_id, user_password from user;`, 
+  idToken : `insert into login_state set ?`,
 }
 
 let admin = {

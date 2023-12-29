@@ -93,8 +93,15 @@ let ipList = await axios.get(`api/dologin`)
 
 if(this.user_id == "" || this.user_password==""){
   alert(`아이디와 비밀번호 모두 입력해`);}
-},
 
+  this.$router.push({name : 'realmain'});
+
+
+	window.localStorage.removeItem('user_id');
+	window.localStorage.setItem('userId', result.data.id); //키 값 : userId, 데이터 : user1
+	const user_id = window.localStorage.getItem('user_id');
+	console.log('user_id = ', user_id);
+},
 
 
 

@@ -91,6 +91,13 @@ app.get("/dologin", async(req, res)=> {
   res.send(list);
 });
 
+//로그인 세션
+app.post("/token", async(req, res)=> {
+  let data = req.body.param;
+  let result = await mysql.query("user","idToken", data);
+  res.send(result);
+})
+
 
 
 
