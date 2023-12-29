@@ -19,7 +19,6 @@
     <v-container>
       <pagination @changePage="changePage" v-bind:list="totalList" :totals="totals" ></pagination>
     </v-container>
-
   
   </div>
 </template>
@@ -45,6 +44,7 @@ export default {
       isFilter : false,
       betweenA : '',
       betweenB : '',
+      mainCategory:'',
     };
   },
   methods: {

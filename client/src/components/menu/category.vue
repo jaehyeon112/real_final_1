@@ -52,11 +52,11 @@
             ><span style="width: 300px">전체</span></router-link
           >
         </li>
-        <li class="test">
-          <router-link to="/">양식</router-link>
+        <li class="test" @click="go">
+          양식
         </li>
         <li class="test">
-          <router-link to="/">한식</router-link>
+          <router-link to="/menu" @cilck="go">한식</router-link>
         </li>
         <li class="test">
           <router-link to="/">중 일식</router-link>
@@ -74,11 +74,11 @@
       class="category-list second-category-list"
       style="position: absolute; left: 220px; top:220px"
       @mouseenter="showSecondCategoryList2"
-      @mouseleave="hideSecondCategoryList"
+      @mouseleave="hideSecondCategoryList2"
     >
       <ul>
         <li class="test">
-          <router-link to="/">바삭한맛</router-link>
+          <router-link to="/menu">바삭한맛</router-link>
         </li>
         <li class="test">
           <router-link to="/">매콤한맛</router-link>
@@ -101,9 +101,15 @@ export default {
       showCategory: false,
       showSecondCategory: false,
       showSecondCategory2 : false,
+      maincategory : ''
     };
   },
   methods: {
+    go(){
+      this.$emit('go','e1')
+      this.$router.push({path: '/menu'})
+    },
+
     showCategoryList() {
       this.showCategory = true;
     },
@@ -198,6 +204,13 @@ a {
   color: black;
 }
 .test:hover a {
+  color: orange;
+}
+li {
+  text-decoration: none;
+  color: black;
+}
+.test:hover li {
   color: orange;
 }
 </style>

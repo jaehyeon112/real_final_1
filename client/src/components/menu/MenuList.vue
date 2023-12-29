@@ -66,7 +66,9 @@ export default {
     },
   
     goToCart(){
-      alert("장바구니 만들고 난 뒤에~")
+      alert("비회원인데 넣었다 가정!")
+      this.$store.commit('addCart',this.prodList)
+      console.log(this.$store.state.cart)
     }
   },
 };
