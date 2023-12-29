@@ -3,6 +3,21 @@ let test = {
   list2 : `select * from product limit ? , 6`
 };
 
+let user = {
+  //아이디 중복 체크할 때
+  duplicateId : `select user_id from user where user_id=?`,
+  
+  //회원가입
+  join : `INSERT INTO user SET ?`, 
+
+  // 이메일 중복체크용
+  duplicateEmail : `select user_email from user where user_email = ?`,
+
+  //로그인(일단)
+  forLogin : `select user_id, user_password from user;`
+ 
+}
+
 let admin = {
   AlluserList : `select user_id,user_name,user_email,user_tel,join_date,user_grade from user order by ??`,
   userList : `select user_id,user_name,user_email,user_tel,join_date,user_grade from user order by ?? limit ?,?`,
@@ -26,5 +41,6 @@ let admin = {
 
 module.exports = {
   test,
+  user,
   admin
 };

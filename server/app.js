@@ -64,6 +64,7 @@ app.get("/show/:no", async (req, res) => {
   res.send(list);
 });
 
+
 app.get("/user/:order", async (req, res) => {
   let result = req.params.order;
   let data = await mysql.query("admin", "AlluserList",result);
@@ -73,6 +74,50 @@ app.get("/user/:order", async (req, res) => {
 app.get("/user/:order/:startNo/:no",async (req, res) => {
   let data = [req.params.order,Number(req.params.startNo)*Number(req.params.no),Number(req.params.no)];
   let list = await mysql.query("admin", "userList",data);
+
+
+// 회원가입 - 아이디 중복체크용
+app.get("/join-id/:id", async(req, res)=> {
+  let uid = req.params.id;
+  let list = await mysql.query("user", "duplicateId", uid);
+  res.send(list);
+})
+
+//회원가입 - 이메일 중복체크용
+app.get("/join-email/:email", async(req, res)=> {
+  let uemail = req.params.email;
+  let list = await mysql.query("user", "duplicateEmail", uemail);
+  res.send(list);
+})
+
+
+//회원가입용(insert) **주소수정ㅎ기! 
+app.post("/join", async (req, res) => {
+  let data = req.body.param;
+  let result = await mysql.query("user","join", data);
+  res.send(result);
+});
+
+
+//로그인 - 아이디비번 일치해야 로그인 (5회 오류시 보안프로그램실행)
+app.get("/dologin", async(req, res)=> {
+  let list = await mysql.query("user", "forLogin");
+  res.send(list);
+});
+
+//로그인 세션
+app.post("/token", async(req, res)=> {
+  let data = req.body.param;
+  let result = await mysql.query("user","idToken", data);
+  res.send(result);
+})
+
+
+
+
+
+app.get("/user",async (req, res) => {
+  let list = await mysql.query("admin", "userList");
   res.send(list);
 });
 
