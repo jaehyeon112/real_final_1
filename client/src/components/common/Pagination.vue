@@ -11,7 +11,6 @@
           <span aria-hidden="true">&laquo;</span>
         </button>
       </li>
-      {{ this.currentPage }}
       <li
         v-for="page in visiblebutton"
         :key="page"
@@ -38,14 +37,14 @@
 export default {
   data() {
     return {
-      total: 6, //보여질 페이지를 조절...
+      //totals: 6, //보여질 페이지를 조절...
       currentPage: 1, //현재페이지
     };
   },
   computed: {
     // 페이지의 총 갯수
     totalpage() {
-      return Math.ceil(this.list.length / this.total);
+      return Math.ceil(this.list.length / this.totals);
     },
     visiblebutton() {
       let pageCount = Math.min(this.totalpage, 5); //보여지는 페이지 버튼 수, 보통은 5이지만 만약 총갯수가 5보다 작으면.. 토탈 페이지갯수 보여줌
@@ -66,7 +65,7 @@ export default {
       );
     },
   },
-  props: ["list"],
+  props: ["list","totals"],
   methods: {
     changePage(index) {
       this.currentPage = index;
