@@ -2,10 +2,6 @@
   <div class="container-fluid" style:width="50px">
   <div class="row">
   <side/>
-<<<<<<< HEAD
-  
-=======
->>>>>>> 589b9ccc736b28c1e566e2991a83d21929e6909e
   <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
       <div class="container-fluid px-4">

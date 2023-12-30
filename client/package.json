@@ -19,10 +19,7 @@
     "vue-router": "^4.0.3",
     "vue3-loading-overlay": "^0.0.0",
     "vuetify": "^3.4.8",
-<<<<<<< HEAD
-=======
     "vuex": "^4.1.0",
->>>>>>> 589b9ccc736b28c1e566e2991a83d21929e6909e
     "vuex-persistedstate": "^4.1.0",
     "webfontloader": "^1.0.0"
   },

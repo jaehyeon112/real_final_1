@@ -1,7 +1,6 @@
 <template>
   <div style="width: 300px; margin-left: 40px">
     <v-container>
-<<<<<<< HEAD
       <v-card  variant="tonal">
 
         <v-row>
@@ -30,32 +29,11 @@
       <v-btn @click="reset">초기화</v-btn>
     </v-card>
       
-=======
-      <h3>필터</h3>
-      <hr />
-      <p>상품명</p>
-      <v-btn
-        v-for="(item, index) in items"
-        :key="index"
-        :class="{ active: currentIndex === index }"
-        @click="handleClick(index)"
-        elevation="0"
-        >{{ item }}</v-btn
-      >
-      <hr />
-      <p>가격</p>
-      <v-radio-group>
-        <v-radio value="Radio One" label="10,000원 미만"></v-radio>
-        <v-radio value="Radio Two" label="10,000~20,000원"></v-radio>
-        <v-radio value="Radio Three" label="20,000원 이상"></v-radio>
-      </v-radio-group>
->>>>>>> 589b9ccc736b28c1e566e2991a83d21929e6909e
     </v-container>
   </div>
 </template>
 
 <script>
-<<<<<<< HEAD
 import axios from 'axios';
 export default {
   data() {
@@ -63,11 +41,6 @@ export default {
       first : '',
       last : '',
       price : '',
-=======
-export default {
-  data() {
-    return {
->>>>>>> 589b9ccc736b28c1e566e2991a83d21929e6909e
       select: false,
       items: [
         "전체",
@@ -86,16 +59,11 @@ export default {
         "ㅍ",
         "ㅎ",
         "A-Z",
-<<<<<<< HEAD
       ], 
-=======
-      ], // 여기에 원하는 페이지 번호를 넣으세요.
->>>>>>> 589b9ccc736b28c1e566e2991a83d21929e6909e
       currentIndex: null,
     };
   },
   methods: {
-<<<<<<< HEAD
     onEmit(){
       this.$emit('getSearch',this.first, this.last, this.price);
     },
@@ -161,24 +129,15 @@ export default {
         this.last = '힣'
       }
 
-=======
-    handleClick(index) {
-      this.currentIndex = index;
->>>>>>> 589b9ccc736b28c1e566e2991a83d21929e6909e
     },
   },
 };
 </script>
 
 <style scoped>
-<<<<<<< HEAD
 
 button {
   background-color: whitesmoke;
-=======
-button {
-  background-color: #ccc;
->>>>>>> 589b9ccc736b28c1e566e2991a83d21929e6909e
 }
 
 button.active {

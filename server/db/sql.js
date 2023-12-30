@@ -1,6 +1,5 @@
 let test = {
   list: `select * from  product`,
-<<<<<<< HEAD
   list2 : `select * from product limit ? , 6`,
   categoryList : `select * from where ?? = ?`,
   wordFilterPage : `select * from product where  prod_name >= ? and prod_name < ?`,
@@ -10,9 +9,6 @@ let test = {
   bothFilterPage : `select * from product where prod_name >= ? and prod_name < ? and discount_price between ? and ?`,
   bothFilter : `select * from product where prod_name >= ? and prod_name < ? and discount_price between ? and ? limit ? , 6`,
 
-=======
-  list2 : `select * from product limit ? , 6`
->>>>>>> 589b9ccc736b28c1e566e2991a83d21929e6909e
 };
 let reviews = {
   myList:`select * from review where user_id=? `,//마이페이지에서 내가 작성한 리뷰 리스트
@@ -53,21 +49,6 @@ let like = {
 let member = {
   memberInfo : `select * from user where user_id=?` //이건 나중에 로그인 세션 이용하게 되면 지우자
 }
-let admin = {
-  userList : `select user_id,user_name,user_email,user_tel,join_date,user_grade
-  from user
-  order by join_date desc`,
-  prodList : `select prod_no,prod_name,price,discount_price,discount_rate,stock,main_category
-  from product`,
-  prodInsert : `insert into product set ?`,
-  prodDelete : `update product set soldout=1 where prod_no=?`,
-  prodInfo : `select prod_no,prod_name,price,discount_price,stock,cooking_time,allergy,
-  main_category,sub_category,refrigeration 
-  from product where prod_no = ?`,
-  productMod : `update product set ? where prod_no = ?`,
-  weekIncome : `select sum(total_payment) from orders where order_date BETWEEN DATE_ADD(NOW(), INTERVAL -1 week ) AND NOW()`,
-  monthsIncome : `select month(order_date) as month,sum(total_payment) as sum from orders group by month order by month;`
-}
 
 let user = {
   //아이디 중복 체크할 때
@@ -83,8 +64,25 @@ let user = {
   forLogin : `select * from user where user_id = ? and user_password = ?;`
  
 }
-
 let admin = {
+  userList : `select user_id,user_name,user_email,user_tel,join_date,user_grade
+  from user
+  order by join_date desc`,
+  prodList : `select prod_no,prod_name,price,discount_price,discount_rate,stock,main_category
+  from product`,
+  prodInsert : `insert into product set ?`,
+  prodDelete : `update product set soldout=1 where prod_no=?`,
+  prodInfo : `select prod_no,prod_name,price,discount_price,stock,cooking_time,allergy,
+  main_category,sub_category,refrigeration 
+  from product where prod_no = ?`,
+  productMod : `update product set ? where prod_no = ?`,
+  weekIncome : `select sum(total_payment) from orders where order_date BETWEEN DATE_ADD(NOW(), INTERVAL -1 week ) AND NOW()`,
+  monthsIncome : `select month(order_date) as month,sum(total_payment) as sum from orders group by month order by month;`,
+
+
+
+
+
   AlluserList : `select user_id,user_name,user_email,user_tel,join_date,user_grade from user order by ??`,
   userList : `select user_id,user_name,user_email,user_tel,join_date,user_grade from user order by ?? limit ?,?`,
   proList : `select prod_no,prod_name,price,discount_price,discount_rate,stock,main_category from product`,
@@ -104,18 +102,8 @@ let admin = {
   where user_id like concat(concat('%',?),'%') or user_name like concat(concat('%',?),'%') or join_date like concat(concat('%',?),'%') order by ?? limit ?,?`,
   searchProd : `select prod_no,prod_name,price,discount_price,discount_rate,stock,main_category from product where prod_name like concat(concat('%',?),'%') order by ?? limit ?,?`
 }
-
 module.exports = {
-<<<<<<< HEAD
-<<<<<<< HEAD
-  test,reviews,point,coupon
-=======
-  test,
   user,
-  admin
->>>>>>> develop
-=======
   test,reviews,point,coupon,orders, delivery,like,member,
   admin
->>>>>>> 589b9ccc736b28c1e566e2991a83d21929e6909e
 };

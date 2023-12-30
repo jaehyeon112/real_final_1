@@ -1,10 +1,6 @@
 <template>
-<<<<<<< HEAD
   <div>
     <ul class="nav justify-content-end" id="nav">
-=======
-<ul class="nav justify-content-end" id="nav">
->>>>>>> 589b9ccc736b28c1e566e2991a83d21929e6909e
       <li class="nav-item">
         <router-link class="nav-link" to="/join">회원가입 </router-link>
       </li>
@@ -18,7 +14,6 @@
         <router-link class="nav-link" to="/logout">로그아웃</router-link>
       </li>
     </ul>
-<<<<<<< HEAD
 
     <div class="container text-center" style="margin-bottom: 20px">
       <div class="row">
@@ -50,6 +45,4 @@
       </div>
     </div>
   </div>
-=======
->>>>>>> 589b9ccc736b28c1e566e2991a83d21929e6909e
   </template>

@@ -29,7 +29,10 @@ const storage = multer.diskStorage({
     cb(null, new Date().valueOf() + path.basename(file.originalname));
   },
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> develop
 });
 
 const upload = multer({ storage: storage });
@@ -42,6 +45,7 @@ app.post("/photos", upload.array("photos", 12), (req, res) => {
 
 app.listen(3000, () => {
   console.log("재현 서버 on");
+<<<<<<< HEAD
 >>>>>>> 589b9ccc736b28c1e566e2991a83d21929e6909e
 });
 
@@ -55,6 +59,8 @@ app.post("/photos", upload.array("photos", 12), (req, res) => {
 
 app.listen(3000, () => {
   console.log("재현 서버 on");
+=======
+>>>>>>> develop
 });
 
 app.get('/prod',async (req, res) => {
@@ -63,11 +69,8 @@ app.get('/prod',async (req, res) => {
 })
 app.get("/test", async (req, res) => {
   // 여기서 imagePath를 db에 저장하고 불러와야할듯...
-<<<<<<< HEAD
+
   const imagePath = "uploads\\1703574590403스페인식_감바스_상세페이지3.jpg";
-=======
-  const imagePath = "uploads\\1703396889842스크린샷 2023-11-12 215622.png";
->>>>>>> 589b9ccc736b28c1e566e2991a83d21929e6909e
   const absolutePath = path.join(__dirname, imagePath);
   res.sendFile(absolutePath);
 });
@@ -80,11 +83,10 @@ app.get("/show", async (req, res) => {
 app.get("/show/:no", async (req, res) => {
   let data = Number(req.params.no) * 6;
   let list = await mysql.query("test", "list2", data);
-<<<<<<< HEAD
+
   res.send(list);
 });
 
-<<<<<<< HEAD
 //리뷰관련
  //상세페이지에서 리뷰목록
  app.get("/detailReview/:pno", async(request, response)=>{
@@ -92,8 +94,7 @@ app.get("/show/:no", async (req, res) => {
   let list = await mysql.query('review','detailList',pno)[0]
   res.send(list);
  })
-=======
-
+  res.send(list);
 app.get("/user/:order", async (req, res) => {
   let result = req.params.order;
   let data = await mysql.query("admin", "AlluserList",result);
@@ -176,7 +177,7 @@ app.get("/prod/:order/:startNo/:no",async (req, res) => {
 });
 
 app.get("/prods/:pno",async (req, res) => {
-=======
+
   res.send(list);
 });
 //시험용 멤버
@@ -285,22 +286,19 @@ app.get("/prod",async (req, res) => {
 });
 
 app.get("/prod/:pno",async (req, res) => {
->>>>>>> 589b9ccc736b28c1e566e2991a83d21929e6909e
+
   let data = req.params.pno;
   let result = await mysql.query("admin", "prodInfo",data);
   res.send(result);
 });
 
-<<<<<<< HEAD
+
 app.get("/prod/:startNo/:no",async (req, res) => {
   let datas = [Number(req.params.startNo)*Number(req.params.no),Number(req.params.no)];
   let result = await mysql.query("admin", "pricehigh",datas);
   res.send(result);
 });
 
-
-=======
->>>>>>> 589b9ccc736b28c1e566e2991a83d21929e6909e
 app.post("/prod",async (req, res) => {
   let data = req.body.param;
   let result = await mysql.query("admin","prodInsert",data);
@@ -324,7 +322,7 @@ app.get("/sum",async (req, res) => {
   res.send(result);
 });
 
-<<<<<<< HEAD
+
 app.put("/user/:grade/:uid",async(req,res)=>{
   let data = [req.params.grade,req.params.uid];
   let result = await mysql.query("admin","stopUser",data);
@@ -368,11 +366,9 @@ app.get("/bothFilter/:first/:last/:A/:B/:no",async (req, res) => {
   let result = await mysql.query("test", "bothFilter", data);
   res.send(result)
 })
->>>>>>> develop
-=======
+
 app.put("/user/:uid",async(req,res)=>{
   let data = req.params.uid;
   let result = await mysql.query("admin","stopUser",data);
   res.send(result);
 });
->>>>>>> 589b9ccc736b28c1e566e2991a83d21929e6909e

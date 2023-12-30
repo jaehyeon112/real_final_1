@@ -2,39 +2,24 @@
   <div>
     <v-row>
       <v-col cols="3">
-<<<<<<< HEAD
         <filterSide @getSearch="setinput" />
-=======
-        <filterSide />
->>>>>>> 589b9ccc736b28c1e566e2991a83d21929e6909e
       </v-col>
       <v-col cols="8">
         <v-row>
           <v-col cols="4" v-for="test in list" :key="test">
-<<<<<<< HEAD
             <menulist :prodList="test">
             </menulist>
           </v-col>
           <v-container v-if="list.length==0" justify="">
             <p >찾는 상품이 없습니다.</p> 
           </v-container>
-=======
-            <menulist :prodList="test"> </menulist>
-          </v-col>
->>>>>>> 589b9ccc736b28c1e566e2991a83d21929e6909e
         </v-row>
       </v-col>
     </v-row>
     <v-container>
-<<<<<<< HEAD
       <pagination @changePage="changePage" v-bind:list="totalList" :totals="totals" ></pagination>
     </v-container>
   
-=======
-      <pagination @changePage="changePage" :list="totalList"></pagination>
-    </v-container>
-    <button @click="changePage(5)">리스트 다르게?</button>
->>>>>>> 589b9ccc736b28c1e566e2991a83d21929e6909e
   </div>
 </template>
 
@@ -47,7 +32,6 @@ import axios from "axios";
 export default {
   data() {
     return {
-<<<<<<< HEAD
       totals:6,
       totalList: "",
       list: "",
@@ -61,11 +45,6 @@ export default {
       betweenA : '',
       betweenB : '',
       mainCategory:'',
-=======
-      totalList: "",
-      list: "",
-      pageNo: 0,
->>>>>>> 589b9ccc736b28c1e566e2991a83d21929e6909e
     };
   },
   methods: {
@@ -73,7 +52,6 @@ export default {
       let total = await axios.get("/api/show").catch((err) => {
         console.log(err);
       });
-<<<<<<< HEAD
       this.totalList = total.data;
     },
     async setinput(first,last,price){
@@ -125,14 +103,6 @@ export default {
 
 }
     ,
-=======
-
-      console.log("Total");
-      this.totalList = total.data;
-      console.log(this.totalList);
-    },
-
->>>>>>> 589b9ccc736b28c1e566e2991a83d21929e6909e
     async productList() {
       try {
         let proList = await axios.get("/api/show/" + this.pageNo);
@@ -142,7 +112,6 @@ export default {
       }
     },
     async changePage(no) {
-<<<<<<< HEAD
       if(this.first == '' && this.price == ''){
         let page = await axios.get("/api/show/" + no).catch (err=>{console.log(err)})
         this.list = page.data;
@@ -167,16 +136,6 @@ export default {
     },
   
     
-=======
-      try {
-        let page = await axios.get("/api/show/" + no);
-        this.list = page.data;
-        console.log(page.data);
-      } catch (error) {
-        console.error("Error fetching page data:", error);
-      }
-    },
->>>>>>> 589b9ccc736b28c1e566e2991a83d21929e6909e
   },
   created() {
     this.productList();
