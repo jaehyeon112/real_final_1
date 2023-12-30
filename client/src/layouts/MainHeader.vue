@@ -2,24 +2,18 @@
   <div>
     <ul class="nav justify-content-end" id="nav">
       <li class="nav-item">
-        <router-link class="nav-link" to="/join">회원가입 </router-link>
+        <span class="nav-link login" @click="loginOrMypage"  >{{ $store.state.user.user_id != null ? $store.state.user.user_name + '님' : '로그인' }}</span>
       </li>
       <li class="nav-item">
-        <router-link class="nav-link" to="/myPage">님</router-link>
-      </li>
-      <li class="nav-item">
-        <router-link class="nav-link" to="/login">로그인</router-link>
-      </li>
-      <li class="nav-item">
-        <router-link class="nav-link" to="/logout">로그아웃</router-link>
+        <span class="nav-link login" @click="logoutOrJoin" >{{ $store.state.user.user_id != null ? '로그아웃' : "회원가입"}}</span>
       </li>
     </ul>
 
-    <div class="container text-center">
+    <div class="container text-center" style="margin-bottom: 20px">
       <div class="row">
-        <div class="col">
+        <div class="col-4">
           <router-link
-            to="/"
+            to="/main"
             class="d-flex align-items-center mb-3 mb-lg-0 me-lg-auto link-body-emphasis text-decoration-none"
           >
             <!--이미지 찾아서 넣자-->
@@ -34,14 +28,22 @@
             <input type="search" placeholder="Search..." />
           </form>
         </div>
-        <div class="col-2">
+        <div class="col-1" style="width: 45px; padding-top: 15px">
           <router-link to="/">
-            <i class="bi bi-bell"></i>
+            <!-- 알람 갯수 조절해야함 -->
+            <v-badge color="error" content='0'>
+              <span class="mdi mdi-bell-outline" style="font-size: 30px"></span>
+            </v-badge>
           </router-link>
-          <span style="color: #fff">　</span>
-          <router-link to="/">
-            <i class="bi bi-cart"> </i>
-          </router-link>
+        </div>
+        <div class="col-1" style="padding-top: 15px">
+          <span @click="what">
+            
+            <!-- 장바구니 갯수 조절해야함 -->
+            <v-badge color="error" :content='$store.state.cart.length'>
+              <span class="mdi mdi-cart-minus" style="font-size: 30px"></span>
+            </v-badge>
+          </span>
         </div>
       </div>
     </div>
@@ -62,79 +64,16 @@
         "
       >
         <div class="col"></div>
-        <div
-          class="col"
-          style="position: relative"
-          @mouseover="showCategoryList"
-          @mouseleave="hideCategoryList"
-        >
-          <router-link to="/">카테고리</router-link>
-          <div v-if="showCategory" class="category-list">
-            <!-- 카테고리?  -->
-            <ul>
-              <li
-                @mouseenter="showSecondCategoryList"
-                @mouseleave="hideSecondCategoryList"
-                class="test"
-              >
-                <router-link class="nav-custom" to="/">밀키트</router-link>
-              </li>
-
-              <li class="test">
-                <router-link class="nav-custom" to="/">신상품</router-link>
-              </li>
-              <li class="test">
-                <router-link class="nav-custom" to="/">베스트</router-link>
-              </li>
-              <li class="test">
-                <router-link class="nav-custom" to="/"
-                  >갑자기 땡긴다면?</router-link
-                >
-              </li>
-              <li class="test">
-                <router-link class="nav-custom" to="/">특가</router-link>
-              </li>
-              <li class="test">
-                <router-link class="nav-custom" to="/">냉동전문관</router-link>
-              </li>
-            </ul>
-          </div>
-          <div
-            v-if="showSecondCategory"
-            class="category-list second-category-list"
-            style="position: absolute; left: 200px"
-            @mouseenter="showSecondCategoryList"
-            @mouseleave="hideSecondCategoryList"
-          >
-            <ul>
-              <li class="test">
-                <router-link class="nav-custom" to="/"
-                  ><span style="width: 300px">전체</span></router-link
-                >
-              </li>
-              <li class="test">
-                <router-link to="/">양식</router-link>
-              </li>
-              <li class="test">
-                <router-link to="/">한식</router-link>
-              </li>
-              <li class="test">
-                <router-link to="/">중 일식</router-link>
-              </li>
-              <li class="test">
-                <router-link to="/">분식</router-link>
-              </li>
-              <li class="test">
-                <router-link to="/">동남아</router-link>
-              </li>
-            </ul>
-          </div>
+        <div class="col">
+          
+          <category id="ca" />
+        
         </div>
         <div class="col">
           <router-link class="nav-custom" to="/">소개</router-link>
         </div>
         <div class="col">
-          <router-link class="nav-custom" to="/">메뉴</router-link>
+          <router-link class="nav-custom" to="/menu">메뉴</router-link>
         </div>
         <div class="col">
           <router-link class="nav-custom" to="/">리뷰</router-link>
@@ -149,39 +88,54 @@
 </template>
 
 <script>
+import category from "../components/menu/category.vue";
 export default {
+  components: { category },
   data() {
     return {
-      cartAmounts: 0,
-      showCategory: false,
-      showSecondCategory: false,
       lnbOffsetTop: 0,
       isLnbFixed: false,
     };
   },
   mounted() {
     this.lnbOffsetTop = this.$refs.lnb.offsetTop;
-
     window.addEventListener("scroll", this.handleScroll);
   },
-  beforeDestroy() {
+  beforeUnmount() {
     window.removeEventListener("scroll", this.handleScroll);
   },
-
   methods: {
-    showCategoryList() {
-      this.showCategory = true;
+    loginOrMypage(){
+      console.log(this.$store.state.user.user_id + "아이디 값은?")
+      if(this.$store.state.user.user_id ==null){
+        this.$router.push("/login")
+      }else{
+        this.$router.push('/myPage') // 마이페이지?
+      }
     },
-    hideCategoryList() {
-      this.showCategory = false;
-      this.showSecondCategory = false;
+    logoutOrJoin(){
+      if(this.$store.state.user.user_id == null){
+        this.$router.push("/join")
+      }else{
+        
+        this.logout();
+        
+      }
+
+
     },
-    showSecondCategoryList() {
-      this.showSecondCategory = true;
+    logout(){
+      alert('로그아웃 되었습니다~')
+      this.$store.commit('logout');
     },
-    hideSecondCategoryList() {
-      this.showSecondCategory = false;
-    },
+  what(){
+    const cartItems = this.$store.state.cart;
+    let total = [];
+    for(let i = 0; i < cartItems.length; i++){
+      total.push(cartItems[i].prod_name + cartItems[i].quantity + '개 장바구니');
+    }
+    alert(total)
+  },
     handleScroll() {
       const windowScroll = window.scrollY;
 
@@ -196,10 +150,11 @@ export default {
 </script>
 
 <style scoped>
-#nav > li > a {
+.login {
   color: #bbb;
   font-size: 12px;
   font-weight: 600;
+  cursor: pointer;
 }
 
 input {
@@ -227,6 +182,7 @@ input {
   text-decoration: none;
   color: black;
   width: 100%;
+  z-index: 999;
 }
 .nav-custom:hover {
   color: orange;
@@ -234,24 +190,6 @@ input {
 
 .bi:hover {
   color: orange;
-}
-
-.category-list {
-  border: 1px solid black;
-  width: 200px;
-  background-color: #fff;
-  position: absolute;
-  text-align: justify;
-}
-.category-list > ul {
-  margin: 0;
-  padding: 0;
-}
-.category-list > ul > li {
-  list-style-type: none;
-  padding-left: 30px;
-  height: 50px;
-  font-size: 20px;
 }
 
 .fixed {
@@ -265,7 +203,11 @@ a {
   text-decoration: none;
   color: black;
 }
-.test:hover a {
-  color: orange;
+#lnb {
+  z-index: 9999;
+}
+
+#ca {
+  z-index: 9999;
 }
 </style>
