@@ -78,11 +78,6 @@ let admin = {
   productMod : `update product set ? where prod_no = ?`,
   weekIncome : `select sum(total_payment) from orders where order_date BETWEEN DATE_ADD(NOW(), INTERVAL -1 week ) AND NOW()`,
   monthsIncome : `select month(order_date) as month,sum(total_payment) as sum from orders group by month order by month;`,
-
-
-
-
-
   AlluserList : `select user_id,user_name,user_email,user_tel,join_date,user_grade from user order by ??`,
   userList : `select user_id,user_name,user_email,user_tel,join_date,user_grade from user order by ?? limit ?,?`,
   proList : `select prod_no,prod_name,price,discount_price,discount_rate,stock,main_category from product`,

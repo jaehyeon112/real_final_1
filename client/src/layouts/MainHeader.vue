@@ -79,7 +79,7 @@
           <router-link class="nav-custom" to="/">리뷰</router-link>
         </div>
         <div class="col">
-          <router-link class="nav-custom" to="/">마이페이지</router-link>
+          <router-link class="nav-link" to="/myPage">마이페이지</router-link>
         </div>
         <div class="col"></div>
       </div>
