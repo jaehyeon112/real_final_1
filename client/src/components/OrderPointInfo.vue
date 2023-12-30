@@ -7,7 +7,7 @@
       return-object></v-select>
     <h1>포인트정보</h1>
     <hr />
-    <p>포인트 <span v-if="Points">{{ pointList[0].point }} 원</span></p>
+    <p>포인트 <span v-if="Points">{{ this.$store.state.user.point }} 원</span></p>
     <input
   style="border-bottom: 1px solid black;"
   v-if="Points || CartItems"
@@ -19,7 +19,7 @@
   v-if="Points"
   id="target_btn"
   @click="useAllPoints"
-  :disabled="pointList[0].point === 0 || (CheckCoupon && selectedCouponIndex !== 0)"
+  :disabled="this.$store.state.user.point === 0 || (CheckCoupon && selectedCouponIndex !== 0)"
 >
   모두 사용
 </v-btn>
@@ -87,8 +87,8 @@
         0
       );
       this.total = totalDiscountPrice + this.delivery - this.coupon;
-      if (this.pointList[0].point > 0) {
-        if (this.total  < this.pointList[0].point) {
+      if (this.$store.state.user.point > 0) {
+        if (this.total  < this.$store.state.user.point) {
           this.inputValue = this.total;
           this.$emit('inputValue', this.inputValue);
         } else {

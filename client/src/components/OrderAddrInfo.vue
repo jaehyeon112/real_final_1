@@ -2,17 +2,17 @@
     <v-container>
       <h1>배송지 정보</h1>
       <hr>
-      <div v-if="cartList.length > 0">
-        <p>배송지 <span style="font-size: 30px;">{{ cartList[0].address }}  {{ cartList[0].detail_address }} {{ cartList[0].postcode }}</span></p>
+      <div>
+        <p>배송지 <span style="font-size: 30px;">{{ this.$store.state.user.address }}  {{ this.$store.state.user.detail_address }} {{ this.$store.state.user.postcode }}</span></p>
       </div>
-        <v-checkbox v-model="checkbox" @change="CheckboxChange" label="배송지가 동일한 경우 선택"></v-checkbox>
+      <v-checkbox v-model="checkbox" @change="CheckboxChange" label="배송지가 동일한 경우 선택"></v-checkbox>
         <form>
           <p><span class="address">우편번호 </span>
-            <input type="text" v-model="zip" style="width: 130px;">
+            <input type="text" v-model="zip" style="width: 130px;" readonly>
             <v-btn @click="showApi">우편번호 찾기</v-btn>
           </p>
-          <p><span class="address">주소 </span><input type="text" v-model="addr1" style="width: 500px;"></p>
-          <p><span class="address">상세주소 </span><input type="text" v-model="addr2" style="width: 500px;"></p>
+          <p><span class="address">주소 </span><input type="text" v-model="addr1" style="width: 500px;" readonly></p>
+          <p><span class="address">상세주소 </span><input type="text" v-model="addr2" style="width: 500px;" @input="getAddress"></p>
         </form>
     </v-container>
   </template>
@@ -25,27 +25,23 @@
         zip: '',
         addr1: '',
         addr2: '',
-        checkbox : []
+        checkbox : false
       }
     },
-    props : {
-        cartList: {
-            type: Array,
-            required: true,
-        }
-    },
+
     methods: {
-        CheckboxChange() {
-        if (this.checkbox.checked) {
-            this.address1 = this.address1;
-            this.addr2 = this.address2;
-            this.zip = this.postcode;
-        } else {
-            this.addr1 = '';
-            this.addr2 = '';
-            this.zip = '';
-        }
-        },
+      CheckboxChange() {
+  if (this.checkbox == true ) {
+    this.zip = this.$store.state.user.postcode
+    this.addr1 = this.$store.state.user.address
+    this.addr2 = this.$store.state.user.detail_address
+    this.$emit('getAddress', this.zip, this.addr1, this.addr2);
+  } else {
+    this.zip = '';
+    this.addr1 = '';
+    this.addr2 = '';
+  }
+},
       showApi() {
         new window.daum.Postcode({
           oncomplete: (data) => {
@@ -77,8 +73,13 @@
               // 우편번호와 주소 정보를 해당 필드에 넣는다.
               this.zip = data.zonecode; //5자리 새우편번호 사용
               this.addr1 = fullRoadAddr;
+              // 이벤트 발생
+              this.$emit('getAddress', this.zip, this.addr1, this.addr2);
           }
         }).open();
+      },
+      getAddress() {
+        this.$emit('getAddress', this.zip, this.addr1, this.addr2);
       }
     }
   }

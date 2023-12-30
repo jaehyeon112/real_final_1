@@ -42,19 +42,7 @@ export default{
         name: "menu",
         component: menu,
       },
-      
-    {
-      path: "main",
-      name: "realmain",
-      component: realmain,
-    },
-    {
-      path: "menu",
-      name: "menu",
-      component: menu,
-    },
-
-  //h
+      //h
     {
       path: "login",
       name: "login",

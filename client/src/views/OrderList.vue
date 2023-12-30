@@ -7,10 +7,9 @@
         <v-card>
           <OrderProdInfo
           :cartList="cartList"/>
-          <OrderUserInfo
-          :cartList="cartList"/>
+          <OrderUserInfo/>
           <OrderAddrInfo
-          :cartList="cartList"/>
+          @getAddress="GetAddress"/>
           <OrderPointInfo
           :cartList="cartList"
           :couponList="couponList"
@@ -21,9 +20,10 @@
           :discount="discount"
           :coupon="coupon"/>
           <OrderPayment
+          @selectedPayMethod="selectedPayMethod"
           :cartList="cartList"
           :final="final"
-          :orderInsert="orderInsert"/>
+          :Order="Order"/>
         </v-card>
       </v-col>
       <v-col>
@@ -39,6 +39,7 @@
         :final="final"/>
       </v-col>
     </v-row>
+    {{ selectedPayMethod }}
     </v-container>
 </template>
 <script>
@@ -74,8 +75,12 @@ export default {
       delivery: 0, // 배송비 계산
       coupon: 0, // 쿠폰할인금액 계산
       point: 0, // 포인트 계산
-      final : 0,
-      Number : 0 // 주문번호 생성
+      final : 0, // 최종금액 계산
+      Number : 0, // 주문번호 생성
+      zip : '',
+      addr1 : '',
+      addr2 : '',
+      paymentMethod : ''
     };
   },
   created() {
@@ -99,11 +104,14 @@ export default {
     pointInput(){
       this.pointPrice();
       this.getBill();
-    }
+    },
+    addrInfo(){
+      this.GetAddress();
+    },
   },
   methods: {
     fetchCartList() {
-      axios.get('/api/cartList/test', {
+      axios.get(`/api/cartList/${this.$store.state.user.user_id}`, {
       })
       .then(response => {
         this.cartList = response.data;
@@ -113,7 +121,7 @@ export default {
       });
     },
     fetchCouponList() {
-      axios.get('/api/coupon/test', {
+      axios.get(`/api/coupon/${this.$store.state.user.user_id}`, {
       })
       .then(response => {
         this.couponList = response.data;
@@ -123,7 +131,7 @@ export default {
       });
     },
     fetchPointList() {
-      axios.get('/api/point/test', {
+      axios.get(`/api/point/${this.$store.state.user.user_id}`, {
       })
       .then(response => {
         this.pointList = response.data; 
@@ -170,6 +178,13 @@ export default {
         this.deliveryPrice(); // 배송비 금액
         this.finalPrice();  // 실제 결제금액
     },
+    GetAddress(zip,addr1,addr2){
+      this.zip = zip
+      this.addr1 = addr1
+      this.addr2 = addr2
+
+      console.log(this.zip,this.addr1,this.addr2,'주소')
+    },
     orderNumber() {
       let date = new Date();
         
@@ -182,28 +197,79 @@ export default {
         this.Number = year + month + day + hours + minutes + seconds + parseInt(Math.random() * 100000) + 100000 ;
         //
         console.log(this.Number);
-      },
-      async orderInsert(){
+    },
+    async selectedPayMethod(paymentMethod) {
+          this.orderNumber();
+
+          // 상품 정보 설정
+          let prodName = '';
+          if (this.cartList.length > 0) {
+            prodName = this.cartList[0].prod_name + '외' + this.cartList.length + '건';
+          } else {
+            prodName = this.cartList[0].prod_name;
+          }
+
+  // 결제 정보 설정
+  let paymentInfo = {
+    pg: '',
+    pay_method: paymentMethod,
+    name: prodName,
+    merchant_uid: this.Number,
+    amount: this.final,
+    buyer_name: this.$store.state.user.user_name,
+    buyer_tel: this.$store.state.user.user_tel,
+    buyer_email: this.$store.state.user.user_email,
+  };
+
+  // 선택한 결제 방법에 따라 결제 정보 설정
+  if (paymentMethod === 'kakaopay') {
+    this.paymentMethod = 'h1'
+    paymentInfo.pg = 'kakaopay';
+    paymentInfo.pay_method = '카카오페이';
+  } else if (paymentMethod === 'toss') {
+    this.paymentMethod = 'h2'
+    paymentInfo.pg = 'tosspay';
+    paymentInfo.pay_method = '토스';
+  } else if (paymentMethod === 'kg') {
+    this.paymentMethod = 'h3'
+    paymentInfo.pg = 'html5_inicis';
+    paymentInfo.pay_method = '신용카드';
+  }
+  
+  let iamport = window.IMP;
+  iamport.init('imp61344571'); // 아임포트에서 발급받은 가맹점 식별코드 입력
+
+  iamport.request_pay(paymentInfo, (response) => {
+    if (response.success) {
+      // 결제 완료 처리
+      this.orderInsert()
+    } else {
+      // 결제 실패 처리
+      alert('결제에 실패했습니다.');
+    }
+  });
+},
+async orderInsert(){
         this.orderNumber();
             let obj = {
                 param : {
-                    order_no : this.Number,
-                    user_id : this.cartList[0].user_id,
-                    delivery_charge : this.delivery ,
-                    recipient: this.cartList[0].user_name,
-                    recipient_address : 'this.addr1',
-                    recipient_detail_address : 'this.addr2',
-                    recipient_tel : 'hh',
-                    recipient_postcode : 'this.zip',
-                    total_payment : this.discount,
-                    coupon_discount_rate : this.couponRate,
-                    point_use : this.point,
-                    point_save_rate : 0,
-                    point_save: 0,
-                    real_payment: this.final,
-                    payment_method : this.payment_method,
-                    payment_no : 1,
-                    order_status : '주문완료'
+                    order_no: this.Number,
+              user_id: this.$store.state.user.user_id,
+              delivery_charge: this.delivery,
+              recipient: this.$store.state.user.user_name,
+              recipient_address: this.addr1,
+              recipient_detail_address: this.addr2,
+              recipient_tel: this.$store.state.user.user_tel,
+              recipient_postcode: this.zip,
+              total_payment: this.discount,
+              coupon_discount_rate: this.couponRate,
+              point_use: this.point,
+              point_save_rate: 0,
+              point_save: 0,
+              real_payment: this.final,
+              payment_method: this.paymentMethod,
+              payment_no: 1,
+              order_status: 'c1',
                 }
             }
             console.log(this.order_no,'order_no')
@@ -214,8 +280,7 @@ export default {
                 alert('주문완료');
             }
         },
-    
-  },
-};
+  }
+}
 </script>
 

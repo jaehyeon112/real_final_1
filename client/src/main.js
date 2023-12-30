@@ -1,11 +1,10 @@
 import { createApp } from "vue";
 import App from "./App.vue";
 import router from "./router";
-import mixins from "./mixins";
 import vuetify from './plugins/vuetify'
 import { loadFonts } from './plugins/webfontloader'
 import store from './store.js'
-import mixin from './mixin'
+import mixins from './mixins'
 import overlay from '@/module/Overlay.js'
 
 loadFonts()
@@ -18,7 +17,6 @@ createApp(App)
   .use(vuetify)
   .use(store)
   .use(overlay)
-  .mixin(mixin)
-  .mixins(mixins)
+  .mixin(mixins)
   .mount('#app')
 
