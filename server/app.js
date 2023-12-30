@@ -28,13 +28,6 @@ const storage = multer.diskStorage({
   filename: function (req, file, cb) {
     cb(null, new Date().valueOf() + path.basename(file.originalname));
   },
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-=======
->>>>>>> develop
-=======
 });
 
 const upload = multer({ storage: storage });
@@ -47,35 +40,6 @@ app.post("/photos", upload.array("photos", 12), (req, res) => {
 
 app.listen(3000, () => {
   console.log("재현 서버 on");
->>>>>>> 589b9ccc736b28c1e566e2991a83d21929e6909e
-});
-
-const upload = multer({ storage: storage });
-
-app.post("/photos", upload.array("photos", 12), (req, res) => {
-  for (let file of req.files) {
-    console.log(file);
-  }
-});
-
-app.listen(3000, () => {
-  console.log("재현 서버 on");
-<<<<<<< HEAD
->>>>>>> 589b9ccc736b28c1e566e2991a83d21929e6909e
-});
-
-const upload = multer({ storage: storage });
-
-app.post("/photos", upload.array("photos", 12), (req, res) => {
-  for (let file of req.files) {
-    console.log(file);
-  }
-});
-
-app.listen(3000, () => {
-  console.log("재현 서버 on");
-=======
->>>>>>> develop
 });
 
 app.get('/prod',async (req, res) => {
@@ -84,12 +48,7 @@ app.get('/prod',async (req, res) => {
 })
 app.get("/test", async (req, res) => {
   // 여기서 imagePath를 db에 저장하고 불러와야할듯...
-<<<<<<< HEAD
-
   const imagePath = "uploads\\1703574590403스페인식_감바스_상세페이지3.jpg";
-=======
-  const imagePath = "uploads\\1703396889842스크린샷 2023-11-12 215622.png";
->>>>>>> 589b9ccc736b28c1e566e2991a83d21929e6909e
   const absolutePath = path.join(__dirname, imagePath);
   res.sendFile(absolutePath);
 });
@@ -102,118 +61,43 @@ app.get("/show", async (req, res) => {
 app.get("/show/:no", async (req, res) => {
   let data = Number(req.params.no) * 6;
   let list = await mysql.query("test", "list2", data);
-<<<<<<< HEAD
-
-=======
-  res.send(list);
-});
-//시험용 멤버
-  app.get("/member/:id", async (req,res)=>{
-    let id = req.params.id;
-    let info= await mysql.query("member", "memberInfo", id);
-    res.send(info)
-  })
-
-//리뷰관련
-  //상세페이지에서 리뷰목록
-  app.get("/detailReview/:pno", async(request, response)=>{
-    let pno = request.params.prod_no
-    let list = await mysql.query('review','detailList',pno)[0]
-    res.send(list);
-  })
-
- //주문내역 관련
-  app.get("/orders/:id", async(req, res)=>{
-    let id = req.params.id
-    //let list = await mysql.query('orders', 'orderList', id);
-    // 가공
-    let list = await getOrderInfos(id);
-    res.send(list);
-  });
-
-  async function getOrderInfos(id){
-    let list = await mysql.query('orders', 'orderList', id); // group_concat 사용 쿼리
-    
-    let newList = list.map((info)=>{
-      let tempList = info.prod_name_list.split(',');
-      let newData = `${tempList[0]} 외 ${tempList.length-1}건`;
-      info.prod_name_list = newData;
-      return info;
-    })
-    return newList;
-  }
-   app.get("/ordersName/:ono/:id", async(req,res)=>{
-     let datas = [Number(req.params.ono),req.params.id]
-     let info = await mysql.query('orders', 'orderListCount',datas);
-     res.send(info);
-   })
-  //주문 상세내역
-  app.get("/orders/:ono/:id", async(req,res)=>{
-    let datas = [req.params.ono,req.params.id]
-    let list = await mysql.query('orders', 'detailOrderLists', datas);
-    res.send(list);
-  })
-  //-주문취소
-  app.delete('/orders/:ono/:id',async (req,res)=>{
-    let datas = [req.body.param.order_status, req.params[ono],req.params[id]];
-    let result = await mysql.query('orders','orderCancle',datas)
-    res.send(result)
-  })
-//추가 배송지 관련
-  app.get('/addDelivery/:id', async(req,res)=>{
-    let id = req.params.id;
-    const list = await mysql.query('delivery','deliveryList',id);
-    res.send(list);
-  })
-  //정보수정
-  app.put("/addDelivery/:dno/:id", async(req,res)=>{
-    let datas = [req.body.param, req.params[dno], req.params[id]]
-    let result =  await mysql.query('delivery', 'updateDelivery',datas);
-    res.send(result)
-  })
-  //정보삽입
-  const delTable = ['delivery_no','user_id','delivery_name','delivery_address','delivery_detail_address, delivery_postcode'];
-  app.post("/addDelivery", async(req,res)=>{
-    let data = req.body.param;
-    let delData = {};
-  for(let column of delTable){  
-    let value = data[column]; 
-    if(value == '') continue;
-    delData[column] = value;    
-  }
-    let result = await mysql.query('delivery', 'addDelivery')
-    res.send(result);
-  })
-  app.delete("/addDelivery", async(req,res)=>{
-    let result = await mysql.query('delivery', 'deleteDelivery')
-    res.send(result);
-  })
-
-  //찜하기 리스트
-    app.get("/like/:id",async(req,res)=>{
-      let id = req.params.id;
-      let list = await mysql.query('like', "likeList",id)
-      res.send(list);
-    })
-
-//쿠폰
-    app.get("/coupon/:id", async(req,res)=>{
-      let id = req.params.id;
-      let list = await mysql.query('coupon','myCoupon',id)
-      res.send(list);
-    })
-app.get("/user",async (req, res) => {
-  let list = await mysql.query("admin", "userList");
->>>>>>> 589b9ccc736b28c1e566e2991a83d21929e6909e
   res.send(list);
 });
 
-app.get("/prod",async (req, res) => {
-  let list = await mysql.query("admin", "prodList");
+
+app.get("/coupon/:id", async (req, res) => { // 쿠폰 리스트
+  let id = req.params.id;
+  let list = await mysql.query("test","couponList", id);
   res.send(list);
-<<<<<<< HEAD
- })
+});
+app.get("/point/:id", async (req, res) => {  // 포인트 리스트 
+  let id = req.params.id;
+  let list = await mysql.query("test","pointList", id);
   res.send(list);
+});
+
+app.get("/cartList/:id", async (req, res) => { //주문 리스트
+  let id = req.params.id;
+  let list = await mysql.query("test","cartList", id);
+  res.send(list);
+});
+
+app.get("/orderList/:id", async (req, res) => { // 주문완료 리스트
+  let id = req.params.id;
+  let list = await mysql.query("test","orderList", id);
+  res.send(list);
+});
+
+app.post("/orderInsert", async (request, res)=>{ // orders 등록
+  let data = request.body.param;
+  res.send((await mysql.query("test","orderInsert", data)));
+});
+
+app.post("/orderdetailInsert", async (request, res)=>{ // order_detail 등록
+  let data = request.body.param;
+  res.send((await mysql.query("orderInsert", data)));
+});
+
 app.get("/user/:order", async (req, res) => {
   let result = req.params.order;
   let data = await mysql.query("admin", "AlluserList",result);
@@ -263,9 +147,6 @@ app.post("/token", async(req, res)=> {
 })
 
 
-
-
-
 app.get("/user",async (req, res) => {
   let list = await mysql.query("admin", "userList");
   res.send(list);
@@ -296,127 +177,10 @@ app.get("/prod/:order/:startNo/:no",async (req, res) => {
 });
 
 app.get("/prods/:pno",async (req, res) => {
-
-  res.send(list);
-});
-//시험용 멤버
-  app.get("/member/:id", async (req,res)=>{
-    let id = req.params.id;
-    let info= await mysql.query("member", "memberInfo", id);
-    res.send(info)
-  })
-
-//리뷰관련
-  //상세페이지에서 리뷰목록
-  app.get("/detailReview/:pno", async(request, response)=>{
-    let pno = request.params.prod_no
-    let list = await mysql.query('review','detailList',pno)[0]
-    res.send(list);
-  })
-
- //주문내역 관련
-  app.get("/orders/:id", async(req, res)=>{
-    let id = req.params.id
-    //let list = await mysql.query('orders', 'orderList', id);
-    // 가공
-    let list = await getOrderInfos(id);
-    res.send(list);
-  });
-
-  async function getOrderInfos(id){
-    let list = await mysql.query('orders', 'orderList', id); // group_concat 사용 쿼리
-    
-    let newList = list.map((info)=>{
-      let tempList = info.prod_name_list.split(',');
-      let newData = `${tempList[0]} 외 ${tempList.length-1}건`;
-      info.prod_name_list = newData;
-      return info;
-    })
-    return newList;
-  }
-   app.get("/ordersName/:ono/:id", async(req,res)=>{
-     let datas = [Number(req.params.ono),req.params.id]
-     let info = await mysql.query('orders', 'orderListCount',datas);
-     res.send(info);
-   })
-  //주문 상세내역
-  app.get("/orders/:ono/:id", async(req,res)=>{
-    let datas = [req.params.ono,req.params.id]
-    let list = await mysql.query('orders', 'detailOrderLists', datas);
-    res.send(list);
-  })
-  //-주문취소
-  app.delete('/orders/:ono/:id',async (req,res)=>{
-    let datas = [req.body.param.order_status, req.params[ono],req.params[id]];
-    let result = await mysql.query('orders','orderCancle',datas)
-    res.send(result)
-  })
-//추가 배송지 관련
-  app.get('/addDelivery/:id', async(req,res)=>{
-    let id = req.params.id;
-    const list = await mysql.query('delivery','deliveryList',id);
-    res.send(list);
-  })
-  //정보수정
-  app.put("/addDelivery/:dno/:id", async(req,res)=>{
-    let datas = [req.body.param, req.params[dno], req.params[id]]
-    let result =  await mysql.query('delivery', 'updateDelivery',datas);
-    res.send(result)
-  })
-  //정보삽입
-  const delTable = ['delivery_no','user_id','delivery_name','delivery_address','delivery_detail_address, delivery_postcode'];
-  app.post("/addDelivery", async(req,res)=>{
-    let data = req.body.param;
-    let delData = {};
-  for(let column of delTable){  
-    let value = data[column]; 
-    if(value == '') continue;
-    delData[column] = value;    
-  }
-    let result = await mysql.query('delivery', 'addDelivery')
-    res.send(result);
-  })
-  app.delete("/addDelivery", async(req,res)=>{
-    let result = await mysql.query('delivery', 'deleteDelivery')
-    res.send(result);
-  })
-
-  //찜하기 리스트
-    app.get("/like/:id",async(req,res)=>{
-      let id = req.params.id;
-      let list = await mysql.query('like', "likeList",id)
-      res.send(list);
-    })
-
-//쿠폰
-    app.get("/coupon/:id", async(req,res)=>{
-      let id = req.params.id;
-      let list = await mysql.query('coupon','myCoupon',id)
-      res.send(list);
-    })
-app.get("/user",async (req, res) => {
-  let list = await mysql.query("admin", "userList");
-  res.send(list);
-});
-
-app.get("/prod",async (req, res) => {
-  let list = await mysql.query("admin", "prodList");
-  res.send(list);
-});
-
-app.get("/prod/:pno",async (req, res) => {
-
-=======
-});
-
-app.get("/prod/:pno",async (req, res) => {
->>>>>>> 589b9ccc736b28c1e566e2991a83d21929e6909e
   let data = req.params.pno;
   let result = await mysql.query("admin", "prodInfo",data);
   res.send(result);
 });
-
-<<<<<<< HEAD
 
 app.get("/prod/:startNo/:no",async (req, res) => {
   let datas = [Number(req.params.startNo)*Number(req.params.no),Number(req.params.no)];
@@ -424,8 +188,7 @@ app.get("/prod/:startNo/:no",async (req, res) => {
   res.send(result);
 });
 
-=======
->>>>>>> 589b9ccc736b28c1e566e2991a83d21929e6909e
+
 app.post("/prod",async (req, res) => {
   let data = req.body.param;
   let result = await mysql.query("admin","prodInsert",data);
@@ -448,8 +211,6 @@ app.get("/sum",async (req, res) => {
   let result = await mysql.query("admin", "monthsIncome");
   res.send(result);
 });
-
-<<<<<<< HEAD
 
 app.put("/user/:grade/:uid",async(req,res)=>{
   let data = [req.params.grade,req.params.uid];
@@ -494,11 +255,3 @@ app.get("/bothFilter/:first/:last/:A/:B/:no",async (req, res) => {
   let result = await mysql.query("test", "bothFilter", data);
   res.send(result)
 })
-
-=======
->>>>>>> 589b9ccc736b28c1e566e2991a83d21929e6909e
-app.put("/user/:uid",async(req,res)=>{
-  let data = req.params.uid;
-  let result = await mysql.query("admin","stopUser",data);
-  res.send(result);
-});
