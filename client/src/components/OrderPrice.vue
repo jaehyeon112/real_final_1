@@ -20,6 +20,7 @@
       <hr>
       <p>최종 결제금액<span style="color: red; font-size: 40px;">{{ final }} 원</span></p>
       <span class="a">적립 </span><span class="b">구매 시 </span><span class="b">{{ savePoint }} 원 </span>
+      <p></p>
     </v-card>
   </v-container>
 </template>
