@@ -15,11 +15,22 @@ export default {
   name: "main",
   component: main,
 
-  children: [
-    {
+  children: [{
       path: "main",
       name: "realmain",
       component: realmain,
+    },
+    {
+      path: "menu/:category",
+      name: "menuCategory",
+      props: true,
+      component: menu,
+    },
+    {
+      path: "menu/:category/:type",
+      name: "menuCategory2",
+      props: true,
+      component: menu,
     },
     {
       path: "menu",
@@ -27,43 +38,43 @@ export default {
       component: menu,
     },
 
-  //h
+    //h
     {
       path: "login",
       name: "login",
       component: login,
     },
-  
+
     {
       path: "join",
       name: "join",
       component: join
     },
-  
+
     {
       path: "finding",
       name: "finding",
       component: finding
     },
-  
+
     {
       path: "withdrawal",
       name: "withdrawal",
       component: withdrawal
     },
-  
+
     {
       path: "emailnum",
       name: "emailnum",
       component: emailnum
     },
-  
+
     {
       path: "putpass",
       name: "putpass",
       component: putpass
     },
-  
+
     {
       path: "test",
       name: "test",
