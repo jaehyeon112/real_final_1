@@ -74,13 +74,9 @@ app.get("/user/:order", async (req, res) => {
 app.get("/user/:order/:startNo/:no",async (req, res) => {
   let data = [req.params.order,Number(req.params.startNo)*Number(req.params.no),Number(req.params.no)];
   let list = await mysql.query("admin", "userList",data);
-<<<<<<< HEAD
   res.send(list);
 });
 
-=======
-})
->>>>>>> develop
 
 // 회원가입 - 아이디 중복체크용
 app.get("/join-id/:id", async(req, res)=> {
