@@ -10,7 +10,7 @@ import emailnum from "../views/PutEmailNum.vue";
 import putpass from "../views/PutPassword.vue";
 import test from "../views/test.vue";
 import myPage from "@/views/MyPage.vue";
-import detailPage from "@/views/DetailPage.vue";
+import detailPage from "@/views/detailPage.vue";
 import orderList from "@/components/MyPage/orderList.vue";
 import detailOrder from "@/components/MyPage/orderDetail.vue";
 import like from  "@/components/MyPage/likeBasket.vue";
