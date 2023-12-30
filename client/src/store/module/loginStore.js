@@ -14,8 +14,8 @@ const loginStore = {
     //payload - 순수 data
     mutations : {
         loginSuccess : function(state, payload){
-            state.isLogin = true;
             state.userInfo = payload;
+            state.isLogin = true;
         },
 
         logoutTest : function(state){

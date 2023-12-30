@@ -84,23 +84,25 @@ export default {
 
 //Login 버튼
 async doLogin(){
-let ipList = await axios.get(`/api/dologin`)  
+  if(this.user_id == "" || this.user_password==""){
+    alert(`아이디와 비밀번호 모두 입력해`)
+    return;
+  }
+
+let ipList = await axios.get(`/api/dologin/${this.user_id}/${this.user_password}`)  
                 .catch(err => console.log(err));
      let users = ipList.data;
-       console.log(users);
-       console.log("users: " + users);
-       console.log("ipList: " + ipList);
-
-if(this.user_id == "" || this.user_password==""){
-  alert(`아이디와 비밀번호 모두 입력해`);}
-
+     
+       
+       if(users == ''){
+        alert('아디 비번 확인;')
+        return;
+       }else{
+         alert(users[0].user_name +'님 환영합니다');
+       }
  
 
-const saveData = {}
-let test = 0;
-saveData.user_id = this.user_id
-saveData.user_password = this.user_password
-this.$store.dispatch('login',test, saveData) // (함수명, 전달인자)
+this.$store.commit('login',users[0]) // (함수명, 전달인자)
 
 
  this.$router.push({name : 'realmain'}); // 메인화면으로

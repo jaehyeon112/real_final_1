@@ -2,16 +2,10 @@
   <div>
     <ul class="nav justify-content-end" id="nav">
       <li class="nav-item">
-        <router-link class="nav-link" to="/join">회원가입 </router-link>
+        <span class="nav-link login" @click="loginOrMypage"  >{{ $store.state.user.user_id != null ? $store.state.user.user_name + '님' : '로그인' }}</span>
       </li>
       <li class="nav-item">
-        <router-link class="nav-link" to="/myPage">님</router-link>
-      </li>
-      <li class="nav-item">
-        <router-link class="nav-link" to="/login">로그인</router-link>
-      </li>
-      <li class="nav-item">
-        <router-link class="nav-link" to="/logout">로그아웃</router-link>
+        <span class="nav-link login" @click="logoutOrJoin" >{{ $store.state.user.user_id != null ? '로그아웃' : "회원가입"}}</span>
       </li>
     </ul>
 
@@ -36,19 +30,20 @@
         </div>
         <div class="col-1" style="width: 45px; padding-top: 15px">
           <router-link to="/">
-            <!-- 장바구니 갯수 조절해야함 -->
-            <v-badge color="error" content="0">
+            <!-- 알람 갯수 조절해야함 -->
+            <v-badge color="error" content='0'>
               <span class="mdi mdi-bell-outline" style="font-size: 30px"></span>
             </v-badge>
           </router-link>
         </div>
         <div class="col-1" style="padding-top: 15px">
-          <router-link to="/">
-            <!-- 알람 갯수 조절해야함 -->
-            <v-badge color="error" content="0">
+          <span @click="what">
+            
+            <!-- 장바구니 갯수 조절해야함 -->
+            <v-badge color="error" :content='$store.state.cart.length'>
               <span class="mdi mdi-cart-minus" style="font-size: 30px"></span>
             </v-badge>
-          </router-link>
+          </span>
         </div>
       </div>
     </div>
@@ -70,7 +65,9 @@
       >
         <div class="col"></div>
         <div class="col">
+          
           <category id="ca" />
+        
         </div>
         <div class="col">
           <router-link class="nav-custom" to="/">소개</router-link>
@@ -108,6 +105,37 @@ export default {
     window.removeEventListener("scroll", this.handleScroll);
   },
   methods: {
+    loginOrMypage(){
+      console.log(this.$store.state.user.user_id + "아이디 값은?")
+      if(this.$store.state.user.user_id ==null){
+        this.$router.push("/login")
+      }else{
+        this.$router.push('/myPage') // 마이페이지?
+      }
+    },
+    logoutOrJoin(){
+      if(this.$store.state.user.user_id == null){
+        this.$router.push("/join")
+      }else{
+        
+        this.logout();
+        
+      }
+
+
+    },
+    logout(){
+      alert('로그아웃 되었습니다~')
+      this.$store.commit('logout');
+    },
+  what(){
+    const cartItems = this.$store.state.cart;
+    let total = [];
+    for(let i = 0; i < cartItems.length; i++){
+      total.push(cartItems[i].prod_name + cartItems[i].quantity + '개 장바구니');
+    }
+    alert(total)
+  },
     handleScroll() {
       const windowScroll = window.scrollY;
 
@@ -121,11 +149,12 @@ export default {
 };
 </script>
 
-<style scope>
-#nav > li > a {
+<style scoped>
+.login {
   color: #bbb;
   font-size: 12px;
   font-weight: 600;
+  cursor: pointer;
 }
 
 input {
