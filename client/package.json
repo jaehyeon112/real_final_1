@@ -17,6 +17,7 @@
     "vue": "^3.2.13",
     "vue-chartjs": "^5.3.0",
     "vue-router": "^4.0.3",
+    "vue-session": "^1.0.0",
     "vue3-loading-overlay": "^0.0.0",
     "vuetify": "^3.4.8",
     "vuex-persistedstate": "^4.1.0",
