@@ -57,7 +57,7 @@
     },
     methods: {
         getDateFormat(date) {
-            return this.$dateFormat(date);
+            return this.$dateFormat(date, 'yyyy-MM-dd');
         },
         updateInputValue() {
       let totalDiscountPrice = this.cartList.reduce(

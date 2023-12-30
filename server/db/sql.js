@@ -1,24 +1,37 @@
 let test = {
   list: `select * from  product`,
   list2 : `select * from product limit ? , 6`,
+  // 장바구니 리스트
   cartList : `select distinct * 
               from cart c, product p, user u
               WHERE cart_checkbox = 1 AND c.user_id = u.user_id AND p.prod_no = c.prod_no AND c.user_id = ?
               order by cart_no`,
+  // 장바구니 체크 리스트 
+  cartCheckList : `select distinct *
+              from cart c, product p, user u
+              WHERE cart_checkbox = 1 AND c.user_id = u.user_id AND p.prod_no = c.prod_no AND c.user_id = ?
+              order by cart_no`,
+
+  // 장바구니 체크박스 선택하면 업데이트되게 구현
   CheckboxUpdate : `UPDATE cart SET ? WHERE cart_no = ?`,
+  // 쿠폰 리스트
   couponList : `select a.coupon_no, start_coupon, end_coupon, coupon_name, coupon_content, coupon_discount_rate
                 from coupon a left join user b on(a.user_id = b.user_id) 
                 left join couponinfo c on(a.couponinfo_no = c.couponinfo_no)
                 where a.user_id = ?`,
+  // 포인트 리스트
   pointList : `select *
                from user
                where user_id = ?`,
+  // 주문 리스트
   orderList : `select distinct * 
                from orders o, product p, user u
                where o.user_id = u.user_id AND prod_no = '1' AND o.user_id = ?
                order by order_no`,
-  orderInsert : `insert into orders set?`,
-  orderdetailInsert : `insert into order_detail set?`,
+  // 주문하고난 후 orders 테이블  등록
+  orderInsert : `insert into orders set ?`,
+  // 주문하고난 후 order_detail 테이블  등록
+  orderdetailInsert : `insert into order_detail set ?`,
   categoryList : `select * from where ?? = ?`,
   wordFilterPage : `select * from product where  prod_name >= ? and prod_name < ?`,
   wordFilter : `select * from product where  prod_name >= ? and prod_name < ? limit ? , 6`,

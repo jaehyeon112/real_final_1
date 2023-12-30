@@ -95,7 +95,7 @@ app.post("/orderInsert", async (request, res)=>{ // orders 등록
 
 app.post("/orderdetailInsert", async (request, res)=>{ // order_detail 등록
   let data = request.body.param;
-  res.send((await mysql.query("orderInsert", data)));
+  res.send((await mysql.query("test", "orderdetailInsert", data)));
 });
 
 app.get("/user/:order", async (req, res) => {

@@ -4,7 +4,7 @@ import router from "./router";
 import vuetify from './plugins/vuetify'
 import { loadFonts } from './plugins/webfontloader'
 import store from './store.js'
-import mixins from './mixins'
+import mixin from './mixin'
 import overlay from '@/module/Overlay.js'
 
 loadFonts()
@@ -17,6 +17,6 @@ createApp(App)
   .use(vuetify)
   .use(store)
   .use(overlay)
-  .mixin(mixins)
+  .mixin(mixin)
   .mount('#app')
 

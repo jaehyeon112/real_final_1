@@ -181,8 +181,6 @@ export default {
       this.zip = zip
       this.addr1 = addr1
       this.addr2 = addr2
-
-      console.log(this.zip,this.addr1,this.addr2,'주소')
     },
     orderNumber() {
       let date = new Date();
@@ -194,92 +192,109 @@ export default {
         let minutes = date.getMinutes();
         let seconds = date.getSeconds();
         this.Number = year + month + day + hours + minutes + seconds + parseInt(Math.random() * 100000) + 100000 ;
-        //
-        console.log(this.Number);
     },
     async selectedPayMethod(paymentMethod) {
-          this.orderNumber();
+         this.orderNumber();
 
-          // 상품 정보 설정
-          let prodName = '';
-          if (this.cartList.length > 0) {
-            prodName = this.cartList[0].prod_name + '외' + (this.cartList.length - 1) + '건';
+                // 상품 정보 설정
+                let prodName = '';
+                if (this.cartList.length > 0) {
+                  prodName = this.cartList[0].prod_name + '외' + (this.cartList.length - 1) + '건';
+                } else {
+                  prodName = this.cartList[0].prod_name;
+                }
+
+        // 결제 정보 설정
+        let paymentInfo = {
+          pg: '', //pg사
+          pay_method: paymentMethod, //결제방법
+          name: prodName, //상품이름
+          merchant_uid: this.Number, //주문번호
+          amount: this.final, // 최종결제금액
+          buyer_name: this.$store.state.user.user_name, //결제이름
+          buyer_tel: this.$store.state.user.user_tel, // 결제전화번호
+          buyer_email: this.$store.state.user.user_email, //결제이메일
+        };
+
+        // 선택한 결제 방법에 따라 결제 정보 설정
+        if (paymentMethod === 'kakaopay') {
+          this.paymentMethod = 'h1'
+          paymentInfo.pg = 'kakaopay';
+          paymentInfo.pay_method = '카카오페이';
+        } else if (paymentMethod === 'toss') {
+          this.paymentMethod = 'h2'
+          paymentInfo.pg = 'tosspay';
+          paymentInfo.pay_method = '토스';
+        } else if (paymentMethod === '0') {
+          this.orderInsert(); // 바로 주문 처리
+          alert('결제완료');
+          return; // 아임포트 응답 처리하지 않고 함수 종료
+        }
+        
+        let iamport = window.IMP;
+        iamport.init('imp61344571'); // 아임포트에서 발급받은 가맹점 식별코드 입력
+
+        iamport.request_pay(paymentInfo, (response) => {
+          if (response.success) {
+            // 결제 완료 처리
+            this.orderInsert();
+            this.orderdetailInsert(orderno);
           } else {
-            prodName = this.cartList[0].prod_name;
+            // 결제 실패 처리
+            alert('결제에 실패했습니다.');
           }
+        });
+      },
 
-  // 결제 정보 설정
-  let paymentInfo = {
-    pg: '', //pg사
-    pay_method: paymentMethod, //결제방법
-    name: prodName, //상품이름
-    merchant_uid: this.Number, //주문번호
-    amount: this.final, // 최종결제금액
-    buyer_name: this.$store.state.user.user_name, //결제이름
-    buyer_tel: this.$store.state.user.user_tel, // 결제전화번호
-    buyer_email: this.$store.state.user.user_email, //결제이메일
-  };
-
-  // 선택한 결제 방법에 따라 결제 정보 설정
-  if (paymentMethod === 'kakaopay') {
-    this.paymentMethod = 'h1'
-    paymentInfo.pg = 'kakaopay';
-    paymentInfo.pay_method = '카카오페이';
-  } else if (paymentMethod === 'toss') {
-    this.paymentMethod = 'h2'
-    paymentInfo.pg = 'tosspay';
-    paymentInfo.pay_method = '토스';
-  } else if (paymentMethod === 'kg') {
-    this.paymentMethod = 'h3'
-    paymentInfo.pg = 'html5_inicis';
-    paymentInfo.pay_method = '신용카드';
-  }
-  
-  let iamport = window.IMP;
-  iamport.init('imp61344571'); // 아임포트에서 발급받은 가맹점 식별코드 입력
-
-  iamport.request_pay(paymentInfo, (response) => {
-    if (response.success) {
-      // 결제 완료 처리
-      this.orderInsert()
-    } else {
-      // 결제 실패 처리
-      alert('결제에 실패했습니다.');
-    }
-  });
-},
-
-async orderInsert(){
+async orderInsert(){ // orders 테이블 등록
         this.orderNumber();
             let obj = {
                 param : {
                     order_no: this.Number,
-              user_id: this.$store.state.user.user_id,
-              delivery_charge: this.delivery,
-              recipient: this.$store.state.user.user_name,
-              recipient_address: this.addr1,
-              recipient_detail_address: this.addr2,
-              recipient_tel: this.$store.state.user.user_tel,
-              recipient_postcode: this.zip,
-              total_payment: this.discount,
-              coupon_discount_rate: this.couponRate,
-              point_use: this.point,
-              point_save_rate: 0,
-              point_save: 0,
-              real_payment: this.final,
-              payment_method: this.paymentMethod,
-              payment_no: 1,
-              order_status: 'c1',
+                    user_id: this.$store.state.user.user_id,
+                    delivery_charge: this.delivery,
+                    recipient: this.$store.state.user.user_name,
+                    recipient_address: this.addr1,
+                    recipient_detail_address: this.addr2,
+                    recipient_tel: this.$store.state.user.user_tel,
+                    recipient_postcode: this.zip,
+                    total_payment: this.discount,
+                    coupon_discount_rate: this.couponRate,
+                    point_use: this.pointInput,
+                    point_save_rate: 0,
+                    point_save: 0,
+                    real_payment: this.final,
+                    payment_method: this.paymentMethod,
+                    payment_no: 1,
+                    order_status: 'c1',
+                  }
                 }
-            }
-            console.log(this.order_no,'order_no')
-            let result = await axios.post("/api/orderInsert", obj)
+                let result = await axios.post("/api/orderInsert", obj)
                                .catch(err => console.log(err));
-            
-            if(result.data.insertId > 0){
-                alert('주문완료');
+            if(result.config.data != null){
+              this.orderdetailInsert(obj.param.order_no)
             }
-        },
+    
+  },
+  async orderdetailInsert(orderno){ // ordersdetail 테이블 등록 부분
+             // 상품 정보를 반복해서 처리하는 부분
+             for (let i = 0; i < this.cartList.length; i++) {
+                let Obj = {
+                  param : {
+                    order_no: orderno,
+                    prod_no: this.cartList[i].prod_no,
+                    order_quantity: this.cartList[i].quantity,
+                    prod_discount_price: this.cartList[i].discount_price,
+                    prod_discount_rate: this.cartList[i].discount_rate,
+                    order_detail_code: '1'
+                  }
+                };
+                console.log(this.order_no,'확인디테일')
+                let result = await axios.post("/api/orderDetailInsert", Obj)
+                                        .catch(err => console.log(err));
+                console.log(result);
+    }
+  }
   }
 }
 </script>
