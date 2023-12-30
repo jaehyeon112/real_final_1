@@ -39,7 +39,6 @@
         :final="final"/>
       </v-col>
     </v-row>
-    {{ selectedPayMethod }}
     </v-container>
 </template>
 <script>
@@ -204,21 +203,21 @@ export default {
           // 상품 정보 설정
           let prodName = '';
           if (this.cartList.length > 0) {
-            prodName = this.cartList[0].prod_name + '외' + this.cartList.length + '건';
+            prodName = this.cartList[0].prod_name + '외' + (this.cartList.length - 1) + '건';
           } else {
             prodName = this.cartList[0].prod_name;
           }
 
   // 결제 정보 설정
   let paymentInfo = {
-    pg: '',
-    pay_method: paymentMethod,
-    name: prodName,
-    merchant_uid: this.Number,
-    amount: this.final,
-    buyer_name: this.$store.state.user.user_name,
-    buyer_tel: this.$store.state.user.user_tel,
-    buyer_email: this.$store.state.user.user_email,
+    pg: '', //pg사
+    pay_method: paymentMethod, //결제방법
+    name: prodName, //상품이름
+    merchant_uid: this.Number, //주문번호
+    amount: this.final, // 최종결제금액
+    buyer_name: this.$store.state.user.user_name, //결제이름
+    buyer_tel: this.$store.state.user.user_tel, // 결제전화번호
+    buyer_email: this.$store.state.user.user_email, //결제이메일
   };
 
   // 선택한 결제 방법에 따라 결제 정보 설정
@@ -249,6 +248,7 @@ export default {
     }
   });
 },
+
 async orderInsert(){
         this.orderNumber();
             let obj = {
