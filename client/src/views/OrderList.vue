@@ -220,11 +220,15 @@ export default {
         if (paymentMethod === 'kakaopay') {
           this.paymentMethod = 'h1'
           paymentInfo.pg = 'kakaopay';
-          paymentInfo.pay_method = '카카오페이';
+          paymentInfo.pay_method = paymentMethod;
         } else if (paymentMethod === 'toss') {
           this.paymentMethod = 'h2'
           paymentInfo.pg = 'tosspay';
-          paymentInfo.pay_method = '토스';
+          paymentInfo.pay_method = paymentMethod;
+        } else if (paymentMethod === 'kg') {
+          this.paymentMethod = 'h3'
+          paymentInfo.pg = 'html5_inicis';
+          paymentInfo.pay_method = paymentMethod;
         } else if (paymentMethod === '0') {
           this.orderInsert(); // 바로 주문 처리
           alert('결제완료');
@@ -241,7 +245,8 @@ export default {
             this.orderdetailInsert(orderno);
           } else {
             // 결제 실패 처리
-            alert('결제에 실패했습니다.');
+            alert('결제 취소했습니다. 장바구니로 다시 이동합니다.');
+            this.$router.replace("/cartList")
           }
         });
       },
@@ -271,6 +276,7 @@ async orderInsert(){ // orders 테이블 등록
                 }
                 let result = await axios.post("/api/orderInsert", obj)
                                .catch(err => console.log(err));
+            this.$router.replace("/orderSuccess")
             if(result.config.data != null){
               this.orderdetailInsert(obj.param.order_no)
             }
