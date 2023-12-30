@@ -30,10 +30,25 @@
         </div>
         <div class="col-1" style="width: 45px; padding-top: 15px">
           <router-link to="/">
+<<<<<<< HEAD
             <!-- 알람 갯수 조절해야함 -->
             <v-badge color="error" content='0'>
               <span class="mdi mdi-bell-outline" style="font-size: 30px"></span>
             </v-badge>
+=======
+            <!-- 장바구니 갯수 조절해야함 -->
+            <v-badge color="error" content="0">
+              <span class="mdi mdi-bell-outline" style="font-size: 30px"></span>
+            </v-badge>
+          </router-link>
+        </div>
+        <div class="col-1" style="padding-top: 15px">
+          <router-link to="/">
+            <!-- 알람 갯수 조절해야함 -->
+            <v-badge color="error" content="0">
+              <span class="mdi mdi-cart-minus" style="font-size: 30px"></span>
+            </v-badge>
+>>>>>>> 589b9ccc736b28c1e566e2991a83d21929e6909e
           </router-link>
         </div>
         <div class="col-1" style="padding-top: 15px">
@@ -65,9 +80,13 @@
       >
         <div class="col"></div>
         <div class="col">
+<<<<<<< HEAD
           
           <category id="ca" />
         
+=======
+          <category id="ca" />
+>>>>>>> 589b9ccc736b28c1e566e2991a83d21929e6909e
         </div>
         <div class="col">
           <router-link class="nav-custom" to="/">소개</router-link>
@@ -79,7 +98,7 @@
           <router-link class="nav-custom" to="/">리뷰</router-link>
         </div>
         <div class="col">
-          <router-link class="nav-custom" to="/">마이페이지</router-link>
+          <router-link class="nav-link" to="/myPage">마이페이지</router-link>
         </div>
         <div class="col"></div>
       </div>
@@ -105,6 +124,7 @@ export default {
     window.removeEventListener("scroll", this.handleScroll);
   },
   methods: {
+<<<<<<< HEAD
     loginOrMypage(){
       console.log(this.$store.state.user.user_id + "아이디 값은?")
       if(this.$store.state.user.user_id ==null){
@@ -136,6 +156,8 @@ export default {
     }
     alert(total)
   },
+=======
+>>>>>>> 589b9ccc736b28c1e566e2991a83d21929e6909e
     handleScroll() {
       const windowScroll = window.scrollY;
 
@@ -149,8 +171,13 @@ export default {
 };
 </script>
 
+<<<<<<< HEAD
 <style scoped>
 .login {
+=======
+<style scope>
+#nav > li > a {
+>>>>>>> 589b9ccc736b28c1e566e2991a83d21929e6909e
   color: #bbb;
   font-size: 12px;
   font-weight: 600;

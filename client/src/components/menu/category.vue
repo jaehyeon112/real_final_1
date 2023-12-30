@@ -9,9 +9,12 @@
     <div v-if="showCategory" class="category-list">
       <!-- 카테고리?  -->
       <ul>
+<<<<<<< HEAD
         <li class="test">
           <router-link class="nav-custom" to="/menu">전체상품</router-link>
         </li>
+=======
+>>>>>>> 589b9ccc736b28c1e566e2991a83d21929e6909e
         <li
           @mouseenter="showSecondCategoryList"
           @mouseleave="hideSecondCategoryList"
@@ -26,9 +29,13 @@
         <li class="test">
           <router-link class="nav-custom" to="/">베스트</router-link>
         </li>
+<<<<<<< HEAD
         <li class="test"
         @mouseenter="showSecondCategoryList2"
           @mouseleave="hideSecondCategoryList2">
+=======
+        <li class="test">
+>>>>>>> 589b9ccc736b28c1e566e2991a83d21929e6909e
           <router-link class="nav-custom" to="/">갑자기 땡긴다면?</router-link>
         </li>
         <li class="test">
@@ -42,7 +49,11 @@
     <div
       v-if="showSecondCategory"
       class="category-list second-category-list"
+<<<<<<< HEAD
       style="position: absolute; left: 220px"
+=======
+      style="position: absolute; left: 200px"
+>>>>>>> 589b9ccc736b28c1e566e2991a83d21929e6909e
       @mouseenter="showSecondCategoryList"
       @mouseleave="hideSecondCategoryList"
     >
@@ -52,11 +63,19 @@
             ><span style="width: 300px">전체</span></router-link
           >
         </li>
+<<<<<<< HEAD
         <li class="test" @click="go">
           양식
         </li>
         <li class="test">
           <router-link to="/menu" @cilck="go">한식</router-link>
+=======
+        <li class="test">
+          <router-link to="/">양식</router-link>
+        </li>
+        <li class="test">
+          <router-link to="/">한식</router-link>
+>>>>>>> 589b9ccc736b28c1e566e2991a83d21929e6909e
         </li>
         <li class="test">
           <router-link to="/">중 일식</router-link>
@@ -69,6 +88,7 @@
         </li>
       </ul>
     </div>
+<<<<<<< HEAD
     <div
       v-if="showSecondCategory2"
       class="category-list second-category-list"
@@ -91,6 +111,8 @@
         </li>
       </ul>
     </div>
+=======
+>>>>>>> 589b9ccc736b28c1e566e2991a83d21929e6909e
   </div>
 </template>
 
@@ -100,6 +122,7 @@ export default {
     return {
       showCategory: false,
       showSecondCategory: false,
+<<<<<<< HEAD
       showSecondCategory2 : false,
       maincategory : ''
     };
@@ -110,6 +133,11 @@ export default {
       this.$router.push({path: '/menu'})
     },
 
+=======
+    };
+  },
+  methods: {
+>>>>>>> 589b9ccc736b28c1e566e2991a83d21929e6909e
     showCategoryList() {
       this.showCategory = true;
     },
@@ -123,12 +151,15 @@ export default {
     hideSecondCategoryList() {
       this.showSecondCategory = false;
     },
+<<<<<<< HEAD
     showSecondCategoryList2() {
       this.showSecondCategory2 = true;
     },
     hideSecondCategoryList2() {
       this.showSecondCategory2 = false;
     },
+=======
+>>>>>>> 589b9ccc736b28c1e566e2991a83d21929e6909e
   },
 };
 </script>
@@ -178,7 +209,10 @@ input {
   width: 200px;
   background-color: #fff;
   position: absolute;
+<<<<<<< HEAD
   left:30px;
+=======
+>>>>>>> 589b9ccc736b28c1e566e2991a83d21929e6909e
   text-align: justify;
 }
 .category-list > ul {
@@ -206,6 +240,7 @@ a {
 .test:hover a {
   color: orange;
 }
+<<<<<<< HEAD
 li {
   text-decoration: none;
   color: black;
@@ -213,4 +248,6 @@ li {
 .test:hover li {
   color: orange;
 }
+=======
+>>>>>>> 589b9ccc736b28c1e566e2991a83d21929e6909e
 </style>

@@ -8,16 +8,23 @@
               <div class="row g-3">
     
                 <div class="col-12">
+<<<<<<< HEAD
                   <label for="prod_name" class="form-label">상품명 <icon/></label>
                   <div class="input-group has-validation" v-if="this.prodNo==null">
                     <input type="text" v-model="prod.prod_name" class="form-control" id="prod_name" required>
                   </div>
                   <div class="input-group has-validation" v-else>
                     <input type="text" v-model="prod.prod_name" class="form-control" id="prod_name" required readonly>
+=======
+                  <label for="prod_name" class="form-label">상품명</label>
+                  <div class="input-group has-validation">
+                    <input type="text" v-model="prod.prod_name" class="form-control" id="prod_name" placeholder="" required>
+>>>>>>> 589b9ccc736b28c1e566e2991a83d21929e6909e
                   </div>
                 </div>
     
                 <div class="col-sm-6">
+<<<<<<< HEAD
                   <label for="price" class="form-label">원가 <icon/></label>
                   <input v-if="this.prodNo==null" type="number" v-model.number="prod.price" class="form-control" id="prod_name" required>
                   <input v-else type="number" v-model.number="prod.price" class="form-control" id="prod_name" required readonly>
@@ -32,11 +39,29 @@
                   <label for="stock" class="form-label">재고 <icon/></label>
                   <input v-if="this.prodNo==null" type="number" v-model.number="prod.stock" class="form-control" id="stock" placeholder="" value="" required>
                   <input v-else type="number" v-model.number="prod.stock" class="form-control" id="stock" placeholder="" value="" required>
+=======
+                  <label for="price" class="form-label">가격</label>
+                  <input type="number" v-model="prod.price" class="form-control" id="prod_name" placeholder="" value="" required>
+                </div>
+    
+                <div class="col-sm-6">
+                  <label for="discount_price" class="form-label">할인 가격</label>
+                  <input type="number" v-model="prod.discount_price" class="form-control" id="price" placeholder="" value="">
+                </div>
+    
+                <div class="col-sm-6">
+                  <label for="stock" class="form-label">재고</label>
+                  <input type="number" v-model="prod.stock" class="form-control" id="stock" placeholder="" value="" required>
+>>>>>>> 589b9ccc736b28c1e566e2991a83d21929e6909e
                 </div>
     
                 <div class="col-sm-6">
                   <label for="cooking_time" class="form-label">조리 시간</label>
+<<<<<<< HEAD
                   <input type="number" v-model.number="prod.cooking_time" class="form-control" id="cooking_time" placeholder="" value="">
+=======
+                  <input type="number" v-model="prod.cooking_time" class="form-control" id="cooking_time" placeholder="" value="">
+>>>>>>> 589b9ccc736b28c1e566e2991a83d21929e6909e
                 </div>
     
                 <div class="col-12">
@@ -54,7 +79,11 @@
                 </div> -->
     
                 <div class="col-md-5">
+<<<<<<< HEAD
                   <label for="main_category" class="form-label">메인 카테고리 <icon/></label>
+=======
+                  <label for="main_category" class="form-label">메인 카테고리</label>
+>>>>>>> 589b9ccc736b28c1e566e2991a83d21929e6909e
                   <select v-model="prod.main_category" class="form-select" id="main_category" required>
                     <option value="">선택하세요</option>
                     <option value="e1">한식</option>
@@ -76,7 +105,11 @@
                   </select>
                 </div>
               </div>
+<<<<<<< HEAD
               <div v-if="this.prodNo==null" class="my-3">
+=======
+              <div class="my-3">
+>>>>>>> 589b9ccc736b28c1e566e2991a83d21929e6909e
                 <div class="form-check">
                   <input v-model="prod.refrigeration" value="g1" name="paymentMethod" type="radio" class="form-check-input" required>
                   <label class="form-check-label" for="credit">냉동</label>
@@ -87,8 +120,13 @@
                 </div>
               </div>
               <div id="buttonBox">
+<<<<<<< HEAD
                 <v-btn @click="refresh">초기화</v-btn>
                 <v-btn @click="saveProd()">저장하기</v-btn>
+=======
+                <button @click="refresh">초기화</button>
+                <button @click="saveProd()">저장하기</button>
+>>>>>>> 589b9ccc736b28c1e566e2991a83d21929e6909e
               </div>
             </div>
     </main>
@@ -98,7 +136,10 @@
     <script>
     import axios from 'axios';
     import side from '../admin/SideBar.vue';
+<<<<<<< HEAD
     import icon from '../admin/icon.vue';
+=======
+>>>>>>> 589b9ccc736b28c1e566e2991a83d21929e6909e
       export default {
         data(){
           return{
@@ -112,8 +153,12 @@
                 allergy : '',
                 main_category : '',
                 sub_category : '',
+<<<<<<< HEAD
                 refrigeration : 'g1',
                 discount_rate : '',
+=======
+                refrigeration : ''
+>>>>>>> 589b9ccc736b28c1e566e2991a83d21929e6909e
               }
           }
         },
@@ -128,7 +173,11 @@
             this.$router.push({name : 'product'});
           },
           async prodUpdateList(){
+<<<<<<< HEAD
             let result = await axios.get(`/api/prods/${this.prodNo}`).catch(err=>console.log(err));
+=======
+            let result = await axios.get(`/api/prod/${this.prodNo}`).catch(err=>console.log(err));
+>>>>>>> 589b9ccc736b28c1e566e2991a83d21929e6909e
             this.prod = (result.data)[0];
           },
           saveProd(){
@@ -145,6 +194,7 @@
                     "main_category" : this.prod.main_category,
                     "sub_category" : this.prod.sub_category,
                     "cooking_time" : this.prod.cooking_time,
+<<<<<<< HEAD
                     "allergy" : this.prod.allergy,
                     "discount_rate" : Math.floor((1-(this.prod.discount_price/this.prod.price))*100)
                 }
@@ -154,11 +204,20 @@
               if(result.data.affectedRows > 0){
                 alert('수정성공!');
                 this.$router.push({name : 'prodList'});
+=======
+                    "allergy" : this.prod.allergy
+                }
+              }
+              let result = await axios.put(`/api/prod/${this.prodNo}`,datas).catch(err=>console.log(err));
+              if(result.data.affectedRows > 0){
+                alert('수정성공!');
+>>>>>>> 589b9ccc736b28c1e566e2991a83d21929e6909e
               }else{
                   alert('수정 실패')
               }
           },
           async insertProduct(){
+<<<<<<< HEAD
             this.prod.discount_rate = Math.floor((1-(this.prod.discount_price/this.prod.price))*100);
             let data = {
               param : this.prod
@@ -181,6 +240,21 @@
         components : {
         side,
         icon
+=======
+            let data = {
+              param : this.prod
+            }
+            let result = await axios.post(`/api/prod`,data).catch(err=>console.log(err));
+            if(result.data.affectedRows > 0){
+                alert('등록성공!');
+              }else{
+                  alert('등록 실패')
+              }
+          }
+        },
+        components : {
+        side
+>>>>>>> 589b9ccc736b28c1e566e2991a83d21929e6909e
         }
     }
     </script>

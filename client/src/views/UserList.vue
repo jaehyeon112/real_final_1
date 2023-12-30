@@ -1,9 +1,13 @@
 <template>
+<<<<<<< HEAD
 <list @changeemit="changeChildData" @search="search">
     <template #filterSearch>
         <div><a @click="this.order='user_id'">기본순 | </a><a @click="this.order='join_date'">가입날짜순 | </a><a @click="this.order='user_grade'">등급 높은순</a></div>
     </template>
     <template #dataList>
+=======
+<list #dataList>
+>>>>>>> 589b9ccc736b28c1e566e2991a83d21929e6909e
     <thead>
         <tr>
             <th>회원 아이디</th>
@@ -22,6 +26,7 @@
             <td>{{ user.user_email }}</td>
             <td>{{ user.user_tel }}</td>
             <td>{{ dateFormat(user.join_date,'yyyy년 MM월 dd일') }}</td>
+<<<<<<< HEAD
 
             <td v-if="user.user_grade=='i6'">사용정지 회원</td>
             <td v-else-if="user.user_grade=='i1'">일반 회원</td>
@@ -46,10 +51,18 @@
 </template>
 </list>
 
+=======
+            <td>{{ user.user_grade }}</td>
+            <td><v-btn>이용 제한</v-btn></td>
+        </tr>
+    </tbody>
+</list>  
+>>>>>>> 589b9ccc736b28c1e566e2991a83d21929e6909e
 </template>
 <script>
 import list from '../components/admin/List.vue';
 import axios from 'axios';
+<<<<<<< HEAD
 import page from '../components/common/Pagination.vue';
 export default {
     data(){
@@ -195,3 +208,35 @@ export default {
 
   }
 </style>
+=======
+export default {
+    data(){
+        return{
+            userList : []
+        }
+    },
+    created(){
+        this.uList();
+    },
+    methods : {
+        async uList(){
+            let list = await axios.get('/api/user').catch(err=>console.log(err));
+            let result = list.data;
+            console.log(result)
+            this.userList = result;
+        },
+        dateFormat(value,format){
+        let date = value == '' ? new Date() : new Date(value);
+        let year = date.getFullYear();
+        let month = ('0'+(date.getMonth()+1)).slice(-2);
+        let day = ('0'+date.getDate()).slice(-2);
+        let result = format.replace('yyyy',year).replace('MM',month).replace('dd',day);
+        return result;
+       }
+    },
+    components : {
+    list
+    }
+}
+</script>
+>>>>>>> 589b9ccc736b28c1e566e2991a83d21929e6909e

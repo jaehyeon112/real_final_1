@@ -39,7 +39,9 @@
                <p style="margin-left:20px;margin-bottom:0;color:black">무료배송 (40,000원 이상 구매 시)</p>
                <br>
             </div>
-            
+            <div>
+               <button @click="goToCart">장바구니 담기</button> <button @click="likes">♡</button>
+            </div>
          </div>
       </div>
       <!--선택하는 바?-->
@@ -121,7 +123,6 @@
          </ul>
          <ul id="list" style="display:none">
             <li>제주, 도서산간 지역은 배송불가합니다.</li>
-            <li>교환/반품하려는 상품은 처음 배송한 택배사에서 수거하므로 다른 택배사 이용은 불가능합니다.</li>
          </ul>
       </div>
       
@@ -150,7 +151,8 @@ export default {
             let list = await axios.get(`api/detailReview/${this.pno}`)
                                   .catch(err=>console.log(err));
             this.reviewList =list.data;                      
-        }
+        },
+        
     }
 }
 </script>

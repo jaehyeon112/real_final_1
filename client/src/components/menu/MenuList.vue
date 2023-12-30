@@ -2,6 +2,7 @@
   <v-container>
     <span>{{ prodList.prod_no }}구분!!</span>
     <v-card class="mx-auto" max-width="300">
+<<<<<<< HEAD
       <!-- 해당 제품으로 이동 -->
       <router-link to="/">
         <div class="image-container">
@@ -18,17 +19,37 @@
           <div v-if="isSoldOut" class="soldout-overlay">품절</div>
           <div v-if="isStock" class="isStock-overlay">상품준비중</div>
         </div>
+=======
+      <!--해당 제품으로 이동-->
+      <router-link to="/">
+        <v-img class="align-end text-white" height="300" src="/api/test" cover>
+          <v-row justify="end" style="margin-right: 30px; margin-bottom: 30px">
+            <v-btn icon="mdi mdi-cart" variant="tonal"> </v-btn>
+          </v-row>
+        </v-img>
+>>>>>>> 589b9ccc736b28c1e566e2991a83d21929e6909e
       </router-link>
 
       <v-card-subtitle class="pt-4"> 1조꺼 </v-card-subtitle>
 
       <v-card-text>
+<<<<<<< HEAD
         <div class="title">{{ prodList.prod_name }}</div>
         <!-- 상품 부가 정보 -->
         <div>
           <span id="rate" v-if="prodList.discount_rate!=0">{{ prodList.discount_rate }}<span class="text">%</span></span>
           <span id="discount">{{ $wonComma(prodList.discount_price) }}<span class="text">원</span></span
           ><span id="price" v-if="prodList.discount_price != prodList.price">{{  $wonComma(prodList.price) }}<span class="text">원</span></span>
+=======
+        <div>{{ prodList.prod_name }}</div>
+        <!-- 상품 부가 정보-->
+        <div>
+
+          <span>{{ prodList.discount_rate }}%</span>
+      
+          <span>{{ prodList.discount_price }}원(판매가)</span
+          ><span>{{ prodList.price }}원(원가)</span>
+>>>>>>> 589b9ccc736b28c1e566e2991a83d21929e6909e
         </div>
         <div id="type-time">
           <span>냉동 | 조리시간</span>
@@ -41,6 +62,7 @@
 
 <script>
 export default {
+<<<<<<< HEAD
   data() {
     return {
       isSoldOut: false,
@@ -70,6 +92,10 @@ export default {
       this.$store.commit('addCart',this.prodList)
       console.log(this.$store.state.cart)
     }
+=======
+  props: ["prodList"],
+  created() {
+>>>>>>> 589b9ccc736b28c1e566e2991a83d21929e6909e
   },
 };
 </script>
@@ -82,6 +108,7 @@ export default {
   font-size: 12px;
   width: 100px;
   text-align: center;
+<<<<<<< HEAD
   margin-top: 10px;
 }
 .title{
@@ -137,5 +164,7 @@ font-size: 16px;
   right: 0;
   bottom: 0;
   position: absolute;
+=======
+>>>>>>> 589b9ccc736b28c1e566e2991a83d21929e6909e
 }
 </style>
