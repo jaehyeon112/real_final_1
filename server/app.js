@@ -46,11 +46,7 @@ app.listen(3000, () => {
   console.log("재현 서버 on");
 });
 
-<<<<<<< HEAD
-app.get('/prod',async (req, res) => {
-=======
 app.get('/prod', async (req, res) => {
->>>>>>> develop
   let data = await mysql.query("admin", "proList");
   res.send(data);
 })
@@ -75,48 +71,23 @@ app.get("/show/:no", async (req, res) => {
 
 app.get("/coupon/:id", async (req, res) => { // 쿠폰 리스트
   let id = req.params.id;
-<<<<<<< HEAD
-  let list = await mysql.query("test","couponList", id);
-  res.send(list);
-});
-app.get("/point/:id", async (req, res) => {  // 포인트 리스트 
-  let id = req.params.id;
-  let list = await mysql.query("test","pointList", id);
-=======
   let list = await mysql.query("test", "couponList", id);
   res.send(list);
 });
 app.get("/point/:id", async (req, res) => { // 포인트 리스트 
   let id = req.params.id;
   let list = await mysql.query("test", "pointList", id);
->>>>>>> develop
   res.send(list);
 });
 
 app.get("/cartList/:id", async (req, res) => { //주문 리스트
   let id = req.params.id;
-<<<<<<< HEAD
-  let list = await mysql.query("test","cartList", id);
-=======
   let list = await mysql.query("test", "cartList", id);
->>>>>>> develop
   res.send(list);
 });
 
 app.get("/orderList/:id", async (req, res) => { // 주문완료 리스트
   let id = req.params.id;
-<<<<<<< HEAD
-  let list = await mysql.query("test","orderList", id);
-  res.send(list);
-});
-
-app.post("/orderInsert", async (request, res)=>{ // orders 등록
-  let data = request.body.param;
-  res.send((await mysql.query("test","orderInsert", data)));
-});
-
-app.post("/orderdetailInsert", async (request, res)=>{ // order_detail 등록
-=======
   let list = await mysql.query("test", "orderList", id);
   res.send(list);
 });
@@ -127,26 +98,12 @@ app.post("/orderInsert", async (request, res) => { // orders 등록
 });
 
 app.post("/orderdetailInsert", async (request, res) => { // order_detail 등록
->>>>>>> develop
   let data = request.body.param;
   res.send((await mysql.query("orderInsert", data)));
 });
 
 app.get("/user/:order", async (req, res) => {
   let result = req.params.order;
-<<<<<<< HEAD
-  let data = await mysql.query("admin", "AlluserList",result);
-  res.send(data);
-});
-
-app.get("/user/:order/:startNo/:no",async (req, res) => {
-  let data = [req.params.order,Number(req.params.startNo)*Number(req.params.no),Number(req.params.no)];
-  let list = await mysql.query("admin", "userList",data);
-})
-
-// 회원가입 - 아이디 중복체크용
-app.get("/join-id/:id", async(req, res)=> {
-=======
   let data = await mysql.query("admin", "AlluserList", result);
   res.send(data);
 });
@@ -158,18 +115,13 @@ app.get("/user/:order/:startNo/:no", async (req, res) => {
 
 // 회원가입 - 아이디 중복체크용
 app.get("/join-id/:id", async (req, res) => {
->>>>>>> develop
   let uid = req.params.id;
   let list = await mysql.query("user", "duplicateId", uid);
   res.send(list);
 })
 
 //회원가입 - 이메일 중복체크용
-<<<<<<< HEAD
-app.get("/join-email/:email", async(req, res)=> {
-=======
 app.get("/join-email/:email", async (req, res) => {
->>>>>>> develop
   let uemail = req.params.email;
   let list = await mysql.query("user", "duplicateEmail", uemail);
   res.send(list);
@@ -179,65 +131,34 @@ app.get("/join-email/:email", async (req, res) => {
 //회원가입용(insert) **주소수정ㅎ기! 
 app.post("/join", async (req, res) => {
   let data = req.body.param;
-<<<<<<< HEAD
-  let result = await mysql.query("user","join", data);
-=======
   let result = await mysql.query("user", "join", data);
->>>>>>> develop
   res.send(result);
 });
 
 
 //로그인 - 아이디비번 일치해야 로그인 (5회 오류시 보안프로그램실행)
-<<<<<<< HEAD
-app.get("/dologin/:id/:password", async(req, res)=> {
-  let data = [req.params.id, req.params.password]
-  let list = await mysql.query("user", "forLogin",data);
-=======
 app.get("/dologin/:id/:password", async (req, res) => {
   let data = [req.params.id, req.params.password]
   let list = await mysql.query("user", "forLogin", data);
->>>>>>> develop
   res.send(list);
 });
 
 //로그인 세션
-<<<<<<< HEAD
-app.post("/token", async(req, res)=> {
-  let data = req.body.param;
-  let result = await mysql.query("user","idToken", data);
-=======
 app.post("/token", async (req, res) => {
   let data = req.body.param;
   let result = await mysql.query("user", "idToken", data);
->>>>>>> develop
   res.send(result);
 })
 
 
-<<<<<<< HEAD
-app.get("/user",async (req, res) => {
-=======
 
 
 
 app.get("/user", async (req, res) => {
->>>>>>> develop
   let list = await mysql.query("admin", "userList");
   res.send(list);
 });
 
-<<<<<<< HEAD
-app.get("/user/:id/:name/:join/:order/:startNo/:no",async (req, res) => {
-  let list = [req.params.id,req.params.name,req.params.join,req.params.order,Number(req.params.startNo)*Number(req.params.no),Number(req.params.no)];
-  let data = await mysql.query("admin", "searchUser",list);
-  res.send(data);
-});
-
-app.get("/prod/:name/:order/:startNo/:no",async (req, res) => {
-  let list = [req.params.name,req.params.order,Number(req.params.startNo)*Number(req.params.no),Number(req.params.no)];
-  let data = await mysql.query("admin", "searchProd",list);
-=======
 app.get("/user/:id/:name/:join/:order/:startNo/:no", async (req, res) => {
   let list = [req.params.id, req.params.name, req.params.join, req.params.order, Number(req.params.startNo) * Number(req.params.no), Number(req.params.no)];
   let data = await mysql.query("admin", "searchUser", list);
@@ -247,25 +168,11 @@ app.get("/user/:id/:name/:join/:order/:startNo/:no", async (req, res) => {
 app.get("/prod/:name/:order/:startNo/:no", async (req, res) => {
   let list = [req.params.name, req.params.order, Number(req.params.startNo) * Number(req.params.no), Number(req.params.no)];
   let data = await mysql.query("admin", "searchProd", list);
->>>>>>> develop
   res.send(data);
 });
 
 app.get("/prod/:order", async (req, res) => {
   let result = req.params.order;
-<<<<<<< HEAD
-  let data = await mysql.query("admin", "AllprodList",result);
-  res.send(data);
-});
-
-app.get("/prod/:order/:startNo/:no",async (req, res) => {
-  let datas = [req.params.order,Number(req.params.startNo)*Number(req.params.no),Number(req.params.no)];
-  let list = await mysql.query("admin", "prodList",datas);
-  res.send(list);
-});
-
-app.get("/prods/:pno",async (req, res) => {
-=======
   let data = await mysql.query("admin", "AllprodList", result);
   res.send(data);
 });
@@ -277,30 +184,19 @@ app.get("/prod/:order/:startNo/:no", async (req, res) => {
 });
 
 app.get("/prods/:pno", async (req, res) => {
->>>>>>> develop
   let data = req.params.pno;
   let result = await mysql.query("admin", "prodInfo", data);
   res.send(result);
 });
 
-<<<<<<< HEAD
-app.get("/prod/:startNo/:no",async (req, res) => {
-  let datas = [Number(req.params.startNo)*Number(req.params.no),Number(req.params.no)];
-  let result = await mysql.query("admin", "pricehigh",datas);
-=======
 app.get("/prod/:startNo/:no", async (req, res) => {
   let datas = [Number(req.params.startNo) * Number(req.params.no), Number(req.params.no)];
   let result = await mysql.query("admin", "pricehigh", datas);
->>>>>>> develop
   res.send(result);
 });
 
 
-<<<<<<< HEAD
-app.post("/prod",async (req, res) => {
-=======
 app.post("/prod", async (req, res) => {
->>>>>>> develop
   let data = req.body.param;
   let result = await mysql.query("admin", "prodInsert", data);
   res.send(result);
@@ -323,29 +219,6 @@ app.get("/sum", async (req, res) => {
   res.send(result);
 });
 
-<<<<<<< HEAD
-app.put("/user/:grade/:uid",async(req,res)=>{
-  let data = [req.params.grade,req.params.uid];
-  let result = await mysql.query("admin","stopUser",data);
-  res.send(result);
-});
-
-app.get("/wordFilter/:first/:last/",async (req, res) => {
-  let data= [req.params.first, req.params.last];
-  let result = await mysql.query("test", "wordFilterPage",data);
-  res.send(result)
-})
-
-
-app.get("/wordFilter/:first/:last/:no",async (req, res) => {
-  let data= [req.params.first, req.params.last, Number(req.params.no) * 6];
-  
-  let result = await mysql.query("test", "wordFilter",data);
-  res.send(result)
-})
-
-app.get("/priceFilter/:A/:B",async (req, res) => {
-=======
 app.put("/user/:grade/:uid", async (req, res) => {
   let data = [req.params.grade, req.params.uid];
   let result = await mysql.query("admin", "stopUser", data);
@@ -379,27 +252,17 @@ app.get("/wordFilter/:first/:last/:col/:category/:no", async (req, res) => {
 })
 
 app.get("/priceFilter/:A/:B", async (req, res) => {
->>>>>>> develop
   let data = [Number(req.params.A), Number(req.params.B)];
   let result = await mysql.query("test", "priceFilterPage", data);
   res.send(result)
 })
 
-<<<<<<< HEAD
-app.get("/priceFilter/:A/:B/:no",async (req, res) => {
-  let data = [Number(req.params.A), Number(req.params.B),Number(req.params.no) * 6];
-=======
 app.get("/priceFilter/:A/:B/:no", async (req, res) => {
   let data = [Number(req.params.A), Number(req.params.B), Number(req.params.no) * 6];
->>>>>>> develop
   let result = await mysql.query("test", "priceFilter", data);
   res.send(result)
 })
 
-<<<<<<< HEAD
-app.get("/bothFilter/:first/:last/:A/:B",async (req, res) => {
-  let data = [req.params.first, req.params.last,Number(req.params.A), Number(req.params.B)];
-=======
 app.get("/priceFilter/:A/:B/:col/:category", async (req, res) => {
   let data = [Number(req.params.A), Number(req.params.B), req.params.col, req.params.category];
   let result = await mysql.query("test", "categoryPriceFilterPage", data);
@@ -414,17 +277,10 @@ app.get("/priceFilter/:A/:B/:col/:category/:no", async (req, res) => {
 
 app.get("/bothFilter/:first/:last/:A/:B", async (req, res) => {
   let data = [req.params.first, req.params.last, Number(req.params.A), Number(req.params.B)];
->>>>>>> develop
   let result = await mysql.query("test", "bothFilterPage", data);
   res.send(result)
 })
 
-<<<<<<< HEAD
-app.get("/bothFilter/:first/:last/:A/:B/:no",async (req, res) => {
-  let data = [req.params.first, req.params.last,Number(req.params.A), Number(req.params.B),Number(req.params.no) * 6];
-  let result = await mysql.query("test", "bothFilter", data);
-  res.send(result)
-=======
 app.get("/bothFilter/:first/:last/:A/:B/:no", async (req, res) => {
   let data = [req.params.first, req.params.last, Number(req.params.A), Number(req.params.B), Number(req.params.no) * 6];
   let result = await mysql.query("test", "bothFilter", data);
@@ -461,5 +317,100 @@ app.get("/new/:no", async (req, res) => {
 app.get("/new", async (req, res) => {
   let result = await mysql.query("test", "newListPage");
   res.send(result);
->>>>>>> develop
 })
+//시험용 멤버
+app.get("/member/:id", async (req,res)=>{
+  let id = req.params.id;
+  let info= await mysql.query("member", "memberInfo", id);
+  res.send(info)
+})
+//리뷰관련
+//상세페이지에서 리뷰목록
+app.get("/detailReview/:pno", async(request, response)=>{
+  let pno = request.params.prod_no
+  let list = await mysql.query('review','detailList',pno)[0]
+  res.send(list);
+})
+//주문내역 관련
+app.get("/orders/:id", async(req, res)=>{
+  let id = req.params.id
+  let lists = await mysql.query('orders', 'orderList', id);
+  //let list = await mysql.query('orders', 'orderList', id);
+  // 가공
+  let list = await getOrderInfos(id);
+  res.send(list);
+});
+
+async function getOrderInfos(id){
+  let lists = await mysql.query('orders', 'orderList', id); // group_concat 사용 쿼리
+
+  let newList = list.map((info)=>{
+    let tempList = info.prod_name_list.split(',');
+    let newData = `${tempList[0]} 외 ${tempList.length-1}건`;
+    info.prod_name_list = newData;
+    return info;
+  })
+  return newList;
+}
+ app.get("/ordersName/:ono/:id", async(req,res)=>{
+   let datas = [Number(req.params.ono),req.params.id]
+   let info = await mysql.query('orders', 'orderListCount',datas);
+   res.send(info);
+ })
+//주문 상세내역
+app.get("/orders/:ono/:id", async(req,res)=>{
+  let datas = [req.params.ono,req.params.id]
+  let list = await mysql.query('orders', 'detailOrderLists', datas);
+  res.send(list);
+})
+//-주문취소
+app.delete('/orders/:ono/:id',async (req,res)=>{
+  let datas = [req.body.param.order_status, req.params[ono],req.params[id]];
+  let result = await mysql.query('orders','orderCancle',datas)
+  res.send(result)
+})
+//추가 배송지 관련
+app.get('/addDelivery/:id', async(req,res)=>{
+  let id = req.params.id;
+  const list = await mysql.query('delivery','deliveryList',id);
+  res.send(list);
+})
+//정보수정
+app.put("/addDelivery/:dno/:id", async(req,res)=>{
+  let datas = [req.body.param, req.params[dno], req.params[id]]
+  let result =  await mysql.query('delivery', 'updateDelivery',datas);
+  res.send(result)
+})
+//정보삽입
+const delTable = ['delivery_no','user_id','delivery_name','delivery_address','delivery_detail_address, delivery_postcode'];
+app.post("/addDelivery", async(req,res)=>{
+  let data = req.body.param;
+  let delData = {};
+for(let column of delTable){  
+  let value = data[column]; 
+  if(value == '') continue;
+  delData[column] = value;    
+}
+  let result = await mysql.query('delivery', 'addDelivery')
+  res.send(result);
+})
+app.delete("/addDelivery", async(req,res)=>{
+  let result = await mysql.query('delivery', 'deleteDelivery')
+  res.send(result);
+})
+//찜하기 리스트
+  app.get("/like/:id",async(req,res)=>{
+    let id = req.params.id;
+    let list = await mysql.query('like', "likeList",id)
+    res.send(list);
+  })
+//쿠폰
+  app.get("/coupon/:id", async(req,res)=>{
+    let id = req.params.id;
+    let list = await mysql.query('coupon','myCoupon',id)
+    res.send(list);
+  })
+app.get("/user",async (req, res) => {
+let list = await mysql.query("admin", "userList");
+res.send(list);
+});

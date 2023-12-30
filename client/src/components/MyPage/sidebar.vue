@@ -7,7 +7,7 @@
     <hr>
     <ul class="nav nav-pills flex-column mb-auto">
       <li class="nav-item">
-        <router-link to ="/myPage/orderList" class="nav-link active" aria-current="page">
+        <router-link to ="/myPage/myOrderList" class="nav-link active" aria-current="page">
          
           주문내역
         </router-link>

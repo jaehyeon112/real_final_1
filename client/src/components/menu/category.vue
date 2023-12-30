@@ -31,15 +31,8 @@
           @mouseleave="hideSecondCategoryList2">
           <span class="nav-custom" >갑자기 땡긴다면?</span>
         </li>
-<<<<<<< HEAD
-        <li class="test"
-        @mouseenter="showSecondCategoryList2"
-          @mouseleave="hideSecondCategoryList2">
-          <router-link class="nav-custom" to="/">갑자기 땡긴다면?</router-link>
-=======
         <li class="test">
           <router-link class="nav-custom" to="/menu/sale">특가</router-link>
->>>>>>> develop
         </li>
         <li class="test">
           <router-link class="nav-custom" to="/menu/frozen">냉동전문관</router-link>
@@ -59,19 +52,11 @@
             ><span style="width: 300px">전체</span></router-link
           >
         </li>
-<<<<<<< HEAD
-        <li class="test" @click="go">
-          양식
-        </li>
-        <li class="test">
-          <router-link to="/menu" @cilck="go">한식</router-link>
-=======
         <li class="test">
           <router-link to="/menu/main/e1" >한식</router-link>
         </li>
         <li class="test">
           <router-link to="/menu/main/e2">중식</router-link>
->>>>>>> develop
         </li>
         <li class="test">
           <router-link to="/menu/main/e3">양식</router-link>
@@ -143,10 +128,6 @@ watchQuery: ['category'],
       showCategory: false,
       showSecondCategory: false,
       showSecondCategory2 : false,
-<<<<<<< HEAD
-      maincategory : ''
-=======
->>>>>>> develop
     };
   },
   methods: {

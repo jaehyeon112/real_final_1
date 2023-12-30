@@ -14,7 +14,7 @@ import putpass from "../views/PutPassword.vue";
 import test from "../views/test.vue";
 import myPage from "@/views/MyPage.vue";
 import detailPage from "@/views/detailPage.vue";
-import orderList from "@/components/MyPage/orderList.vue";
+import MyorderList from "@/components/MyPage/orderList.vue";
 import detailOrder from "@/components/MyPage/orderDetail.vue";
 import like from  "@/components/MyPage/likeBasket.vue";
 import delivery from "@/components/MyPage/delivery.vue"
@@ -114,9 +114,9 @@ export default {
       name:"myPage",
       component:myPage, 
       children:[
-        { path:"orderList", //   /myPage/orderList
-          name:"orderList",
-          component:orderList
+        { path:"MyOrderList", //   /myPage/orderList
+          name:"MyOrderList",
+          component:MyorderList
         },
         {
           path:"detailOrder",

@@ -116,7 +116,6 @@
                 let result = list.data;
                 console.log('리스트 : '+result)
                 this.productList = result;
-<<<<<<< HEAD
             }
         },
         watch : {
@@ -129,22 +128,6 @@
             order(){
             this.prodList(this.nums);
             }
-    }
-        
-=======
-            }
-        },
-        watch : {
-            nums(){
-                this.prodList(this.nums);
-            },
-            content(){
-                this.searchList(this.content);
-            },
-            order(){
-            this.prodList(this.nums);
-            }
->>>>>>> develop
     }
         
     }
