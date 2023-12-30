@@ -17,25 +17,32 @@
           @mouseleave="hideSecondCategoryList"
           class="test"
         >
-          <router-link class="nav-custom" to="/">밀키트</router-link>
+          <router-link class="nav-custom" to="/menu/meal">밀키트</router-link>
         </li>
 
         <li class="test">
-          <router-link class="nav-custom" to="/">신상품</router-link>
+          <router-link class="nav-custom" to="/menu/new">신상품</router-link>
         </li>
         <li class="test">
-          <router-link class="nav-custom" to="/">베스트</router-link>
+          <router-link class="nav-custom" to="/menu/best">베스트</router-link>
         </li>
         <li class="test"
         @mouseenter="showSecondCategoryList2"
           @mouseleave="hideSecondCategoryList2">
+          <span class="nav-custom" >갑자기 땡긴다면?</span>
+        </li>
+<<<<<<< HEAD
+        <li class="test"
+        @mouseenter="showSecondCategoryList2"
+          @mouseleave="hideSecondCategoryList2">
           <router-link class="nav-custom" to="/">갑자기 땡긴다면?</router-link>
+=======
+        <li class="test">
+          <router-link class="nav-custom" to="/menu/sale">특가</router-link>
+>>>>>>> develop
         </li>
         <li class="test">
-          <router-link class="nav-custom" to="/">특가</router-link>
-        </li>
-        <li class="test">
-          <router-link class="nav-custom" to="/">냉동전문관</router-link>
+          <router-link class="nav-custom" to="/menu/frozen">냉동전문관</router-link>
         </li>
       </ul>
     </div>
@@ -52,20 +59,53 @@
             ><span style="width: 300px">전체</span></router-link
           >
         </li>
+<<<<<<< HEAD
         <li class="test" @click="go">
           양식
         </li>
         <li class="test">
           <router-link to="/menu" @cilck="go">한식</router-link>
+=======
+        <li class="test">
+          <router-link to="/menu/main/e1" >한식</router-link>
         </li>
         <li class="test">
-          <router-link to="/">중 일식</router-link>
+          <router-link to="/menu/main/e2">중식</router-link>
+>>>>>>> develop
         </li>
         <li class="test">
-          <router-link to="/">분식</router-link>
+          <router-link to="/menu/main/e3">양식</router-link>
         </li>
         <li class="test">
-          <router-link to="/">동남아</router-link>
+          <router-link to="/menu/main/e4">일식</router-link>
+        </li>
+        <li class="test">
+          <router-link to="/menu/main/e5">분식</router-link>
+        </li>
+        <li class="test">
+          <router-link to="/menu/main/e6">동남아</router-link>
+        </li>
+      </ul>
+    </div>
+    <div
+      v-if="showSecondCategory2"
+      class="category-list second-category-list"
+      style="position: absolute; left: 220px; top:220px"
+      @mouseenter="showSecondCategoryList2"
+      @mouseleave="hideSecondCategoryList2"
+    >
+      <ul>
+        <li class="test">
+          <router-link to="/menu/f1">바삭한맛</router-link>
+        </li>
+        <li class="test">
+          <router-link to="/menu/f2">매콤한맛</router-link>
+        </li>
+        <li class="test">
+          <router-link to="/menu/f3">국물</router-link>
+        </li>
+        <li class="test">
+          <router-link to="/menu/f4">건강한맛</router-link>
         </li>
       </ul>
     </div>
@@ -95,13 +135,18 @@
 </template>
 
 <script>
+
 export default {
+watchQuery: ['category'],
   data() {
     return {
       showCategory: false,
       showSecondCategory: false,
       showSecondCategory2 : false,
+<<<<<<< HEAD
       maincategory : ''
+=======
+>>>>>>> develop
     };
   },
   methods: {

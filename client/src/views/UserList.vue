@@ -194,4 +194,8 @@ export default {
     padding : 5px;
 
   }
+<<<<<<< HEAD
 </style>
+=======
+</style>
+>>>>>>> develop

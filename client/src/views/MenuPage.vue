@@ -1,5 +1,9 @@
 <template>
+  
+  
   <div>
+
+    카테고리 : {{ mainCategory }}, 타입은 {{ condition }}
     <v-row>
       <v-col cols="3">
         <filterSide @getSearch="setinput" />
@@ -10,8 +14,16 @@
             <menulist :prodList="test">
             </menulist>
           </v-col>
+<<<<<<< HEAD
           <v-container v-if="list.length==0" justify="">
             <p >찾는 상품이 없습니다.</p> 
+=======
+          <v-container v-if="loading" justify="">
+            <p>데이터를 불러오는 중입니다...</p>
+          </v-container>
+          <v-container v-else-if="list.length==0" justify="">
+            <p>찾는 상품이 없습니다.</p> 
+>>>>>>> develop
           </v-container>
         </v-row>
       </v-col>
@@ -30,8 +42,13 @@ import pagination from "@/components/common/Pagination";
 import axios from "axios";
 
 export default {
+  props: ['category','type'],
   data() {
     return {
+<<<<<<< HEAD
+=======
+      loading:false,
+>>>>>>> develop
       totals:6,
       totalList: "",
       list: "",
@@ -45,6 +62,7 @@ export default {
       betweenA : '',
       betweenB : '',
       mainCategory:'',
+<<<<<<< HEAD
     };
   },
   methods: {
@@ -53,6 +71,42 @@ export default {
         console.log(err);
       });
       this.totalList = total.data;
+=======
+      condition:'',
+    };
+  },
+  methods: {
+    getCategory(){
+      switch(this.category){
+        case 'main':
+          this.mainCategory = 'main_category';
+          break;
+        case 'new':
+          this.mainCategory = '신상품';
+          break;
+      }
+      switch(this.type){
+        case 'e1' :
+          this.condition = '한식'
+          break;
+        case 'e2' :
+          this.condition = '중식'
+          break;
+        case 'e3' :
+          this.condition = '양식'
+          break;
+        case 'e4' :
+          this.condition = '일식'
+          break;
+        case 'e5' :
+          this.condition = '분식'
+          break;
+        case 'e6' :
+          this.condition = '동남아'
+          break;
+
+      } 
+>>>>>>> develop
     },
     async setinput(first,last,price){
       this.first = first;
@@ -83,34 +137,136 @@ export default {
         this.totalList = pageResult.data; // 페이징맞추고..
         this.list = listResult.data; // 리스트를 맞추자..
 
+<<<<<<< HEAD
       }
       if(first=='' && price != ''){
       this.pageNo = 0;
         
           let pageResult = await axios.get(`/api/priceFilter/${this.betweenA}/${this.betweenB}`).catch((err) => {console.log(err)});
           let listResult = await axios.get(`/api/priceFilter/${this.betweenA}/${this.betweenB}/${this.pageNo}`).catch((err) => {console.log(err)});
+=======
+    async total() { // 페이지네이션
+      if(this.category == null){
+        let total = await axios.get("/api/show").catch((err) => {console.log(err);});
+        this.totalList =  total.data;
+      }else if(this.category != null && this.type!= null){
+        let total = await axios.get(`/api/show/${this.mainCategory}/${this.type}`).catch((err) => {console.log(err);});
+        this.totalList = total.data;
+      }
+
+    },
+    async setinput(first,last,price){ // 필터 버튼 누르면?
+      this.first = first;
+      this.last = last;
+      this.price = price;
+      if(price == 'top'){
+          this.betweenA = 20001;
+          this.betweenB = 100000000;
+        }else if(price == 'middle'){
+          this.betweenA = 10000;
+          this.betweenB = 20000;
+        }else{
+          this.betweenA = 0;
+          this.betweenB = 9999;
+        }
+        if(first == '' && price ==''){
+          this.productList();
+          this.total();
+          return;
+        }
+
+        this.pageNo = 0;
+          
+        if(price == '' && first != '' && this.category == null){
+          this.$showLoading();
+        let pageResult = await axios.get(`/api/wordFilter/${first}/${last}`).catch((err) => {console.log(err)});
+        let listResult = await axios.get(`/api/wordFilter/${first}/${last}/${this.pageNo}`).catch((err) => {console.log(err)});
+        this.$hideLoading();
+        this.totalList = pageResult.data; // 페이징맞추고..
+        this.list = listResult.data; // 리스트를 맞추자..
+        return
+      }else if(price == '' && first != '' && this.category != null){
+        this.$showLoading();
+        let pageResult = await axios.get(`/api/wordFilter/${first}/${last}/${this.mainCategory}/${this.type}`).catch((err) => {console.log(err)});
+        let listResult = await axios.get(`/api/wordFilter/${first}/${last}/${this.mainCategory}/${this.type}/${this.pageNo}`).catch((err) => {console.log(err)});
+        this.$hideLoading();
+        this.totalList = pageResult.data; // 페이징맞추고..
+        this.list = listResult.data; // 리스트를 맞추자..
+        return
+      }
+      if(first=='' && price != ''  && this.category != null){
+      this.$showLoading();
+          let pageResult = await axios.get(`/api/priceFilter/${this.betweenA}/${this.betweenB}/${this.mainCategory}/${this.type}`).catch((err) => {console.log(err)});
+          let listResult = await axios.get(`/api/priceFilter/${this.betweenA}/${this.betweenB}/${this.mainCategory}/${this.type}/${this.pageNo}`).catch((err) => {console.log(err)});
+          this.$hideLoading();
+          this.totalList = pageResult.data; // 페이징맞추고..
+          this.list = listResult.data; // 리스트를 맞추자..
+          return;
+      }else if(first=='' && price != ''  && this.category == null){
+        this.$showLoading();
+          let pageResult = await axios.get(`/api/priceFilter/${this.betweenA}/${this.betweenB}`).catch((err) => {console.log(err)});
+          let listResult = await axios.get(`/api/priceFilter/${this.betweenA}/${this.betweenB}/${this.pageNo}`).catch((err) => {console.log(err)});
+          this.$hideLoading();
+>>>>>>> develop
           this.totalList = pageResult.data; // 페이징맞추고..
           this.list = listResult.data; // 리스트를 맞추자..
           return;
       }
+<<<<<<< HEAD
       if(price != '' && first != ''){
           let pageResult = await axios.get(`/api/bothFilter/${first}/${last}/${this.betweenA}/${this.betweenB}`).catch((err) => {console.log(err)});
           let listResult = await axios.get(`/api/bothFilter/${first}/${last}/${this.betweenA}/${this.betweenB}/${this.pageNo}`).catch((err) => {console.log(err)});
           this.totalList = pageResult.data; // 페이징맞추고..
           this.list = listResult.data; // 리스트를 맞추자..
           return;
+=======
+      if(price != '' && first != ''  && this.category == null ){
+        this.$showLoading();
+          let pageResult = await axios.get(`/api/bothFilter/${first}/${last}/${this.betweenA}/${this.betweenB}`).catch((err) => {console.log(err)});
+          let listResult = await axios.get(`/api/bothFilter/${first}/${last}/${this.betweenA}/${this.betweenB}/${this.pageNo}`).catch((err) => {console.log(err)});
+          this.$hideLoading();
+          this.totalList = pageResult.data; // 페이징맞추고..
+          this.list = listResult.data; // 리스트를 맞추자..
+          return;
+        }else if(price != '' && first != ''  && this.category != null){
+          this.$showLoading();
+            let pageResult = await axios.get(`/api/bothFilter/${first}/${last}/${this.betweenA}/${this.betweenB}/${this.mainCategory}/${this.type}`).catch((err) => {console.log(err)});
+            let listResult = await axios.get(`/api/bothFilter/${first}/${last}/${this.betweenA}/${this.betweenB}/${this.mainCategory}/${this.type}/${this.pageNo}`).catch((err) => {console.log(err)});
+            this.$hideLoading();
+            this.totalList = pageResult.data; // 페이징맞추고..
+            this.list = listResult.data; // 리스트를 맞추자..
+            return;
+          
+>>>>>>> develop
       }
 
 }
     ,
+<<<<<<< HEAD
     async productList() {
       try {
         let proList = await axios.get("/api/show/" + this.pageNo);
+=======
+    async productList() { //물건 리스트 보여주기
+      this.pageNo = 0;
+      if(this.category == null){
+        this.loading = true;
+  this.$showLoading();
+  let proList = await axios.get("/api/show/" + this.pageNo);
+  this.list = proList.data;
+  this.$hideLoading();
+  this.loading = false;
+      }else if(this.category == 'main'){
+        let proList = await axios.get(`/api/show/${this.mainCategory}/${this.type}/${this.pageNo}`)
+        console.log('일단뜸?')
         this.list = proList.data;
-      } catch (error) {
-        console.error("Error fetching initial page data:", error);
+      }else if(this.mainCategory == '신상품'){
+        let proList = await axios.get(`/api/new/${this.pageNo}`)
+>>>>>>> develop
+        this.list = proList.data;
       }
     },
+<<<<<<< HEAD
     async changePage(no) {
       if(this.first == '' && this.price == ''){
         let page = await axios.get("/api/show/" + no).catch (err=>{console.log(err)})
@@ -131,13 +287,72 @@ export default {
         let listResult = await axios.get(`/api/bothFilter/${this.first}/${this.last}/${this.betweenA}/${this.betweenB}/${no}`).catch((err) => {console.log(err)});
         this.list = listResult.data;
       }
+=======
+
+
+    async changePage(no) { //페이지 눌렀을때 이동
+      if(this.category == null){
+        if(this.first == '' && this.price == ''){ //필터 없을 때
+          let page = await axios.get("/api/show/" + no).catch (err=>{console.log(err)})
+          this.list = page.data;
+          return;
+        }
+        if(this.first != '' && this.price == '' ){ // 글자 필터 적용
+          let page = await axios.get(`/api/wordFilter/${this.first}/${this.last}/${no}`).catch(err=>{console.log(err)})
+          this.list=page.data;
+          return;
+        }
+        if(this.first == '' && this.price != ''){ // 가격필터 적용
+          let page = await axios.get(`/api/priceFilter/${this.betweenA}/${this.betweenB}/${no}`).catch((err) => {console.log(err)});
+          this.list = page.data;
+          return;
+        }
+        if(this.first != '' && this.price != ''){ // 필터 둘다 적용
+          let listResult = await axios.get(`/api/bothFilter/${this.first}/${this.last}/${this.betweenA}/${this.betweenB}/${no}`).catch((err) => {console.log(err)});
+          this.list = listResult.data;
+        }
+      }else if(this.category=='main'){
+        if(this.first == '' && this.price == ''){ // 필터 없이 전체
+          let page = await axios.get(`/api/show/${this.mainCategory}/${this.type}/${no}`).catch (err=>{console.log(err)})
+          this.list = page.data;
+          return;
+        }
+        if(this.first != '' && this.price == '' ){ // 글자 필터 적용
+          let page = await axios.get(`/api/wordFilter/${this.first}/${this.last}/${this.mainCategory}/${this.type}/${no}`).catch(err=>{console.log(err)})
+          this.list=page.data;
+          return;
+        }
+        if(this.first == '' && this.price != ''){ //가격 필터 적용
+          let page = await axios.get(`/api/priceFilter/${this.betweenA}/${this.betweenB}/${this.mainCategory}/${this.type}/${no}`).catch((err) => {console.log(err)});
+          this.list = page.data;
+          return;
+        }
+        if(this.first != '' && this.price != ''){ //필터 둘다 적용
+          let listResult = await axios.get(`/api/bothFilter/${this.first}/${this.last}/${this.betweenA}/${this.betweenB}/${this.mainCategory}/${this.type}/${no}`).catch((err) => {console.log(err)});
+          this.list = listResult.data;
+          return;
+        }
+      }else if(this.mainCategory='신상품'){
+        let newList = await axios.get(`/api/new/${no}`).catch(err=>{console.log(err)})
+          this.list = newList.data;
+          return;
+      }
+     
+
+>>>>>>> develop
 
 
     },
   
+<<<<<<< HEAD
     
+=======
+      
+>>>>>>> develop
   },
   created() {
+    this.getCategory();
+
     this.productList();
     this.total();
   },

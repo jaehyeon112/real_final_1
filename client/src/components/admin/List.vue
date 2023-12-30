@@ -89,4 +89,8 @@ export default {
         text-align: center;
     }
 
+<<<<<<< HEAD
 </style>
+=======
+</style>
+>>>>>>> develop
