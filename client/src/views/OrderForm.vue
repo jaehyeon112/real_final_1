@@ -44,16 +44,16 @@
 <script>
 import axios from 'axios';
 
-import OrderProdInfo from '../components/OrderProdInfo.vue';
-import OrderUserInfo from '../components/OrderUserInfo.vue';
-import OrderAddrInfo from '../components/OrderAddrInfo.vue';
-import OrderPointInfo from '../components/OrderPointInfo.vue';
-import OrderPayment from '../components/OrderPayment.vue';
-import OrderPrice from '../components/OrderPrice.vue';
+import OrderProdInfo from '../components/order/OrderProdInfo.vue';
+import OrderUserInfo from '../components/order/OrderUserInfo.vue';
+import OrderAddrInfo from '../components/order/OrderAddrInfo.vue';
+import OrderPointInfo from '../components/order/OrderPointInfo.vue';
+import OrderPayment from '../components/order/OrderPayment.vue';
+import OrderPrice from '../components/order/OrderPrice.vue';
 
 
 export default {
-  name: 'OrderList',
+  name: 'OrderForm',
   components: {
     OrderProdInfo,
     OrderUserInfo, 
@@ -83,7 +83,7 @@ export default {
     };
   },
   created() {
-    this.fetchCartList();
+    this.fetchCartCheckList();
     this.fetchCouponList();
     this.fetchPointList();
     this.orderNumber();
@@ -109,8 +109,8 @@ export default {
     },
   },
   methods: {
-    fetchCartList() {
-      axios.get(`/api/cartList/${this.$store.state.user.user_id}`, {
+    fetchCartCheckList() {
+      axios.get(`/api/cartCheckList/${this.$store.state.user.user_id}`, {
       })
       .then(response => {
         this.cartList = response.data;

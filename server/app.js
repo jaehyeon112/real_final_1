@@ -76,9 +76,28 @@ app.get("/point/:id", async (req, res) => {  // 포인트 리스트
   res.send(list);
 });
 
-app.get("/cartList/:id", async (req, res) => { //주문 리스트
+app.get("/cartList/:id", async (req, res) => { //장바구니 리스트
   let id = req.params.id;
   let list = await mysql.query("test","cartList", id);
+  res.send(list);
+});
+
+app.put("/CheckboxUpdate/:no", async (request, res) => { // 장바구니 체크박스 선택시 업데이트
+  let data = [request.body.param, request.params.no];
+  let list = await mysql.query("test","CheckboxUpdate", data);
+  res.send(list);
+});
+
+app.put("/AllCheckboxUpdate/:id", async (request, res) => { // 장바구니 전체선택 업데이트
+  let data = [request.body.param, request.params.id];
+  let list = await mysql.query("test","AllCheckboxUpdate", data);
+  res.send(list);
+});
+
+
+app.get("/cartCheckList/:id", async (req, res) => { //주문서의 장바구니체크된거만불러오는 리스트
+  let id = req.params.id;
+  let list = await mysql.query("test","cartCheckList", id);
   res.send(list);
 });
 

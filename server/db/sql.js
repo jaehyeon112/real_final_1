@@ -4,7 +4,7 @@ let test = {
   // 장바구니 리스트
   cartList : `select distinct * 
               from cart c, product p, user u
-              WHERE cart_checkbox = 1 AND c.user_id = u.user_id AND p.prod_no = c.prod_no AND c.user_id = ?
+              where c.user_id = u.user_id AND p.prod_no = c.prod_no AND c.user_id = ?
               order by cart_no`,
   // 장바구니 체크 리스트 
   cartCheckList : `select distinct *
@@ -13,7 +13,7 @@ let test = {
               order by cart_no`,
 
   // 장바구니 체크박스 선택하면 업데이트되게 구현
-  CheckboxUpdate : `UPDATE cart SET ? WHERE cart_no = ?`,
+  CheckboxUpdate : `UPDATE cart SET cart_checkbox = ? WHERE cart_no = ?`,
   // 쿠폰 리스트
   couponList : `select a.coupon_no, start_coupon, end_coupon, coupon_name, coupon_content, coupon_discount_rate
                 from coupon a left join user b on(a.user_id = b.user_id) 
