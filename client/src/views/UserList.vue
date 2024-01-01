@@ -41,7 +41,7 @@
             <td v-else-if="user.user_grade=='i2'">실버 회원</td>
             <td v-else-if="user.user_grade=='i3'">골드 회원</td>
             <td v-if="user.user_grade=='i6'"><v-btn style="border-radius: 10px;" type="button" @click="NonStop(user.user_id)">정지풀기</v-btn></td>
-            <td v-else><v-btn style="border-radius: 10px;" type="button" @click="modalCheck=true,userId=user.user_id">정지하기</v-btn></td>
+            <td v-else><v-btn style="border-radius: 10px;" type="button" @click="modalCheck=true,this.userId=user.user_id">정지하기</v-btn></td>
         </tr>
     </tbody>
     <div class="modal-wrap" v-show="modalCheck" @click="modalOpen">
