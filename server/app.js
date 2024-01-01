@@ -148,19 +148,11 @@ app.get("/user/:order", async (req, res) => {
   res.send(data);
 });
 
-<<<<<<< HEAD
 app.get("/user/:order/:startNo/:no",async (req, res) => {
   let data = [req.params.order,Number(req.params.startNo)*Number(req.params.no),Number(req.params.no)];
   let list = await mysql.query("admin", "userList",data);
   res.send(list);
 });
-
-=======
-app.get("/user/:order/:startNo/:no", async (req, res) => {
-  let data = [req.params.order, Number(req.params.startNo) * Number(req.params.no), Number(req.params.no)];
-  let list = await mysql.query("admin", "userList", data);
-})
->>>>>>> develop
 
 // 회원가입 - 아이디 중복체크용
 app.get("/join-id/:id", async (req, res) => {
@@ -333,8 +325,7 @@ app.get("/bothFilter/:first/:last/:A/:B", async (req, res) => {
 app.get("/bothFilter/:first/:last/:A/:B/:no", async (req, res) => {
   let data = [req.params.first, req.params.last, Number(req.params.A), Number(req.params.B), Number(req.params.no) * 6];
   let result = await mysql.query("test", "bothFilter", data);
-  res.send(result)
-<<<<<<< HEAD
+  res.send(result);
 });
 
 app.get('/order',async (req, res) => {
@@ -358,13 +349,12 @@ app.get('/orders/:startNo/:lastNo',async (req, res) => {
   let result = await mysql.query("admin", "orderDate",datas);
   res.send(result);
 });
-=======
-})
+
 app.get("/bothFilter/:first/:last/:A/:B/:col/:category", async (req, res) => {
   let data = [req.params.first, req.params.last, Number(req.params.A), Number(req.params.B), req.params.col, req.params.category];
   let result = await mysql.query("test", "categoryBothFilterPage", data);
-  res.send(result)
-})
+  res.send(result);
+});
 
 app.get("/bothFilter/:first/:last/:A/:B/:col/:category/:no", async (req, res) => {
   let data = [req.params.first, req.params.last, Number(req.params.A), Number(req.params.B), req.params.col, req.params.category, Number(req.params.no) * 6];
@@ -392,10 +382,7 @@ app.get("/new/:no", async (req, res) => {
 app.get("/new", async (req, res) => {
   let result = await mysql.query("test", "newListPage");
   res.send(result);
-})
-<<<<<<< HEAD
->>>>>>> develop
-=======
+});
 
 // sql injection의 위험이 있음 처리해야함;;
 app.get("/new2/:first/:last/:A/:B/:no", async (req, res) => {
@@ -437,5 +424,4 @@ app.get("/frozen/:first/:last/:A/:B/:no", async (req, res) => {
   }
   let result = await mysql.query2(base);
   res.send(result);
-})
->>>>>>> develop
+});
