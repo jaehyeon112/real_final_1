@@ -14,9 +14,6 @@ import overlay from '@/module/Overlay.js'
 loadFonts()
 window.Kakao.init("8acdd93f5a6fa89a6d2fe9190ea23ff1");
 
-window.Kakao.init("8acdd93f5a6fa89a6d2fe9190ea23ff1");
-
-
 createApp(App)
   .use(router)
   .use(vuetify)

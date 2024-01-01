@@ -42,25 +42,25 @@ export default {
     },
     created(){
         this.getOrderList(); // 실행이 종료 후
-        this.name = this.orderList.order_no;
+        //this.name = this.orderList.order_no;
         this.getProductName();
         //this.$store.state.user_id = userId;
     },
     methods:{
         async getOrderList(){
-            this.orderList = (await axious.get(`/api/orders/test`)
+            this.orderList = (await axious.get(`/api/myOrders/test`)
                                           .catch(err=>console.log(err))).data
                                           
         },
         async getProductName(){
-        this.prodcutName = (await axious.get(`/api/ordersName/${this.name}/test`)
+        this.prodcutName = (await axious.get(`/api/myOrdersName/1/test`)
                                           .catch(err=>console.log(err))).data
         },
         goToOrderDetail(orderNo){
             this.$router.push({path:'/orderDetail', query:{orderNo : orderNo}})
         },
         async orderCancle(){
-            this.orderList = await axious.delete('/api/orders')
+            this.orderList = await axious.delete('/api/myOrders')
                                           .catch(err=>console.log(err))
         },
         

@@ -77,8 +77,5 @@ export default{
 }
 </script>
 <style >
-    #side-bar{
-        position: sticky;
-        top: 10;
-    }
+   
 </style>

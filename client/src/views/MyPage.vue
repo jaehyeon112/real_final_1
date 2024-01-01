@@ -3,7 +3,7 @@
     
   
         <main class="d-flex flex-nowrap">
-        <sidebar/>
+        <sidebar class="sidebar"/>
         <div class="container">
         <div class="row" style="width:900px;">
             
@@ -87,7 +87,7 @@ export default{
     data() {
         return {
             //modalCheck: false,
-            member:[],
+            member:{},
             //point테이블의 table
             couponList:[]
         } 
@@ -99,6 +99,7 @@ export default{
     },
     created(){
         this.getMember();
+        //this.$store.state.user   
     },
     watch: {
        /*  modalCheck: function () {
@@ -117,7 +118,8 @@ export default{
         },
         //일단 멤버 정보를 셀렉트 해오는걸로 시험 중 나중에 로그인 세션그걸로 바꿔야 함
         async getMember(){
-            this.member = (await axios.get(`/api/member/test`)
+            let member_id = this.$store.state.user.user_id;
+            this.member = (await axios.get(`/api/member/${member_id}`)
                                       .catch(err=>{console.log(err)})).data[0]
             console.log( 'member' + this.member)                            
         }
@@ -126,6 +128,9 @@ export default{
 </script>
 
 <style scope>
+.container{
+    margin-left: 200px;
+}
 .modal-wrap {
   position: fixed;
   left: 0;
@@ -146,6 +151,9 @@ export default{
   padding: 20px;
   box-sizing: border-box;
 }
-
+.sidebar{
+    position:sticky;
+    top: 10px;
+}
 
 </style>

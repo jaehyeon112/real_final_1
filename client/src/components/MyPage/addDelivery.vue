@@ -20,7 +20,7 @@ export default{
             delivery:{
                 delivery_no:'',
                 delivery_name:'',
-                user_id:'test',
+                user_id:'',
                 delivery_address:'',
                 delivery_detail_address:'',
                 delivery_postcode:''
@@ -28,16 +28,16 @@ export default{
         }
     },
     created(){
+        this.delivery.user_id = this.$store.state.user.user_id;
         this.getDelivery();
-        //this.userId = this.$store.
+       
        this.$route.query.addDelivery
     },
     methods:{
       
         async getDelivery(){
             let obj ={
-                param:{
-                    delivery_name : this.delivery.delivery_name,
+                param:{delivery_name : this.delivery.delivery_name,
                     user_id : this.delivery.user_id,
                     delivery_address: this.delivery.delivery_address,
                     dlivery_detail_address: this.delivery.delivery_detail_address,

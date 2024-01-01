@@ -332,27 +332,27 @@ app.get("/detailReview/:pno", async(request, response)=>{
   res.send(list);
 })
 //주문내역 관련
-app.get("/orders/:id", async(req, res)=>{
+app.get("/myOrders/:id", async(req, res)=>{
   let id = req.params.id
   let lists = await mysql.query('orders', 'orderList', id);
   //let list = await mysql.query('orders', 'orderList', id);
   // 가공
-  let list = await getOrderInfos(id);
-  res.send(list);
+  //let list = await getOrderInfos(id);
+  res.send(lists);
 });
 
-async function getOrderInfos(id){
-  let lists = await mysql.query('orders', 'orderList', id); // group_concat 사용 쿼리
+// async function getOrderInfos(id){
+//   let lists = await mysql.query('orders', 'orderList', id); // group_concat 사용 쿼리
 
-  let newList = list.map((info)=>{
-    let tempList = info.prod_name_list.split(',');
-    let newData = `${tempList[0]} 외 ${tempList.length-1}건`;
-    info.prod_name_list = newData;
-    return info;
-  })
-  return newList;
-}
- app.get("/ordersName/:ono/:id", async(req,res)=>{
+//   let newList = list.map((info)=>{
+//     let tempList = info.prod_name_list.split(',');
+//     let newData = `${tempList[0]} 외 ${tempList.length-1}건`;
+//     info.prod_name_list = newData;
+//     return info;
+//   })
+//   return newList;
+// }
+ app.get("/myOrdersName/:ono/:id", async(req,res)=>{
    let datas = [Number(req.params.ono),req.params.id]
    let info = await mysql.query('orders', 'orderListCount',datas);
    res.send(info);
@@ -410,6 +410,7 @@ app.delete("/addDelivery", async(req,res)=>{
     let list = await mysql.query('coupon','myCoupon',id)
     res.send(list);
   })
+  
 app.get("/user",async (req, res) => {
 let list = await mysql.query("admin", "userList");
 res.send(list);
