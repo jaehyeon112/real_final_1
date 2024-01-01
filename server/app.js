@@ -7,6 +7,40 @@ const app = express();
 const fs = require("fs");
 const multer = require("multer");
 const path = require("path");
+const server = require('http').createServer(app);
+const cors = require('cors');
+const io = require('socket.io')(server, {
+  cors: {
+    origin: "http://localhost:8080",
+  }
+});
+
+
+
+
+io.on('connect', (socket) => {
+  console.log('소켓연결테스트')
+
+  socket.on('message', (message) => {
+    console.log(message);
+  });
+
+  socket.on('send', (one, two, three) => {
+    console.log(one, two, three)
+  })
+
+  socket.on('report', (message) => {
+    console.log(message);
+  })
+
+  socket.on('disconnect', () => {
+    console.log('user disconnected');
+  });
+
+})
+
+
+
 
 // const cron = require("node-cron");
 
@@ -42,9 +76,15 @@ app.post("/photos", upload.array("photos", 12), (req, res) => {
   }
 });
 
+/* 
 app.listen(3000, () => {
   console.log("재현 서버 on");
 });
+ */
+server.listen(3000, () => {
+  console.log('app대신 socket.io서버 on~~');
+});
+
 
 app.get('/prod', async (req, res) => {
   let data = await mysql.query("admin", "proList");
@@ -301,6 +341,7 @@ app.get("/bothFilter/:first/:last/:A/:B/:col/:category/:no", async (req, res) =>
 app.get("/show/:col/:category/:no", async (req, res) => {
   let data = [req.params.col, req.params.category, Number(req.params.no) * 6];
   let result = await mysql.query("test", "categoryList", data);
+  console.log(Number(req.params.no))
   res.send(result)
 })
 app.get("/show/:col/:category/", async (req, res) => {
@@ -316,5 +357,47 @@ app.get("/new/:no", async (req, res) => {
 })
 app.get("/new", async (req, res) => {
   let result = await mysql.query("test", "newListPage");
+  res.send(result);
+})
+
+// sql injection의 위험이 있음 처리해야함;;
+app.get("/new2/:first/:last/:A/:B/:no", async (req, res) => {
+  let base = 'select * from product where registration >= current_date() - 3 '
+  let no = req.params.no;
+  let first = req.params.first;
+  let last = req.params.last;
+  let A = req.params.A;
+  let B = req.params.B;
+  if (first != 'X' && last != 'X') {
+    base += ` and  prod_name >= '${first}' and prod_name < '${last}'`;
+  }
+  if (A != 'X' && B != 'X') {
+    base += ` and discount_price between ${A} and ${B} `
+  }
+  if (no != 'X') { // 2번째가 X라면 전체페이지, 아니면 6페이지씩
+    base += ' limit ' + no * 6 + ', 6';
+  }
+  let result = await mysql.query2(base);
+  res.send(result);
+})
+// sql injection의 위험이 있음 처리해야함;;
+app.get("/frozen/:first/:last/:A/:B/:no", async (req, res) => {
+  let base = `select * from product  where refrigeration = 'g1' `
+
+  let no = req.params.no;
+  let first = req.params.first;
+  let last = req.params.last;
+  let A = req.params.A;
+  let B = req.params.B;
+  if (first != 'X' && last != 'X') {
+    base += ` and  prod_name >= '${first}' and prod_name < '${last}'`;
+  }
+  if (A != 'X' && B != 'X') {
+    base += ` and discount_price between ${A} and ${B} `
+  }
+  if (no != 'X') { // 2번째가 X라면 전체페이지, 아니면 6페이지씩
+    base += ' limit ' + no * 6 + ', 6';
+  }
+  let result = await mysql.query2(base);
   res.send(result);
 })

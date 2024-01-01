@@ -16,7 +16,9 @@ const query = async (table, dml, values) => {
     dbPool.query(sql[table][dml], values, (err, result) => {
       if (err) {
         console.log(err);
-        reject({ err });
+        reject({
+          err
+        });
       } else {
         resolve(result);
       }
@@ -24,6 +26,22 @@ const query = async (table, dml, values) => {
   });
 };
 
+const query2 = async (query, values) => {
+  return new Promise((resolve, reject) => {
+    dbPool.query(query, values, (err, result) => {
+      if (err) {
+        console.log(err);
+        reject({
+          err
+        });
+      } else {
+        resolve(result);
+      }
+    })
+  })
+}
+
 module.exports = {
   query,
+  query2
 };
