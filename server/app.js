@@ -1,6 +1,7 @@
 require("dotenv").config({ path: "./db/db.env" });
 const mysql = require("./db.js");
 const express = require("express");
+const nodemailer = require('nodemailer'); //이메일인증
 const app = express();
 const fs = require("fs");
 const multer = require("multer");
@@ -90,12 +91,65 @@ app.get("/join-email/:email", async(req, res)=> {
   res.send(list);
 })
 
+//회원가입 이메일 인증
+// 이메일 전송 API 엔드포인트
+app.post('/api/sendVerificationEmail', (req, res) => {
+  const { email } = req.body;
+  // 이메일 주소 확인 및 인증 코드 생성
+  const verificationCode = generateVerificationCode();
+
+  // Nodemailer를 사용하여 이메일 전송
+  const transporter = nodemailer.createTransport({
+    service: 'Gmail',
+    auth: {
+      user: 'pphhaa314@gmail.com',
+      pass: 'passwd123*'
+    }
+  });
+
+  const mailOptions = {
+    from: 'pphhaa314@gmail.com',
+    to: email,
+    subject: '이메일 인증',
+    text: `인증 코드: ${verificationCode}`
+  };
+
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      console.log(error);
+      res.status(500).send('이메일 전송 실패');
+    } else {
+      console.log('이메일 전송 성공');
+      res.status(200).send('이메일 전송 성공');
+    }
+  });
+});
+
+// 이메일 인증 API 엔드포인트
+app.post('/api/verifyEmail', (req, res) => {
+  const { email, verificationCode } = req.body;
+  // 이메일 주소와 인증 코드 확인 및 처리
+  if (verifyVerificationCode(email, verificationCode)) {
+    // 인증 성공 처리
+    res.status(200).send('이메일 인증 성공');
+  } else {
+    // 인증 실패 처리
+    res.status(400).send('이메일 인증 실패');
+  }
+});
+
+
 
 //회원가입용(insert) **주소수정ㅎ기! 
-app.post("/join", async (req, res) => {
+app.post("/join/joinIn", async (req, res) => {
   let data = req.body.param;
-  let result = await mysql.query("user","join", data);
+  try{  let result = await mysql.query("user","joinIn", data);
   res.send(result);
+  }catch{
+  console.error(error);
+  res.status(500).send({ error: 'Database query failed' });
+  }
+
 });
 
 
@@ -106,6 +160,8 @@ app.get("/dologin/:id/:password", async(req, res)=> {
   res.send(list);
 });
 
+
+
 //로그인 세션
 app.post("/insertLogin", async(req, res)=> {
   let data = req.body.param;
@@ -114,7 +170,12 @@ app.post("/insertLogin", async(req, res)=> {
 })
 
 
-
+//회원탈퇴
+app.delete("/deleteUser/:id", async(req, res)=> {
+  let uid = req.params.id;
+  let list = await mysql.query("user", "deleteUser", uid);
+  res.send(list);
+})
 
 
 app.get("/user",async (req, res) => {

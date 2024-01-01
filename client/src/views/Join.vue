@@ -36,49 +36,73 @@
 
         <div class="group">
           <label for="user" class="label"> ID </label>
-          <input id="user" type="text" class="input" v-model="userInfo.userId" autofocus placeholder="영문+숫자 조합 6자이상 11자 이하" >
-          <v-btn type="button" @click="checkId(userInfo.userId)">중복체크</v-btn >
+          <input id="user" type="text" class="input" v-model="userInfo.user_id" autofocus placeholder="영문+숫자 조합 6자이상 11자 이하" >
+          <v-btn type="button" v-if="!validId" @click="checkId(userInfo.user_id)">중복체크</v-btn >
+           <p v-if="validId" style="color: green;">사용 가능한 아이디입니다.</p>
         </div>
 
         <div class="group">
+          <!-- type 두개 password로 바꾸기 -->
           <label for="pass" class="label">Password</label>
-          <input id="pass" type="password" class="input" data-type="password" maxlength=16 v-model="userInfo.userPass" @blur="passwordValid">
-          <div v-if="!passwordValidFlag">
+          <input id="pass" type="text" class="input" data-type="text" maxlength=16 v-model="userInfo.user_password" @blur="passwordValid">
+          <div v-if="!passwordValidFlag"  style="color: red;">
             유효하지 않은 비밀번호 입니다.
           </div>
         </div>
 
         <div class="group">
           <label for="pass" class="label"> Password CHECK</label>
-          <input id="pass" type="password" class="input" data-type="password" maxlength=16 v-model="userInfo.userChPass" @blur="passwordCheckValid">
+          <input id="pass" type="text" class="input" data-type="text" maxlength=16 v-model="userInfo.userChPass" @blur="passwordCheckValid">
           
-            <div v-if="!passwordCheckFlag">
+            <div v-if="!passwordCheckFlag"  style="color: red;">
               비밀번호가 동일하지 않습니다.
             </div>
         </div>
 
         <div class="group">
           <label for="name" class="label" > Name </label>
-          <input id="name" type="text" class="input" v-model="userInfo.userName">
+          <input id="name" type="text" class="input" v-model="userInfo.user_name">
         </div>
 
 
         <div class="group">
           <label for="email" class="label">Email Address</label>
-          <input id="email" type="text" class="input" v-model="userInfo.userEmail">
+          <input id="email" type="text" class="input" v-model="userInfo.user_email">
           
-          <button type="button" @click="checkEmail(userInfo.userEmail)">인증하기</button>
+          <v-btn type="button" @click="sendVerificationEmail"> 이메일 인증 메일 전송</v-btn>
+          
+          
+          <!-- <button type="button" @click="sendRequestEmail" @click="checkEmail(userInfo.userEmail)">인증하기</button> -->
         </div>
 
-         <div class="group">
+
+
+<div class="group">
+  <label for="email" class="label">Email Address</label>
+  
+  <input id="email" type="text" class="input" v-model="userInfo.user_emailid" placeholder="아이디 입력">
+<span>@</span>
+  <select v-model="userInfo.email_domain" class="input">
+    <option disabled value="">도메인 선택</option>
+    <option>gmail.com</option>
+    <option>naver.com</option>
+    <option>daum.net</option>
+    <!-- 필요한 만큼 도메인 추가 -->
+  </select>
+
+  <v-btn type="button" @click="sendVerificationEmail"> 이메일 인증 메일 전송</v-btn>
+</div>
+
+
+         <div class="group" v-if="isEmailSent">
           <label for="email" class="label">인증번호입력하기</label>
-          <input id="email" type="text" class="input" v-model="userInfo.chEmail">
-          <button type="button">확인</button>
+          <input id="email" type="text" class="input" v-model="userInfo.verificationCode" placeholder="인증 코드를 입력하세요">
+          <v-btn type="button" @click="verifyEmail">확인</v-btn>
         </div>
 
          <div class="group">
           <label for="tel" class="label">TEL</label>
-          <input id="tel" type="text" class="input" v-model="userInfo.userTel">
+          <input id="tel" type="text" class="input" v-model="userInfo.user_tel">
           <button type="button">휴대폰 인증</button>
         </div>
                             
@@ -87,65 +111,43 @@
         <div class="group">
           <label for="address" class="label">주소</label>
             <div class="address">
-             
-              <input type="text" id="postcode" placeholder="우편번호" v-model="userInfo.postcode">
-              <button @click="search()">우편번호 찾기</button><br>
+             <v-btn @click="search()">우편번호 찾기</v-btn><br>
+              <input type="text" id="postcode"  class="input" placeholder="우편번호" v-model="userInfo.postcode">
+              
               <!--onclick이 아니라 @click으로 바꿔야한다. -->
-              <input type="text" id="roadAddress" placeholder="도로명주소" v-model="userInfo.AddressD">
-              <input type="text" id="jibunAddress" placeholder="지번주소" v-model="userInfo.AddressJ">
+              <input type="text" id="roadAddress"  class="input" placeholder="임시주소" v-model="userInfo.address">
+               <input type="text" id="roadAddress"  class="input" placeholder="도로명주소" v-model="userInfo.AddressD">
+              <input type="text" id="jibunAddress"  class="input" placeholder="지번주소" v-model="userInfo.AddressJ">
               <span id="guide" style="color:#000;display:none"></span>
-              <input type="text" id="detailAddress" placeholder="상세주소" v-model="userInfo.detailAdd">
+              <input type="text" id="detailAddress"  class="input" placeholder="상세주소" v-model="userInfo.detail_address">
               <!-- <input type="text" id="extraAddress" placeholder="참고항목"> -->
   </div>
         </div>
 
-         <div class="group">
-          <label for="birth" class="select">생년월일</label>
+      <div class="group"> 
+        <label for="birth" class="label">생년월일</label>
+          <input type="date" v-model="userInfo.birth" class="input">
+      </div>
 
-            <select v-model="userInfo.bthYear">
-                    <option value="">년</option>
-                    <option v-for ="(item, index) in yyyyList" :key="index" :value="item.value" >
-                  {{ item.text }}
-                    </option> 
-            </select>
 
-            <select v-model="userInfo.bthMonth">
-                    <option value="">월</option>
-                <option
-                  v-for="(item, index) in mmlist"
-                  :key="index"
-                  :value="item.value"
-                >
-                  {{ item.text }}
-                </option>
-            </select>
 
-           <select v-model="userInfo.bthDate">
-                    <option value="">일</option>
-                    <option
-                  v-for="(item, index) in ddList"
-                  :key="index"
-                  :value="item.value"
-                >
-                  {{ item.text }}
-                    </option>
-            </select>
-        </div>
 
         <div class="group">
-          <input id="check" type="checkbox" class="check" checked v-model="userInfo.allCh">
+          <input id="check" type="checkbox" class="check"  v-model="userInfo.allCh">
           <label for="check"><span class="icon"></span> 전체 동의합니다.</label>
         </div>
 
 
+
+
         <div class="group">
-          <input id="check" type="checkbox" class="check" checked  v-model="userInfo.ch1">
-          <label for="check"><span class="icon"></span> 약관1</label>
+          <input id="check1" type="checkbox" class="check"   v-model="userInfo.ch1">
+          <label for="check1"><span class="icon"></span> 약관1</label>
         </div>
 
         <div class="group">
-          <input id="check" type="checkbox" class="check" checked  v-model="userInfo.ch2">
-          <label for="check"><span class="icon"></span> 약관2</label>
+          <input id="check2" type="checkbox" class="check"   v-model="userInfo.ch2">
+          <label for="check2"><span class="icon"></span> 약관2</label>
         </div>
 
 
@@ -168,74 +170,76 @@
 import axios from 'axios';
 
 export default {
-  //주소api때 쓴거
-  name: "Address",
+  
+  name: "회원가입",
 
   data() {
     return {
-      //생년월일
-      yyyyList: [],
-      mmlist: [],
-      ddList: [],
-      
+
+    
+      isEmailSent : false, //이메일인증창
+
       //회원가입 v-model
       userInfo : {
-        userId : "",
-        userPass : "",
+        user_id : "",
+        user_password : "",
         userChPass : "",
-        userName : "",
-        userEmail : "",
-        chEmail : "",
-        userTel : "",
+        user_name : "",
+        user_email : "",
+        user_emailid: "",  // 이메일 아이디 저장 필드
+      email_domain: "",  // 이메일 도메인 저장 필드
+        //verificationCode : "",
+        user_tel : "",
         postcode : "",
-        AddressD : "",
-        AddressJ : "",
-        detailAdd : "",
-        bthYear : "",
-        bthMonth : "",
-        bthDate : "",
-        allCh : "",
-        ch1 : "",
-        ch2 : "",
+        address : "",
+        //AddressD : "",
+        //AddressJ : "",
+        //detailAdd : "",
+        birth : "",
+       
+       // allCh : "false",
+        //ch1 : "false",
+        //ch2 : "false",
 
       },
 
       //비밀번호
      passwordValidFlag: true,
       passwordCheck: '',
-      passwordCheckFlag: true
-      
+      passwordCheckFlag: true,
+    
+    // 사용가능한아이디메세지
+    validId: false, // 추가된 변수
      
   }
 
   }, 
 
+computed: {
+  userEmailFull: function() {
+    return `${this.userInfo.user_emailid}@${this.userInfo.email_domain}`;
+  }
+},
   created() {
 
-    //생년월일
-    const nowYear = new Date().getFullYear();
-    for (let i = 0; i < 124; i++) {
-      let date = nowYear - i;
-      this.yyyyList.push({ value: date, text: date });
-    }
-
-    for (let i = 1; i < 13; i++) {
-      this.mmlist.push({
-        value: i,
-        text: i,
-      });
-    }
-
-    for (let i = 1; i <= 31; i++) {
-      this.ddList.push({
-        value: i,
-        text: i,
-      });
-    }
-  
 
 
   }, //created
+
+  watch:{
+    // 아이디 입력값 변화 감지해서 변경되면 false로 설정
+    'userInfo.user_id': function() {
+        this.validId = false;
+    },
+
+    'userInfo.user_emailid': function(newEmailId, oldEmailId) {
+    this.userInfo.user_email = `${newEmailId}@${this.userInfo.email_domain}`;
+  },
+  'userInfo.email_domain': function(newDomain, oldDomain) {
+    this.userInfo.user_email = `${this.userInfo.user_emailid}@${newDomain}`;
+  }
+  },
+
 
   methods: {
     //아이디 중복체크: db에 아이디 있으면 중복되는 아이디 있다고 메세지 띄우기! 
@@ -243,58 +247,34 @@ export default {
 
       let result = await axios.get(`/api/join-id/${this.id}`)
                   .catch(err => console.log(err));
-                  console.log("result.data" + result.data)
+              console.log(result.data)
       let list = result.data.length;
       console.log(list);
 
-      // if(id == ""){
-      //   alert(`아이디를 입력해주세요`);
-      // } else if(list != 0){
-      //   alert(`중복된 아이디 입니다.`);
-      // }
-      // else{
-      //   alert(`사용가능 아이디 입니다.`);
-      // }
-      
-      if(id == ""){
-        alert(`아이디를 입력해주세요`);
-      } else if(list != 0){
-        alert(`중복된 아이디 입니다.`);
-      }else if(id == !this.validation()){
-        alert(`사용가능 아이디 입니다.`);
-      }
-    }, //checkID,
 
-
-  //유효성검사
-    validation(){
-      //id
-      if(this.userInfo.userId.length < 6 || this.userInfo.userId.length > 17){
-        alert(`아이디는 6글자 이상 17자 이하로 입력해주세요`);
-        //this.userInfo.userId.focus();
-        return false;
-      }else if(!this.idChVal(this.userInfo.userId)){
-        alert(`영어 대·소문자와 숫자만 입력가능합니다.`);
-        //this.userId.focus();
-        return false;
-      }
-    },
-
-  //유효성 검사 - 문자열 check
-  idChVal(id){
-    var count = 0;
-    //영어, 숫자 체크
-    for(let i=0; i<id.length; i++){
-      if((id.charCodeAt(i)>=65 && id.charCodeAt(i)<=90) || (id.charCodeAt(i)>=97 && id.charCodeAt(i)<=122) || (id.charCodeAt(i)>=48 && id.charCodeAt(i)<=57)){
-                count += 1;
-            }
-      if(count == id.length){
-        return true;
-      }else{
-        return false;
-      }
+      // 아이디 공백 입력시 경고창
+    if(id == ""){
+      alert(`아이디를 입력해주세요`);
+       this.validId = false;
+    // 아이디가 대소문자 영어와 숫자로 6글자 이상 12자 이하로 이루어지지 않았을 경우 경고창
+    } else if(!this.validation(id)){
+      alert(`아이디는 영문 대소문자와 숫자로 6글자 이상 12자 이하로 구성해주세요`);
+       this.validId = false;
+    } else if(list != 0){
+      alert(`중복된 아이디입니다.`);
+       this.validId = false;
+    } else {
+      alert(`사용 가능한 아이디입니다.`);
+       this.validId = true;
     }
+  }, //checkID,
+
+  // 유효성 검사
+  validation(id){
+    var ch = /^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z\d]{6,12}$/;  // 대소문자 영어와 숫자로 6글자 이상 12자 이하의 조건을 정규표현식으로 작성
+    return ch.test(id);
   },
+
 
   //비밀번호 체크
   //1) 문자유효성 - 영문 대소문자, 숫자 특수문자 최소 한 개씩 포함하는 10자 이상의 비밀번호
@@ -305,21 +285,36 @@ export default {
   // },
 
 //2) 비밀번호랑 비밀번호확인이랑 일치해야함
-   passwordValid () {
-      if (/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9]).{8,16}$/.test(this.userInfo.userPass)) {
-        this.passwordValidFlag = true
-      } else {
-        this.passwordValidFlag = false
-      }
-    },
+  checkPwd(pwd){
+  // 영어와 숫자만 허용하는 정규표현식
+  var onlyEngNum = /^[a-zA-Z0-9]*$/;
 
-     passwordCheckValid () {
-      if (this.userInfo.userPass === this.userInfo.userChPass) {
-        this.passwordCheckFlag = true
-      } else {
-        this.passwordCheckFlag = false
-      }
-    },
+  // 비밀번호 유효성 검사
+  if(!this.validationPwd(pwd)){
+    alert("비밀번호는 영어 대문자 혹은 소문자, 숫자, 특수문자를 반드시 포함하는 8자 이상이어야 합니다."); 
+  } else if(!onlyEngNum.test(pwd)){
+    alert("비밀번호에는 영어와 숫자 외의 문자가 포함될 수 없습니다."); 
+  } else {
+    alert("비밀번호가 유효합니다."); 
+  }
+},
+
+passwordValid() {
+   if (this.userInfo.user_password === '') {
+    this.passwordValidFlag = true;
+  } else {
+    this.passwordValidFlag = this.validationPwd(this.userInfo.user_password);
+  }
+  },
+
+  passwordCheckValid() {
+    this.passwordCheckFlag = (this.userInfo.user_password === this.userInfo.userChPass);
+  },
+  
+  validationPwd(pwd){
+    var pwdCh = /^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[^a-zA-Z0-9]).{8,}$/;  
+    return pwdCh.test(pwd);
+  },
  
 
  //Email
@@ -337,22 +332,58 @@ export default {
       }else{ alert(`사용가능한 이메일입니다.`)};
     },
 
+    //이메일 인증
+
+    sendVerificationEmail() {
+      const email = this.userEmailFull; //computed  에서 합친거
+
+      // 이메일 주소를 백엔드로 전송하여 인증 코드를 받아옵니다.
+      // 백엔드 API 호출 예시:
+      axios.post('/api/sendVerificationEmail', { email: this.userInfo.email })
+         .then(response => {
+          alert(`인증코드를 받아옵니다.`);
+           this.isEmailSent = true;
+         })
+         .catch(error => {
+        alert(`인증코드를 받아옵니다 실패! .`);
+        this.isEmailSent = true; //얘는 확인용임 지워라현아야..
+         });
+      console.log('이메일 인증 메일 전송');
+    },
     
+    verifyEmail() {
+      // 인증 코드를 백엔드로 전송하여 이메일 인증을 수행합니다.
+      // 백엔드 API 호출 예시:
+       axios.post('/api/verifyEmail', { email: this.email, verificationCode: this.verificationCode })
+         .then(response => {
+          alert(`이메일 인증 성꽁! `);
+         })
+         .catch(error => {
+           alert(`이메일 인증 실패! `);
+        })
+      console.log('이메일 인증');
+    },
+  
+
+
 
 
 
 
   async joinInsert(){
     let info = this.userInfo;
-    let data ={
+    let data = {
       param : this.userInfo
     };
 
-    let result = await axios.post('/api/join', data);
+    let result = await axios.post(`/api/join/joinIn`, data);
     if(result.data.affectedRows > 0 ){
       alert('가입 성공');
+      this.$router.push({name : 'message'});
+      return;
     }else{
       alert('가입 실패');
+      return;
   }
   },
 
@@ -566,6 +597,22 @@ a{color:inherit;text-decoration:none}
 }
 .login-html .sign-up:checked + .tab + .login-form .sign-up-htm{
   transform:rotate(0);
+}
+
+css
+/* 체크박스 크기 변경 */
+.check {
+  transform: scale(1.5); /* 원하는 크기로 조절 */
+}
+
+/* 전체 동의합니다 라벨 텍스트 크기 변경 */
+#check + label {
+  font-size: 20px; /* 원하는 크기로 조절 */
+}
+
+/* 약관1, 약관2 라벨 위치 변경 */
+#check1 + label, #check2 + label {
+  margin-left: 30px; /* 원하는 거리로 조절 */
 }
 
 .hr{

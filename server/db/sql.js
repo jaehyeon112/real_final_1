@@ -15,14 +15,20 @@ let user = {
   //아이디 중복 체크할 때
   duplicateId : `select user_id from user where user_id=?`,
   
-  //회원가입
-  join : `INSERT INTO user SET ?`, 
+  //회원가입--일단
+  joinIn : `INSERT INTO user SET ?`, 
 
   // 이메일 중복체크용
   duplicateEmail : `select user_email from user where user_email = ?`,
 
+  //이메일 인증번호용
+  e_verification : `INSERT INTO email_verification set ?`,
+
   //로그인(일단)
-  forLogin : `select * from user where user_id = ? and user_password = ?;`
+  forLogin : `select * from user where user_id = ? and user_password = ?`,
+
+  //회원탈퇴 - 탈퇴하기버튼누르면 삭제될때
+  deleteUser : `delete from user where user_id=?`
  
 }
 

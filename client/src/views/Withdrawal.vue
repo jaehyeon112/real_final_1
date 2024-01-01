@@ -1,62 +1,83 @@
 <template>
-  <div class="container">
-    <div>
-        <h1>회원 탈퇴 page</h1>
-        
-    
+<div class="container">
+  <h2>탈퇴 사유를 알려주세요.</h2>
+  <v-container fluid>
+    <p>Selected Button: {{ radios }}</p>
+    <v-radio-group v-model="radios">
+      <v-radio label="사유1" value="one"></v-radio>
+      <v-radio label="사유2 (string)" value="2"></v-radio>
+      <v-radio label="사유3 (integer)" :value="3"></v-radio>
+      <v-radio label="사유4 (integer)" :value="4"></v-radio>
+    </v-radio-group>
+    <v-textarea
+      v-if="this.radios === 4"
+      label="기타 사유 작성해주세요."
+      v-model="textarea"
+    ></v-textarea>
 
-    <b-form-group label="회원 탈퇴 사유를 알려주세요" v-slot="{ ariaDescribedby }">
-      <b-form-radio-group
-        v-model="selected"
-        :options="options"
-        :aria-describedby="ariaDescribedby"
-        name="radios-stacked"
-        stacked
-      >
+    <v-checkbox
+      label="탈퇴 시 30일간 재 가입이 불가능합니다. 동의하십니까? "
+      v-model="checkbox"
       
-      </b-form-radio-group>
-<b-container fluid>
-  <b-row>
-    <b-col sm="2">
-      <label for="textarea-auto-height">기타:</label>
-    </b-col>
-    <b-col sm="10">
-      <b-form-textarea
-        id="textarea-auto-height"
-        placeholder="Auto height textarea"
-        rows="3"
-        max-rows="8"
-      ></b-form-textarea>
-    </b-col>
-  </b-row>
-  </b-container>
+    ></v-checkbox>
 
+   <div class="button">
+   <v-container>
+    <v-row justify="center">
+      <v-col cols="auto">
+        <v-btn
+          height="50"
+          min-width="80"
+        >
+          홈으로
+        </v-btn>
+      </v-col>
 
-    </b-form-group>
-
-    <div class="button">
-          <b-button squared variant="info" a href="/">홈으로</b-button>
-         <b-button variant="outline-secondary" type="submit">탈퇴하기</b-button>
-    </div>
-</div>
-
-    <div class="mt-3">Selected: <strong>{{ selected }}</strong></div>
+      <v-col cols="auto">
+        <v-btn
+          :ripple="false"
+          height="50"
+          min-width="80"
+          @click="deleteUser"
+        >
+          탈퇴하기
+        </v-btn>
+      </v-col>
+    </v-row>
+  </v-container>
+  </div>
+  </v-container>
   </div>
 </template>
 
+
+
+
 <script>
+import axios from 'axios'
   export default {
     data() {
       return {
-        selected: 'first',
-        options: [
-          { text: 'First 사유', value: 'first' },
-          { text: 'Second 사유', value: 'second' },
-          { text: 'Third 사유', value: 'third' },
-          { text: 'fourth사유', value: 'fourth' },
-          { text: 'fifth 사유', value: 'fifth' },
-          { text: '기타', value: 'etc' },
-        ]
+        radios: 'one',
+        textarea: '',
+        checkbox: false,
+      }
+    },
+
+    methods : {
+      async deleteUser(){
+        if(!this.checkbox ){
+           alert('탈퇴 시 30일간 재 가입이 불가능하다는 사항에 동의해주세요.');
+        }else{
+          let user_id = this.$store.state.user.id;
+          
+          
+          console.log(user_id);
+
+          let result = await axios.delete(`/api/deleteUser/${uid}`)
+                              .catch(err => console.log(err));
+                console.log(result);
+         }
       }
     }
   }

@@ -55,6 +55,9 @@
       <div>
       <router-link to="/finding" class="button"> 아이디비번찾기페이지로 </router-link> 
       <router-link to="/test" class="button"> test 페이지로 </router-link> 
+      <router-link to="/putpass" class="button"> 비번입력창 </router-link> 
+      <router-link to="/withdrawal" class="button"> 탈퇴페이지 </router-link> 
+      
       </div>  
 
       </div>
@@ -83,16 +86,52 @@ export default {
   methods: {
 
 //Login 버튼
+
+
+
 async doLogin(){
   if(this.user_id == "" || this.user_password==""){
     alert(`아이디와 비밀번호 모두 입력해`)
     return;
   }
 
+let failedAttemps = 0;
+
 let ipList = await axios.get(`/api/dologin/${this.user_id}/${this.user_password}`)  
                 .catch(err => console.log(err));
      let users = ipList.data;
+     console.log(users);
+     console.log(users.user_id);
      
+    if(users == ''){
+      this.failedAttemps++;
+      alert(`ID나 Password 확인하기!`)
+    }
+
+    //로그인 5회이상 실패시 보안프로그램 실행! 
+    if(failedAttempts >= 5){
+      // reCAPTCHA 실행
+      grecaptcha.ready(function() {
+        grecaptcha.execute('your-recaptcha-site-key', {action: 'submit'}).then(function(token) {
+          // reCAPTCHA 토큰을 서버로 전송
+          axios.post('/api/verify_recaptcha', { recaptcha_token: token })
+          .then(response => {
+            if(response.data.success){
+              // reCAPTCHA 검증 성공
+              alert('reCAPTCHA를 통과했습니다. 다시 로그인해주세요')
+            }else{
+              // reCAPTCHA 검증 실패
+              alert('reCAPTCHA 검증에 실패했습니다.')
+            }
+          })
+        });
+      });
+    
+    return;
+  }else{
+    alert(response.data[0].user_name +'님 환영합니다');
+  }
+  
        
        if(users == ''){
         alert('아디 비번 확인;')
