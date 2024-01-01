@@ -108,6 +108,7 @@ let ipList = await axios.get(`/api/dologin/${this.user_id}/${this.user_password}
       alert(`ID나 Password 확인하기!`)
     }
 
+
     //로그인 5회이상 실패시 보안프로그램 실행! 
     if(failedAttempts >= 5){
       // reCAPTCHA 실행
