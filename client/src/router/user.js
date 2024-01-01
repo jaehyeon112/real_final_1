@@ -17,9 +17,10 @@ import detailPage from "@/views/detailPage.vue";
 import MyorderList from "@/components/MyPage/orderList.vue";
 import detailOrder from "@/components/MyPage/orderDetail.vue";
 import like from  "@/components/MyPage/likeBasket.vue";
-import delivery from "@/components/MyPage/delivery.vue"
-import addDeli from "@/components/MyPage/addDelivery.vue"
-import coupon from "@/components/MyPage/couponList.vue"
+import delivery from "@/components/MyPage/delivery.vue";
+import addDeli from "@/components/MyPage/addDelivery.vue";
+import coupon from "@/components/MyPage/couponList.vue";
+import myReview from "@/components/MyPage/myReview.vue";
 
 export default {
   path: "/",
@@ -122,6 +123,11 @@ export default {
           path:"detailOrder",
           name:"detailOrder",
           component:detailOrder
+        },
+        {
+          path:"myReview",
+          name:"myReview",
+          component:myReview
         },
          {path:"like",
           name:"like",

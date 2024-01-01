@@ -27,7 +27,8 @@ import axios from 'axios';
 export default {
    data(){
     return{
-        productList:[]
+        productList:[],
+        orderNo:''
     }
    },
    created(){
@@ -36,12 +37,12 @@ export default {
    },
    methods:{
     async getDetailList(){
-        this.productList = (await axios.get(`api/orders/${orderNo}/test`)
+        this.productList = (await axios.get(`api/myDetailOrders/${this.orderNo}/${this.$store.state.user.user_id}`)
                                         .console.log(err=>console.log(err))).data
     },
     
     goToReview(productNo){
-            this.$router.push({path:'/review',query:{pno : productNo}})
+            this.$router.push({path:'/reviewForm',query:{pno : productNo}})
         }
    }
    

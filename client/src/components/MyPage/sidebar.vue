@@ -25,7 +25,7 @@
         </router-link>
       </li>
       <li>
-        <router-link to="#" class="nav-link text-white">
+        <router-link to="/myPage/myReview" class="nav-link text-white">
           <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#grid"/></svg>
           상품후기
         </router-link>

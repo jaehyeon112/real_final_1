@@ -6,7 +6,7 @@
                     <div :key="i" v-for="(quantity, i) in prodcutName">
                     <div>
                         <p class="orderdate" >주문일자  {{ order.order_date }}</p>
-                        <p class="showdetail" @click="goToOrderDetail">주문내역 상세보기></p>
+                        <p class="showdetail" @click="goToOrderDetail(order.order_no)">주문내역 상세보기></p>
                        
                     </div> 
                     <div>
@@ -57,7 +57,7 @@ export default {
                                           .catch(err=>console.log(err))).data
         },
         goToOrderDetail(orderNo){
-            this.$router.push({path:'/orderDetail', query:{orderNo : orderNo}})
+            this.$router.push({path:'/detailOrder', query:{orderNo : orderNo}})
         },
         async orderCancle(){
             this.orderList = await axious.delete('/api/myOrders')

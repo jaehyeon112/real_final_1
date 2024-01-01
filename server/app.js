@@ -8,14 +8,22 @@ const fs = require("fs");
 const multer = require("multer");
 const path = require("path");
 
-// const cron = require("node-cron");
+const cron = require("node-cron");
 
 //  *(분: 0-59) *(시: 0-23) *(일: 1-31) *(월 1-12) *(요일 0-7, 0or7은 일요일~)
 /* 
-cron.schedule("1-59 * * * * *", () => {
+cron.schedule("0 2 * * * *", () => {
   console.log("1초마다 스케줄러 작동!");
 });
  */
+
+
+
+// cron.schedule("0 0 6 * * *", () => {
+//   console.log("1초마다 스케줄러 작동!");
+//   // 매일 06시 0분 0초에 진행되는 작업
+  
+// });
 
 app.use(
   express.json({
@@ -318,19 +326,13 @@ app.get("/new", async (req, res) => {
   let result = await mysql.query("test", "newListPage");
   res.send(result);
 })
-//시험용 멤버
+//멤버조회정보
 app.get("/member/:id", async (req,res)=>{
   let id = req.params.id;
   let info= await mysql.query("member", "memberInfo", id);
   res.send(info)
 })
-//리뷰관련
-//상세페이지에서 리뷰목록
-app.get("/detailReview/:pno", async(request, response)=>{
-  let pno = request.params.prod_no
-  let list = await mysql.query('review','detailList',pno)[0]
-  res.send(list);
-})
+
 //주문내역 관련
 app.get("/myOrders/:id", async(req, res)=>{
   let id = req.params.id
@@ -358,7 +360,7 @@ app.get("/myOrders/:id", async(req, res)=>{
    res.send(info);
  })
 //주문 상세내역
-app.get("/orders/:ono/:id", async(req,res)=>{
+app.get("/myDetailOrders/:ono/:id", async(req,res)=>{
   let datas = [req.params.ono,req.params.id]
   let list = await mysql.query('orders', 'detailOrderLists', datas);
   res.send(list);
@@ -415,3 +417,43 @@ app.get("/user",async (req, res) => {
 let list = await mysql.query("admin", "userList");
 res.send(list);
 });
+//포인트
+    //기간 만료시 포인트 소멸
+    cron.schedule("0 0 0 * * *", () => {
+      app.post("/pointExpre",async (req,res)=>{
+        let data = req.body.param
+        res.send(await mysql.query('point','pointExpire',data));
+      })
+    });
+
+    //리뷰등록시 포인트 지급
+    app.post("/reviewPoint/:ono/:id", async(req,res)=>{
+        let datas = [request.body.param,Number(req.params.ono),req.params.id] 
+        res.send(await mysql.query("reviews","reviewPoint", datas));
+      
+      });
+//리뷰관련
+    //상세페이지에서 리뷰목록
+    app.get("/detailReview/:pno", async(request, response)=>{
+      let pno = request.params.pno
+      let list = await mysql.query('reviews','detailList',pno)
+      res.send(list);
+    })
+    //마이페이지에서 리뷰목록
+    app.get("/myReview/:id", async(request, response)=>{
+      let id = request.params.id
+      let list = await mysql.query('reviews','myReview',id)
+      response.send(list);
+    })
+    //리뷰등록 + (포인트 지급은 위에 참고)
+    app.post("/reviewInsert", async(req,res)=>{
+      let datas = req.body.param
+      res.send(await mysql.query("reviews", "insertReview", datas));
+    
+    });
+    //리뷰수정
+    app.put("/reviewUpdate/:id/:rno", async(req,res)=>{
+      let datas = [req.body.param, req.params.id, Number(req.params.rno)]
+      res.send(await mysql.query("reviews", "updateReview", datas));
+    })
+    

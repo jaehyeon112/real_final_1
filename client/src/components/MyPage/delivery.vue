@@ -46,11 +46,11 @@ export default {
 
     methods:{
         async getDeliveryList() {
-         this.deliveryList = (await axios.get(`/api/addDelivery/test`)
+         this.deliveryList = (await axios.get(`/api/addDelivery/${this.$store.state.user.user_id}`)
                                             .catch(err=>console.log(err))).data
         },
         goToUpdatePage(addDeli){
-            this.$router.push({path :'/addDeli', query : {addDelivery : addDeli}})
+            this.$router.push({path :'myPage/addDeli', query : {addDelivery : addDeli}})
         }
     }
 }

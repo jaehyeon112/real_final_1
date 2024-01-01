@@ -23,7 +23,7 @@
             </div>
                 <div class="col-sm-3 " style="background-color: lightgreen; margin:10px">
                     <div class="col p-4 d-flex flex-column position-static">
-                        <strong class="d-inline-block mb-2 text-success-emphasis"><!--{{ 잔여포인트 }}-->잔여포인트</strong>
+                        <strong class="d-inline-block mb-2 text-success-emphasis">잔여포인트</strong>
                         <h3 class="mb-0">{{ member.point }} p</h3>
                         <p class="mb-auto"></p>
                     </div>
@@ -32,7 +32,9 @@
                 <div class="col-sm-3"  style="background-color: lightgreen; margin:10px">
                     <div class="col p-4 d-flex flex-column position-static">
                         <strong class="d-inline-block mb-2 text-success-emphasis">잔여쿠폰</strong>
-                        <h3 class="mb-0" @click="modalOpen"> 잔여쿠폰</h3>
+                        <!-- <h3 class="mb-0" @click="modalOpen">{{ member.couponCnt }} 개</h3> -->
+                        <router-link to="/myPage/coupon"><h3 class="mb-0" >{{ member.couponCnt }} 개</h3></router-link>
+                         
                             <!-- <div class="modal-wrap" v-show="modalCheck">
                                 <div class="modal-container">
                                     <table>

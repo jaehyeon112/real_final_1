@@ -88,14 +88,23 @@ let admin = {
   searchProd: `select prod_no,prod_name,price,discount_price,discount_rate,stock,main_category from product where prod_name like concat(concat('%',?),'%') order by ?? limit ?,?`
 }
 
+
+//예빈
+
 let reviews = {
-  myList:`select * from review where user_id=? `,//마이페이지에서 내가 작성한 리뷰 리스트
+  myReview:`select * from review where user_id=? `,//마이페이지에서 내가 작성한 리뷰 리스트
   detailList:`select * from review where prod_no=?`, //상세페이지에서 그 상품에대한 리뷰 리스트
-  insertRivew:`insert into review set?`,//이미지를 넣으려면..?
-  insertImage:`insert into image set?`  
+  insertReview:`insert into review set?`,//주문상세내역->리뷰등록
+  updateReview:`update review set ? where user_id= ? and review_no= ?`,
+  insertReviewImage:`insert into image set?`  
 };
 let point = {
-  myPoint:`select * from point where user_id=?`//마이페이지 보유 포인트
+  myPoint:`select point from user where user_id=?`,//마이페이지 보유 포인트
+  reviewPoint:`insert into point set point_no = ?, order_no=?, user_id=?, point_history='리뷰등록',
+              point_save = 500, point_use=null, point_date =current_date(), end_point_date = date_add(current_date(), interval 1 Year);`, //리뷰등록시 포인트 지급
+  pointExpire:`update user as t1,(select sum( point_save) as points, user_id from point where end_point_date = current_date() group by user_id) as t2
+              set t1.point = t1.point- t2.points where t1.user_id=t2.user_id;`//기간소멸
+              //그리고 point table에 소멸사유로 인서트 해주는것도 같이..?
 };
 let coupon = {
   myCoupon:`select c1.couponinfo_no, c1.user_id, c1.start_coupon, c1.end_coupon, c1.coupon_able, c2.coupon_name, c2.coupon_content, c2.coupon_discount_rate  
@@ -104,7 +113,7 @@ let coupon = {
             where c1.user_id=?;`//마이페이지 보유 쿠폰
 };
 let orders = {
-  detailOrderLists:`select * from order_detail o1 left join orders o2 on o1.order_no = o2.order_no`,//주문창에서 상세주문내역으로 이동시 불러올 값
+  detailOrderLists:`select * from order_detail o1 left join orders o2 on o1.order_no = o2.order_no where o1.order_no =? and user_id = ?`,//주문창에서 상세주문내역으로 이동시 불러올 값
   orderList:`select order_no, order_date, total_payment, real_payment, payment_method, order_status
              from orders where user_id=?`,
    orderListCount:`select prod_name from product pr join order_detail ord on pr.prod_no = ord.prod_no 
@@ -126,7 +135,7 @@ let like = {
   likeList : `select* from likes where user_id=?`
 }
 let member = {
-  memberInfo : `select * from user where user_id=?` //이건 나중에 로그인 세션 이용하게 되면 지우자
+  memberInfo : `select t1.*, count(t2.user_id) as couponCnt from user t1 join coupon t2  on t1.user_id = t2.user_id where t1.user_id=?` //이건 나중에 로그인 세션 이용하게 되면 지우자
 }
 
 module.exports = {

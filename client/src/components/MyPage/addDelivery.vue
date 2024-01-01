@@ -37,7 +37,8 @@ export default{
       
         async getDelivery(){
             let obj ={
-                param:{delivery_name : this.delivery.delivery_name,
+                param:{
+                    delivery_name : this.delivery.delivery_name,
                     user_id : this.delivery.user_id,
                     delivery_address: this.delivery.delivery_address,
                     dlivery_detail_address: this.delivery.delivery_detail_address,
