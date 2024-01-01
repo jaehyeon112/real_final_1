@@ -118,6 +118,8 @@ export default {
                 let result = await axios.put(`/api/user/i6/${this.userId}`).catch(err=>console.log(err));
                 if(result.data.affectedRows==1){
                     alert('이용제한이 되었습니다');
+                    //여기에 유저에게 정지되었다고 알람주기
+                    this.$socket.emit('report', `${this.userId}  정지!`)
                     this.uList(this.nums);
                     this.modalCheck = false;
                     //스케쥴러 사용--한달동안 정지시킴

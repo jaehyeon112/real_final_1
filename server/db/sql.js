@@ -25,6 +25,8 @@ let test = {
   //신상품
   newListPage: `select * from product where registration >= current_date() - 3;`,
   newList: `select * from product where registration >= current_date() - 3 limit ?,6;`,
+
+
   cartList: `select distinct * 
               from cart c, product p, user u
               WHERE cart_checkbox = 1 AND c.user_id = u.user_id AND p.prod_no = c.prod_no AND c.user_id = ?
@@ -43,13 +45,7 @@ let test = {
                order by order_no`,
   orderInsert: `insert into orders set?`,
   orderdetailInsert: `insert into order_detail set?`,
-  categoryList: `select * from where ?? = ?`,
-  wordFilterPage: `select * from product where  prod_name >= ? and prod_name < ?`,
-  wordFilter: `select * from product where  prod_name >= ? and prod_name < ? limit ? , 6`,
-  priceFilterPage: `select * from product where discount_price between ? and ?`,
-  priceFilter: `select * from product where discount_price between ? and ? limit ? , 6`,
-  bothFilterPage: `select * from product where prod_name >= ? and prod_name < ? and discount_price between ? and ?`,
-  bothFilter: `select * from product where prod_name >= ? and prod_name < ? and discount_price between ? and ? limit ? , 6`,
+
 };
 
 let user = {
