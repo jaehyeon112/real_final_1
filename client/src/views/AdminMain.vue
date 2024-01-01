@@ -42,10 +42,10 @@
           <td>{{ $wonComma(order.total_payment)+'원' }}</td>
           <td>{{ $wonComma(order.real_payment)+'원' }}</td>
           <td v-if="order.order_status=='c1'">{{this.alarm='주문완료'}}</td>
-          <td v-if="order.order_status=='c2'">상품준비중</td>
-          <td v-if="order.order_status=='c3'">출고완료</td>
-          <td v-if="order.order_status=='c1'"><button>상품 준비완료</button></td>
-          <td v-else-if="order.order_status=='c2'"><button>상품 출고하기</button></td>
+          <td v-else-if="order.order_status=='c2'">상품준비중</td>
+          <td v-else-if="order.order_status=='c3'">출고완료</td>
+          <td v-if="order.order_status=='c1'"><button @click="this.orderStatus='c2',changeStatus(order.order_no)">상품 준비완료</button></td>
+          <td v-else-if="order.order_status=='c2'"><button @click="this.orderStatus='c3',changeStatus(order.order_no)">상품 출고하기</button></td>
           <td v-else><button>배송 조회</button></td>
         </tr>
       </tbody>
@@ -168,6 +168,8 @@ import icon from '../components/admin/icon.vue';
   export default {
     data(){
       return{
+        orderStatus : '',
+        ono : 0,
         count : 0,
         count2 : 0,
         alarm : false,
@@ -267,6 +269,16 @@ import icon from '../components/admin/icon.vue';
           if(result.data[i].answer_state=='0'){
             this.count2 = this.count2+1;
           }
+        }
+       },
+       async changeStatus(ono){
+        let result = await axios.put(`/api/order/${this.orderStatus}/${ono}`).catch(err=>console.log(err));
+        console.log('?'+result)
+        if(result.data.affectedRows==1){
+          alert('완료되었습니다');
+          this.getOrderList();
+        }else{
+          alert('오류가 남');
         }
        }
       }

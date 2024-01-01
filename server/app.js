@@ -154,6 +154,18 @@ app.get("/user/:order/:startNo/:no",async (req, res) => {
   res.send(list);
 });
 
+app.put("/order/:status/:ono",async (req, res) => {
+  let data = [req.params.status,req.params.ono];
+  let list = await mysql.query("admin", "updateOrder",data);
+  res.send(list);
+});
+
+app.get("/orderCount",async (req, res) => {
+  //let data = req.params.orderNo;
+  let list = await mysql.query("admin", "orderDetailCount");
+  res.send(list);
+});
+
 // 회원가입 - 아이디 중복체크용
 app.get("/join-id/:id", async (req, res) => {
   let uid = req.params.id;
@@ -329,12 +341,72 @@ app.get("/bothFilter/:first/:last/:A/:B/:no", async (req, res) => {
 });
 
 app.get('/order',async (req, res) => {
-  let result = await mysql.query("admin", "orderList");
+  let result = await mysql.query("admin", "AllOrderList");
+  res.send(result);
+});
+
+app.get('/review/:order',async (req, res) => {
+  let data=req.params.order;
+  let result = await mysql.query("admin", "reviewList",data);
+  res.send(result);
+});
+
+app.get('/order/:status/:sno/:lno',async (req, res) => {
+  console.log('실행중')
+  let data = [req.params.status,Number(req.params.sno),Number(req.params.lno)]
+  let result = await mysql.query("admin", "orderStatus",data);
+  res.send(result);
+});
+
+app.post('/refund/:ono',async (req, res) => {
+  let data = req.params.ono
+  let result = await mysql.query("admin", "adminRefund",data);
+  res.send(result);
+});
+
+app.put('/refund/:ono',async (req, res) => {
+  let data = req.params.ono
+  let result = await mysql.query("admin", "refundOrder",data);
+  res.send(result);
+});
+
+app.get('/order/:sno/:lno',async (req, res) => {
+  let datas = [Number(req.params.sno),Number(req.params.lno)]
+  let result = await mysql.query("admin", "orderList",datas);
   res.send(result);
 });
 
 app.get('/review',async (req, res) => {
-  let result = await mysql.query("admin", "reviewReportList");
+  let result = await mysql.query("admin", "AllreviewReportList");
+  res.send(result);
+});
+
+app.get('/review/:sno/:lno',async (req, res) => {
+  let datas = [Number(req.params.sno),Number(req.params.lno)]
+  let result = await mysql.query("admin", "reviewReportList",datas);
+  res.send(result);
+});
+
+app.get('/review/:status/:sno/:lno',async (req, res) => {
+  let datas = [req.params.status,Number(req.params.sno),Number(req.params.lno)]
+  let result = await mysql.query("admin", "reasonReportList",datas);
+  res.send(result);
+});
+
+app.get('/refund',async (req, res) => {
+  let result = await mysql.query("admin", "AllrefundOrderList");
+  res.send(result);
+});
+
+app.get('/refund/:sno/:lno',async (req, res) => {
+  let datas = [Number(req.params.sno),Number(req.params.lno)]
+  let result = await mysql.query("admin", "refundOrderList",datas);
+  res.send(result);
+});
+
+app.put('/refund/:state/:ono',async (req, res) => {
+  let datas = [req.params.state,req.params.ono];
+  let result = await mysql.query("admin", "updateRefund",datas);
   res.send(result);
 });
 
@@ -343,9 +415,8 @@ app.get('/inquire',async (req, res) => {
   res.send(result);
 });
 
-app.get('/orders/:startNo/:lastNo',async (req, res) => {
-  console.log('리스트불러옴')
-  let datas = [req.params.startNo,req.params.lastNo];
+app.get('/orders/:sday/:eday/:startNo/:lastNo',async (req, res) => {
+  let datas = [req.params.sday,req.params.eday,Number(req.params.startNo),Number(req.params.lastNo)];
   let result = await mysql.query("admin", "orderDate",datas);
   res.send(result);
 });
