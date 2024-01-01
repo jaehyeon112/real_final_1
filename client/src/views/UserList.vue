@@ -1,8 +1,21 @@
 <template>
+    
 <list @changeemit="changeChildData" @search="search">
     <template #filterSearch>
         <div><a @click="this.order='user_id'">기본순 | </a><a @click="this.order='join_date'">가입날짜순 | </a><a @click="this.order='user_grade'">등급 높은순</a></div>
     </template>
+    <table>
+        <thead>
+            <tr>
+                <th>오늘 가입자 수</th>
+                <th>오늘 탈퇴자 수</th>
+            </tr>
+        </thead>
+        <tbody>
+            <td>1명</td>
+            <td>1명</td>
+        </tbody>
+    </table>
     <template #dataList>
     <thead>
         <tr>

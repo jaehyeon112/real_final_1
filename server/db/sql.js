@@ -44,7 +44,11 @@ let admin = {
   stopUser : `update user set user_grade = ? where user_id = ?`,
   searchUser : `select user_id,user_name,user_email,user_tel,join_date,user_grade from user
   where user_id like concat(concat('%',?),'%') or user_name like concat(concat('%',?),'%') or join_date like concat(concat('%',?),'%') order by ?? limit ?,?`,
-  searchProd : `select prod_no,prod_name,price,discount_price,discount_rate,stock,main_category from product where prod_name like concat(concat('%',?),'%') order by ?? limit ?,?`
+  searchProd : `select prod_no,prod_name,price,discount_price,discount_rate,stock,main_category from product where prod_name like concat(concat('%',?),'%') order by ?? limit ?,?`,
+  orderList : `select * from orders order by order_date desc`,
+  reviewReportList : `select * from review_report order by report_date desc`,
+  inquireList : `select * from inquire order by create_date desc`,
+  orderDate : `select * from orders where order_date between ? and ?`
 }
 
 module.exports = {

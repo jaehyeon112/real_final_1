@@ -8,7 +8,7 @@
               <div class="row g-3">
     
                 <div class="col-12">
-                  <label for="prod_name" class="form-label">상품명 <icon/></label>
+                  <label for="prod_name" class="form-label">상품명 <icon/>필수</label>
                   <div class="input-group has-validation" v-if="this.prodNo==null">
                     <input type="text" v-model="prod.prod_name" class="form-control" id="prod_name" required>
                   </div>
@@ -18,7 +18,7 @@
                 </div>
     
                 <div class="col-sm-6">
-                  <label for="price" class="form-label">원가 <icon/></label>
+                  <label for="price" class="form-label">원가 <icon/>필수</label>
                   <input v-if="this.prodNo==null" type="number" v-model.number="prod.price" class="form-control" id="prod_name" required>
                   <input v-else type="number" v-model.number="prod.price" class="form-control" id="prod_name" required readonly>
                 </div>
@@ -29,7 +29,7 @@
                 </div>
 
                 <div class="col-sm-6">
-                  <label for="stock" class="form-label">재고 <icon/></label>
+                  <label for="stock" class="form-label">재고 <icon/>필수</label>
                   <input v-if="this.prodNo==null" type="number" v-model.number="prod.stock" class="form-control" id="stock" placeholder="" value="" required>
                   <input v-else type="number" v-model.number="prod.stock" class="form-control" id="stock" placeholder="" value="" required>
                 </div>
@@ -54,7 +54,7 @@
                 </div> -->
     
                 <div class="col-md-5">
-                  <label for="main_category" class="form-label">메인 카테고리 <icon/></label>
+                  <label for="main_category" class="form-label">메인 카테고리 <icon/>필수</label>
                   <select v-model="prod.main_category" class="form-select" id="main_category" required>
                     <option value="">선택하세요</option>
                     <option value="e1">한식</option>

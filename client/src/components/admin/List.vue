@@ -29,7 +29,7 @@
                             <v-icon icon="fa:fas fa-search"></v-icon>
                         </div>
                     </template>
-                    <input class="datatable-input" v-model="word" @keyup="searchData" style="border-bottom: 1px black solid;float: right;">
+                    <input class="datatable-input" v-model="word" @keyup="searchData" style="border-bottom: 1px black solid;float: right;" placeholder="Search...">
                     </div>
                 <div class="card-body">                 
                 <table id="datatablesSimple" class="table">

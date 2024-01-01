@@ -226,4 +226,26 @@ app.get("/bothFilter/:first/:last/:A/:B/:no",async (req, res) => {
   let data = [req.params.first, req.params.last,Number(req.params.A), Number(req.params.B),Number(req.params.no) * 6];
   let result = await mysql.query("test", "bothFilter", data);
   res.send(result)
-})
+});
+
+app.get('/order',async (req, res) => {
+  let result = await mysql.query("admin", "orderList");
+  res.send(result);
+});
+
+app.get('/review',async (req, res) => {
+  let result = await mysql.query("admin", "reviewReportList");
+  res.send(result);
+});
+
+app.get('/inquire',async (req, res) => {
+  let result = await mysql.query("admin", "inquireList");
+  res.send(result);
+});
+
+app.get('/orders/:startNo/:lastNo',async (req, res) => {
+  console.log('리스트불러옴')
+  let datas = [req.params.startNo,req.params.lastNo];
+  let result = await mysql.query("admin", "orderDate",datas);
+  res.send(result);
+});
