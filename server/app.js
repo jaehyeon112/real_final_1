@@ -362,7 +362,7 @@ app.get("/new", async (req, res) => {
 
 // sql injection의 위험이 있음 처리해야함;;
 app.get("/new2/:first/:last/:A/:B/:no", async (req, res) => {
-  let base = 'select * from product where registration >= current_date() - 3 '
+  let base = 'SELECT * FROM product WHERE registration >= CURRENT_DATE() - INTERVAL 7 DAY ';
   let no = req.params.no;
   let first = req.params.first;
   let last = req.params.last;
@@ -384,20 +384,28 @@ app.get("/new2/:first/:last/:A/:B/:no", async (req, res) => {
 app.get("/frozen/:first/:last/:A/:B/:no", async (req, res) => {
   let base = `select * from product  where refrigeration = 'g1' `
 
-  let no = req.params.no;
-  let first = req.params.first;
-  let last = req.params.last;
-  let A = req.params.A;
-  let B = req.params.B;
-  if (first != 'X' && last != 'X') {
-    base += ` and  prod_name >= '${first}' and prod_name < '${last}'`;
+  let params = [];
+
+  const {
+    no,
+    first,
+    last,
+    A,
+    B
+  } = req.params;
+
+  if (first !== 'X' && last !== 'X') {
+    base += ` AND prod_name >= ? AND prod_name < ?`;
+    params.push(first, last);
   }
-  if (A != 'X' && B != 'X') {
-    base += ` and discount_price between ${A} and ${B} `
+  if (A !== 'X' && B !== 'X') {
+    base += ` AND discount_price BETWEEN ? AND ?`;
+    params.push(Number(A), Number(B));
   }
-  if (no != 'X') { // 2번째가 X라면 전체페이지, 아니면 6페이지씩
-    base += ' limit ' + no * 6 + ', 6';
+  if (no !== 'X') {
+    base += ` LIMIT ?, 6`;
+    params.push(Number(no) * 6);
   }
-  let result = await mysql.query2(base);
+  let result = await mysql.query2(base, params);
   res.send(result);
 })

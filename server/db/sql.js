@@ -23,8 +23,8 @@ let test = {
   categoryBothFilterPage: `select * from product where prod_name >= ? and prod_name < ? and discount_price between ? and ? and ?? = ?`,
 
   //신상품
-  newListPage: `select * from product where registration >= current_date() - 3;`,
-  newList: `select * from product where registration >= current_date() - 3 limit ?,6;`,
+  newListPage: `select * from product where registration >= DATE_SUB(CURDATE(), INTERVAL 7 DAY);`,
+  newList: `select * from product where registration >= DATE_SUB(CURDATE(), INTERVAL 7 DAY) limit ?,6;`,
 
 
   cartList: `select distinct * 

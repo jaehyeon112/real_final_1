@@ -24,7 +24,7 @@
       </v-col>
     </v-row>
     <v-container>
-      <pagination @changePage="changePage" v-bind:list="totalList" :totals="totals" ></pagination>
+      <pagination  ref="pagination1" @changePage="changePage" v-bind:list="totalList" :totals="totals" ></pagination>
     </v-container>
     <v-btn @click="socketTest">우하하</v-btn>
   </div>
@@ -133,7 +133,7 @@ export default {
           return;
         }
 
-          
+        this.$refs.pagination1.currentPage1()
         if(price == '' && first != '' && this.category == null){ // 글자만 필터
           this.$showLoading();
         let pageResult = await axios.get(`/api/wordFilter/${first}/${last}`).catch((err) => {console.log(err)});
@@ -252,7 +252,7 @@ export default {
         let proList = await axios.get(`/api/show/${this.mainCategory}/${this.type}/${this.pageNo}`)
         console.log('일단뜸?')
         this.list = proList.data;
-      }else if(this.mainCategory == '신상품'){
+      }else if(this.category == 'new'){
         let proList = await axios.get(`/api/new/${this.pageNo}`)
         this.list = proList.data;
       }else if(this.category == 'frozen'){
@@ -311,7 +311,7 @@ export default {
           return;
         }
         if(this.first != '' && this.price == '' ){ // 글자 필터 적용
-          let listResult = await axios.get(`/api/new2/${first}/${last}/X/X/${no}`).catch((err) => {console.log(err)})
+          let listResult = await axios.get(`/api/new2/${this.first}/${this.last}/X/X/${no}`).catch((err) => {console.log(err)})
           this.list = listResult.data
           return;
         }
@@ -321,7 +321,7 @@ export default {
           return;
         }
         if(this.first != '' && this.price != ''){ //필터 둘다 적용
-          let listResult = await axios.get(`/api/new2/${first}/${last}/${this.betweenA}/${this.betweenB}/${no}`).catch((err) => {console.log(err)})
+          let listResult = await axios.get(`/api/new2/${this.first}/${this.last}/${this.betweenA}/${this.betweenB}/${no}`).catch((err) => {console.log(err)})
           this.list = listResult.data
           return;
         }
@@ -358,7 +358,7 @@ export default {
           return;
         }
         if(this.first != '' && this.price == '' ){ // 글자 필터 적용
-          let listResult = await axios.get(`/api/frozen/${first}/${last}/X/X/${no}`).catch((err) => {console.log(err)})
+          let listResult = await axios.get(`/api/frozen/${this.first}/${this.last}/X/X/${no}`).catch((err) => {console.log(err)})
           this.list = listResult.data
           return;
         }
@@ -368,7 +368,7 @@ export default {
           return;
         }
         if(this.first != '' && this.price != ''){ //필터 둘다 적용
-          let listResult = await axios.get(`/api/frozen/${first}/${last}/${this.betweenA}/${this.betweenB}/${no}`).catch((err) => {console.log(err)})
+          let listResult = await axios.get(`/api/frozen/${this.first}/${this.last}/${this.betweenA}/${this.betweenB}/${no}`).catch((err) => {console.log(err)})
           this.list = listResult.data
           return;
         }
