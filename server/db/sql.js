@@ -29,9 +29,16 @@ let test = {
 
   cartList: `select distinct * 
               from cart c, product p, user u
+              where c.user_id = u.user_id AND p.prod_no = c.prod_no AND c.user_id = ?
+              order by cart_no`,
+  // 장바구니 체크 리스트 
+  cartCheckList : `select distinct *
+              from cart c, product p, user u
               WHERE cart_checkbox = 1 AND c.user_id = u.user_id AND p.prod_no = c.prod_no AND c.user_id = ?
               order by cart_no`,
-  CheckboxUpdate: `UPDATE cart SET ? WHERE cart_no = ?`,
+  CheckboxUpdate: `UPDATE cart set cart_checkbox = ? WHERE cart_no = ?`,
+  // 장바구니 체크된거 삭제 구현
+  CheckboxDelete : `DELETE FROM cart WHERE cart_no = ?`,
   couponList: `select a.coupon_no, start_coupon, end_coupon, coupon_name, coupon_content, coupon_discount_rate
                 from coupon a left join user b on(a.user_id = b.user_id) 
                 left join couponinfo c on(a.couponinfo_no = c.couponinfo_no)

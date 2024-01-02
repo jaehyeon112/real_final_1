@@ -23,7 +23,6 @@ export default {
     props: {
         cartList: {
             type: Array,
-            required: true,
         }
     }
 };
