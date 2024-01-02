@@ -1,15 +1,18 @@
 <template>
   <div style="width: 300px; margin-left: 40px">
-    <v-container>
-      <v-card  variant="tonal">
+    <v-container >
+      <v-card   elevation="0">
 
         <v-row>
-          <v-col>
-            <h3>필터</h3>
+          <v-col cols="6">
+            <span style="font-size: 24px; font-weight: 700">필터</span>
+          </v-col>
+          <v-col cols="6">
+            <v-btn @click="reset" elevation="0">초기화</v-btn>
           </v-col>
         </v-row>
         <hr />
-        <p>상품명</p>
+        <p style="font-size: 18px;">상품명</p>
         <v-btn 
         v-for="(item, index) in items"
         :key="index"
@@ -19,14 +22,14 @@
         >{{ item }}</v-btn
         >
         <hr />
-        <p>가격</p>
+        <p style="font-size: 18px;">가격</p>
         <v-radio-group v-model="price">
           <v-radio  value="bottom" label="10,000원 미만"></v-radio>
           <v-radio value="middle" label="10,000~20,000원"></v-radio>
           <v-radio  value="top" label="20,001원 이상"></v-radio>
       </v-radio-group>
-      <v-btn @click="onEmit">검색</v-btn>
-      <v-btn @click="reset">초기화</v-btn>
+          <v-btn style="width:300px" @click="onEmit">검색</v-btn>
+
     </v-card>
       
     </v-container>
@@ -137,7 +140,7 @@ export default {
 <style scoped>
 
 button {
-  background-color: whitesmoke;
+  background-color: rgb(255, 255, 255);
 }
 
 button.active {
