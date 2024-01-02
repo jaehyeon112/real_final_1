@@ -6,20 +6,29 @@
         <sidebar class="sidebar"/>
         <div class="container">
         <div class="row" style="width:900px;">
-            
             <div class="col-sm-5">
-                
-                    <div class="col p-4 d-flex flex-column position-static">
-                        <strong class="d-inline-block mb-2 text-success-emphasis"> 등급 : {{ member.user_grade }}</strong>
-                        <h3 class="mb-0">{{ member.user_id}}님</h3>
-                        <div class="mb-1 text-body-secondary">일반</div>
-                        <p class="mb-auto"></p>
-                        <a href="#" class="icon-link gap-1 icon-link-hover ">
-                            다음달 소멸 포인트 조회
-                            <svg class="bi"><use xlink:href="#chevron-right"></use></svg>
-                        </a>
-                    </div>
-               
+                        <div class="col p-4 d-flex flex-column position-static">
+                            <strong class="d-inline-block mb-2 text-success-emphasis"> 등급 : {{ member.user_grade }}</strong>
+                            <h3 class="mb-0">{{ member.user_id}}님</h3>
+                            <div class="mb-1 text-body-secondary">일반</div>
+                            <p class="mb-auto"></p>
+                            <a href="#" class="icon-link gap-1 icon-link-hover ">
+                                <div class="text-center">
+                                    <v-btn color="primary" @click="dialog = true">다음달 소멸 포인트 조회</v-btn>
+                                    <v-dialog v-model="dialog" width="100px">
+                                    <v-card>
+                                        <v-card-text>
+                                        {{ NextMonthPoint.sump }}
+                                        </v-card-text>
+                                        <v-card-actions>
+                                        <v-btn color="primary" block @click="dialog = false">닫기</v-btn>
+                                        </v-card-actions>
+                                    </v-card>
+                                    </v-dialog>
+                                </div>
+                                <svg class="bi"><use xlink:href="#chevron-right"></use></svg>
+                            </a>
+                        </div>
             </div>
                 <div class="col-sm-3 " style="background-color: lightgreen; margin:10px">
                     <div class="col p-4 d-flex flex-column position-static">
@@ -32,34 +41,10 @@
                 <div class="col-sm-3"  style="background-color: lightgreen; margin:10px">
                     <div class="col p-4 d-flex flex-column position-static">
                         <strong class="d-inline-block mb-2 text-success-emphasis">잔여쿠폰</strong>
-                        <!-- <h3 class="mb-0" @click="modalOpen">{{ member.couponCnt }} 개</h3> -->
+                        
                         <router-link to="/myPage/coupon"><h3 class="mb-0" >{{ member.couponCnt }} 개</h3></router-link>
                          
-                            <!-- <div class="modal-wrap" v-show="modalCheck">
-                                <div class="modal-container">
-                                    <table>
-                                        <tr>
-                                            <th>쿠폰번호</th>
-                                            <th>쿠폰내용</th>
-                                            <th>쿠폰 발급일</th>
-                                            <th>쿠폰 만료일</th>
-                                            <th>쿠폰 사용 가능여부</th>
-                                        </tr>
-                                        <tr :key="idx" v-for="(coupon, idx) in couponList">
-                                            <td>{{ coupon.couponinfo_no }}</td>
-                                            <td>{{ coupon.start_coupon }}</td>
-                                            <td>{{ coupon.end_coupon }}</td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                        </tr>
-                                    </table>
-                                <div class="modal-btn">
-                                    <button @click="modalOpen">닫기</button>
-                                    <button @click="modalOpen">확인</button>
-                                </div>
-                                </div>
-                            </div> <모달> -->
+                           
                     </div>
                 </div>
             </div>
@@ -68,7 +53,7 @@
         
         </div>
         
-        <!--detailOrder/-->
+     
     
     </main>
     
@@ -80,50 +65,42 @@
 
 <script>
 
-// import detailOrder from '../components/Mypage/orderDetail.vue'
- import coupon from '../components/MyPage/couponList.vue'
+//import coupon from '../components/MyPage/couponList.vue'
 import sidebar from'../components/MyPage/sidebar.vue'
 import axios from 'axios'
 
 export default{
     data() {
         return {
-            //modalCheck: false,
             member:{},
-            //point테이블의 table
-            couponList:[]
+            couponList:[],
+            NextMonthPoint:{},
+            dialog:false
         } 
     },
     components : {
-       // detailOrder,
-        coupon,
+        //coupon,
         sidebar
     },
     created(){
         this.getMember();
-        //this.$store.state.user   
+        this.getNextMontPoint();
     },
     watch: {
-       /*  modalCheck: function () {
-        const html = document.querySelector('.mb-0');
-        if( this.modalCheck === true ){
-        html.style.overflow = 'hidden'
-        } else {
-        html.style.overflow = 'auto'
-        }
-        }, */
+       
     },
     methods: {
-       
-        modalOpen() {
-            this.modalCheck = !this.modalCheck
-        },
         //일단 멤버 정보를 셀렉트 해오는걸로 시험 중 나중에 로그인 세션그걸로 바꿔야 함
         async getMember(){
             let member_id = this.$store.state.user.user_id;
             this.member = (await axios.get(`/api/member/${member_id}`)
+                                      .catch(err=>{console.log(err)})).data[0]                           
+        },
+        async getNextMontPoint(){
+            let member_id = this.$store.state.user.user_id;
+            this.NextMonthPoint = (await axios.get(`/api/nextMonthPoint/${member_id}`)
                                       .catch(err=>{console.log(err)})).data[0]
-            console.log( 'member' + this.member)                            
+                                      console.log(this.NextMonthPoint.sump)
         }
     }
 }

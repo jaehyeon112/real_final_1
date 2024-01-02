@@ -37,7 +37,7 @@
         </router-link>
       </li>
       <li>
-        <router-link to="#" class="nav-link text-white">
+        <router-link to="/myPage/point" class="nav-link text-white">
           <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#people-circle"/></svg>
           포인트
         </router-link>

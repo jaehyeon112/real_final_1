@@ -57,7 +57,7 @@ export default {
                                           .catch(err=>console.log(err))).data
         },
         goToOrderDetail(orderNo){
-            this.$router.push({path:'/detailOrder', query:{orderNo : orderNo}})
+            this.$router.push({path:'detailOrder', query:{orderNo : orderNo}})
         },
         async orderCancle(){
             this.orderList = await axious.delete('/api/myOrders')

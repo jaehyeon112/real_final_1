@@ -19,8 +19,8 @@
                     <td>{{ coupon.coupon_name }}</td>
                     <td>{{ coupon.coupon_content }}</td>
                     <td>{{ coupon.coupon_discount_rate }} %</td>
-                    <td>{{ coupon.start_coupon }}</td>
-                    <td>{{ coupon.end_coupon }}</td>
+                    <td>{{ $dateFormat(coupon.start_coupon,"yyyy년MM월dd일") }}</td>
+                    <td>{{ $dateFormat(coupon.end_coupon,"yyyy년MM월dd일") }}</td>
                     <td>{{ coupon.coupon_able }}</td>
                     
                     

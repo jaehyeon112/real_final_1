@@ -361,7 +361,7 @@ app.get("/myOrders/:id", async(req, res)=>{
  })
 //주문 상세내역
 app.get("/myDetailOrders/:ono/:id", async(req,res)=>{
-  let datas = [req.params.ono,req.params.id]
+  let datas = [Number(req.params.ono),req.params.id]
   let list = await mysql.query('orders', 'detailOrderLists', datas);
   res.send(list);
 })
@@ -425,13 +425,29 @@ res.send(list);
         res.send(await mysql.query('point','pointExpire',data));
       })
     });
-
+    
+    //마이페이지 포인트 내역조회
+    app.get("/myPointSave/:id", async (req,res)=>{
+      let id = req.params.id;
+      let list = await mysql.query("point", "myPointSaveHistory", id);
+      res.send(list);
+    })
+    app.get("/myPointUse/:id", async (req,res)=>{
+      let id = req.params.id;
+      let list = await mysql.query("point", "myPointUseHistory", id);
+      res.send(list);
+    })
     //리뷰등록시 포인트 지급
     app.post("/reviewPoint/:ono/:id", async(req,res)=>{
         let datas = [request.body.param,Number(req.params.ono),req.params.id] 
         res.send(await mysql.query("reviews","reviewPoint", datas));
       
       });
+    //다음달 소멸 포인트
+    app.get("/nextMonthPoint/:id", async(req,res)=>{
+      let id = req.params.id;
+      res.send(await mysql.query("point", "showNextMonth", id))
+    })
 //리뷰관련
     //상세페이지에서 리뷰목록
     app.get("/detailReview/:pno", async(request, response)=>{
@@ -451,9 +467,22 @@ res.send(list);
       res.send(await mysql.query("reviews", "insertReview", datas));
     
     });
+    //리뷰 단건 조회
+    app.get("reviewInfo/:id/:rno", async(req,res)=>{
+      let datas = [req,params.id, req.params.rno]
+      res.send(await mysql.query("reviews", "reviewInfo",datas))
+    });
     //리뷰수정
     app.put("/reviewUpdate/:id/:rno", async(req,res)=>{
       let datas = [req.body.param, req.params.id, Number(req.params.rno)]
       res.send(await mysql.query("reviews", "updateReview", datas));
     })
+
+    //상세페이지 버튼 disable용
+    app.get("/orderNoReview/:id", async(req,res)=>{
+      let id = req.params.id
+      res.send(await mysql.query("reviews", "orderNoReview",id))
+    });
+  
+
     

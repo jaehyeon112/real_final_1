@@ -81,8 +81,8 @@
                 <td> {{ review.review_content }}</td>
                 <td> {{ review.review_grade }}</td>
                 <td> {{ review.review_writedate }}</td>
-                <td> 아이콘{{ review.like_cnt }}</td>
-                <td> 아이콘</td>
+                <td> <v-btn class="ma-2" variant="text" icon="mdi-thumb-up" color="blue-lighten-2"></v-btn>{{ review.like_cnt }}</td>
+                <td> <v-btn class="ma-2" variant="text" icon="mdi-thumb-down" color="red-lighten-2"></v-btn>아이콘</td>
             </tr>
         </table>
        </div>

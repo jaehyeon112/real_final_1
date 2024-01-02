@@ -20,7 +20,10 @@ import like from  "@/components/MyPage/likeBasket.vue";
 import delivery from "@/components/MyPage/delivery.vue";
 import addDeli from "@/components/MyPage/addDelivery.vue";
 import coupon from "@/components/MyPage/couponList.vue";
+import point from "@/components/MyPage/point.vue";
 import myReview from "@/components/MyPage/myReview.vue";
+import reviewForm from "@/views/ReviewForm.vue";
+
 
 export default {
   path: "/",
@@ -141,6 +144,10 @@ export default {
          name:"addDeli",
          component:addDeli
         },
+        {path:"point",
+         name:"point",
+         component:point
+        },
         {path:"coupon",
          name:"coupon",
          component:coupon
@@ -152,6 +159,11 @@ export default {
       path:"detailPage",
       name:"detailPage",
       component:detailPage
-    }
+    },
+    {
+      path:"reviewForm",
+      name:"reviewForm",
+      component:reviewForm
+    },
   ],
 };

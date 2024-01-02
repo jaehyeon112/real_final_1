@@ -93,6 +93,8 @@ let admin = {
 
 let reviews = {
   myReview:`select * from review where user_id=? `,//마이페이지에서 내가 작성한 리뷰 리스트
+  reviewInfo:`select * from review where user_id=? and review_no=?`,//마이페이지 리뷰하나 보기
+  orderNoReview:`select * from review where user_id=?`,
   detailList:`select * from review where prod_no=?`, //상세페이지에서 그 상품에대한 리뷰 리스트
   insertReview:`insert into review set?`,//주문상세내역->리뷰등록
   updateReview:`update review set ? where user_id= ? and review_no= ?`,
@@ -100,11 +102,15 @@ let reviews = {
 };
 let point = {
   myPoint:`select point from user where user_id=?`,//마이페이지 보유 포인트
+  myPointSaveHistory:`select * from point where user_id= ? and point_save is not null order by end_point_date `,
+  myPointUseHistory:`select * from point where user_id=? and point_use is not null order by end_point_date `,
   reviewPoint:`insert into point set point_no = ?, order_no=?, user_id=?, point_history='리뷰등록',
               point_save = 500, point_use=null, point_date =current_date(), end_point_date = date_add(current_date(), interval 1 Year);`, //리뷰등록시 포인트 지급
   pointExpire:`update user as t1,(select sum( point_save) as points, user_id from point where end_point_date = current_date() group by user_id) as t2
-              set t1.point = t1.point- t2.points where t1.user_id=t2.user_id;`//기간소멸
+              set t1.point = t1.point- t2.points where t1.user_id=t2.user_id;`,//기간소멸
               //그리고 point table에 소멸사유로 인서트 해주는것도 같이..?
+  showNextMonth:`select sum(point_save) as sump from point where user_id =? and (year(end_point_date)=year(now()) and Month(end_point_date)=Month(DATE_ADD(curdate(),INTERVAL 1 month))); `            
+
 };
 let coupon = {
   myCoupon:`select c1.couponinfo_no, c1.user_id, c1.start_coupon, c1.end_coupon, c1.coupon_able, c2.coupon_name, c2.coupon_content, c2.coupon_discount_rate  
@@ -113,7 +119,7 @@ let coupon = {
             where c1.user_id=?;`//마이페이지 보유 쿠폰
 };
 let orders = {
-  detailOrderLists:`select * from order_detail o1 left join orders o2 on o1.order_no = o2.order_no where o1.order_no =? and user_id = ?`,//주문창에서 상세주문내역으로 이동시 불러올 값
+  //detailOrderLists:`select * from order_detail o1 left join orders o2 on o1.order_no = o2.order_no where o1.order_no =? and user_id = ?`,//주문창에서 상세주문내역으로 이동시 불러올 값
   orderList:`select order_no, order_date, total_payment, real_payment, payment_method, order_status
              from orders where user_id=?`,
    orderListCount:`select prod_name from product pr join order_detail ord on pr.prod_no = ord.prod_no 
@@ -123,7 +129,7 @@ let orders = {
   detailOrderLists:`select * from order_detail od join product pr on od.prod_no = pr.prod_no	
                                                   join orders ods on ods.order_no = od.order_no
                      where od.order_no=?
-                     where user_id=?`//주문창에서 상세주문내역으로 이동시 불러올 값
+                     and ods.user_id=?`//주문창에서 상세주문내역으로 이동시 불러올 값
 }
 let delivery = {
   addDelivery: `insert into add_delivery set?`,
