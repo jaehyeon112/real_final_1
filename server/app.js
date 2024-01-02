@@ -1,6 +1,7 @@
 require("dotenv").config({
   path: "./db/db.env"
 });
+
 const mysql = require("./db.js");
 const express = require("express");
 const app = express();
@@ -14,9 +15,6 @@ const io = require('socket.io')(server, {
     origin: "http://localhost:8080",
   }
 });
-
-
-
 
 io.on('connect', (socket) => {
   console.log('소켓연결테스트')
@@ -76,6 +74,12 @@ app.post("/photos", upload.array("photos", 12), (req, res) => {
   }
 });
 
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  next();
+});
 /* 
 app.listen(3000, () => {
   console.log("재현 서버 on");

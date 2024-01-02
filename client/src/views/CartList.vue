@@ -22,6 +22,7 @@
           </td>
         </tr>
       </table>
+      <v-btn @click="moveOrderForm()" :disabled="!buttonClick">주문하기</v-btn>
     </v-container>
 </template>
 
@@ -33,11 +34,30 @@ export default {
   data() {
     return {
       cartList: [],
+      allchecked : false, //전체선택 확인여부
+      check : false
     }
   },
   created(){
     this.fetchCartList();
   },
+  computed: {
+  buttonClick() {
+      for (let i = 0; i < this.cartList.length; i++) {
+        if (this.cartList[i].cart_checkbox === 1) {
+          this.check = true;
+        }
+      }
+      this.check = false;
+    }
+  },
+  // watch : {
+  //   cartList(){
+  //     for (let i = 0; i < this.cartList.length; i++) {              
+  //           this.updateCheckbox(this.cartList[i]);
+  //     }
+  //   }
+  // },
   methods : {
       fetchCartList() {
         axios.get(`/api/cartList/${this.$store.state.user.user_id}`, {
@@ -71,16 +91,18 @@ export default {
             if (this.cartList[i].cart_checkbox == 1) {
               allChecked = true; 
             }
-        }
+          }
         console.log('아무거나')
         if (allChecked) { // 전체선택
           for (let i = 0; i < this.cartList.length; i++) {
             if (this.cartList[i].cart_checkbox == 1) { // 1인 경우에만 변경
+              this.cartList[i].cart_checkbox = "0";
               this.updateCheckbox(this.cartList[i]); 
             }
           }
         } else { // 선택해제
           for (let i = 0; i < this.cartList.length; i++) {
+              this.cartList[i].cart_checkbox = "1";
               this.updateCheckbox(this.cartList[i]); // 모든 상품의 체크박스 값을 0으로 변경하여 선택을 해제
             }
           }
@@ -94,7 +116,18 @@ export default {
             
           }
         }
+      },
+    moveOrderForm(){
+      let checkbox = false
+      for(let i=0; i<this.cartList.length; i++) {
+        let data = this.cartList[i].cart_checkbox;
+        console.log(this.cartList[i].cart_checkbox,'확인');
+        if(data == 1){
+          checkbox = true;
+        }
       }
+      // this.$router.replace('/orderForm');
+    }
     },
   }
 </script>

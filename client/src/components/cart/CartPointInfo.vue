@@ -29,7 +29,7 @@
   
   <script>
   export default {
-    name: 'OrderPointInfo',
+    name: 'CartPointInfo',
     data() {
       return {
         inputValue: 0,

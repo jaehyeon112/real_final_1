@@ -27,7 +27,7 @@
   
   <script>
   export default {
-    name: 'cartPrice',
+    name: 'CartPrice',
     props: {
       cartList: {
         type: Array,

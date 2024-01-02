@@ -19,11 +19,10 @@
   </template>
 <script>
 export default {
-	name: 'OrderProdInfo',
+	name: 'CartProdInfo',
     props: {
         cartList: {
             type: Array,
-            required: true,
         }
     }
 };
