@@ -190,10 +190,6 @@ app.post("/token", async (req, res) => {
   res.send(result);
 })
 
-
-
-
-
 app.get("/user", async (req, res) => {
   let list = await mysql.query("admin", "userList");
   res.send(list);

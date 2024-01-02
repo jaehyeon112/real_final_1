@@ -21,6 +21,7 @@ export default {
       path: "main",
       name: "realmain",
       component: realmain,
+      bread: '홈'
     },
     {
       path: "menu/:category",
