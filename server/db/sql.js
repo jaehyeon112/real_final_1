@@ -122,7 +122,8 @@ let admin = {
   FNQList : `select * from fnq where ?? = ?`,
   insertFNQ : `insert into fnq set ?`,
   updateFNQ : `update fnq set ? where qno = ?`,
-  delFNQ : `delete from fnq where qno = ?`
+  delFNQ : `delete from fnq where qno = ?`,
+  oneOrder : `select * from orders where order_no = ?`
 
 }
 

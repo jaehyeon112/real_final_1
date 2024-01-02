@@ -37,7 +37,7 @@
           v-for="order in orderList"
           :key="order.order_no"
         >
-          <td>{{ order.order_no }}</td>
+          <td v-on:click="this.orderGetOne(order.order_no),modalCheck=true">{{ order.order_no }}</td>
           <td>{{ order.user_id }}</td>
           <td>{{ $dateFormat(order.order_date,'yyyy년 MM월 dd일') }}</td>
           <td>{{ $wonComma(order.total_payment)+'원' }}</td>
@@ -52,6 +52,85 @@
           <td v-else-if="order.order_status=='c4'"><router-link to="/admin/refundList">취소목록으로 가기</router-link></td>
         </tr>
       </tbody>
+
+
+      <div class="modal-wrap" v-show="modalCheck">
+      <div class="modal-container">
+        <h3>주문내역서</h3>
+        <div class="modalPop">
+            <v-table height="250px" class="vTable1">
+      <thead>
+        <tr>
+          <th class="text-left">
+            주문 번호
+          </th>
+          <th class="text-left">
+            주문자
+          </th>
+          <th class="text-left">
+            받는사람
+          </th>
+          <th class="text-left">
+            받는사람 주소
+          </th>
+          <th class="text-left">
+            받는사람 번호
+          </th>
+          <th class="text-left">
+            주문 날짜
+          </th>
+          <th class="text-left">
+            결제금액
+          </th>
+          <th class="text-left">
+            쿠폰할인율
+          </th>
+          <th class="text-left">
+            포인트 사용액
+          </th>
+          <th class="text-left">
+            배송비
+          </th>
+          <th class="text-left">
+            실결제금액
+          </th>
+          <th class="text-left">
+            결제방법
+          </th>
+          <th class="text-left">
+            주문상태
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>{{ this.orderOne.order_no }}</td>
+          <td>{{ this.orderOne.user_id }}</td>
+          <td>{{ this.orderOne.recipient }}</td>
+          <td>{{ this.orderOne.recipient_address+' '+this.orderOne.recipient_detail_address }}</td>
+          <td>{{ this.orderOne.recipient_tel }}</td>
+          <td>{{ $dateFormat(this.orderOne.order_date,'yyyy년 MM월 dd일') }}</td>
+          <td>{{ (this.orderOne.total_payment)+'원' }}</td>
+          <td>{{ this.orderOne.coupon_discount_rate+'%' }}</td>
+          <td>{{ (this.orderOne.point_use)+'포인트' }}</td>
+          <td>{{ (this.orderOne.delivery_charge)+'원' }}</td>
+          <td>{{ (this.orderOne.real_payment)+'원' }}</td>
+          <td>{{ this.orderOne.payment_method }}</td>
+          <td v-if="this.orderOne.order_status=='c1'">주문완료</td>
+          <td v-else-if="this.orderOne.order_status=='c2'">상품준비중</td>
+          <td v-else-if="this.orderOne.order_status=='c3'">출고완료</td>
+          <td v-else-if="this.orderOne.order_status=='c4'">취소된 주문건</td>
+        </tr>
+      </tbody>
+      </v-table>
+        </div>
+        <div class="modal-btn">
+            <v-btn style="border-radius: 10px;" @click="modalCheck = false">닫기</v-btn>
+            <v-btn style="border-radius: 10px;" v-if="this.orderOne.order_status=='c1'" @click="this.orderStatus='c2',changeStatus(this.orderOne.order_no)">상품 준비완료하기</v-btn>
+            <v-btn style="border-radius: 10px;" v-else-if="this.orderOne.order_status=='c2'" @click="this.orderStatus='c3',changeStatus(this.orderOne.order_no)">상품 출고하기</v-btn>
+        </div>
+      </div>
+    </div>
     </v-table>
     </v-card>
     <br>
@@ -138,7 +217,7 @@
         </tr>
       </tbody>
     </v-table>
-    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <!-- <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
         </div>
                         <div class="row">
                             <div class="col-xl-6">
@@ -161,7 +240,7 @@
 
                                 </div>
                             </div>
-                        </div>
+                        </div> -->
 
     </main>
   </div>
@@ -177,6 +256,7 @@ import icon from '../components/admin/icon.vue';
   export default {
     data(){
       return{
+        modalCheck: false,
         orderStatus : '',
         ono : 0,
         count : 0,
@@ -189,7 +269,8 @@ import icon from '../components/admin/icon.vue';
         datas : [],
         orderList : [],
         reviewList : [],
-        inquireList : []
+        inquireList : [],
+        orderOne : []
       }
     },
     components : {
@@ -208,40 +289,40 @@ import icon from '../components/admin/icon.vue';
         this.getSum();
       }
     },
-    mounted(){
-            const ctx = document.getElementById('myChart');
-            const myChart = new Chart(ctx,{
-            type: 'line',
-            data: {
-                labels : this.months,
-                datasets: [{
-                    label : '최근 3개월 매출액',
-                    data: this.datas.sum,
-                    // backgroundColor: [
-                    //     'rgb(255, 99, 132)',
-                    //     'rgb(54, 162, 235)',
-                    //     'rgb(255, 205, 86)'
-                    // ],
-                    //hoverOffset: 3
-                    fill: false,
-                    borderColor: 'rgb(75, 192, 192)',
-                    tension: 0.1    //선을 부드럽게
-                }]
-            },
-            options : {
-              scales: {
-                xAxes: [{
-                  ticks: {
-                    min: 0,
-                    stepSize : 100000,
-                    fontSize : 18,
-                  }
-                }]
-			        }
-            }
-            })
-            myChart;
-      },
+    // mounted(){
+    //         const ctx = document.getElementById('myChart');
+    //         const myChart = new Chart(ctx,{
+    //         type: 'line',
+    //         data: {
+    //             labels : this.months,
+    //             datasets: [{
+    //                 label : '최근 3개월 매출액',
+    //                 data: this.datas.sum,
+    //                 // backgroundColor: [
+    //                 //     'rgb(255, 99, 132)',
+    //                 //     'rgb(54, 162, 235)',
+    //                 //     'rgb(255, 205, 86)'
+    //                 // ],
+    //                 //hoverOffset: 3
+    //                 fill: false,
+    //                 borderColor: 'rgb(75, 192, 192)',
+    //                 tension: 0.1    //선을 부드럽게
+    //             }]
+    //         },
+    //         options : {
+    //           scales: {
+    //             xAxes: [{
+    //               ticks: {
+    //                 min: 0,
+    //                 stepSize : 100000,
+    //                 fontSize : 18,
+    //               }
+    //             }]
+		// 	        }
+    //         }
+    //         })
+    //         myChart;
+    //   },
       methods : {
         dateFormat(){
         let date = new Date();
@@ -262,6 +343,11 @@ import icon from '../components/admin/icon.vue';
             this.count = this.count+1;
           }
         }
+       },
+       async orderGetOne(ono){
+        let result = await axios.get(`/api/order/${ono}`).catch(err=>console.log(err));
+        console.log(result.data[0])
+        this.orderOne = result.data[0];
        },
        show(){
         alert('현재 새로운 주문건은 '+this.count+'건입니다')
@@ -324,13 +410,49 @@ import icon from '../components/admin/icon.vue';
   .vTable1{
     background-color: rgba(223, 255, 231, 0.735);
     border: 1px solid;
+    z-index: 1;
   }
   .vTable2{
     background-color: rgba(231, 253, 255, 0.735);
     border: 1px solid;
+    z-index: 1;
   }
   .vTable3{
     background-color: rgba(254, 255, 233, 0.735);
     border: 1px solid;
+    z-index: 1;
+  }
+  .modal-wrap {
+    z-index: 100;
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+  }
+  .modal-container {
+    z-index: 1000;
+    position :relative;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 1200px;
+    height: 500px;
+    background: #fff;
+    border-radius: 10px;
+    padding: 20px;
+    box-sizing: border-box;
+  }
+  .modalPop{
+    z-index: 1000;
+    border: 1px solid;
+  }
+
+  .modal-btn button{
+    z-index: 1000;
+    margin: 10px;
+    padding : 5px;
+
   }
 </style>

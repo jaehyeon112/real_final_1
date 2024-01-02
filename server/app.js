@@ -244,6 +244,12 @@ app.put("/order/:status/:ono", async (req, res) => {
   res.send(list);
 });
 
+app.get("/order/:ono", async (req, res) => {
+  let data = req.params.ono;
+  let list = await mysql.query("admin", "oneOrder", data);
+  res.send(list);
+});
+
 app.get("/orderCount", async (req, res) => {
   //let data = req.params.orderNo;
   let list = await mysql.query("admin", "orderDetailCount");
@@ -522,7 +528,6 @@ app.get('/refund', async (req, res) => {
   res.send(result);
 });
 
-<<<<<<< HEAD
 app.get('/refund/:state/:sno/:lno',async (req, res) => {
   let data = [req.params.state,Number(req.params.sno),Number(req.params.lno)];
   let result = await mysql.query("admin", "refundState",data);
@@ -532,11 +537,6 @@ app.get('/refund/:state/:sno/:lno',async (req, res) => {
 app.get('/refund/:sno/:lno',async (req, res) => {
   let datas = [Number(req.params.sno),Number(req.params.lno)]
   let result = await mysql.query("admin", "refundOrderList",datas);
-=======
-app.get('/refund/:sno/:lno', async (req, res) => {
-  let datas = [Number(req.params.sno), Number(req.params.lno)]
-  let result = await mysql.query("admin", "refundOrderList", datas);
->>>>>>> develop
   res.send(result);
 });
 
@@ -546,7 +546,6 @@ app.put('/refund/:state/:ono', async (req, res) => {
   res.send(result);
 });
 
-<<<<<<< HEAD
 app.get('/delivery',async (req, res) => {
   let result = await mysql.query("admin", "Alldelivery");
   res.send(result);
@@ -584,10 +583,6 @@ app.get('/inquire/:startNo/:lastNo',async (req, res) => {
 app.get('/inquire/:where1/:where2/:where3/:where4/:startNo/:lastNo',async (req, res) => {
   let datas = [req.params.where1,req.params.where2,req.params.where3,req.params.where4,Number(req.params.startNo),Number(req.params.lastNo)];
   let result = await mysql.query("admin", "StateinquireList",datas);
-=======
-app.get('/inquire', async (req, res) => {
-  let result = await mysql.query("admin", "inquireList");
->>>>>>> develop
   res.send(result);
 });
 
