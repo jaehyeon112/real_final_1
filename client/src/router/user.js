@@ -1,6 +1,6 @@
 import main from "@/views/MainHome.vue";
 import cartList from "@/views/CartList.vue";
-import orderList from "@/views/OrderList.vue";
+import orderForm from "@/views/OrderForm.vue";
 import orderSuccess from "@/views/OrderSuccess.vue";
 import menu from "@/views/MenuPage.vue";
 import realmain from "@/views/realMainhome.vue";
@@ -11,6 +11,7 @@ import withdrawal from "../views/Withdrawal.vue";
 import emailnum from "../views/PutEmailNum.vue";
 import putpass from "../views/PutPassword.vue";
 import test from "../views/test.vue";
+import search from '@/components/menu/search.vue';
 
 export default {
   path: "/",
@@ -22,6 +23,12 @@ export default {
       name: "realmain",
       component: realmain,
       bread: '홈'
+    },
+    {
+      path: "menu/search/:word",
+      name: "search",
+      props: true,
+      component: search
     },
     {
       path: "menu/:category",
@@ -46,9 +53,9 @@ export default {
       component: cartList,
     },
     {
-      path: "orderList",
-      name: "orderList",
-      component: orderList,
+      path: "orderForm",
+      name: "orderForm",
+      component: orderForm,
     },
     {
       path: "orderSuccess",

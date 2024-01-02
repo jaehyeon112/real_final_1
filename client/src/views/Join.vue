@@ -511,7 +511,7 @@ a{color:inherit;text-decoration:none}
   background:rgba(78, 48, 160, 0.1);
 }
 .login-form .group input[data-type="password"]{
-  text-security:circle;
+  -text-security:circle;
   -webkit-text-security:circle;
 }
 .login-form .group .label{
