@@ -27,8 +27,9 @@ let user = {
   //로그인(일단)
   forLogin : `select * from user where user_id = ? and user_password = ?`,
 
-  //회원탈퇴 - 탈퇴하기버튼누르면 삭제될때
-  deleteUser : `delete from user where user_id=?`,
+  //회원탈퇴 - 탈퇴하기누르면 아이디 남기고 null 되고 withdrawal table에 insert되는거임! 
+  deleteUser : `UPDATE user SET ? where user_id=?`,
+
   insertWithdrawal : `insert into withdrawal_user set ?`
  
 }

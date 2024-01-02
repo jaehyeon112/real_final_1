@@ -7,6 +7,7 @@
       <li class="nav-item">
         <span class="nav-link login" @click="logoutOrJoin" >{{ $store.state.user.user_id != null ? '로그아웃' : "회원가입"}}</span>
       </li>
+
     </ul>
 
     <div class="container text-center" style="margin-bottom: 20px">
@@ -105,6 +106,8 @@ export default {
     window.removeEventListener("scroll", this.handleScroll);
   },
   methods: {
+   
+
     loginOrMypage(){
       console.log(this.$store.state.user.user_id + "아이디 값은?")
       if(this.$store.state.user.user_id ==null){

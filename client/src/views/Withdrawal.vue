@@ -4,10 +4,10 @@
   <v-container fluid>
     <p>Selected Button: {{ radios }}</p>
     <v-radio-group v-model="radios">
-      <v-radio label="사유1" value="one"></v-radio>
-      <v-radio label="사유2 (string)" value="2"></v-radio>
-      <v-radio label="사유3 (integer)" :value="3"></v-radio>
-      <v-radio label="사유4 (integer)" :value="4"></v-radio>
+      <v-radio label="사고싶은 제품이 없어서" value="one"></v-radio>
+      <v-radio label="더 좋은 site를 발견해서" value="2"></v-radio>
+      <v-radio label="가격이 너무 비싸서" :value="3"></v-radio>
+      <v-radio label="기타 (사유를 입력해주세요.)" :value="4"></v-radio>
     </v-radio-group>
     <v-textarea
       v-if="this.radios === 4"
@@ -16,7 +16,7 @@
     ></v-textarea>
 
     <v-checkbox
-      label="탈퇴 시 30일간 재 가입이 불가능합니다. 동의하십니까? "
+      label="탈퇴 시 30일간 재 가입이 불가능합니다. 동의하십니까? 이거는 alert창으로 띄우자현아야" 
       v-model="checkbox"
       
     ></v-checkbox>
@@ -68,13 +68,13 @@ import axios from 'axios'
     methods : {
       async deleteUser(){
         if(!this.checkbox ){
-           alert('탈퇴 시 30일간 재 가입이 불가능하다는 사항에 동의해주세요.');
+           alert('체크박스동의해주세요.');
         }else{
           
-          let user_id = this.$store.state.user.id;
+          let uid = $store.state.user.user_id ;
+          if(confirm('탈퇴 시 30일 간 재가입이 불가능합니다. 정말 탈퇴하시겠습니까?'))
           
-          
-          console.log(user_id);
+          console.log(uid);
 
           let result = await axios.delete(`/api/deleteUser/${uid}`)
                               .catch(err => console.log(err));
