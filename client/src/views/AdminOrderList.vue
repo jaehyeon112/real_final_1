@@ -45,6 +45,9 @@
           <td v-else><v-btn type="button" @click="modalCheck=true,this.orderNo=order.order_no">주문취소 신청</v-btn></td>
         </tr>
       </tbody>
+      <tbody v-if="orderList.length==0" style="text-align: center;">
+            <tr><td></td><td></td><td><h3>존재하는 데이터가 없습니다</h3></td></tr>
+        </tbody>
       <div class="modal-wrap" v-show="modalCheck" @click="modalOpen">
       <div class="modal-container" @click.stop="">
         <h3>취소 사유를 입력해주세요</h3>

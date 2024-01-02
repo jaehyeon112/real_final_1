@@ -278,6 +278,47 @@ app.put("/user/:grade/:uid", async (req, res) => {
   res.send(result);
 });
 
+app.get("/notice", async (req, res) => {
+  let result = await mysql.query("admin", "AllnoticeList");
+  res.send(result);
+});
+
+app.get("/fnq/:column/:cate", async (req, res) => {
+  let data = [req.params.column,req.params.cate];
+  let result = await mysql.query("admin", "FNQList",data);
+  res.send(result);
+});
+
+app.post("/fnq", async (req, res) => {
+  let data = req.body.param;
+  let result = await mysql.query("admin", "insertFNQ",data);
+  res.send(result);
+});
+
+app.put("/fnq/:qno", async (req, res) => {
+  let data = [req.body.param,req.params.qno];
+  let result = await mysql.query("admin", "updateFNQ",data);
+  res.send(result);
+});
+
+app.delete("/fnq/:qno", async (req, res) => {
+  let data = req.params.qno;
+  let result = await mysql.query("admin", "delFNQ",data);
+  res.send(result);
+});
+
+app.get("/notice/:order/:sno/:lno", async (req, res) => {
+  let data = [req.params.order,Number(req.params.sno),Number(req.params.lno)]
+  let result = await mysql.query("admin", "AllnoticeList",data);
+  res.send(result)
+});
+
+app.get("/notice/:import1/:import2/:order/:sno/:lno", async (req, res) => {
+  let data = [req.params.import1,req.params.import2,req.params.order,Number(req.params.sno),Number(req.params.lno)];
+  let result = await mysql.query("admin", "StateNoticeList",data);
+  res.send(result)
+});
+
 app.get("/wordFilter/:first/:last/", async (req, res) => {
   let data = [req.params.first, req.params.last];
   let result = await mysql.query("test", "wordFilterPage", data);
@@ -292,7 +333,6 @@ app.get("/wordFilter/:first/:last/:col/:category", async (req, res) => {
 
 app.get("/wordFilter/:first/:last/:no", async (req, res) => {
   let data = [req.params.first, req.params.last, Number(req.params.no) * 6];
-
   let result = await mysql.query("test", "wordFilter", data);
   res.send(result)
 })
@@ -398,6 +438,12 @@ app.get('/refund',async (req, res) => {
   res.send(result);
 });
 
+app.get('/refund/:state/:sno/:lno',async (req, res) => {
+  let data = [req.params.state,Number(req.params.sno),Number(req.params.lno)];
+  let result = await mysql.query("admin", "refundState",data);
+  res.send(result);
+});
+
 app.get('/refund/:sno/:lno',async (req, res) => {
   let datas = [Number(req.params.sno),Number(req.params.lno)]
   let result = await mysql.query("admin", "refundOrderList",datas);
@@ -410,8 +456,43 @@ app.put('/refund/:state/:ono',async (req, res) => {
   res.send(result);
 });
 
+app.get('/delivery',async (req, res) => {
+  let result = await mysql.query("admin", "Alldelivery");
+  res.send(result);
+});
+
+app.get('/delivery/:sno/:lno',async (req, res) => {
+  let datas = [Number(req.params.sno),Number(req.params.lno)]
+  let result = await mysql.query("admin", "deliveryList",datas);
+  res.send(result);
+});
+
+app.get('/delivery/:state/:startNo/:lastNo',async (req, res) => {
+  let datas = [req.params.state,Number(req.params.startNo),Number(req.params.lastNo)];
+  let result = await mysql.query("admin", "StatedeliveryList",datas);
+  res.send(result);
+});
+
+app.get('/delivery/:sday/:eday/:startNo/:lastNo',async (req, res) => {
+  let datas = [req.params.sday,req.params.eday,Number(req.params.startNo),Number(req.params.lastNo)];
+  let result = await mysql.query("admin", "DatedeliveryList",datas);
+  res.send(result);
+});
+
 app.get('/inquire',async (req, res) => {
-  let result = await mysql.query("admin", "inquireList");
+  let result = await mysql.query("admin", "AllinquireList");
+  res.send(result);
+});
+
+app.get('/inquire/:startNo/:lastNo',async (req, res) => {
+  let datas = [Number(req.params.startNo),Number(req.params.lastNo)];
+  let result = await mysql.query("admin", "inquireList",datas);
+  res.send(result);
+});
+
+app.get('/inquire/:where1/:where2/:where3/:where4/:startNo/:lastNo',async (req, res) => {
+  let datas = [req.params.where1,req.params.where2,req.params.where3,req.params.where4,Number(req.params.startNo),Number(req.params.lastNo)];
+  let result = await mysql.query("admin", "StateinquireList",datas);
   res.send(result);
 });
 

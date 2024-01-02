@@ -27,6 +27,9 @@
                 
             </tr>
         </tbody>
+        <tbody v-if="productList.length==0" style="text-align: center;">
+            <tr><td></td><td><h3>존재하는 데이터가 없습니다</h3></td></tr>
+        </tbody>
         <v-container>
           <page @changePage="changePage" :list="totalList" :totals="this.nums"></page>
         </v-container>

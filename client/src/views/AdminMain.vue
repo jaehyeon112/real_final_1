@@ -28,6 +28,7 @@
             주문상태<icon v-show="alarm=='주문완료'" @click="show"/>
           </th>
           <th class="text-left">
+            <router-link to="/admin/orderList"></router-link>
           </th>
         </tr>
       </thead>
@@ -44,9 +45,11 @@
           <td v-if="order.order_status=='c1'">{{this.alarm='주문완료'}}</td>
           <td v-else-if="order.order_status=='c2'">상품준비중</td>
           <td v-else-if="order.order_status=='c3'">출고완료</td>
-          <td v-if="order.order_status=='c1'"><button @click="this.orderStatus='c2',changeStatus(order.order_no)">상품 준비완료</button></td>
-          <td v-else-if="order.order_status=='c2'"><button @click="this.orderStatus='c3',changeStatus(order.order_no)">상품 출고하기</button></td>
-          <td v-else><button>배송 조회</button></td>
+          <td v-else-if="order.order_status=='c4'">취소된 주문건</td>
+          <td v-if="order.order_status=='c1'"><v-btn @click="this.orderStatus='c2',changeStatus(order.order_no)">상품 준비완료하기</v-btn></td>
+          <td v-else-if="order.order_status=='c2'"><v-btn @click="this.orderStatus='c3',changeStatus(order.order_no)">상품 출고하기</v-btn></td>
+          <td v-else-if="order.order_status=='c3'"><v-btn>배송 조회</v-btn></td>
+          <td v-else-if="order.order_status=='c4'"><router-link to="/admin/refundList">취소목록으로 가기</router-link></td>
         </tr>
       </tbody>
     </v-table>
@@ -69,7 +72,7 @@
             신고날짜
           </th>
           <th class="text-left">
-            신고상태
+            신고상태<icon v-show="reviews=='새로운 신고건'" @click="show3"/>
           </th>
         </tr>
       </thead>
@@ -81,8 +84,10 @@
           <td>{{ review.review_no }}</td>
           <td>{{ review.user_id }}</td>
           <td>{{ review.report_reason }}</td>
-          <td>{{ $dateFormat(review.review_date,'yyyy년 MM월 dd일') }}</td>
-          <td>{{ review.report_status }}</td>
+          <td>{{ $dateFormat(review.report_date,'yyyy년 MM월 dd일') }}</td>
+          <td v-if="review.report_status=='p1'">{{this.reviews='새로운 신고건'}}</td>
+          <td v-else-if="review.report_status=='p2'">신고처리완료</td>
+          <td v-else-if="review.report_status=='p3'">신고반려</td>
         </tr>
       </tbody>
     </v-table>
@@ -109,6 +114,8 @@
           <th class="text-left">
             문의 상태<icon @click="show2" v-show="inquires=='답변 대기 중'"/>
           </th>
+          <th class="text-left">
+          </th>
         </tr>
       </thead>
       <tbody>
@@ -126,6 +133,8 @@
           <td>{{ $dateFormat(inquire.create_date,'yyyy년 MM월 dd일') }}</td>
           <td v-if="inquire.answer_state==0">{{this.inquires='답변 대기 중'}}</td>
           <td v-else-if="inquire.answer_state==1">답변완료</td>
+          <td v-if="inquire.answer_state==0"><router-link to="">답변하러 가기</router-link></td>
+          <td v-else-if="inquire.answer_state==1"><router-link to="">답변보기</router-link></td>
         </tr>
       </tbody>
     </v-table>
@@ -172,6 +181,8 @@ import icon from '../components/admin/icon.vue';
         ono : 0,
         count : 0,
         count2 : 0,
+        count3 : 0,
+        reviews : false,
         alarm : false,
         inquires : false,
         months : [this.dateFormat()-2+'월',this.dateFormat()-1+'월',this.dateFormat()+'월'],
@@ -258,9 +269,17 @@ import icon from '../components/admin/icon.vue';
        show2(){
         alert('현재 새로운 문의내역은 '+this.count2+'건입니다')
        },
+       show3(){
+        alert('현재 새로운 신고내역은 '+this.count3+'건입니다')
+       },
        async getReviewList(){
         let result = await axios.get('/api/review').catch(err=>console.log(err));
         this.reviewList = result.data;
+        for(let i=0;i<result.data.length;i++){
+          if(result.data[i].report_status=='p1'){
+            this.count3 = this.count3+1;
+          }
+        }
        },
        async getInquireList(){
         let result = await axios.get('/api/inquire').catch(err=>console.log(err));
@@ -272,15 +291,32 @@ import icon from '../components/admin/icon.vue';
         }
        },
        async changeStatus(ono){
-        let result = await axios.put(`/api/order/${this.orderStatus}/${ono}`).catch(err=>console.log(err));
-        console.log('?'+result)
-        if(result.data.affectedRows==1){
-          alert('완료되었습니다');
-          this.getOrderList();
-        }else{
-          alert('오류가 남');
-        }
-       }
+                if(this.orderStatus=='c2'){
+                    if(confirm('주문을 확인하셨습니까?')){
+                        let result = await axios.put(`/api/order/${this.orderStatus}/${ono}`).catch(err=>console.log(err));
+                        if(result.data.affectedRows==1){
+                            alert('상품준비중으로 변경되었습니다! ');
+                            this.getOrderList();
+                        }else{
+                            alert('오류가 남');
+                        }
+                    }else{
+                        alert('취소되었습니다')
+                    }
+                }else if(this.orderStatus=='c3'){
+                    if(confirm('상품이 준비되었습니까?')){
+                        let result = await axios.put(`/api/order/${this.orderStatus}/${ono}`).catch(err=>console.log(err));
+                        if(result.data.affectedRows==1){
+                            alert('출고완료로 변경되었습니다! ');
+                            this.getOrderList();
+                        }else{
+                            alert('오류가 남');
+                        }
+                    }else{
+                        alert('취소되었습니다')
+                    }
+                }
+            },
       }
 }
 </script>
