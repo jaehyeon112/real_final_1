@@ -104,6 +104,7 @@ async doLogin(){
 
 let ipList = await axios.get(`/api/dologin/${this.user_id}/${this.user_password}`)  
                 .catch(err => console.log(err));
+                console.log(ipList.data)
      let users = ipList.data;
       console.log('users는?', users);
        
