@@ -55,6 +55,7 @@
 
 <script>
 import axios from 'axios'
+
   export default {
     data() {
       return {
@@ -69,6 +70,7 @@ import axios from 'axios'
         if(!this.checkbox ){
            alert('탈퇴 시 30일간 재 가입이 불가능하다는 사항에 동의해주세요.');
         }else{
+          
           let user_id = this.$store.state.user.id;
           
           

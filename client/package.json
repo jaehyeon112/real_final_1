@@ -17,7 +17,6 @@
     "roboto-fontface": "*",
     "vue": "^3.2.13",
     "vue-chartjs": "^5.3.0",
-    "vue-recaptcha": "^3.0.0-alpha.6",
     "vue-router": "^4.0.3",
     "vue3-loading-overlay": "^0.0.0",
     "vuetify": "^3.4.8",

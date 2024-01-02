@@ -28,7 +28,8 @@ let user = {
   forLogin : `select * from user where user_id = ? and user_password = ?`,
 
   //회원탈퇴 - 탈퇴하기버튼누르면 삭제될때
-  deleteUser : `delete from user where user_id=?`
+  deleteUser : `delete from user where user_id=?`,
+  insertWithdrawal : `insert into withdrawal_user set ?`
  
 }
 

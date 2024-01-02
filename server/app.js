@@ -1,7 +1,8 @@
 require("dotenv").config({ path: "./db/db.env" });
 const mysql = require("./db.js");
 const express = require("express");
-const nodemailer = require('nodemailer'); //이메일인증
+//const nodemailer = require('nodemailer'); //이메일인증
+//const {RecaptchaEnterpriseServiceClient} = require('@google-cloud/recaptcha-enterprise'); //리캡챠 
 const app = express();
 const fs = require("fs");
 const multer = require("multer");
@@ -84,6 +85,59 @@ app.get("/join-id/:id", async(req, res)=> {
   res.send(list);
 })
 
+// 구글리캡챠
+async function createAssessment({
+  // 할 일: 샘플을 실행하기 전에 토큰과 reCAPTCHA 작업 변수를 바꿉니다.
+  projectID = "yedam1wh-1704161523384",
+  recaptchaKey = "6LcdkEIpAAAAAIdsuklVrOU-ajlphVeZMxFaRge8",
+  token = "action-token",
+  recaptchaAction = "action-name",
+}) {
+  // reCAPTCHA 클라이언트를 만듭니다.
+  // 할 일: 클라이언트 생성 코드를 캐시하거나(권장) 메서드를 종료하기 전에 client.close()를 호출합니다.
+  const client = new RecaptchaEnterpriseServiceClient();
+  const projectPath = client.projectPath(projectID);
+
+  // 평가 요청을 작성합니다.
+  const request = ({
+    assessment: {
+      event: {
+        token: token,
+        siteKey: recaptchaKey,
+      },
+    },
+    parent: projectPath,
+  });
+
+  const [ response ] = await client.createAssessment(request);
+
+  // 토큰이 유효한지 확인합니다.
+  if (!response.tokenProperties.valid) {
+    console.log(`The CreateAssessment call failed because the token was: ${response.tokenProperties.invalidReason}`);
+    return null;
+  }
+
+  // 예상한 작업이 실행되었는지 확인합니다.
+  // The `action` property is set by user client in the grecaptcha.enterprise.execute() method.
+  if (response.tokenProperties.action === recaptchaAction) {
+    // 위험 점수와 이유를 가져옵니다.
+    // 평가 해석에 대한 자세한 내용은 다음을 참조하세요.
+    // https://cloud.google.com/recaptcha-enterprise/docs/interpret-assessment
+    console.log(`The reCAPTCHA score is: ${response.riskAnalysis.score}`);
+    response.riskAnalysis.reasons.forEach((reason) => {
+      console.log(reason);
+    });
+
+    return response.riskAnalysis.score;
+  } else {
+    console.log("The action attribute in your reCAPTCHA tag does not match the action you are expecting to score");
+    return null;
+  }
+}
+
+
+
+
 //회원가입 - 이메일 중복체크용
 app.get("/join-email/:email", async(req, res)=> {
   let uemail = req.params.email;
@@ -91,9 +145,11 @@ app.get("/join-email/:email", async(req, res)=> {
   res.send(list);
 })
 
+
 //회원가입 이메일 인증
 // 이메일 전송 API 엔드포인트
-app.post('/api/sendVerificationEmail', (req, res) => {
+// api 지운 상태
+app.post('/sendVerificationEmail', (req, res) => {
   const { email } = req.body;
   // 이메일 주소 확인 및 인증 코드 생성
   const verificationCode = generateVerificationCode();
@@ -126,7 +182,7 @@ app.post('/api/sendVerificationEmail', (req, res) => {
 });
 
 // 이메일 인증 API 엔드포인트
-app.post('/api/verifyEmail', (req, res) => {
+app.post('/verifyEmail', (req, res) => {
   const { email, verificationCode } = req.body;
   // 이메일 주소와 인증 코드 확인 및 처리
   if (verifyVerificationCode(email, verificationCode)) {
@@ -176,6 +232,14 @@ app.delete("/deleteUser/:id", async(req, res)=> {
   let list = await mysql.query("user", "deleteUser", uid);
   res.send(list);
 })
+
+//탈퇴한 애 탈퇴테이블에 담는거
+app.post("/insertwithdrawal", async(req, res)=> {
+  let data = req.body.param;
+  let result = await mysql.query("user","insertWithdrawal", data);
+  res.send(result);
+})
+
 
 
 app.get("/user",async (req, res) => {
