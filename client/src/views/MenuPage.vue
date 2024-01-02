@@ -2,8 +2,7 @@
   
   
   <div>
-
-    카테고리 : {{ mainCategory }}, 타입은 {{ condition }}
+    <bread :breadcrumb="breadcrumb" />
     <v-row>
       <v-col cols="3">
         <filterSide @getSearch="setinput" />
@@ -35,11 +34,12 @@ import filterSide from "@/components/menu/filter.vue";
 import menulist from "@/components/menu/MenuList.vue";
 import pagination from "@/components/common/Pagination";
 import axios from "axios";
-
+import bread from '@/components/common/bread.vue'
 export default {
   props: ['category','type'],
   data() {
     return {
+      breadcrumb:[],
       loading:false,
       totals:6,
       totalList: "",
@@ -92,9 +92,9 @@ export default {
         case 'e6' :
           this.condition = '동남아'
           break;
-
       } 
-    },
+    }
+    ,
 
     async total() { // 페이지네이션
       if(this.category == null){
@@ -379,6 +379,10 @@ export default {
       console.log('Connected to the server');
     });
     this.$socket.emit('send',1,2,3)  
+    },
+    
+    bread(){
+      this.breadcrumb.push(this.$route.fullPath)
     }
       
   },
@@ -387,11 +391,14 @@ export default {
 
     this.productList();
     this.total();
+
+    this.bread();
   },
   components: {
     filterSide,
     menulist,
     pagination,
+    bread
   },
   mounted() {
     

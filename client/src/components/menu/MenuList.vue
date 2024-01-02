@@ -1,6 +1,5 @@
 <template>
   <v-container>
-    <span>{{ prodList.prod_no }}구분!!</span>
     <v-card class="mx-auto" max-width="300">
       <!-- 해당 제품으로 이동 -->
       <router-link to="/">

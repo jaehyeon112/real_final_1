@@ -24,9 +24,7 @@
           </router-link>
         </div>
         <div class="col-6">
-          <form class="col-12 col-lg-6 mb-3 mb-lg-0" role="search">
-            <input type="search" placeholder="Search..." />
-          </form>
+            <input v-model='word'  @keyup.enter="search" type="search" placeholder="Search..." />
         </div>
         <div class="col-1" style="width: 45px; padding-top: 15px">
           <router-link to="/">
@@ -89,12 +87,14 @@
 
 <script>
 import category from "../components/menu/category.vue";
+import axios from 'axios'
 export default {
   components: { category },
   data() {
     return {
       lnbOffsetTop: 0,
       isLnbFixed: false,
+      word : ''
     };
   },
   mounted() {
@@ -105,6 +105,17 @@ export default {
     window.removeEventListener("scroll", this.handleScroll);
   },
   methods: {
+    async search(){
+      if(this.word == ''){
+        alert('검색어를 입력하세요.')
+        return;
+      } 
+      let list = await axios.get(`/api/searchHeader/${this.word}`)
+      this.$store.state.searchList = list.data;
+      console.log(this.$store.state.searchList)
+      this.$router.push({ path:`/menu/search/${this.word}` })
+    }
+    ,
     loginOrMypage(){
       console.log(this.$store.state.user.user_id + "아이디 값은?")
       if(this.$store.state.user.user_id ==null){

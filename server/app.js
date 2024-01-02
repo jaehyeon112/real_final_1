@@ -14,8 +14,73 @@ const io = require('socket.io')(server, {
     origin: "http://localhost:8080",
   }
 });
+app.use(express.json());
+require('dotenv').config();
+const {
+  google
+} = require('googleapis');
+const nodemailer = require('nodemailer');
 
+// OAuth2 클라이언트 설정
+const oauth2Client = new google.auth.OAuth2(
+  process.env.GMAIL_OAUTH_CLIENT_ID,
+  process.env.GAMIL_OAUTH_CLIENT_SECRET,
+  "https://developers.google.com/oauthplayground"
+);
 
+oauth2Client.setCredentials({
+  refresh_token: process.env.GAMIL_OAUTH_REFRESH_TOKEN
+});
+
+// 액세스 토큰 생성
+async function getAccessToken() {
+  const {
+    token
+  } = await oauth2Client.getAccessToken();
+  return token;
+}
+
+// 이메일 전송 함수
+async function sendEmail(to, subject, body) {
+  const accessToken = await getAccessToken();
+
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      type: "OAuth2",
+      user: process.env.GMAIL_OAUTH_USER,
+      accessToken,
+      clientId: process.env.GMAIL_OAUTH_CLIENT_ID,
+      clientSecret: process.env.GAMIL_OAUTH_CLIENT_SECRET,
+      refreshToken: process.env.GAMIL_OAUTH_REFRESH_TOKEN
+    }
+  });
+  const mailOptions = {
+    from: `Your Name <${process.env.GMAIL_OAUTH_USER}>`,
+    to,
+    subject,
+    text: body
+  };
+
+  const result = await transporter.sendMail(mailOptions);
+  return result;
+}
+
+app.post('/send-email', async (req, res) => {
+  try {
+    const {
+      to,
+      subject,
+      body
+    } = req.body;
+    console.log(to + subject + body + 'asdfasfdasfdasfd');
+    const result = await sendEmail(to, subject, body);
+    res.status(200).send(result);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Internal Server Error');
+  }
+});
 
 
 io.on('connect', (socket) => {
@@ -339,15 +404,36 @@ app.get("/bothFilter/:first/:last/:A/:B/:col/:category/:no", async (req, res) =>
 })
 
 app.get("/show/:col/:category/:no", async (req, res) => {
-  let data = [req.params.col, req.params.category, Number(req.params.no) * 6];
-  let result = await mysql.query("test", "categoryList", data);
-  console.log(Number(req.params.no))
-  res.send(result)
+
+  let data = [req.params.col];
+  if (req.params.category == 'all') {
+    let test = "select * from product limit ?,6"
+    let data = []
+    data.push(Number(req.params.no) * 6);
+    let result = await mysql.query2(test, data);
+    res.send(result)
+
+
+  } else {
+    data.push(req.params.category, Number(req.params.no) * 6)
+    let result = await mysql.query("test", "categoryList", data);
+    res.send(result)
+  }
 })
+
 app.get("/show/:col/:category/", async (req, res) => {
-  let data = [req.params.col, req.params.category];
-  let result = await mysql.query("test", "categoryListPage", data);
-  res.send(result)
+  let data = [req.params.col];
+  if (req.params.category == 'all') {
+    let test = "select * from product"
+    let result = await mysql.query2(test, data);
+    res.send(result)
+
+
+  } else {
+    data.push(req.params.category)
+    let result = await mysql.query("test", "categoryListPage", data);
+    res.send(result)
+  }
 })
 
 app.get("/new/:no", async (req, res) => {
@@ -408,4 +494,11 @@ app.get("/frozen/:first/:last/:A/:B/:no", async (req, res) => {
   }
   let result = await mysql.query2(base, params);
   res.send(result);
+})
+
+app.get("/searchHeader/:word", async (req, res) => {
+  let word = req.params.word
+  console.log(word)
+  let list = await mysql.query('test', 'searchHeader', word)
+  res.send(list);
 })
