@@ -1,7 +1,9 @@
 <template>
-  <v-container>
-      <h1>장바구니</h1>
-      <hr>
+  <v-container v-if="this.$store.state.user.user_id == null">
+    <h1>장바구니</h1>
+    <p>로그인 해주세요.</p>
+  </v-container>
+  <v-container v-else>
         <v-btn @click="selectAll">전체선택</v-btn>
         <v-btn @click="deleteSelected">선택삭제</v-btn>
       <table class="rwd-table" :key="idx" v-for="(list, idx) in cartList">
@@ -36,11 +38,6 @@ export default {
   created(){
     this.fetchCartList();
   },
-  watch : {
-    cartList(){
-      this.fetchCartList();
-    }
-  },
   methods : {
       fetchCartList() {
         axios.get(`/api/cartList/${this.$store.state.user.user_id}`, {
@@ -52,76 +49,54 @@ export default {
           console.error(error);
         });
       },
-      async updateCheckbox(list) {
-
+      async updateCheckbox(list) {  // DB에 등록부분
         if(list.cart_checkbox == 1) {
-              let obj = {
-                  param: {
-                  cart_no: list.cart_no,
-                  cart_checkbox: list.cart_checkbox = 0,
-                  prod_no: list.prod_no,
-                  user_id: this.$store.state.user.user_id,
-                  quantity: list.quantity,
-            },
-          };
-          try {
-            let result = await axios.put(`/api/CheckboxUpdate/${list.cart_no}`, obj);
+          let result = await axios.put(`/api/CheckboxUpdate/0/${list.cart_no}`, );
+          
+          console.log(result.data,'0으로 바꾸기');
+          if(result.data.affectedRows> 0){
+          }
+        }else {
+            let result = await axios.put(`/api/CheckboxUpdate/1/${list.cart_no}`);
             
-            if (result && result.data && result.data.changedRows > 0) {
-              console.log(list.cart_checkbox,'확인좀요');
+            console.log(result,'1으로 바꾸기');
+            if(result.data.affectedRows > 0){
             }
-          } catch (error) {
-            console.error(error);
           }
-        }else{
-          let obj = {
-                  param: {
-                  cart_no: list.cart_no,
-                  cart_checkbox: list.cart_checkbox = 1,
-                  prod_no: list.prod_no,
-                  user_id: this.$store.state.user.user_id,
-                  quantity: list.quantity,
-            },
-          };
-          try {
-            let result = await axios.put(`/api/CheckboxUpdate/${list.cart_no}`, obj);
-            
-            if (result && result.data && result.data.changedRows > 0) {
-              console.log(list.cart_checkbox,'확인좀요');
-            }
-          } catch (error) {
-            console.error(error);
-          }
-        }
-      },
-      selectAll() {
-        let allChecked = true; 
+          console.log(list.cart_checkbox,'체크박스리스트');
+        },
+        selectAll() {
+          let allChecked = false; 
           for (let i = 0; i < this.cartList.length; i++) {
-            if (this.cartList[i].cart_checkbox === 0) {
-              allChecked = false; 
+            if (this.cartList[i].cart_checkbox == 1) {
+              allChecked = true; 
             }
         }
-        
-        if (allChecked) { // 선택해제
+        console.log('아무거나')
+        if (allChecked) { // 전체선택
           for (let i = 0; i < this.cartList.length; i++) {
-            if (this.cartList[i].cart_checkbox === 1) {
-              continue; // 기존 값이 1인 경우에는 변경하지 않고 다음 상품으로 넘어감
-            }else{
-              this.updateCheckbox(this.cartList[i], 0); // 모든 상품의 체크박스 값을 0으로 변경하여 선택을 해제
+            if (this.cartList[i].cart_checkbox == 1) { // 1인 경우에만 변경
+              this.updateCheckbox(this.cartList[i]); 
             }
           }
-        } else { // 전체선택
+        } else { // 선택해제
           for (let i = 0; i < this.cartList.length; i++) {
-            if (this.cartList[i].cart_checkbox === 0) { // 0인 경우에만 변경
-              this.updateCheckbox(this.cartList[i], 1); // 체크박스 값을 1로 변경하여 선택
+              this.updateCheckbox(this.cartList[i]); // 모든 상품의 체크박스 값을 0으로 변경하여 선택을 해제
             }
           }
-        }
     },
-      deleteSelected() {
-    } ,
-  },
-}
+    async deleteSelected() { 
+        for(let i=0; i<this.cartList.length; i++) {
+          console.log(this.cartList[i].cart_checkbox,'삭제');
+          if(this.cartList[i].cart_checkbox == 1){
+
+            await axios.delete(`/api/CheckboxDelete/${this.cartList[i].cart_no}`);
+            
+          }
+        }
+      }
+    },
+  }
 </script>
 <style scoped>
 * {

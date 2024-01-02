@@ -22,8 +22,7 @@
           <OrderPayment
           @selectedPayMethod="selectedPayMethod"
           :cartList="cartList"
-          :final="final"
-          :Order="Order"/>
+          :final="final"/>
         </v-card>
       </v-col>
       <v-col>
@@ -39,6 +38,8 @@
         :final="final"/>
       </v-col>
     </v-row>
+    {{ savePointprice }}
+    <v-btn @click="cancelPay">환불하기</v-btn>
     </v-container>
 </template>
 <script>
@@ -74,12 +75,15 @@ export default {
       delivery: 0, // 배송비 계산
       coupon: 0, // 쿠폰할인금액 계산
       point: 0, // 포인트 계산
+      savePointrate : 0, // 포인트적립율 계산
+      savePointprice: 0, // 포인트적립액 계산
       final : 0, // 최종금액 계산
       Number : 0, // 주문번호 생성
+      prodName : '',
       zip : '',
       addr1 : '',
       addr2 : '',
-      paymentMethod : ''
+      paymentMethod : '',
     };
   },
   created() {
@@ -87,6 +91,8 @@ export default {
     this.fetchCouponList();
     this.fetchPointList();
     this.orderNumber();
+  },
+  computed: {
   },
   watch: {
     cartList() {
@@ -106,11 +112,12 @@ export default {
     },
     addrInfo(){
       this.GetAddress();
+      
     },
   },
   methods: {
-    fetchCartCheckList() {
-      axios.get(`/api/cartCheckList/${this.$store.state.user.user_id}`, {
+    async fetchCartCheckList() {
+      await axios.get(`/api/cartCheckList/${this.$store.state.user.user_id}`, {
       })
       .then(response => {
         this.cartList = response.data;
@@ -176,11 +183,26 @@ export default {
         this.discountPrice(); // 상품 총 금액 중 할인 금액
         this.deliveryPrice(); // 배송비 금액
         this.finalPrice();  // 실제 결제금액
+        this.savePointRate();
+        this.savePoint();
     },
     GetAddress(zip,addr1,addr2){
       this.zip = zip
       this.addr1 = addr1
       this.addr2 = addr2
+    },
+    savePointRate(){
+      if (this.$store.state.user.user_grade === 'i1' || 'i6') { // 일반 또는 정지회원
+        this.savePointrate = 1 / 100; // 1% 
+      } else if (this.$store.state.user.user_grade === 'i2') { // 실버
+        this.savePointrate = 3 / 100; // 3% 
+      } else if (this.$store.state.user.user_grade === 'i3' || 'i4') { //골드 또는 관리자
+        this.savePointrate = 5 / 100; // 5% 
+      }
+      console.log(this.savePointrate,'적립율 계산');
+    },
+    savePoint() {
+      this.savePointprice = Math.floor(this.final * this.savePointrate);
     },
     orderNumber() {
       let date = new Date();
@@ -195,20 +217,19 @@ export default {
     },
     async selectedPayMethod(paymentMethod) {
          this.orderNumber();
-
-                // 상품 정보 설정
-                let prodName = '';
+                for(let i=0; i<this.cartList.length; i++) {
+                }
                 if (this.cartList.length > 0) {
-                  prodName = this.cartList[0].prod_name + '외' + (this.cartList.length - 1) + '건';
+                  this.prodName = this.cartList[0].prod_name + '외' + (this.cartList.length - 1) + '건';
                 } else {
-                  prodName = this.cartList[0].prod_name;
+                  this.prodName = this.cartList[0].prod_name;
                 }
 
         // 결제 정보 설정
         let paymentInfo = {
           pg: '', //pg사
           pay_method: paymentMethod, //결제방법
-          name: prodName, //상품이름
+          name: this.prodName, //상품이름
           merchant_uid: this.Number, //주문번호
           amount: this.final, // 최종결제금액
           buyer_name: this.$store.state.user.user_name, //결제이름
@@ -241,8 +262,8 @@ export default {
         iamport.request_pay(paymentInfo, (response) => {
           if (response.success) {
             // 결제 완료 처리
-            this.orderInsert();
-            this.orderdetailInsert(orderno);
+            this.orderInsert(); // order테이블 
+            this.orderdetailInsert(orderno); // orderdetail테이블
           } else {
             // 결제 실패 처리
             alert('결제 취소했습니다. 장바구니로 다시 이동합니다.');
@@ -266,8 +287,8 @@ async orderInsert(){ // orders 테이블 등록
                     total_payment: this.discount,
                     coupon_discount_rate: this.couponRate,
                     point_use: this.pointInput,
-                    point_save_rate: 0,
-                    point_save: 0,
+                    point_save_rate: this.savePointrate * 100,
+                    point_save: this.savePointprice,
                     real_payment: this.final,
                     payment_method: this.paymentMethod,
                     payment_no: 1,
@@ -300,7 +321,27 @@ async orderInsert(){ // orders 테이블 등록
                                         .catch(err => console.log(err));
                 console.log(result);
     }
-  }
+  },
+  cancelPay() {
+    jQuery.ajax({
+      // 예: http://www.myservice.com/payments/cancel
+      "url": "{환불정보를 수신할 가맹점 서비스 URL}", 
+      "type": "POST",
+      "contentType": "application/json",
+      "data": JSON.stringify({
+        "merchant_uid": "187747", // 예: ORD20180131-0000011
+        "cancel_request_amount": 2000, // 환불금액
+        "reason": "테스트 결제 환불", // 환불사유
+        // [가상계좌 환불시 필수입력] 환불 수령계좌 예금주
+        "refund_holder": "홍길동", 
+        // [가상계좌 환불시 필수입력] 환불 수령계좌 은행코드(예: KG이니시스의 경우 신한은행은 88번)
+        "refund_bank": "88", 
+        // [가상계좌 환불시 필수입력] 환불 수령계좌 번호
+        "refund_account": "56211105948400" 
+      }),
+      "dataType": "json"
+    });
+    }
   }
 }
 </script>
