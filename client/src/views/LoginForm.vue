@@ -26,6 +26,8 @@
  
         </div>
 
+
+
         <div class="hr"></div>
         
         <div class="foot-lnk">
@@ -51,7 +53,6 @@
             
         </div>
 
-
       <div>
       <router-link to="/finding" class="button"> 아이디비번찾기페이지로 </router-link> 
       <router-link to="/test" class="button"> test 페이지로 </router-link> 
@@ -72,6 +73,10 @@
 </template>
 
 <script>
+
+  var onloadCallback = function() {
+    alert("grecaptcha is ready!");
+  };
 import axios from 'axios';
 
 export default {
@@ -82,6 +87,8 @@ export default {
         user_password : ""
     }
   },
+
+
 
   methods: {
 
@@ -95,14 +102,14 @@ async doLogin(){
     return;
   }
 
-let failedAttemps = 0;
-
 let ipList = await axios.get(`/api/dologin/${this.user_id}/${this.user_password}`)  
                 .catch(err => console.log(err));
+                console.log(ipList.data)
      let users = ipList.data;
-     console.log(users);
-     console.log(users.user_id);
-     
+      console.log('users는?', users);
+       
+    
+   
     if(users == ''){
       this.failedAttemps++;
       alert(`ID나 Password 확인하기!`)
@@ -110,30 +117,18 @@ let ipList = await axios.get(`/api/dologin/${this.user_id}/${this.user_password}
 
 
     //로그인 5회이상 실패시 보안프로그램 실행! 
-    if(failedAttempts >= 5){
-      // reCAPTCHA 실행
-      grecaptcha.ready(function() {
-        grecaptcha.execute('your-recaptcha-site-key', {action: 'submit'}).then(function(token) {
-          // reCAPTCHA 토큰을 서버로 전송
-          axios.post('/api/verify_recaptcha', { recaptcha_token: token })
-          .then(response => {
-            if(response.data.success){
-              // reCAPTCHA 검증 성공
-              alert('reCAPTCHA를 통과했습니다. 다시 로그인해주세요')
-            }else{
-              // reCAPTCHA 검증 실패
-              alert('reCAPTCHA 검증에 실패했습니다.')
-            }
-          })
-        });
-      });
+    if(this.failedAttempts >= 5){
+
+    alert(`보안프로그램 실행하기`)
     
-    return;
-  }else{
-    alert(response.data[0].user_name +'님 환영합니다');
   }
+  // else{
+  //   alert(users[0].user_name +'님 환영합니다');
+  // }
   
        
+
+
        if(users == ''){
         alert('아디 비번 확인;')
         return;

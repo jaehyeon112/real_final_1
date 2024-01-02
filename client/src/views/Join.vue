@@ -65,15 +65,15 @@
         </div>
 
 
-        <div class="group">
+        <!-- <div class="group">
           <label for="email" class="label">Email Address</label>
           <input id="email" type="text" class="input" v-model="userInfo.user_email">
           
           <v-btn type="button" @click="sendVerificationEmail"> 이메일 인증 메일 전송</v-btn>
           
           
-          <!-- <button type="button" @click="sendRequestEmail" @click="checkEmail(userInfo.userEmail)">인증하기</button> -->
-        </div>
+          <!- <button type="button" @click="sendRequestEmail" @click="checkEmail(userInfo.userEmail)">인증하기</button> -->
+        <!-- </div> --> 
 
 
 
@@ -84,10 +84,10 @@
 <span>@</span>
   <select v-model="userInfo.email_domain" class="input">
     <option disabled value="">도메인 선택</option>
+    <option>직접입력</option> <!-- 입력할 수 있게 바꾸기! -->
     <option>gmail.com</option>
     <option>naver.com</option>
-    <option>daum.net</option>
-    <!-- 필요한 만큼 도메인 추가 -->
+    <option>daum.net</option> 
   </select>
 
   <v-btn type="button" @click="sendVerificationEmail"> 이메일 인증 메일 전송</v-btn>
@@ -114,13 +114,14 @@
              <v-btn @click="search()">우편번호 찾기</v-btn><br>
               <input type="text" id="postcode"  class="input" placeholder="우편번호" v-model="userInfo.postcode">
               
-              <!--onclick이 아니라 @click으로 바꿔야한다. -->
-              <input type="text" id="roadAddress"  class="input" placeholder="임시주소" v-model="userInfo.address">
-               <input type="text" id="roadAddress"  class="input" placeholder="도로명주소" v-model="userInfo.AddressD">
+              
+              <input type="text" id="roadAddress"  class="input" placeholder="임시주소" v-model="userInfo.address1">
+
+               <input type="text" id="roadAddress"  class="input" placeholder="도로명주소" v-model="userInfo.address">
               <input type="text" id="jibunAddress"  class="input" placeholder="지번주소" v-model="userInfo.AddressJ">
               <span id="guide" style="color:#000;display:none"></span>
               <input type="text" id="detailAddress"  class="input" placeholder="상세주소" v-model="userInfo.detail_address">
-              <!-- <input type="text" id="extraAddress" placeholder="참고항목"> -->
+            
   </div>
         </div>
 
@@ -169,6 +170,7 @@
 <script>
 import axios from 'axios';
 
+
 export default {
   
   name: "회원가입",
@@ -187,19 +189,19 @@ export default {
         user_name : "",
         user_email : "",
         user_emailid: "",  // 이메일 아이디 저장 필드
-      email_domain: "",  // 이메일 도메인 저장 필드
-        //verificationCode : "",
+        email_domain: "",  // 이메일 도메인 저장 필드
+        verificationCode : "",
         user_tel : "",
         postcode : "",
-        address : "",
-        //AddressD : "",
-        //AddressJ : "",
-        //detailAdd : "",
+        address1 : "", // 임시주소
+        address : "", // 도로명
+        AddressJ : "", //지번
+        detailAdd : "", //상세주소
         birth : "",
        
-       // allCh : "false",
-        //ch1 : "false",
-        //ch2 : "false",
+        allCh : "false",
+        ch1 : "false",
+        ch2 : "false",
 
       },
 
@@ -276,17 +278,10 @@ computed: {
   },
 
 
-  //비밀번호 체크
-  //1) 문자유효성 - 영문 대소문자, 숫자 특수문자 최소 한 개씩 포함하는 10자 이상의 비밀번호
-  // passVal(){
-  //   if
-  //   //영문 대소문자, 숫자 특수문자 최소 한 개씩 포함하는 10자 이상의 비밀번호
-  //   (^(?=.?[A-Z])(?=.?[a-z])(?=.?[0-9])(?=.?[#?!@$ %^&*-]).{10,}$/.
-  // },
-
-//2) 비밀번호랑 비밀번호확인이랑 일치해야함
+  //비밀번호
   checkPwd(pwd){
-  // 영어와 숫자만 허용하는 정규표현식
+
+  // 영어(대소문자)와 숫자만 허용하는 정규표현식
   var onlyEngNum = /^[a-zA-Z0-9]*$/;
 
   // 비밀번호 유효성 검사
@@ -335,11 +330,11 @@ passwordValid() {
     //이메일 인증
 
     sendVerificationEmail() {
-      const email = this.userEmailFull; //computed  에서 합친거
+      const email = this.userEmailFull; //computed 에서 합친거
 
       // 이메일 주소를 백엔드로 전송하여 인증 코드를 받아옵니다.
-      // 백엔드 API 호출 예시:
-      axios.post('/api/sendVerificationEmail', { email: this.userInfo.email })
+      // 백엔드 API 호출 
+      axios.post('/api/sendVerificationEmail', { email: this.userInfo.user_email })
          .then(response => {
           alert(`인증코드를 받아옵니다.`);
            this.isEmailSent = true;
@@ -356,7 +351,7 @@ passwordValid() {
       // 백엔드 API 호출 예시:
        axios.post('/api/verifyEmail', { email: this.email, verificationCode: this.verificationCode })
          .then(response => {
-          alert(`이메일 인증 성꽁! `);
+          alert(`이메일 인증 성공! `);
          })
          .catch(error => {
            alert(`이메일 인증 실패! `);
@@ -367,13 +362,21 @@ passwordValid() {
 
 
 
-
-
-
   async joinInsert(){
     let info = this.userInfo;
     let data = {
-      param : this.userInfo
+
+      param : {
+        "user_id" : this.userInfo.user_id,
+        "user_name" : this.userInfo.user_name,
+        "user_password" : this.userInfo.user_password,
+        "user_email" : this.userInfo.user_email,
+        "user_tel" : this.userInfo.user_tel,
+        "birth" : this.userInfo.birth,
+        "address" : this.userInfo.address,
+        "detail_address" : this.userInfo.detail_address,
+        "postcode" : this.userInfo.postcode
+      }
     };
 
     let result = await axios.post(`/api/join/joinIn`, data);
@@ -390,11 +393,11 @@ passwordValid() {
 
 
     //주소api
-            search(){ //@click을 사용할 때 함수는 이렇게 작성해야 한다.
+            search(){ //
             const vueObj = this;
 
             new window.daum.Postcode({
-            oncomplete: (data) => { //function이 아니라 => 로 바꿔야한다.
+            oncomplete: (data) => { 
                 // 팝업에서 검색결과 항목을 클릭했을때 실행할 코드를 작성하는 부분.
 
                 // 도로명 주소의 노출 규칙에 따라 주소를 표시한다.
@@ -418,16 +421,10 @@ passwordValid() {
 
                 // 우편번호와 주소 정보를 해당 필드에 넣는다.
                 vueObj.userInfo.postcode = data.zonecode;
-                vueObj.userInfo.AddressD = roadAddr;
+                vueObj.userInfo.address = roadAddr;
                 vueObj.userInfo.AddressJ = data.jibunAddress;
                 
-                // 참고항목 문자열이 있을 경우 해당 필드에 넣는다.
-                // if(roadAddr !== ''){
-                //     document.getElementById("extraAddress").value = extraRoadAddr;
-                // } else {
-                //     document.getElementById("extraAddress").value = '';
-                // }
-
+    
                 var guideTextBox = document.getElementById("guide");
                 // 사용자가 '선택 안함'을 클릭한 경우, 예상 주소라는 표시를 해준다.
                 if(data.autoRoadAddress) {
@@ -542,7 +539,7 @@ a{color:inherit;text-decoration:none}
   background:rgba(78, 48, 160, 0.1);
 }
 .login-form .group input[data-type="password"]{
-  text-security:circle;
+  -text-security:circle;
   -webkit-text-security:circle;
 }
 .login-form .group .label{

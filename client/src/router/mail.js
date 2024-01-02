@@ -1,3 +1,4 @@
+
 const nodemailer = require('nodemailer');
 const senderInfo = require('../config/senderInfo.json');
 // 메일발송 객체
@@ -11,8 +12,8 @@ const mailSender = {
       secure: false,  
       requireTLS: true ,
       auth: {
-        user: senderInfo.user,  // 보내는 메일의 주소
-        pass: senderInfo.pass   // 보내는 메일의 비밀번호
+        user: 'pphhaa314@gmail.com',  // 보내는 메일의 주소
+        pass: 'bffj gipa cqob axuh'   // 보내는 메일의 비밀번호
       }
     });
     // 메일 옵션
