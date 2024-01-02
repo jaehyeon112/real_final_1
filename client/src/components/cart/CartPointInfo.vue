@@ -17,7 +17,6 @@
 />
 <v-btn
   v-if="Points"
-  id="target_btn"
   @click="useAllPoints"
   :disabled="this.$store.state.user.point === 0 || (CheckCoupon && selectedCouponIndex !== 0)"
 >

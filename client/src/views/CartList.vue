@@ -22,7 +22,7 @@
           </td>
         </tr>
       </table>
-      <v-btn @click="moveOrderForm()" :disabled="!buttonClick">주문하기</v-btn>
+      <v-btn v-model="check" @click="moveOrderForm" :disabled="box === 0">주문하기</v-btn>
     </v-container>
 </template>
 
@@ -35,21 +35,22 @@ export default {
     return {
       cartList: [],
       allchecked : false, //전체선택 확인여부
-      check : false
+      Checkbox : 0
     }
   },
   created(){
     this.fetchCartList();
   },
-  computed: {
-  buttonClick() {
-      for (let i = 0; i < this.cartList.length; i++) {
-        if (this.cartList[i].cart_checkbox === 1) {
-          this.check = true;
+  computed :{
+    check() { // 장바구니 체크안되면 주문하기버튼 활성화가 안되게 설정
+          let Checkbox = 0;
+          for (let i = 0; i < this.cartList.length; i++) {
+            if (this.cartList[i].cart_checkbox == 1) {
+              Checkbox = 1;
+            }
+          }
+          this.box = Checkbox;
         }
-      }
-      this.check = false;
-    }
   },
   // watch : {
   //   cartList(){
@@ -118,16 +119,9 @@ export default {
         }
       },
     moveOrderForm(){
-      let checkbox = false
-      for(let i=0; i<this.cartList.length; i++) {
-        let data = this.cartList[i].cart_checkbox;
-        console.log(this.cartList[i].cart_checkbox,'확인');
-        if(data == 1){
-          checkbox = true;
-        }
-      }
-      // this.$router.replace('/orderForm');
-    }
+      alert('주문서로 이동합니다~')
+      this.$router.replace('/orderForm');
+    },
     },
   }
 </script>
