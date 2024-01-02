@@ -81,7 +81,25 @@ let admin = {
   stopUser: `update user set user_grade = ? where user_id = ?`,
   searchUser: `select user_id,user_name,user_email,user_tel,join_date,user_grade from user
   where user_id like concat(concat('%',?),'%') or user_name like concat(concat('%',?),'%') or join_date like concat(concat('%',?),'%') order by ?? limit ?,?`,
-  searchProd: `select prod_no,prod_name,price,discount_price,discount_rate,stock,main_category from product where prod_name like concat(concat('%',?),'%') order by ?? limit ?,?`
+  searchProd : `select prod_no,prod_name,price,discount_price,discount_rate,stock,main_category from product where prod_name like concat(concat('%',?),'%') order by ?? limit ?,?`,
+  AllOrderList : `select * from orders order by order_date desc`,
+  orderList : `select * from orders order by order_date desc limit ?,?`,
+  AllreviewReportList : `select *,(select report_cnt from review where review_no=review_report.review_no) as cnt from review_report order by report_date desc`,
+  reviewReportList : `select *,(select report_cnt from review where review_no=review_report.review_no) as cnt from review_report order by report_date desc limit ?,?`,
+  reasonReportList : `select *,(select report_cnt from review where review_no=review_report.review_no) as cnt from review_report 
+  where report_status=? order by report_date desc  limit ?,?`,
+  inquireList : `select * from inquire order by create_date desc`,
+  orderDate : `select * from orders where order_date between ? and ? order by order_date desc limit ?,?`,
+  updateOrder : `update orders set order_status = ? where order_no= ?`,
+  orderStatus : `select * from orders where order_status = ? order by order_date desc limit ?,?`,
+  reviewList : `select prod_name,order_detail_no,user_id,review_title,review_content,review_writedate,review_grade,like_cnt from order_detail o,product p,review r 
+  where o.prod_no=p.prod_no and o.order_detail_no=r.detail_order_no order by ?? desc`,
+  refundOrder : `update orders set order_status = 'c4' where order_no = ?`,
+  adminRefund : `insert into refund_cancel set order_no=?,user_id=(select user_id from orders where order_no=refund_cancel.order_no),
+  return_point=(select point_use from orders where order_no=refund_cancel.order_no),cancel_status='o2',cancel_request=current_date()`,
+  AllrefundOrderList : `select * from refund_cancel order by cancel_request desc`,
+  refundOrderList : `select * from refund_cancel order by cancel_request desc limit ?,?`,
+  updateRefund : `update refund_cancel set cancel_status = ? where order_no= ?`
 }
 
 module.exports = {
