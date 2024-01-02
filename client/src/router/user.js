@@ -22,7 +22,8 @@ import addDeli from "@/components/MyPage/addDelivery.vue";
 import coupon from "@/components/MyPage/couponList.vue";
 import point from "@/components/MyPage/point.vue";
 import myReview from "@/components/MyPage/myReview.vue";
-import reviewForm from "@/views/ReviewForm.vue";
+import reviewForm from "../views/ReviewForm.vue";
+import search from '@/components/menu/search.vue';
 
 
 export default {

@@ -3,7 +3,7 @@
         <form @submit.prevent >
             <h2 v-if="reviewInfo.review_no > 0 ">리뷰수정</h2>
             <h2 v-else>리뷰등록</h2>
-
+            dddd{{ reviewInfo.review_no }}
             <label for="detailNo">주문상세번호</label>
             <input type="text" id="detailNo"  v-model="this.detailNo" readonly>
 
@@ -58,8 +58,9 @@ export default {
         this.detailNo = this.$route.query.detailNo;//주문상세에서 리뷰등록시 가져올 주문번호
         if(this.reviewNo > 0){
             //수정
-            this.getReviewInfo(); //날짜포맷 중요함 출력할때 뒤에 시간도 같이 나와서 화면에 안나올거임
             this.isUpdated = true;
+            this.getReviewInfo(); //날짜포맷 중요함 출력할때 뒤에 시간도 같이 나와서 화면에 안나올거임
+            console.log(this.reviewNo)
         }else{
             //등록
             this.reviewInfo.review_writedate = this.getToday();
@@ -67,10 +68,13 @@ export default {
     },
     methods: {
         async getReviewInfo() {
-           let result = await axios.get(`/api/reviewInfo/${this.$store.state.user.user_id}/${this.reviewNo}`) //sql.js 단건조회 경로 그대로 가져오기 api붙여주는 이유 proxy와 관련
-                                    .catch(err=>{console.log(err)})[0]      
-            this.reviewInfo =result.data;
-            this.reviewInfo.review_writedate = this.$dateFormat(this.reviewInfo.review_writedate,'yyyy년MM월dd일')//화면에 보이는것만 하는게 아니라 보낼때도 포맷이 잘 되어야 한다 프로퍼티 자체를 변경하는거야  서버별로 날짜 취급이 달라서 중요함                       
+           let result = (await axios.get(`/api/reviewInfo/${this.$store.state.user.user_id}/${this.reviewNo}`) //sql.js 단건조회 경로 그대로 가져오기 api붙여주는 이유 proxy와 관련
+                                    .catch(err=>{console.log(err)}))
+            
+            this.reviewInfo=result.data     
+            this.reviewInfo.review_writedate = this.$dateFormat(this.reviewInfo.review_writedate,'yyyy년MM월dd일')
+            console.log( this.reviewInfo.review_writedate )  
+                          
         },
         getToday(){
             return this.$dateFormat('','yyyy년MM월dd일');

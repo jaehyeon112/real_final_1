@@ -4,7 +4,7 @@
   
         <main class="d-flex flex-nowrap">
         <sidebar class="sidebar"/>
-        <div class="container">
+        <div >
         <div class="row" style="width:900px;">
             <div class="col-sm-5">
                         <div class="col p-4 d-flex flex-column position-static">

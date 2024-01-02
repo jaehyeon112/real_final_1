@@ -125,8 +125,8 @@ let reviews = {
 };
 let point = {
   myPoint:`select point from user where user_id=?`,//마이페이지 보유 포인트
-  myPointSaveHistory:`select * from point where user_id= ? and point_save is not null order by end_point_date `,
-  myPointUseHistory:`select * from point where user_id=? and point_use is not null order by end_point_date `,
+  myPointSaveHistory:`select * from point where user_id= ? and point_save > 0 order by end_point_date `,
+  myPointUseHistory:`select * from point where user_id=? and point_use > 0 order by end_point_date `,
   reviewPoint:`insert into point set point_no = ?, order_no=?, user_id=?, point_history='리뷰등록',
               point_save = 500, point_use=null, point_date =current_date(), end_point_date = date_add(current_date(), interval 1 Year);`, //리뷰등록시 포인트 지급
   pointExpire:`update user as t1,(select sum( point_save) as points, user_id from point where end_point_date = current_date() group by user_id) as t2
@@ -143,12 +143,17 @@ let coupon = {
 };
 let orders = {
   //detailOrderLists:`select * from order_detail o1 left join orders o2 on o1.order_no = o2.order_no where o1.order_no =? and user_id = ?`,//주문창에서 상세주문내역으로 이동시 불러올 값
-  orderList:`select order_no, order_date, total_payment, real_payment, payment_method, order_status
-             from orders where user_id=?`,
-   orderListCount:`select prod_name from product pr join order_detail ord on pr.prod_no = ord.prod_no 
-                  join user us
-                   where ord.order_no=? and us.user_id=? limit 1`,        
+  orderList:`select  ord.order_date, dord.order_detail_no, ord.delivery_charge, ord.total_payment, ord.real_payment, ord.payment_no, ord.order_no, pro.prod_name
+              from orders ord  join order_detail dord on ord.order_no = ord.order_no
+                               join product pro on pro.prod_no = dord.prod_no
+                               where ord.user_id=?
+                               group by ord.order_no
+                               order by ord.order_no`,
+  //  orderListCount:`select prod_name from product pr join order_detail ord on pr.prod_no = ord.prod_no 
+  //                 join user us
+  //                  where ord.order_no=? and us.user_id=? limit 1`,        
   orderCancle:`update orders set order_status=m3 where order_no=? and user_id=?`,//주문전체취소
+
   detailOrderLists:`select * from order_detail od join product pr on od.prod_no = pr.prod_no	
                                                   join orders ods on ods.order_no = od.order_no
                      where od.order_no=?

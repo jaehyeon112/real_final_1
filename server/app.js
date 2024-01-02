@@ -659,14 +659,29 @@ let list = await mysql.query("admin", "userList");
 res.send(list);
 });
 //포인트
-    //기간 만료시 포인트 소멸
-    cron.schedule("0 0 0 * * *", () => {
-      app.post("/pointExpre",async (req,res)=>{
-        let data = req.body.param
-        res.send(await mysql.query('point','pointExpire',data));
+    //기간 만료시 포인트 소멸인거처럼 업데이트 
+    //둘다 된다 await를 거는게 더 좋은걸까..?
+    cron.schedule("0 0 0 * * *", async() => {
+      //updatePoint();
+      await mysql.query("point", 'pointExpire',(err,result)=>{
+        if(err){
+          console.log(err)
+        }else{
+          console.log(`테이블 업데이트 성공`)
+        }
       })
     });
-    
+    cron.schedule("0 0 0 * * *", ()=>{
+    function updatePoint(){
+       mysql.query("point", 'pointExpire',(err,result)=>{
+        if(err){
+          console.log(err)
+        }else{
+          console.log(`테이블 업데이트 성공`)
+        }
+      })
+    }
+  })
     //마이페이지 포인트 내역조회
     app.get("/myPointSave/:id", async (req,res)=>{
       let id = req.params.id;
@@ -709,9 +724,9 @@ res.send(list);
     
     });
     //리뷰 단건 조회
-    app.get("reviewInfo/:id/:rno", async(req,res)=>{
-      let datas = [req,params.id, req.params.rno]
-      res.send(await mysql.query("reviews", "reviewInfo",datas))
+    app.get("/reviewInfo/:id/:rno", async(req,res)=>{
+      let datas = [req.params.id, req.params.rno]
+      res.send(await mysql.query("reviews", "reviewInfo",datas))[0]
     });
     //리뷰수정
     app.put("/reviewUpdate/:id/:rno", async(req,res)=>{

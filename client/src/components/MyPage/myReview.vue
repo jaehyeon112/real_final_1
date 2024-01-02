@@ -49,8 +49,8 @@ export default {
             this.reviewList = (await axios.get(`/api/myReview/${member_id}`)
                                    .catch(err => console.log(err))).data;
         },
-        goToUpdate(reviewno){// 여기 변수는..? value(필드명)
-            this.$router.push({path : '/reviewForm', query : {reviewNo : reviewno}});//{키:필드명}
+        goToUpdate(reviewNo){// 여기 변수는..? value(필드명)
+            this.$router.push({path : '/reviewForm', query : {reviewNo : reviewNo}});//{키:필드명}
         },
     }
 }
