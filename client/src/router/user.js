@@ -45,9 +45,9 @@ export default {
       component: cartList,
     },
     {
-      path: "orderList",
-      name: "orderList",
-      component: orderList,
+      path: "orderForm",
+      name: "orderForm",
+      component: orderForm,
     },
     {
       path: "orderSuccess",
