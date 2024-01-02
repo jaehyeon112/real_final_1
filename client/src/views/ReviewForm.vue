@@ -50,7 +50,8 @@ export default {
                 review_writedate : '',
                 like_cnt:''
             },
-            isUpdated : false
+            isUpdated : false,
+            point_no : ''
         };
     },
     created() {
@@ -92,11 +93,26 @@ export default {
                     report_cnt : 0
                 }
             }
+            let obj2={
+               param: {
+                 
+                 order_no:this.detailNo,
+                 user_id:this.$store.state.user.user_id, 
+                 point_history:'리뷰등록',
+                 point_save : 500, 
+                 point_use: 0,
+                 //point_date =current_date(), 
+                 //end_point_date = date_add(current_date(), interval 1 Year)
+                }
+            }
              let result = await axios.post('/api/reviewInsert', obj) //sql에서 두번째로 넘어오는 데이터(body.param)를 obj에 넣는다 
                                      .catch(err=>console.log(err))
+             let point = await axios.put(`/api/reviewPoint/${this.detailNo}/${this.$store.state.user.user_id}`,obj2)
+                                    .catch(err=>console.log(err))                              
             if(result.data.insertId>0){ //글번호는 자동으로 부여되니까 obj에서 주는게 아니라 따로 빼서 
                 alert('등록완료');
                 this.reviewInfo.no = result.data.insertId; //여기에 data가 있고 없고 차이는..?
+                this.point_no = point.data.insertId;
                 this.$router.push({path:'myPage/myReview'})
             }                         
         },

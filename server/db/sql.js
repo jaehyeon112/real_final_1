@@ -128,7 +128,7 @@ let point = {
   myPointSaveHistory:`select * from point where user_id= ? and point_save > 0 order by end_point_date `,
   myPointUseHistory:`select * from point where user_id=? and point_use > 0 order by end_point_date `,
   reviewPoint:`insert into point set point_no = ?, order_no=?, user_id=?, point_history='리뷰등록',
-              point_save = 500, point_use=null, point_date =current_date(), end_point_date = date_add(current_date(), interval 1 Year);`, //리뷰등록시 포인트 지급
+              point_save = 500, point_use=0, point_date =current_date(), end_point_date = date_add(current_date(), interval 1 Year);`, //리뷰등록시 포인트 지급
   pointExpire:`update user as t1,(select sum( point_save) as points, user_id from point where end_point_date = current_date() group by user_id) as t2
               set t1.point = t1.point- t2.points where t1.user_id=t2.user_id;`,//기간소멸
               //그리고 point table에 소멸사유로 인서트 해주는것도 같이..?
@@ -148,10 +148,7 @@ let orders = {
                                join product pro on pro.prod_no = dord.prod_no
                                where ord.user_id=?
                                group by ord.order_no
-                               order by ord.order_no`,
-  //  orderListCount:`select prod_name from product pr join order_detail ord on pr.prod_no = ord.prod_no 
-  //                 join user us
-  //                  where ord.order_no=? and us.user_id=? limit 1`,        
+                               order by ord.order_no`,       
   orderCancle:`update orders set order_status=m3 where order_no=? and user_id=?`,//주문전체취소
 
   detailOrderLists:`select * from order_detail od join product pr on od.prod_no = pr.prod_no	
