@@ -606,9 +606,14 @@ app.get("/frozen/:first/:last/:A/:B/:no", async (req, res) => {
   res.send(result);
 })
 
-app.get("/searchHeader/:word", async (req, res) => {
-  let word = req.params.word
-  console.log(word)
+app.get("/searchHeader/:word/:no", async (req, res) => {
+  let word = [req.params.word, Number(req.params.no)];
   let list = await mysql.query('test', 'searchHeader', word)
   res.send(list);
+})
+
+app.get("/searchHeader/:word", async (req, res) => {
+  let data = req.params.word
+  let list = await mysql.query('test', 'searchHeaderPage', data)
+  res.send(list)
 })

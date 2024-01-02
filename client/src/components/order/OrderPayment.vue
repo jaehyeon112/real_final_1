@@ -59,7 +59,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .kakaopay {
     -webkit-box-align: center;
     align-items: center;
