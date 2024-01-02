@@ -57,18 +57,27 @@
           </ul>
         </li>
         <li class="nav-item">
-          <button class="nav-link d-flex align-items-center gap-2 active" @click="chart">
+          <button class="nav-link d-flex align-items-center gap-2 active" @click="order">
             <svg class="bi"><use xlink:href="#file-earmark"/></svg>
             주문관리
           </button>
-          <slot name="order"></slot>
+          <ul v-if="isorder">
+            <li @click="orderList">주문 목록</li>
+            <li @click="orderList">배송 목록</li>
+            <li @click="refundList">취소된 주문 목록</li>
+          </ul>
         </li>
         <li class="nav-item">
-          <button class="nav-link d-flex align-items-center gap-2 active">
+          <button class="nav-link d-flex align-items-center gap-2 active" @click="review">
             <svg class="bi"><use xlink:href="#puzzle"/></svg>
             리뷰/문의사항
           </button>
-          <ul slot="reList"></ul>
+          <ul v-if="isreview">
+            <li @click="reviewList">리뷰 목록</li>
+            <li @click="reviewReport">신고된 리뷰</li>
+            <li @click="reviewList">문의사항</li>
+            <li @click="reviewList">공지사항</li>
+          </ul>
         </li>
         <li class="nav-item">
           <button class="nav-link d-flex align-items-center gap-2 active">
@@ -103,7 +112,9 @@
 export default {
   data(){
     return{
-      isOk : false
+      isOk : false,
+      isorder : false,
+      isreview : false
     }
   }, 
   methods : {
@@ -117,15 +128,38 @@ export default {
         this.isOk = true;
       }
     },
+    order(){
+      if(this.isorder==true){
+        this.isorder = false;
+      }else{
+        this.isorder = true;
+      }
+    },
+    review(){
+      if(this.isreview==true){
+        this.isreview = false;
+      }else{
+        this.isreview = true;
+      }
+    },
     prodList(){
-      this.$router.push({name : 'prodList'})
+      this.$router.push({name : 'prodList'});
     },
     prodReg(){
-      this.$router.push({name : 'product'})
+      this.$router.push({name : 'product'});
     },
-    chart(){
-      this.$router.push({name : 'dd'})
-    }
+    orderList(){
+      this.$router.push({name : 'orderList'})
+    },
+    reviewList(){
+      this.$router.push({name : 'reviewList'})
+    },
+    reviewReport(){
+      this.$router.push({name : 'reviewReport'})
+    },
+    refundList(){
+      this.$router.push({name : 'refundList'})
+    },
   }
 }
 </script>

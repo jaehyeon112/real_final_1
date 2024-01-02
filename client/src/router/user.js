@@ -1,7 +1,7 @@
 
 import main from "@/views/MainHome.vue";
 import cartList from "@/views/CartList.vue";
-import orderList from "@/views/OrderList.vue";
+import orderForm from "@/views/OrderForm.vue";
 import orderSuccess from "@/views/OrderSuccess.vue";
 import menu from "@/views/MenuPage.vue";
 import realmain from "@/views/realMainhome.vue";
@@ -36,6 +36,12 @@ export default {
       component: realmain,
     },
     {
+      path: "menu/search/:word",
+      name: "search",
+      props: true,
+      component: search
+    },
+    {
       path: "menu/:category",
       name: "menuCategory",
       props: true,
@@ -58,9 +64,9 @@ export default {
       component: cartList,
     },
     {
-      path: "orderList",
-      name: "orderList",
-      component: orderList,
+      path: "orderForm",
+      name: "orderForm",
+      component: orderForm,
     },
     {
       path: "orderSuccess",

@@ -1,8 +1,25 @@
 <template>
+    
 <list @changeemit="changeChildData" @search="search">
+    <template #searchData>
+        <div class="datatable-input">가입 날짜 :  <input class="datatable-input" type="date" v-model="words"><v-btn @click="refresh">초기화</v-btn><br><br>
+            <input class="datatable-input" v-model="word" @keyup="searchData" style="border-bottom: 1px black solid;float: right;width: 300px;" placeholder="회원 아이디나 이름을 검색하세요"></div>
+    </template>
     <template #filterSearch>
         <div><a @click="this.order='user_id'">기본순 | </a><a @click="this.order='join_date'">가입날짜순 | </a><a @click="this.order='user_grade'">등급 높은순</a></div>
     </template>
+    <table>
+        <thead>
+            <tr>
+                <th>오늘 가입자 수</th>
+                <th>오늘 탈퇴자 수</th>
+            </tr>
+        </thead>
+        <tbody>
+            <td>1명</td>
+            <td>1명</td>
+        </tbody>
+    </table>
     <template #dataList>
     <thead>
         <tr>
@@ -28,7 +45,7 @@
             <td v-else-if="user.user_grade=='i2'">실버 회원</td>
             <td v-else-if="user.user_grade=='i3'">골드 회원</td>
             <td v-if="user.user_grade=='i6'"><v-btn style="border-radius: 10px;" type="button" @click="NonStop(user.user_id)">정지풀기</v-btn></td>
-            <td v-else><v-btn style="border-radius: 10px;" type="button" @click="modalCheck=true,userId=user.user_id">정지하기</v-btn></td>
+            <td v-else><v-btn style="border-radius: 10px;" type="button" @click="modalCheck=true,this.userId=user.user_id">정지하기</v-btn></td>
         </tr>
     </tbody>
     <div class="modal-wrap" v-show="modalCheck" @click="modalOpen">
@@ -43,6 +60,9 @@
         </div>
       </div>
     </div>
+    <v-container>
+        <page @changePage="changePage" :list="totalList" :totals="this.nums"></page>
+    </v-container>
 </template>
 </list>
 
@@ -54,6 +74,8 @@ import page from '../components/common/Pagination.vue';
 export default {
     data(){
         return{
+            word : '',
+            words : '',
             userList : [],
             modalCheck: false,
             userId : '',
@@ -74,19 +96,17 @@ export default {
                     console.log(err);
                 });
                 this.totalList = total.data;
-                console.log('총길이'+this.totalList);
             },
         async uList(no){
             let list = await axios.get(`/api/user/${this.order}/${this.startNum}/${no}`).catch(err=>console.log(err));
             let result = list.data;
             this.userList = result;
-            console.log(this.order)
         },
         async changePage(no) {
             try {
                 let page = await axios.get(`/api/user/${this.order}/${no}/${this.nums}`);
+                console.log(page.data)
                 this.userList = page.data;
-                this.totals = this.nums;
                 console.log('페이지'+page.data);
             } catch (error) {
                 console.error("Error fetching page data:", error);
@@ -105,6 +125,8 @@ export default {
                 let result = await axios.put(`/api/user/i6/${this.userId}`).catch(err=>console.log(err));
                 if(result.data.affectedRows==1){
                     alert('이용제한이 되었습니다');
+                    //여기에 유저에게 정지되었다고 알람주기
+                    this.$socket.emit('report', `${this.userId}  정지!`)
                     this.uList(this.nums);
                     this.modalCheck = false;
                     //스케쥴러 사용--한달동안 정지시킴
@@ -145,6 +167,11 @@ export default {
             let list = await axios.get(`/api/user/${cont}/${cont}/${cont}/${this.order}/${this.startNum}/${this.nums}`).catch(err=>console.log(err));
             let result = list.data;
             this.userList = result;
+        },
+        refresh(){
+            this.uList(this.nums);
+            this.words ='';
+            this.total()
         }
     },
     components : {
@@ -161,6 +188,12 @@ export default {
         order(){
             this.uList(this.nums);
         },
+        word(){
+            this.search(this.word);
+        },
+        words(){
+            this.search(this.words);
+        }
     }
 }
 </script>

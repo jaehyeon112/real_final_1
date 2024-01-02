@@ -1,12 +1,14 @@
 <template>
     <list @changeemit="changeChildData" @search="search">
+        <template #searchData>
+             <input class="datatable-input" v-model="word" @keyup="searchData" style="border-bottom: 1px black solid;float: right;width: 300px;" placeholder="상품명을 검색하세요">
+        </template>
         <template #filterSearch>
             <div><a @click="this.order='prod_no'">기본순 | </a><a @click="this.order='registration'">최근 등록순 | </a><a @click="this.order='high'">높은 가격순(판매가 기준) | </a><a @click="this.order='discount_price'">낮은 가격순(판매가 기준)</a></div>
         </template>
         <template #dataList>
         <thead>
             <tr>
-                <th>상품번호</th>
                 <th>상품명</th>
                 <th>원가</th>
                 <th>판매가</th>
@@ -16,7 +18,6 @@
         </thead>
         <tbody>
             <tr :key="idx" v-for="(prod,idx) in productList">
-                <td>{{ prod.prod_no }}</td>
                 <td>{{ prod.prod_name }}</td>
                 <td>{{ prod.price }}</td>
                 <td>{{ prod.discount_price }}</td>
@@ -40,6 +41,7 @@
     export default {
         data(){
             return{
+                word : '',
                 productList : [],
                 nums : 0,
                 startNum : 0,
@@ -127,7 +129,10 @@
             },
             order(){
             this.prodList(this.nums);
-            }
+            },
+            word(){
+            this.search(this.word);
+        }
     }
         
     }
