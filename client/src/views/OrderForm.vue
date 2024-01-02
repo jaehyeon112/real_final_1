@@ -320,6 +320,7 @@ async orderInsert(){ // orders 테이블 등록
                 let result = await axios.post("/api/orderDetailInsert", Obj)
                                         .catch(err => console.log(err));
                 console.log(result);
+                console.log(result);
     }
   },
   cancelPay() {
