@@ -80,10 +80,11 @@ export default {
 
 <style scope>
 .pagination {
+  z-index: 3;
   justify-content: center;
 }
 .pagination .active {
-  background-color: #007bff;
+  background-color: #7d90a5;
   color: #fff;
 }
 </style>

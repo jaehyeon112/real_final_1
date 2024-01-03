@@ -8,7 +8,7 @@
               <div class="row g-3">
     
                 <div class="col-12">
-                  <label for="prod_name" class="form-label">상품명 <icon/>필수</label>
+                  <label for="prod_name" class="form-label">상품명 <icon v-if="showIcon">필수</icon></label>
                   <div class="input-group has-validation" v-if="this.prodNo==null">
                     <input type="text" v-model="prod.prod_name" class="form-control" id="prod_name" required>
                   </div>
@@ -18,18 +18,19 @@
                 </div>
     
                 <div class="col-sm-6">
-                  <label for="price" class="form-label">원가 <icon/>필수</label>
+                  <label for="price" class="form-label">원가 <icon v-if="showIcon">필수</icon></label>
                   <input v-if="this.prodNo==null" type="number" v-model.number="prod.price" class="form-control" id="prod_name" required>
                   <input v-else type="number" v-model.number="prod.price" class="form-control" id="prod_name" required readonly>
                 </div>
     
                 <div class="col-sm-6">
-                  <label for="discount_price" class="form-label">판매가{{'(할인율 : '+Math.floor((1-((prod.discount_price)/(prod.price)))*100)+'%)' }}</label>
+                  <label for="discount_price" class="form-label" v-if="prod.price==''">판매가</label>
+                  <label for="discount_price" class="form-label" v-else>판매가{{'(할인율 : '+Math.floor((1-((prod.discount_price)/(prod.price)))*100)+'%)' }}</label>
                   <input type="number" v-model.number="prod.discount_price" class="form-control" id="price">
                 </div>
 
                 <div class="col-sm-6">
-                  <label for="stock" class="form-label">재고 <icon/>필수</label>
+                  <label for="stock" class="form-label">재고 <icon v-if="showIcon">필수</icon></label>
                   <input v-if="this.prodNo==null" type="number" v-model.number="prod.stock" class="form-control" id="stock" placeholder="" value="" required>
                   <input v-else type="number" v-model.number="prod.stock" class="form-control" id="stock" placeholder="" value="" required>
                 </div>
@@ -46,15 +47,15 @@
                   </div>
                 </div>
     
-                <!-- <div class="col-12">
+                <div class="col-12">
                   <label for="stock" class="form-label">상품 이미지 등록</label>
                   <div class="input-group has-validation">
                     <input type="number" v-model="prod.prod_name" class="form-control" id="stock" placeholder="" required>
                   </div>
-                </div> -->
+                </div>
     
                 <div class="col-md-5">
-                  <label for="main_category" class="form-label">메인 카테고리 <icon/>필수</label>
+                  <label for="main_category" class="form-label">메인 카테고리 <icon v-if="showIcon">필수</icon></label>
                   <select v-model="prod.main_category" class="form-select" id="main_category" required>
                     <option value="">선택하세요</option>
                     <option value="e1">한식</option>
@@ -114,7 +115,8 @@
                 sub_category : '',
                 refrigeration : 'g1',
                 discount_rate : '',
-              }
+              },
+              showIcon : false
           }
         },
         created(){
@@ -125,7 +127,15 @@
         },
         methods : {
           refresh(){
-            this.$router.push({name : 'product'});
+            this.prod.prod_name = '';
+            this.prod.price = '';
+            this.prod.discount_price = '';
+            this.prod.stock = '';
+            this.prod.cooking_time = '';
+            this.prod.allergy = '';
+            this.prod.main_category = '';
+            this.prod.sub_category = '';
+            this.prod.discount_rate = '';
           },
           async prodUpdateList(){
             let result = await axios.get(`/api/prods/${this.prodNo}`).catch(err=>console.log(err));
@@ -165,16 +175,16 @@
             }
             if(this.prod.prod_name==''||this.prod.price==''||this.prod.stock==''||this.prod.main_category==''||this.prod.refrigeration==''){
               alert('필수정보를 채워주세요');
+              this.showIcon = true;
             }else if(this.prod.discount_price==''){
               data.param.discount_price = data.param.price;
-            }else{
               let result = await axios.post(`/api/prod`,data).catch(err=>console.log(err));
               if(result.data.affectedRows > 0){
-                  alert('등록성공!');
-                  this.$router.push({name : 'prodList'});
-                }else{
-                  alert('등록 실패')
-                }
+                alert('등록성공!');
+                this.$router.push({name : 'prodList'});
+              }else{
+                alert('등록 실패')
+              }
             }
           }
         },
@@ -189,6 +199,7 @@
             background-color: rgb(241, 221, 224);
             width: 800px;
             padding: 20px;
+            margin-top: 100px;
         }
     
         #buttonBox{

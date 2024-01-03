@@ -434,14 +434,14 @@ import icon from '../components/admin/icon.vue';
   .modal-container {
     z-index: 1000;
     position :relative;
-    top: 40%;
+    top: 230px;
     left: 50%;
     transform: translate(-50%, -50%);
     width: 1200px;
-    height: 500px;
+    height: 400px;
     background: #fff;
     border-radius: 10px;
-    padding: 20px;
+    padding: 10px;
     box-sizing: border-box;
   }
   .modalPop{

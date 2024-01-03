@@ -2,11 +2,21 @@
     
 <list @changeemit="changeChildData" @search="search">
     <template #searchData>
-        <div class="datatable-input">가입 날짜 :  <input class="datatable-input" type="date" v-model="words"><v-btn @click="refresh">초기화</v-btn><br><br>
-            <input class="datatable-input" v-model="word" @keyup="searchData" style="border-bottom: 1px black solid;float: right;width: 300px;" placeholder="회원 아이디나 이름을 검색하세요"></div>
-    </template>
-    <template #filterSearch>
-        <div><a @click="this.order='user_id'">기본순 | </a><a @click="this.order='join_date'">가입날짜순 | </a><a @click="this.order='user_grade'">등급 높은순</a></div>
+        <div class="datatable-input" style="width: 30%;float: right;">
+            ==가입 날짜==
+            <input class="datatable-input" type="date" v-model="days">
+            <v-select
+            label=" 등급"
+            :items="['일반회원','실버회원','골드회원','정지회원']"
+            v-model = grade
+            variant="underlined"
+            return-object
+            ></v-select>
+            <v-btn @click="searchList(this.grade,this.days)">검색</v-btn>     <v-btn @click="refresh">초기화</v-btn></div>
+        </template>
+        <template #filterSearch>
+        <div><a @click="this.order='user_id'">기본순 | </a><a @click="this.order='join_date'">가입날짜순 | </a><a @click="this.order='user_grade'">등급 높은순</a><br><br>
+        <input class="datatable-input" v-model="word" @change="searchData" style="border-bottom: 1px black solid;float: right;width: 300px;" placeholder="회원 아이디나 이름을 검색하세요"></div>
     </template>
     <table>
         <thead>
@@ -29,6 +39,7 @@
             <th>전화번호</th>
             <th>가입일</th>
             <th>등급</th>
+            <th></th>
         </tr>
     </thead>
                     
@@ -39,12 +50,14 @@
             <td>{{ user.user_email }}</td>
             <td>{{ user.user_tel }}</td>
             <td>{{ dateFormat(user.join_date,'yyyy년 MM월 dd일') }}</td>
-
             <td v-if="user.user_grade=='i6'">사용정지 회원</td>
             <td v-else-if="user.user_grade=='i1'">일반 회원</td>
             <td v-else-if="user.user_grade=='i2'">실버 회원</td>
             <td v-else-if="user.user_grade=='i3'">골드 회원</td>
+            <td v-else-if="user.user_grade=='i4'">관리자</td>
+            <td v-else-if="user.user_grade=='i5'">탈퇴한 회원</td>
             <td v-if="user.user_grade=='i6'"><v-btn style="border-radius: 10px;" type="button" @click="NonStop(user.user_id)">정지풀기</v-btn></td>
+            <td v-else-if="user.user_grade=='i4'||user.user_grade=='i5'"></td>
             <td v-else><v-btn style="border-radius: 10px;" type="button" @click="modalCheck=true,this.userId=user.user_id">정지하기</v-btn></td>
         </tr>
     </tbody>
@@ -60,6 +73,9 @@
         </div>
       </div>
     </div>
+    <tbody v-if="userList.length==0" style="text-align: center;">
+            <tr><td></td><td><h3>존재하는 데이터가 없습니다</h3></td></tr>
+        </tbody>
     <v-container>
         <page @changePage="changePage" :list="totalList" :totals="this.nums"></page>
     </v-container>
@@ -75,16 +91,17 @@ export default {
     data(){
         return{
             word : '',
-            words : '',
+            days : '',
             userList : [],
             modalCheck: false,
             userId : '',
             nums : 0,
             startNum : 0,
-            totalList: "",
+            totalList: [],
             totals :'',
             conetnt:'',
             order : 'user_id',
+            grade : ''
         }
     },
     created(){
@@ -92,22 +109,23 @@ export default {
     },
     methods : {
         async total() {
-                let total = await axios.get(`/api/user/${this.order}`).catch((err) => {
+                let total = await axios.get(`/api/user`).catch((err) => {
                     console.log(err);
                 });
                 this.totalList = total.data;
             },
         async uList(no){
-            let list = await axios.get(`/api/user/${this.order}/${this.startNum}/${no}`).catch(err=>console.log(err));
+            let list = await axios.get(`/api/user/${this.word}/${this.word}/${this.word}/${this.word}/${this.order}/${this.startNum}/${no}`).catch(err=>console.log(err));
             let result = list.data;
             this.userList = result;
         },
         async changePage(no) {
+            console.log(this.word,no)
             try {
-                let page = await axios.get(`/api/user/${this.order}/${no}/${this.nums}`);
+                let page = await axios.get(`/api/user/${this.word}/${this.word}/${this.word}/${this.word}/${this.order}/${no}/${this.nums}`);
                 console.log(page.data)
                 this.userList = page.data;
-                console.log('페이지'+page.data);
+                this.totals = this.nums;
             } catch (error) {
                 console.error("Error fetching page data:", error);
             }
@@ -157,21 +175,46 @@ export default {
         },
         changeChildData(childData){
             this.nums = childData;
-            this.totals = childData;
         },
-        search(searchData){
-            this.content = searchData;
-            this.searchList(this.content);
+        search(searchData1,searchData2){
+            //this.content = searchData;
+            this.searchList(searchData1,searchData2);
         },
-        async searchList(cont){
-            let list = await axios.get(`/api/user/${cont}/${cont}/${cont}/${this.order}/${this.startNum}/${this.nums}`).catch(err=>console.log(err));
+        async searchList(cont,day){
+            if(cont=='일반회원'){
+                cont = 'i1'
+            }else if(cont=='실버회원'){
+                cont = 'i2'
+            }
+            else if(cont=='골드회원'){
+                cont = 'i3'
+            }
+            else if(cont=='정지회원'){
+                cont = 'i5'
+            }
+
+            if(cont==''&&day==''){
+                this.total();
+                this.uList(this.nums);
+                return;
+            }
+            if(day==''){
+                day=cont
+            }
+            if(cont==''){
+                cont=day
+            }
+            console.log('실행중'+day,cont)
+            let list = await axios.get(`/api/user/${cont}/${cont}/${day}/${cont}/${this.order}/${this.startNum}/${this.nums}`).catch(err=>console.log(err));
             let result = list.data;
             this.userList = result;
+            this.totalList = result;
         },
         refresh(){
-            this.uList(this.nums);
-            this.words ='';
-            this.total()
+            this.word ='';
+            this.grade = '';
+            this.days = '';
+            this.searchList(this.grade,this.days)
         }
     },
     components : {
@@ -191,9 +234,6 @@ export default {
         word(){
             this.search(this.word);
         },
-        words(){
-            this.search(this.words);
-        }
     }
 }
 </script>
@@ -227,4 +267,5 @@ export default {
     padding : 5px;
 
   }
+
 </style>
