@@ -38,6 +38,9 @@ const store = createStore({
     },
     logout(state) {
       state.user = {};
+    },
+    cartEmpty(state) {
+      state.cart = {}
     }
   },
   actions: {
