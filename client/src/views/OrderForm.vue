@@ -13,6 +13,7 @@
           <CartPointInfo
           :cartList="cartList"
           :couponList="couponList"
+          @selectedCouponIndex="selectedCouponIndex"
           @discountRate="discountRate"
           @inputValue="inputValue"
           :pointList="pointList"
@@ -27,6 +28,7 @@
       </v-col>
       <v-col>
         <CartPrice
+        style="position: sticky; top:100px;"
         :cartList="cartList"
         :pointInput="pointInput"
         :couponRate="couponRate"
@@ -82,6 +84,7 @@ export default {
       addr1 : '',
       addr2 : '',
       paymentMethod : '',
+      coupons : '' //선택한 쿠폰넘버
     };
   },
   created() {
@@ -149,6 +152,10 @@ export default {
     },
     inputValue(point){
       this.pointInput = point;
+    },
+    selectedCouponIndex(coupons){
+      this.coupons = this.couponList[coupons].coupon_no;
+      console.log(this.coupons,'쿠폰넘버');
     },
     totalPrice() {
         this.total = 0;

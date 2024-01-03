@@ -101,6 +101,7 @@
     let selectedCouponIndex = this.coupons.indexOf(this.selectedCouponIndex);
     let discount_rate = selectedCouponIndex !== 0 ? this.couponList[selectedCouponIndex - 1].coupon_discount_rate : 0;
     this.$emit('discountRate', discount_rate);
+    console.log(this.selectedCouponIndex,'쿠폰선택');
   
   if (selectedCouponIndex !== 0) {
     this.CheckCoupon = true;
@@ -110,16 +111,19 @@
   }
 },
       getLocations() {
-        let conpons = ["쿠폰 선택안함"];
+        let coupons = ["쿠폰 선택안함"];
         for (let i = 0; i < this.couponList.length; i++) {
-          let couponName = this.couponList[i].coupon_name;
-          let couponStart = this.getDateFormat(this.couponList[i].start_coupon);
-          let couponEnd = this.getDateFormat(this.couponList[i].end_coupon);
-          let couponrate = this.couponList[i].coupon_discount_rate;
-          let couponInfo = `${couponName} 쿠폰할인율 ${couponrate}% ${couponName} 발급날짜 ${couponStart} 만료날짜 ${couponEnd}`;
-          conpons.push(couponInfo);
+          if(this.couponList[i].coupon_able == 0){
+            let couponName = this.couponList[i].coupon_content;
+            let couponStart = this.getDateFormat(this.couponList[i].start_coupon);
+            let couponEnd = this.getDateFormat(this.couponList[i].end_coupon);
+            let couponrate = this.couponList[i].coupon_discount_rate;
+            let couponInfo = `${couponName} 쿠폰할인율 ${couponrate}% 발급날짜 ${couponStart} 만료날짜 ${couponEnd}`;
+            coupons.push(couponInfo);
+          }
+          return coupons;
         }
-        return conpons;
+        this.$emit('selectedCouponIndex', coupons);
       },
     },
     watch: {
