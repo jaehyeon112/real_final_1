@@ -108,14 +108,22 @@ io.on('connect', (socket) => {
 
 
 
-// const cron = require("node-cron");
+const cron = require("node-cron");
 
 //  *(분: 0-59) *(시: 0-23) *(일: 1-31) *(월 1-12) *(요일 0-7, 0or7은 일요일~)
 /* 
-cron.schedule("1-59 * * * * *", () => {
+cron.schedule("0 2 * * * *", () => {
   console.log("1초마다 스케줄러 작동!");
 });
  */
+
+
+
+// cron.schedule("0 0 6 * * *", () => {
+//   console.log("1초마다 스케줄러 작동!");
+//   // 매일 06시 0분 0초에 진행되는 작업
+  
+// });
 
 app.use(
   express.json({
@@ -580,7 +588,183 @@ app.get("/new/:no", async (req, res) => {
 app.get("/new", async (req, res) => {
   let result = await mysql.query("test", "newListPage");
   res.send(result);
+})
+//멤버조회정보
+app.get("/member/:id", async (req,res)=>{
+  let id = req.params.id;
+  let info= await mysql.query("member", "memberInfo", id);
+  res.send(info)
+})
+
+//주문내역 관련
+app.get("/myOrders/:id", async(req, res)=>{
+  let id = req.params.id
+  let lists = await mysql.query('orders', 'orderList', id);
+  //let list = await mysql.query('orders', 'orderList', id);
+  // 가공
+  //let list = await getOrderInfos(id);
+  res.send(lists);
 });
+
+// async function getOrderInfos(id){
+//   let lists = await mysql.query('orders', 'orderList', id); // group_concat 사용 쿼리
+
+//   let newList = list.map((info)=>{
+//     let tempList = info.prod_name_list.split(',');
+//     let newData = `${tempList[0]} 외 ${tempList.length-1}건`;
+//     info.prod_name_list = newData;
+//     return info;
+//   })
+//   return newList;
+// }
+ app.get("/myOrdersName/:ono/:id", async(req,res)=>{
+   let datas = [Number(req.params.ono),req.params.id]
+   let info = await mysql.query('orders', 'orderListCount',datas);
+   res.send(info);
+ })
+//주문 상세내역
+app.get("/myDetailOrders/:ono/:id", async(req,res)=>{
+  let datas = [Number(req.params.ono),req.params.id]
+  let list = await mysql.query('orders', 'detailOrderLists', datas);
+  res.send(list);
+})
+//-주문취소
+app.delete('/orders/:ono/:id',async (req,res)=>{
+  let datas = [req.body.param.order_status, req.params[ono],req.params[id]];
+  let result = await mysql.query('orders','orderCancle',datas)
+  res.send(result)
+})
+//추가 배송지 관련
+app.get('/addDelivery/:id', async(req,res)=>{
+  let id = req.params.id;
+  const list = await mysql.query('delivery','deliveryList',id);
+  res.send(list);
+})
+  app.get('/deliveryInfo/:id/:dno', async(req,res)=>{
+    let datas = [ req.params.id, req.params.dno]
+    let result = await mysql.query('delivery', 'deliveryInfo', datas)[0];
+    res.send(result)
+  })
+//배송지정보수정
+app.put("/updateDelivery/:dno/:id", async(req,res)=>{
+  let datas = [req.body.param, req.params[dno], req.params[id]]
+  let result =  await mysql.query('delivery', 'updateDelivery',datas);
+  res.send(result)
+})
+//정보삽입
+
+app.post("/addDelivery", async(req,res)=>{
+  let datas = req.body.param
+  let result = await mysql.query('delivery', 'addDelivery',datas)
+  res.send(result);
+})
+app.delete("/delDelivery", async(req,res)=>{
+  let result = await mysql.query('delivery', 'deleteDelivery')
+  res.send(result);
+})
+//찜하기 리스트
+  app.get("/like/:id",async(req,res)=>{
+    let id = req.params.id;
+    let list = await mysql.query('like', "likeList",id)
+    res.send(list);
+  })
+//쿠폰
+  app.get("/myCoupon/:id", async(req,res)=>{
+    let id = req.params.id;
+    let list = await mysql.query('coupon','myCoupon',id)
+    res.send(list);
+  })
+  
+app.get("/user",async (req, res) => {
+let list = await mysql.query("admin", "userList");
+res.send(list);
+});
+//포인트
+    //기간 만료시 포인트 소멸인거처럼 업데이트 
+    //둘다 된다 await를 거는게 더 좋은걸까..?
+    cron.schedule("0 0 0 * * *", async() => {
+      //updatePoint();
+      await mysql.query("point", 'pointExpire',(err,result)=>{
+        if(err){
+          console.log(err)
+        }else{
+          console.log(`테이블 업데이트 성공`)
+        }
+      })
+    });
+
+//     cron.schedule("0 0 0 * * *", ()=>{
+//     updatePoint()
+//   })
+//   function updatePoint(){
+//     mysql.query("point", 'pointExpire',(err,result)=>{
+//      if(err){
+//        console.log(err)
+//      }else{
+//        console.log(`테이블 업데이트 성공`)
+//      }
+//    })
+//  }
+    //마이페이지 포인트 내역조회
+    app.get("/myPointSave/:id", async (req,res)=>{
+      let id = req.params.id;
+      let list = await mysql.query("point", "myPointSaveHistory", id);
+      res.send(list);
+    })
+    app.get("/myPointUse/:id", async (req,res)=>{
+      let id = req.params.id;
+      let list = await mysql.query("point", "myPointUseHistory", id);
+      res.send(list);
+    })
+    //리뷰등록시 포인트 지급
+    app.post("/reviewPoint/:ono/:id", async(req,res)=>{
+        let datas = [request.body.param,Number(req.params.ono),req.params.id] 
+        res.send(await mysql.query("reviews","reviewPoint", datas));
+      
+      });
+    //다음달 소멸 포인트
+    app.get("/nextMonthPoint/:id", async(req,res)=>{
+      let id = req.params.id;
+      res.send(await mysql.query("point", "showNextMonth", id))
+    })
+//리뷰관련
+    //상세페이지에서 리뷰목록
+    app.get("/detailReview/:pno", async(request, response)=>{
+      let pno = request.params.pno
+      let list = await mysql.query('reviews','detailList',pno)
+      response.send(list);
+    })
+    //마이페이지에서 리뷰목록
+    app.get("/myReview/:id", async(request, response)=>{
+      let id = request.params.id
+      let list = await mysql.query('reviews','myReview',id)
+      response.send(list);
+    })
+    //리뷰등록 + (포인트 지급은 위에 참고)
+    app.post("/reviewInsert", async(req,res)=>{
+      let datas = req.body.param
+      res.send(await mysql.query("reviews", "insertReview", datas));
+    
+    });
+    //리뷰 단건 조회
+    app.get("/reviewInfo/:id/:rno", async(req,res)=>{
+      let datas = [req.params.id, req.params.rno]
+      res.send(await mysql.query("reviews", "reviewInfo",datas))[0]
+    });
+    //리뷰수정
+    app.put("/reviewUpdate/:id/:rno", async(req,res)=>{
+      let datas = [req.body.param, req.params.id, Number(req.params.rno)]
+      res.send(await mysql.query("reviews", "updateReview", datas));
+    })
+
+    //상세페이지 버튼 disable용
+    app.get("/orderNoReview/:id", async(req,res)=>{
+      let id = req.params.id
+      res.send(await mysql.query("reviews", "orderNoReview",id))
+    });
+  
+
+    
 
 // sql injection의 위험이 있음 처리해야함;;
 app.get("/new2/:first/:last/:A/:B/:no", async (req, res) => {

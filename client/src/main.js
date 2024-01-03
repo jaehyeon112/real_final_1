@@ -14,7 +14,6 @@ import {
   io
 } from 'socket.io-client';
 loadFonts()
-
 window.Kakao.init("8acdd93f5a6fa89a6d2fe9190ea23ff1");
 
 const vue = 'http://localhost:8080'
@@ -31,4 +30,3 @@ app
   .use(overlay)
   .mixin(mixin)
   .mount('#app')
-
