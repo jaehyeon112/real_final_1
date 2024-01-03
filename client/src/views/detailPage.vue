@@ -8,8 +8,8 @@
             <b>상세이미지 삽입하는 곳</b>
          </div>
          <div class="col-md-6">
-            <h1 class="display-4 fw-bolder">상품이름{{ 상품이름 }}</h1>
-            <h1 class="display-7 fw-bolder">상품원가격{{ 상품가격 }}</h1>
+            <h1 class="display-5 fw-bolder">상품이름{{ productInfo.prod_name }}</h1>
+            <h1 class="display-7 fw-bolder">상품원가격{{ productInfo.price }}</h1>
             <div class="fs-5 mb-5">
                 <br>
               <table class="table" border="1">
@@ -18,36 +18,31 @@
                     <td>최고다최고</td>
                 </tr>
                 <tr>
-                    <th>원산지</th>
-                    <td>정보{{ 원산지정보 }}</td>
+                    <th>냉장/냉동</th>
+                    <td>정보{{ productInfo.refrigeration }}</td>
                 </tr>
                 <tr>
                     <th>알레르기 정보</th>
-                    <td>알레르기 정보 {{ 알레르기정보 }}</td>
+                    <td>알레르기 정보 {{ productInfo.allergy }}</td>
                 </tr>
               </table>
             </div>
             
             <div class="d-flex">
                 <p>상품선택</p>
-                <v-text-field>
-                  <template v-slot:append>
-                     <v-icon color="red">mdi-plus</v-icon>
-                  </template>
-                  <template v-slot:prepend>
-                     <v-icon color="green">mdi-minus</v-icon>
-                  </template>
-                </v-text-field>
+                  <v-btn @click="minusCount(1,$event)">-</v-btn>
+                  <v-input type="number" v-model="counter"> {{ counter }}</v-input>
+                  <v-btn @click="plusCount(1,$event)">+</v-btn>
             </div>
             <div>
-                <p class="lead">할인률</p>
-                <p class="lead">할인률 적용된 가격</p>
+                <p class="lead">할인률{{ productInfo.discount_rate }}</p>
+                <p class="lead">할인률 적용된 가격{{  productInfo.discount_price }}</p>
             <br>
                <p style="margin-left:20px;margin-bottom:0;color:black">무료배송 (40,000원 이상 구매 시)</p>
                <br>
             </div>
             <div>
-               <button @click="goToCart">장바구니 담기</button> <button @click="likes">♡</button>
+               <v-btn @click="goToCart">장바구니 담기</v-btn> <v-btn @click="likes">♡</v-btn>
             </div>
          </div>
       </div>
@@ -147,25 +142,81 @@ export default {
     data(){
         return{
             pno:'',
+            cart:{
+               cart_no:'',
+                 cart_checkbox :0,
+                 prod_no:'',
+                 user_id:'',
+                 quantity:''
+            },
+            productInfo:{},
             reviewList:[],
-            inquireList:[]
+            inquireList:[],
+            counter:0
         }
     },
     created(){ 
       this.pno = this.$route.query.pno; 
-      console.log('pno'+this.pno)
+      this.getProductInfo();
       this.getRivewList();
+      this.cartInsert();
         
     },
     methods:{
+        async getProductInfo(){
+            let info = await axios.get(`/api/detailPro/${this.pno}`)
+                                    .catch(err=>console.log(err));
+            this.productInfo = info.data[0]                        
+        },
         async getRivewList() {
-            let list = await axios.get(`api/detailReview/${this.pno}`)
+            let list = await axios.get(`/api/detailReview/${this.pno}`)
                                   .catch(err=>console.log(err));
             this.reviewList =list.data;
             console.log(this.reviewList)                      
         },
-        
-    }
+        async goToCart(){},
+         async cartInsert(){
+         let obj ={
+             param: {
+                 cart_checkbox :this.cart.cart_checkbox,
+                 prod_no:this.pno,
+                 user_id:this.$store.state.user.user_id,
+                 quantity: this.cart.quantity
+             }
+         }
+          let result = await axios.get(`/api/comparisonCart/${this.$store.state.user.user_id}`) //카트 안에 같은 상품이 있는지 정보가져오기 
+                                  .catch(err=>console.log(err)).data
+                                   console.log( '장바구니 불러오기'+ result.data)
+            for(let i=1; i < result.data.length; i++){
+               if( this.pno in result.prod_no[i]) {                      
+                  let carts = await axios.put(`/api/updateCart/${this.pno}/${this.$store.state.user.user_id}`,obj)
+                                          .catch(err=>console.log(err))
+                  if(carts.data.changedRows > 0){
+                  alert('장바구니 수량 변견 완료');
+                  //this.$router.push({path:'card'})
+                  }                          
+               }else{
+                  let carts2 = await axios.post(`/api/savingCart`,obj)
+                                          .catch(err=>console.log(err))                           
+                  if(carts2.data.insertId>0){ 
+                  alert('장바구니에 담겼습니다');
+                  this.cart.cart_no = carts2.data.insertId; 
+                  //this.$router.push({path:'cart'})
+                  }
+               }               
+            }                        
+        }                  
+     },
+     minusCount(value,event){
+      this.counter = this.counter - value;
+     },
+     plusCount(value,event){
+      this.counter = this.counter + value;
+     },
+     like(){
+      //찜하기눌러서 저장하는 곳
+     }
+    
 }
 </script>
 

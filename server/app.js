@@ -574,13 +574,36 @@ app.get("/new", async (req, res) => {
   let result = await mysql.query("test", "newListPage");
   res.send(result);
 })
+//예빈
 //멤버조회정보
 app.get("/member/:id", async (req,res)=>{
   let id = req.params.id;
   let info= await mysql.query("member", "memberInfo", id);
   res.send(info)
 })
-
+//상세페이지 정보
+app.get("/detailPro/:pno", async (req,res)=>{
+  let pno = req.params.pno;
+  let info = await mysql.query('orders','detailInfo',pno);
+  res.send(info);
+})
+//상세페이지-> 장바구니
+app.post("/savingCart",async(req,res)=>{
+  let data= req.body.param;
+  let result = await mysql.query('orders', 'savingCart',data);
+  res.send(result);
+})
+app.put("/updateCart/:pno/:id", async(req,res)=>{
+  let datas = [req.body.param,req.params.pno,req.params.id];
+  let result = await mysql.query('orders','updateCart',datas);
+  res.send(result);
+})
+//장바구니 넣을시 추가할지 업데이트할지
+app.get("/comparisonCart/:id", async(req,res)=>{
+  let id = req.params.id;
+  let result = await mysql.query('orders','comparisonCart',id);
+  res.send(result)
+})
 //주문내역 관련
 app.get("/myOrders/:id", async(req, res)=>{
   let id = req.params.id
@@ -702,8 +725,9 @@ res.send(list);
       res.send(list);
     })
     //리뷰등록시 포인트 지급
-    app.post("/reviewPoint/:ono/:id", async(req,res)=>{
-        let datas = [request.body.param,Number(req.params.ono),req.params.id] 
+    app.post("/reviewPoint/:id", async(req,res)=>{
+        //let datas = [request.body.param,Number(req.params.ono),req.params.id]
+        let datas = [req.body.point_no,req.body.order_no,req.params.id]
         res.send(await mysql.query("reviews","reviewPoint", datas));
       
       });

@@ -145,6 +145,10 @@ let coupon = {
             where c1.user_id=?;`//마이페이지 보유 쿠폰
 };
 let orders = {
+  savingCart:`insert into cart set ?`,
+  updateCart:`update cart set quantity=quantity+? where prod_no =? and user_id=?;`,
+  comparisonCart:`select * from cart where user_id=?`,
+  detailInfo:`select * from product where prod_no=?`,
   //detailOrderLists:`select * from order_detail o1 left join orders o2 on o1.order_no = o2.order_no where o1.order_no =? and user_id = ?`,//주문창에서 상세주문내역으로 이동시 불러올 값
   orderList:`select  ord.order_date, dord.order_detail_no, ord.delivery_charge, ord.total_payment, ord.real_payment, ord.payment_no, ord.order_no, pro.prod_name
               from orders ord  join order_detail dord on ord.order_no = ord.order_no
@@ -170,7 +174,7 @@ let like = {
   likeList : `select* from likes where user_id=?`
 }
 let member = {
-  memberInfo : `select t1.*, count(case when 'coupon_able'=1 then 1 end) as couponCnt from user t1 join coupon t2  on t1.user_id = t2.user_id where t1.user_id= ?` //이건 나중에 로그인 세션 이용하게 되면 지우자
+  memberInfo : `select t1.*, count(case when coupon_able=0 then 1 end) as couponCnt from user t1 join coupon t2  on t1.user_id = t2.user_id where t1.user_id= ?` 
 }
 
 module.exports = {
