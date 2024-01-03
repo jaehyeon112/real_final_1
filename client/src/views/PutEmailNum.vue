@@ -34,9 +34,9 @@
 
 <style>
 .field {
-  display: flex; /* 라벨과 텍스트 필드를 가로로 배열합니다. */
-  align-items: center; /* 라벨과 텍스트 필드를 수직 방향으로 가운데 정렬합니다. */
-  gap: 10px; /* 라벨과 텍스트 필드 사이에 간격을 만듭니다. */
+  display: flex; /* 가로로 배열. */
+  align-items: center; /*  수직 방향으로 가운데 정렬 */
+  gap: 10px; 
 }
 </style>
 

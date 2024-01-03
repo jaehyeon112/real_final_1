@@ -2,7 +2,7 @@
 <div class="login-wrap">
   <div class="login-html">
     <input id="tab-1" type="radio" name="tab" class="sign-in" checked><label for="tab-1" class="tab">Sign In</label>
-    <!-- <input id="tab-2" type="radio" name="tab" class="sign-up"><label for="tab-2" class="tab">Sign Up</label> -->
+
     <div class="login-form">
       <div class="sign-in-htm">
         <div class="group">
@@ -14,10 +14,6 @@
           <input id="pass" type="password" class="input" data-type="password" v-model="user_password">
         </div>
 
-        <!-- <div class="group">
-          <input id="check" type="checkbox" class="check" checked>
-          <label for="check"><span class="icon"></span> Keep me Signed in</label>
-        </div> -->
 
         <div class="group">
             <b-button variant="link" a href="finding">ID/PASSWORD 찾기</b-button>
@@ -48,7 +44,7 @@
       /></router-link></a>
       <div><v-btn @click="kakaoLogout()">카카오 로그아웃</v-btn></div>
 
-        <img src="../assets/naverLogo.png" @click="naverLogin" />
+    
 
             
         </div>
@@ -163,8 +159,8 @@ this.$store.commit('login',users[0]) // (함수명, 전달인자)
         url: "/v2/user/me",
         success: (res) => {
           const kakao_account = res.kakao_account;
-          const ninkname = kakao_account.profile.ninkname;
-          console.log("ninkname", ninkname);
+          const nickname = kakao_account.profile.nickname;
+          console.log("nickname", nickname);
 
           //로그인처리구현
           alert("로그인 성공!");

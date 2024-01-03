@@ -62,21 +62,40 @@ let user = {
   duplicateId: `select user_id from user where user_id=?`,
 
   //회원가입
-  join: `INSERT INTO user SET ?`,
+  joinIn: `INSERT INTO user SET ?`,
 
   // 이메일 중복체크용
   duplicateEmail: `select user_email from user where user_email = ?`,
 
-  //이메일 인증번호용
-  e_verification : `INSERT INTO email_verification set ?`,
+
 
   //로그인(일단)
   forLogin : `select * from user where user_id = ? and user_password = ?`,
 
-  //회원탈퇴 - 탈퇴하기누르면 아이디 남기고 null 되고 withdrawal table에 insert되는거임! 
-  deleteUser : `UPDATE user SET ? where user_id=?`,
+  //회원수정 - id > 마이페이지> 회원가입때 입력한 값 그대로 출력 > 수정
+    //id 별 조회
+    selectId :  `select * from user where user_id = ?`,
 
-  insertWithdrawal : `insert into withdrawal_user set ?`
+    updateUser : `update user set ? where user_id=?`,
+
+
+  //회원탈퇴 - 탈퇴하기누르면 아이디 남기고 null 되고 withdrawal table에 insert되는거임! how...?
+  updateOutUser : `UPDATE user
+  SET
+    user_name = null,
+    user_password = null,
+    user_email = null,
+    user_tel = null,
+    birth = null,
+    address = null,
+    detail_address = null,
+    postcode = null,
+    point = null,
+    join_date = null,
+    user_grade = null
+  WHERE user_id = ?`,
+
+  insertWithdrawal : `INSERT INTO withdrawal_user set ? `
  
 }
 

@@ -71,7 +71,7 @@ import axios from 'axios'
            alert('체크박스동의해주세요.');
         }else{
           
-          let uid = $store.state.user.user_id ;
+          let uid = this.$store.state.user.user_id ;
           if(confirm('탈퇴 시 30일 간 재가입이 불가능합니다. 정말 탈퇴하시겠습니까?'))
           
           console.log(uid);

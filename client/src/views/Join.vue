@@ -1,44 +1,19 @@
 <template>
 <div class="login-wrap">
   <div class="login-html">
-    <!-- <input id="tab-1" type="radio" name="tab" class="sign-in" checked><label for="tab-1" class="tab">Sign In</label> -->
     <input id="tab-2" type="radio" name="tab" class="sign-up"><label for="tab-2" class="tab">Sign Up</label>
     <div class="login-form">
-
-    <!-- 로그인     
-      <div class="sign-in-htm">
-        <div class="group">
-          <label for="user" class="label">Username</label>
-          <input id="user" type="text" class="input">
-        </div>
-        <div class="group">
-          <label for="pass" class="label">Password</label>
-          <input id="pass" type="password" class="input" data-type="password">
-        </div>
-        <div class="group">
-          <input id="check" type="checkbox" class="check" checked>
-          <label for="check"><span class="icon"></span> Keep me Signed in</label>
-        </div>
-        <div class="group">
-          <input type="submit" class="button" value="Sign In">
-        </div>
-        <div class="hr"></div>
-        <div class="foot-lnk">
-          <a href="#forgot">Forgot Password?</a>
-        </div>
-      </div>
-
- END 로그인-->
-
-   
-
       <div class="sign-up-htm">
 
         <div class="group">
           <label for="user" class="label"> ID </label>
           <input id="user" type="text" class="input" v-model="userInfo.user_id" autofocus placeholder="영문+숫자 조합 6자이상 11자 이하" >
+          <div>
           <v-btn type="button" v-if="!validId" @click="checkId(userInfo.user_id)">중복체크</v-btn >
            <p v-if="validId" style="color: green;">사용 가능한 아이디입니다.</p>
+           
+        </div>
+
         </div>
 
         <div class="group">
@@ -65,22 +40,13 @@
         </div>
 
 
-        <!-- <div class="group">
-          <label for="email" class="label">Email Address</label>
-          <input id="email" type="text" class="input" v-model="userInfo.user_email">
-          
-          <v-btn type="button" @click="sendVerificationEmail"> 이메일 인증 메일 전송</v-btn>
-          
-          
-          <!- <button type="button" @click="sendRequestEmail" @click="checkEmail(userInfo.userEmail)">인증하기</button> -->
-        <!-- </div> --> 
-
+        
 
 
 <div class="group">
   <label for="email" class="label">Email Address</label>
   
-  <input id="email" type="text" class="input" v-model="userInfo.user_emailid" placeholder="아이디 입력">
+  <input id="email" type="text" class="input" v-model="userInfo.user_emailid" placeholder="이메일아이디 입력">
 <span>@</span>
   <select v-model="userInfo.email_domain" class="input">
     <option disabled value="">도메인 선택</option>
@@ -89,7 +55,8 @@
     <option>naver.com</option>
     <option>daum.net</option> 
   </select>
-
+  <input v-if="userInfo.email_domain === '직접입력'" type="text" class="input" v-model="userInfo.direct_input_domain" placeholder="도메인 직접 입력">
+  <v-btn type="button" @click="checkEmail"> 이메일 중복확인</v-btn>
   <v-btn type="button" @click="sendVerificationEmail"> 이메일 인증 메일 전송</v-btn>
 </div>
 
@@ -114,20 +81,21 @@
              <v-btn @click="search()">우편번호 찾기</v-btn><br>
               <input type="text" id="postcode"  class="input" placeholder="우편번호" v-model="userInfo.postcode">
               
-              
-              <input type="text" id="roadAddress"  class="input" placeholder="임시주소" v-model="userInfo.address1">
+              <!-- 도로명주소 -->
+                    <input type="text" id="roadAddress" class="input" placeholder="도로명주소" v-model="userInfo.address" v-if="!isJibunAddressSelected">
 
-               <input type="text" id="roadAddress"  class="input" placeholder="도로명주소" v-model="userInfo.address">
-              <input type="text" id="jibunAddress"  class="input" placeholder="지번주소" v-model="userInfo.AddressJ">
-              <span id="guide" style="color:#000;display:none"></span>
+              <!-- 지번주소 -->
+               <input type="text" id="jibunAddress" class="input" placeholder="지번주소" v-model="userInfo.address" v-if="isJibunAddressSelected">
+ <span id="guide" style="color:#000;display:none"></span>
               <input type="text" id="detailAddress"  class="input" placeholder="상세주소" v-model="userInfo.detail_address">
+
             
   </div>
         </div>
 
       <div class="group"> 
         <label for="birth" class="label">생년월일</label>
-          <input type="date" v-model="userInfo.birth" class="input">
+          <input type="date" v-model="userInfo.birth" class="input" >
       </div>
 
 
@@ -190,12 +158,13 @@ export default {
         user_email : "",
         user_emailid: "",  // 이메일 아이디 저장 필드
         email_domain: "",  // 이메일 도메인 저장 필드
+        direct_input_domain : "",
         verificationCode : "",
         user_tel : "",
         postcode : "",
-        address1 : "", // 임시주소
-        address : "", // 도로명
-        AddressJ : "", //지번
+        
+        address : "", // 
+      
         detailAdd : "", //상세주소
         birth : "",
        
@@ -207,20 +176,33 @@ export default {
 
       //비밀번호
      passwordValidFlag: true,
-      passwordCheck: '',
+      //passwordCheck: '',
       passwordCheckFlag: true,
     
-    // 사용가능한아이디메세지
-    validId: false, // 추가된 변수
+    // 사용가능한아이디메세지하려고 만든 애
+    validId: false, 
      
+     // 주소 지번 선택 플래그
+     isJibunAddressSelected: false, 
+
+
   }
 
   }, 
 
 computed: {
-  userEmailFull: function() {
-    return `${this.userInfo.user_emailid}@${this.userInfo.email_domain}`;
-  }
+
+
+   userEmailFull: function() {
+      if (this.userInfo.email_domain === '직접입력') {
+        return `${this.userInfo.user_emailid}@${this.userInfo.direct_input_domain}`;
+      } else {
+        return `${this.userInfo.user_emailid}@${this.userInfo.email_domain}`;
+      }
+    }
+
+  
+ 
 },
   created() {
 
@@ -234,12 +216,13 @@ computed: {
         this.validId = false;
     },
 
+
     'userInfo.user_emailid': function(newEmailId, oldEmailId) {
-    this.userInfo.user_email = `${newEmailId}@${this.userInfo.email_domain}`;
-  },
-  'userInfo.email_domain': function(newDomain, oldDomain) {
-    this.userInfo.user_email = `${this.userInfo.user_emailid}@${newDomain}`;
-  }
+      this.updateUserEmail();
+    },
+    'userInfo.email_domain': function(newDomain, oldDomain) {
+      this.updateUserEmail();
+    }
   },
 
 
@@ -247,22 +230,27 @@ computed: {
     //아이디 중복체크: db에 아이디 있으면 중복되는 아이디 있다고 메세지 띄우기! 
     async checkId(id){
 
-      let result = await axios.get(`/api/join-id/${this.id}`)
+      let result = await axios.get(`/api/join-id/${id}`)
                   .catch(err => console.log(err));
               console.log(result.data)
-      let list = result.data.length;
+      //let list = result.data.length;
+      console.log(result.data);
+      let list = result.data;
       console.log(list);
 
 
       // 아이디 공백 입력시 경고창
     if(id == ""){
+      console.log(id);
       alert(`아이디를 입력해주세요`);
        this.validId = false;
+    
     // 아이디가 대소문자 영어와 숫자로 6글자 이상 12자 이하로 이루어지지 않았을 경우 경고창
     } else if(!this.validation(id)){
       alert(`아이디는 영문 대소문자와 숫자로 6글자 이상 12자 이하로 구성해주세요`);
        this.validId = false;
-    } else if(list != 0){
+    // } else if(list.includes(id)){
+    }else if(list.length == 1){
       alert(`중복된 아이디입니다.`);
        this.validId = false;
     } else {
@@ -273,15 +261,15 @@ computed: {
 
   // 유효성 검사
   validation(id){
-    var ch = /^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z\d]{6,12}$/;  // 대소문자 영어와 숫자로 6글자 이상 12자 이하의 조건을 정규표현식으로 작성
-    return ch.test(id);
+    var ch = /^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z\d]{6,12}$/;  // 영어대소문자+숫자 6~12글자 정규표현식 쓰는 법.
+    return ch.test(id); // 정규표현식이랑 일치하는지-> t/f
   },
 
 
   //비밀번호
   checkPwd(pwd){
 
-  // 영어(대소문자)와 숫자만 허용하는 정규표현식
+  // 영어(대소문자)와 숫자만 정규표현식
   var onlyEngNum = /^[a-zA-Z0-9]*$/;
 
   // 비밀번호 유효성 검사
@@ -294,6 +282,7 @@ computed: {
   }
 },
 
+//비번
 passwordValid() {
    if (this.userInfo.user_password === '') {
     this.passwordValidFlag = true;
@@ -302,67 +291,78 @@ passwordValid() {
   }
   },
 
+  //비번일치
   passwordCheckValid() {
     this.passwordCheckFlag = (this.userInfo.user_password === this.userInfo.userChPass);
   },
   
   validationPwd(pwd){
-    var pwdCh = /^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[^a-zA-Z0-9]).{8,}$/;  
+    var pwdCh = /^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[^a-zA-Z0-9]).{8,}$/;  //영어대소문자, 숫자, 특수문자 all 포함 최소 8자 이상. 
     return pwdCh.test(pwd);
   },
  
+ 
 
  //Email
+
+    updateUserEmail: function() {
+      if (this.userInfo.email_domain === '직접입력') {
+        this.userInfo.user_email = `${this.userInfo.user_emailid}@${this.userInfo.direct_input_domain}`;
+      } else {
+        this.userInfo.user_email = `${this.userInfo.user_emailid}@${this.userInfo.email_domain}`;
+      }
+},
+
+
     async checkEmail(email){
       let result = await axios.get(`/api/join-email/${email}`)
                   .catch(err => console.log(err));
-                  console.log("result.data" + result.data)
-      let list = result.data.length;
+                  console.log("result.data", result.data)
+      let list = result.data;
       console.log(list);
 
-      if(email == ""){
+      if(email == ''){
         alert(`이메일을 입력해주세요`);
-      } else if(list != 0){
+      } else if(list.length == 1){
         alert(`중복된 이메일 입니다.`);
       }else{ alert(`사용가능한 이메일입니다.`)};
     },
 
     //이메일 인증
 
-    sendVerificationEmail() {
-      const email = this.userEmailFull; //computed 에서 합친거
-
-      // 이메일 주소를 백엔드로 전송하여 인증 코드를 받아옵니다.
-      // 백엔드 API 호출 
-      axios.post('/api/sendVerificationEmail', { email: this.userInfo.user_email })
-         .then(response => {
-          alert(`인증코드를 받아옵니다.`);
-           this.isEmailSent = true;
-         })
-         .catch(error => {
-        alert(`인증코드를 받아옵니다 실패! .`);
-        this.isEmailSent = true; //얘는 확인용임 지워라현아야..
-         });
-      console.log('이메일 인증 메일 전송');
-    },
-    
-    verifyEmail() {
-      // 인증 코드를 백엔드로 전송하여 이메일 인증을 수행합니다.
-      // 백엔드 API 호출 예시:
-       axios.post('/api/verifyEmail', { email: this.email, verificationCode: this.verificationCode })
-         .then(response => {
-          alert(`이메일 인증 성공! `);
-         })
-         .catch(error => {
-           alert(`이메일 인증 실패! `);
-        })
-      console.log('이메일 인증');
-    },
+  
   
 
 
 
+
   async joinInsert(){
+    //
+//필드가 모두 채워져 있는지 확인 - 일단! 나중ㅇ에 바꿔야함
+  if (
+    !this.userInfo.user_id ||
+    !this.userInfo.user_password ||
+    !this.userInfo.userChPass ||
+    !this.userInfo.user_name ||
+    !this.userInfo.user_emailid ||
+    !this.userInfo.email_domain ||
+    //!this.userInfo.verificationCode ||
+    !this.userInfo.user_tel ||
+    !this.userInfo.postcode ||
+   
+    !this.userInfo.address ||
+   
+    !this.userInfo.detail_address ||
+    !this.userInfo.birth ||
+    !this.userInfo.allCh ||
+    !this.userInfo.ch1 ||
+    !this.userInfo.ch2
+  ) {
+    alert('모든 필드를 입력해주세요.');
+    return;
+  }
+
+
     let info = this.userInfo;
     let data = {
 
@@ -404,6 +404,7 @@ passwordValid() {
                 // 내려오는 변수가 값이 없는 경우엔 공백('')값을 가지므로, 이를 참고하여 분기 한다.
                 var roadAddr = data.roadAddress; // 도로명 주소 변수
                 var extraRoadAddr = ''; // 참고 항목 변수
+                var jibunAddr = data.jibunAddress; //지번 주소 변수
 
                 // 법정동명이 있을 경우 추가한다. (법정리는 제외)
                 // 법정동의 경우 마지막 문자가 "동/로/가"로 끝난다.
@@ -421,8 +422,19 @@ passwordValid() {
 
                 // 우편번호와 주소 정보를 해당 필드에 넣는다.
                 vueObj.userInfo.postcode = data.zonecode;
-                vueObj.userInfo.address = roadAddr;
-                vueObj.userInfo.AddressJ = data.jibunAddress;
+                //vueObj.userInfo.address = roadAddr;
+                //vueObj.userInfo.address = jibunAddr;
+
+              // 사용자가 도로명 주소를 선택한 경우
+          if (data.userSelectedType === 'R') {
+            vueObj.userInfo.address = roadAddr;
+            vueObj.isJibunAddressSelected = false; // 도로명주소를 선택했음을 나타내는 플래그를 설정
+
+          // 사용자가 지번 주소를 선택한 경우
+          } else if (data.userSelectedType === 'J') {
+            vueObj.userInfo.address = jibunAddr;
+            vueObj.isJibunAddressSelected = true; // 지번주소를 선택했음을 나타내는 플래그를 설정
+          }
                 
     
                 var guideTextBox = document.getElementById("guide");

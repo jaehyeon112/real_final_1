@@ -2,9 +2,10 @@ require("dotenv").config({
   path: "./db/db.env"
 });
 const mysql = require("./db.js");
+const bodyParser = require('body-parser');
+const { createTransport } = require('nodemailer');
+//const config = require('./config'); // config 파일에 Gmail API 정보
 const express = require("express");
-//const nodemailer = require('nodemailer'); //이메일인증
-//const {RecaptchaEnterpriseServiceClient} = require('@google-cloud/recaptcha-enterprise'); //리캡챠 
 const app = express();
 const fs = require("fs");
 const multer = require("multer");
@@ -75,14 +76,14 @@ app.post('/send-email', async (req, res) => {
       subject,
       body
     } = req.body;
-    console.log(to + subject + body + 'asdfasfdasfdasfd');
+    console.log(to + subject + body + '이메일콘솔');
     const result = await sendEmail(to, subject, body);
     res.status(200).send(result);
   } catch (error) {
     console.error(error);
     res.status(500).send('Internal Server Error');
   }
-});
+}); //이메일
 
 
 io.on('connect', (socket) => {
@@ -259,55 +260,6 @@ app.get("/join-id/:id", async (req, res) => {
   res.send(list);
 })
 
-// 구글리캡챠
-async function createAssessment({
-  // 할 일: 샘플을 실행하기 전에 토큰과 reCAPTCHA 작업 변수를 바꿉니다.
-  projectID = "yedam1wh-1704161523384",
-  recaptchaKey = "6LcdkEIpAAAAAIdsuklVrOU-ajlphVeZMxFaRge8",
-  token = "action-token",
-  recaptchaAction = "action-name",
-}) {
-  // reCAPTCHA 클라이언트를 만듭니다.
-  // 할 일: 클라이언트 생성 코드를 캐시하거나(권장) 메서드를 종료하기 전에 client.close()를 호출합니다.
-  const client = new RecaptchaEnterpriseServiceClient();
-  const projectPath = client.projectPath(projectID);
-
-  // 평가 요청을 작성합니다.
-  const request = ({
-    assessment: {
-      event: {
-        token: token,
-        siteKey: recaptchaKey,
-      },
-    },
-    parent: projectPath,
-  });
-
-  const [ response ] = await client.createAssessment(request);
-
-  // 토큰이 유효한지 확인합니다.
-  if (!response.tokenProperties.valid) {
-    console.log(`The CreateAssessment call failed because the token was: ${response.tokenProperties.invalidReason}`);
-    return null;
-  }
-
-  // 예상한 작업이 실행되었는지 확인합니다.
-  // The `action` property is set by user client in the grecaptcha.enterprise.execute() method.
-  if (response.tokenProperties.action === recaptchaAction) {
-    // 위험 점수와 이유를 가져옵니다.
-    // 평가 해석에 대한 자세한 내용은 다음을 참조하세요.
-    // https://cloud.google.com/recaptcha-enterprise/docs/interpret-assessment
-    console.log(`The reCAPTCHA score is: ${response.riskAnalysis.score}`);
-    response.riskAnalysis.reasons.forEach((reason) => {
-      console.log(reason);
-    });
-
-    return response.riskAnalysis.score;
-  } else {
-    console.log("The action attribute in your reCAPTCHA tag does not match the action you are expecting to score");
-    return null;
-  }
-}
 
 
 
@@ -320,57 +272,10 @@ app.get("/join-email/:email", async (req, res) => {
 })
 
 
-//회원가입 이메일 인증
-// 이메일 전송 API 엔드포인트
-// api 지운 상태
-app.post('/sendVerificationEmail', (req, res) => {
-  const { email } = req.body;
-  // 이메일 주소 확인 및 인증 코드 생성
-  const verificationCode = generateVerificationCode();
-
-  // Nodemailer를 사용하여 이메일 전송
-  const transporter = nodemailer.createTransport({
-    service: 'Gmail',
-    auth: {
-      user: 'pphhaa314@gmail.com',
-      pass: 'passwd123*'
-    }
-  });
-
-  const mailOptions = {
-    from: 'pphhaa314@gmail.com',
-    to: email,
-    subject: '이메일 인증',
-    text: `인증 코드: ${verificationCode}`
-  };
-
-  transporter.sendMail(mailOptions, (error, info) => {
-    if (error) {
-      console.log(error);
-      res.status(500).send('이메일 전송 실패');
-    } else {
-      console.log('이메일 전송 성공');
-      res.status(200).send('이메일 전송 성공');
-    }
-  });
-});
-
-// 이메일 인증 API 엔드포인트
-app.post('/verifyEmail', (req, res) => {
-  const { email, verificationCode } = req.body;
-  // 이메일 주소와 인증 코드 확인 및 처리
-  if (verifyVerificationCode(email, verificationCode)) {
-    // 인증 성공 처리
-    res.status(200).send('이메일 인증 성공');
-  } else {
-    // 인증 실패 처리
-    res.status(400).send('이메일 인증 실패');
-  }
-});
 
 
 
-//회원가입용(insert) **주소수정ㅎ기! 
+//회원가입용(insert) 
 app.post("/join/joinIn", async (req, res) => {
   let data = req.body.param;
   try{  let result = await mysql.query("user","joinIn", data);
@@ -392,19 +297,36 @@ app.get("/dologin/:id/:password", async (req, res) => {
 
 
 
-//로그인 세션
-app.post("/insertLogin", async(req, res)=> {
-  let data = req.body.param;
-  let result = await mysql.query("user","insertLogin", data);
-  res.send(result);
-})
+// //로그인 세션
+// app.post("/insertLogin", async(req, res)=> {
+//   let data = req.body.param;
+//   let result = await mysql.query("user","insertLogin", data);
+//   res.send(result);
+// })
 
-
-//회원탈퇴
-app.delete("/deleteUser/:id", async(req, res)=> {
+//회원수정
+  //일단 단건 데이터 불러오기
+app.get("/selectid/:id", async(req, res) => {
   let uid = req.params.id;
-  let list = await mysql.query("user", "deleteUser", uid);
+  let list = await mysql.query("user", "selectId", uid);
   res.send(list);
+})
+  //회원정보수정하기
+  app.put('/join/:id', async(req, res)=>{
+    let data = [req.body.param, req.params.id];
+    let result = await mysql.query('user','updateUser', data);
+    res.send(result);
+  });
+
+
+//회원탈퇴하면 user id 뺴고 null로 수정해야됨
+app.put("/updateoutuser/:id", async(req, res)=> {
+  
+  let uid = req.params.id;
+
+  let list = await mysql.query("user", "updateOutUser", uid);
+  res.send(list);
+  
 })
 
 //탈퇴한 애 탈퇴테이블에 담는거
