@@ -39,6 +39,15 @@ let test = {
               WHERE cart_checkbox = 1 AND c.user_id = u.user_id AND p.prod_no = c.prod_no AND c.user_id = ?
               order by cart_no`,
   CheckboxUpdate: `UPDATE cart set cart_checkbox = ? WHERE cart_no = ?`,
+  CheckAllUpdate: `UPDATE cart set cart_checkbox = ? WHERE user_id = ?`,
+  CartPlusquantity: `UPDATE cart
+                 SET quantity = quantity + 1
+                 WHERE prod_no = ?  
+                 AND user_id = ?`,
+  CartMinusquantity: `UPDATE cart
+                 SET quantity = quantity - 1
+                 WHERE prod_no = ?  
+                 AND user_id = ?`,
   // 장바구니 체크된거 삭제 구현
   CheckboxDelete : `DELETE FROM cart WHERE cart_no = ?`,
   couponList: `select a.coupon_no, start_coupon, end_coupon, coupon_name, coupon_content, coupon_discount_rate, coupon_able
@@ -49,8 +58,8 @@ let test = {
                from user
                where user_id = ?`,
   orderList: `  select distinct * 
-                from orders a, order_detail b 
-                where a.order_no = b.order_no AND b.order_no = ?`,
+                from orders a, order_detail b , product c 
+                where a.order_no = b.order_no AND b.prod_no = c.prod_no AND b.order_no = ?`,
   orderInsert: `insert into orders set?`,
   orderdetailInsert: `insert into order_detail set?`,
   // 주문서에서 쿠폰사용해서 결제완료했을경우 쿠폰업데이트

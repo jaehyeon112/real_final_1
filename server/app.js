@@ -204,6 +204,24 @@ app.put("/CheckboxUpdate/:check/:no", async (request, res) => { // 장바구니 
   res.send(list);
 });
 
+app.put("/CheckAllUpdate/:check/:id", async (request, res) => { // 체크박스 전체선택 업데이트
+  let data = [request.params.check, request.params.id];
+  let list = await mysql.query("test", "CheckAllUpdate", data);
+  res.send(list);
+});
+
+app.put("/CartPlusquantity/:pno/:id", async (request, res) => { // 장바구니 수량 플러스
+  let data = [request.params.pno, request.params.id];
+  let list = await mysql.query("test", "CartPlusquantity", data);
+  res.send(list);
+});
+
+app.put("/CartMinusquantity/:pno/:id", async (request, res) => { // 장바구니 수량 플러스
+  let data = [request.params.pno, request.params.id];
+  let list = await mysql.query("test", "CartMinusquantity", data);
+  res.send(list);
+});
+
 app.delete("/CheckboxDelete/:no", async (req, res) => { // 체크된 장바구니 삭제
   let data = req.params.no;
   let result = await mysql.query("test", 'CheckboxDelete', data);

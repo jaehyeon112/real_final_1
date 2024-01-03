@@ -223,7 +223,7 @@ export default {
         let hours = date.getHours();
         let minutes = date.getMinutes();
         let seconds = date.getSeconds();
-        this.Number = year + month + day + hours + minutes + seconds + parseInt(Math.random() * 100000) + 100000 ;
+        this.Number = year + month + day + hours + minutes + seconds + parseInt(Math.random() * 100000000) + 100000000 ; // 9자리로 계산됨
     },
     async selectedPayMethod(paymentMethod) {
          this.orderNumber();
@@ -316,7 +316,7 @@ async orderInsert(){ // orders 테이블 등록
               this.orderdetailInsert(obj.param.order_no)
               this.couponUpdate(obj.param.order_no)
               this.pointInsert(obj.param.order_no)
-              this.userPointUpdate(obj.param.point_use)
+              this.userPointUpdate()
               this.deleteCheckbox();
             }
             this.$store.commit('getOrderNo',obj.param.order_no);
@@ -363,10 +363,10 @@ async orderInsert(){ // orders 테이블 등록
             if(result.data.changedRows > 0){
             }
     },
-    async userPointUpdate(pointuse){
+    async userPointUpdate(){
             let obj = {
                 param : {
-                  point : this.$store.state.user.point - pointuse,
+                  point : this.pointInput
                 }
             }
 
@@ -379,8 +379,6 @@ async orderInsert(){ // orders 테이블 등록
     async pointInsert(orderno){ // point 테이블 등록 부분
              // 상품 정보를 반복해서 처리하는 부분
              if(this.pointInput != 0){
-
-               for (let i = 0; i < this.cartList.length; i++) {
                  let Obj = {
                    param : {
                      order_no : orderno,
@@ -391,7 +389,6 @@ async orderInsert(){ // orders 테이블 등록
                   };
                   let result = await axios.post("/api/pointInsert", Obj)
                   .catch(err => console.log(err));
-                }
                 console.log('포인트사용성공')
               }
     },
