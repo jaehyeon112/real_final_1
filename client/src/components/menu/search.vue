@@ -1,6 +1,9 @@
 <template>
   <v-container>
-    <h1>{{ word }}을(를) 검색한 내용입니다.</h1>
+    <v-row justify="center">
+      
+      <h1>{{ word }}을(를) 검색한 내용입니다.</h1>
+    </v-row>
     <v-row>
           <v-col cols="4" v-for="test in list" :key="test">
             <menulist :prodList="test"/>
@@ -34,7 +37,7 @@ export default {
       this.$hideLoading()
     }
     ,
-   async changePage(no){
+  async changePage(no){
     let test = await axios.get(`/api/searchHeader/${this.word}/` + no).catch (err=>{console.log(err)})
           this.list = test.data;
     }

@@ -1,6 +1,16 @@
 <template>
   <v-container>
-    <v-card class="mx-auto" max-width="300">
+    <v-hover
+        v-slot="{ isHovering, props }"
+        open-delay="200"
+      >
+    <v-card 
+    
+    :elevation="isHovering ? 16 : 2"
+          :class="{ 'on-hover': isHovering }"
+          class="mx-auto"
+          max-width="300"
+          v-bind="props">
       <!-- 해당 제품으로 이동 -->
       <router-link to="/">
         <div class="image-container">
@@ -10,6 +20,7 @@
             src="/api/test"
             @load="imageLoaded"
             style="position: relative;"
+            
           >
         <v-dialog transition="dialog-top-transition" width="auto">
           <template  v-slot:activator="{ props }">
@@ -57,28 +68,29 @@
             </v-card>
           </template>
         </v-dialog>
-          </v-img>
-          <div v-if="isSoldOut" class="soldout-overlay">품절</div>
-          <div v-if="isStock" class="isStock-overlay">상품준비중</div>
-        </div>
-      </router-link>
-
-      <v-card-subtitle class="pt-4"> 1조꺼 </v-card-subtitle>
-
-      <v-card-text>
-        <div class="title">{{ prodList.prod_name }}</div>
-        <!-- 상품 부가 정보 -->
-        <div>
-          <span id="rate" v-if="prodList.discount_rate!=0">{{ prodList.discount_rate }}<span class="text">%</span></span>
-          <span id="discount">{{ $wonComma(prodList.discount_price) }}<span class="text">원</span></span
-          ><span id="price" v-if="prodList.discount_price != prodList.price">{{  $wonComma(prodList.price) }}<span class="text">원</span></span>
-        </div>
-        <div id="type-time">
-          <span>냉동 | 조리시간</span>
-        </div>
-        <v-row justify="end"><span>별점</span> <slot></slot></v-row>
-      </v-card-text>
-    </v-card>
+      </v-img>
+      <div v-if="isSoldOut" class="soldout-overlay">품절</div>
+      <div v-if="isStock" class="isStock-overlay">상품준비중</div>
+    </div>
+  </router-link>
+  
+  <v-card-subtitle class="pt-4"> 1조꺼 </v-card-subtitle>
+  
+  <v-card-text>
+    <div class="title">{{ prodList.prod_name }}</div>
+    <!-- 상품 부가 정보 -->
+    <div>
+      <span id="rate" v-if="prodList.discount_rate!=0">{{ prodList.discount_rate }}<span class="text">%</span></span>
+      <span id="discount">{{ $wonComma(prodList.discount_price) }}<span class="text">원</span></span
+      ><span id="price" v-if="prodList.discount_price != prodList.price">{{  $wonComma(prodList.price) }}<span class="text">원</span></span>
+    </div>
+    <div id="type-time">
+      <span>냉동 | {{prodList.cooking_time}}분</span>
+    </div>
+    <v-row justify="end"><span>별점</span> <slot></slot></v-row>
+  </v-card-text>
+</v-card>
+</v-hover>
   </v-container>
 </template>
 
