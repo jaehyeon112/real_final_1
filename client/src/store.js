@@ -10,13 +10,9 @@ const store = createStore({
       subCategory: '',
       cartCount: 0,
       cart: [],
-<<<<<<< HEAD
-      user:{},
-      orderNo: 0
-=======
       user: {},
-      searchList: []
->>>>>>> fe9668ff58e783595f557a831fa2d952bdb42bfe
+      searchList: [],
+      orderNo: 0
     }
   },
   getters: {
@@ -53,11 +49,7 @@ const store = createStore({
   },
   plugins: [
     createPersistedState({
-<<<<<<< HEAD
       paths: ['user','cart','orderNo']
-=======
-      paths: ['user', 'cart']
->>>>>>> fe9668ff58e783595f557a831fa2d952bdb42bfe
     })
   ]
 
