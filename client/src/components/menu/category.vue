@@ -94,6 +94,28 @@
         </li>
       </ul>
     </div>
+    <div
+      v-if="showSecondCategory2"
+      class="category-list second-category-list"
+      style="position: absolute; left: 220px; top:220px"
+      @mouseenter="showSecondCategoryList2"
+      @mouseleave="hideSecondCategoryList2"
+    >
+      <ul>
+        <li class="test">
+          <router-link to="/menu">바삭한맛</router-link>
+        </li>
+        <li class="test">
+          <router-link to="/">매콤한맛</router-link>
+        </li>
+        <li class="test">
+          <router-link to="/">국물</router-link>
+        </li>
+        <li class="test">
+          <router-link to="/">건강한맛</router-link>
+        </li>
+      </ul>
+    </div>
   </div>
 </template>
 

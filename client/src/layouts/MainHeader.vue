@@ -35,7 +35,7 @@
           </router-link>
         </div>
         <div class="col-1" style="padding-top: 15px">
-          <span @click="what">
+          <span @click="moveCartList">
             
             <!-- 장바구니 갯수 조절해야함 -->
             <v-badge color="error" :content='$store.state.cart.length'>
@@ -77,7 +77,7 @@
           <router-link class="nav-custom" to="/">리뷰</router-link>
         </div>
         <div class="col">
-          <router-link class="nav-custom" to="/">마이페이지</router-link>
+          <router-link class="nav-link" to="/myPage">마이페이지</router-link>
         </div>
         <div class="col"></div>
       </div>
@@ -156,6 +156,9 @@ export default {
         this.isLnbFixed = false;
       }
     },
+    moveCartList(){ // 장바구니 이동
+      this.$router.push('/cartList');
+    }
   },
 };
 </script>

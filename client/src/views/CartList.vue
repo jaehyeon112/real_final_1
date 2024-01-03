@@ -16,12 +16,13 @@
           <td>{{ list.quantity }} 개</td>
           <td>
             <ul>
-              <li >{{ list.discount_price * list.quantity }} 원</li>
-              <li v-if="list.discount_price !== list.price" class="discount">{{ list.price * list.quantity }} 원</li>
+              <li >{{ $wonComma(list.discount_price * list.quantity) }} 원</li>
+              <li v-if="list.discount_price !== list.price" class="discount">{{ $wonComma(list.price * list.quantity) }} 원</li>
             </ul>
           </td>
         </tr>
       </table>
+      <v-btn v-model="check" @click="moveOrderForm" :disabled="box === 0">주문하기</v-btn>
     </v-container>
 </template>
 
@@ -33,11 +34,31 @@ export default {
   data() {
     return {
       cartList: [],
+      allchecked : false, //전체선택 확인여부
+      Checkbox : 0
     }
   },
   created(){
     this.fetchCartList();
   },
+  computed :{
+    check() { // 장바구니 체크안되면 주문하기버튼 활성화가 안되게 설정
+          let Checkbox = 0;
+          for (let i = 0; i < this.cartList.length; i++) {
+            if (this.cartList[i].cart_checkbox == 1) {
+              Checkbox = 1;
+            }
+          }
+          this.box = Checkbox;
+        }
+  },
+  // watch : {
+  //   cartList(){
+  //     for (let i = 0; i < this.cartList.length; i++) {              
+  //           this.updateCheckbox(this.cartList[i]);
+  //     }
+  //   }
+  // },
   methods : {
       fetchCartList() {
         axios.get(`/api/cartList/${this.$store.state.user.user_id}`, {
@@ -71,16 +92,18 @@ export default {
             if (this.cartList[i].cart_checkbox == 1) {
               allChecked = true; 
             }
-        }
+          }
         console.log('아무거나')
         if (allChecked) { // 전체선택
           for (let i = 0; i < this.cartList.length; i++) {
             if (this.cartList[i].cart_checkbox == 1) { // 1인 경우에만 변경
+              this.cartList[i].cart_checkbox = "0";
               this.updateCheckbox(this.cartList[i]); 
             }
           }
         } else { // 선택해제
           for (let i = 0; i < this.cartList.length; i++) {
+              this.cartList[i].cart_checkbox = "1";
               this.updateCheckbox(this.cartList[i]); // 모든 상품의 체크박스 값을 0으로 변경하여 선택을 해제
             }
           }
@@ -94,7 +117,11 @@ export default {
             
           }
         }
-      }
+      },
+    moveOrderForm(){
+      alert('주문서로 이동합니다~')
+      this.$router.replace('/orderForm');
+    },
     },
   }
 </script>
