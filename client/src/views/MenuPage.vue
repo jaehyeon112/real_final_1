@@ -2,6 +2,7 @@
   
   
   <div>
+
     <bread :breadcrumb="breadcrumb" />
     <v-row>
       <v-col cols="3">

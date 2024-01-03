@@ -68,6 +68,10 @@ async function sendEmail(to, subject, body) {
   return result;
 }
 
+server.listen(3000, () => {
+  console.log('app대신 socket.io서버 on~~');
+});
+
 app.post('/send-email', async (req, res) => {
   try {
     const {
@@ -90,6 +94,7 @@ io.on('connect', (socket) => {
   socket.on('message', (message) => {
     console.log(message);
   });
+
 
   socket.on('send', (one, two, three) => {
     console.log(one, two, three)
@@ -161,9 +166,7 @@ app.listen(3000, () => {
   console.log("재현 서버 on");
 });
  */
-server.listen(3000, () => {
-  console.log('app대신 socket.io서버 on~~');
-});
+
 
 
 app.get('/prod', async (req, res) => {
@@ -816,10 +819,12 @@ app.get("/searchHeader/:word/:no", async (req, res) => {
   let word = [req.params.word, Number(req.params.no)];
   let list = await mysql.query('test', 'searchHeader', word)
   res.send(list);
+  io.emit('alert', req.params.word);
 })
 
 app.get("/searchHeader/:word", async (req, res) => {
   let data = req.params.word
   let list = await mysql.query('test', 'searchHeaderPage', data)
   res.send(list)
+
 })
