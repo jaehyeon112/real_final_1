@@ -3,9 +3,8 @@
         <form @submit.prevent >
             <h2 v-if="reviewInfo.review_no > 0 ">리뷰수정</h2>
             <h2 v-else>리뷰등록</h2>
-            dddd{{ reviewInfo.review_no }}
             <label for="detailNo">주문상세번호</label>
-            <input type="text" id="detailNo"  v-model="this.detailNo" readonly>
+            <input type="text" id="detailNo"   v-model="reviewInfo.detail_order_no" readonly>
 
             <label for="title">제목</label>
             <input type="text" id="title"  v-model="reviewInfo.review_title">
@@ -24,7 +23,9 @@
             <textarea id="content" style="height:200px" v-model="reviewInfo.review_content"></textarea>
 
             <label for="regdate">작성일자</label>
-            <input type="regdate" id="regdate" v-model="reviewInfo.review_writedate" readonly > <!--model필드명 칼럼명이랑 일치-->
+            
+            <input type="regdate" id="regdate" v-if="reviewInfo.review_no > 0" v-model="reviewInfo.review_updatedate" readonly > <!--model필드명 칼럼명이랑 일치-->
+            <input type="regdate" id="regdate" v-else v-model="reviewInfo.review_writedate" readonly >
 
             <label for="image">이미지 첨부</label>
 
@@ -48,6 +49,7 @@ export default {
                 review_grade:5,
                 review_content : '',
                 review_writedate : '',
+                review_updatedate:'',
                 like_cnt:''
             },
             isUpdated : false
@@ -63,6 +65,7 @@ export default {
             console.log(this.reviewNo)
         }else{
             //등록
+            this.reviewInfo.detail_order_no = this.detailNo
             this.reviewInfo.review_writedate = this.getToday();
         }       
     },
@@ -70,17 +73,20 @@ export default {
         async getReviewInfo() {
            let result = (await axios.get(`/api/reviewInfo/${this.$store.state.user.user_id}/${this.reviewNo}`) //sql.js 단건조회 경로 그대로 가져오기 api붙여주는 이유 proxy와 관련
                                     .catch(err=>{console.log(err)}))
+                                    
             
-            this.reviewInfo=result.data     
+            this.reviewInfo=result.data[0]     
+            this.reviewInfo.review_updatedate = this.$dateFormat(this.reviewInfo.review_updatedate,'yyyy년MM월dd일')
             this.reviewInfo.review_writedate = this.$dateFormat(this.reviewInfo.review_writedate,'yyyy년MM월dd일')
-            console.log( this.reviewInfo.review_writedate )  
+            console.log(this.reviewInfo)
+            console.log(this.reviewInfo.review_updatedate )  
                           
         },
         getToday(){
             return this.$dateFormat('','yyyy년MM월dd일');
         },
         async reviewInsert(){
-            console.log(this.reviewInfo.review_writedate)
+         
             let obj ={
                 param: {
                     detail_order_no: this.detailNo,//this.reviewInfo.detail_order_no,
@@ -103,17 +109,19 @@ export default {
         async reviewUpdate(){
             let obj ={
                 param: {
-
+                    detail_order_no: this.detailNo,
+                    user_id:this.$store.state.user.user_id,
                     review_title:this.reviewInfo.review_title,
-                    review_grade:this.reviewInfo.review_grade,
                     review_content:this.reviewInfo.review_content,
-                    //review_writedate:this.reviewInfo.review_writedate
+                    review_grade:this.reviewInfo.review_grade,
+                    //review_updatedate:this.reviewInfo.review_updatedate
                 }
             }
-            let result = await axios.put(`/api/reviewUpdate/${this.reviewNo}`, obj) //얘는 왜 searchNo아니고..?
+            let result = await axios.put(`/api/reviewUpdate/${this.$store.state.user.user_id}/${this.reviewNo}`, obj) //얘는 왜 searchNo아니고..?
                                     .catch((err=>console.log(err))) //수정된 정보를 저장한다
             if(result.data.changedRows > 0){
                 alert('수정완료');
+                this.$router.push({path:'myPage/myReview'})
             }                        
             
         }

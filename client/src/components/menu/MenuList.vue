@@ -2,13 +2,14 @@
   <v-container>
     <v-card class="mx-auto" max-width="300">
       <!-- 해당 제품으로 이동 -->
-      <router-link to="/">
+      <router-link @click.stop="goToDetail(prodList.prod_no)" to="/detailPage">
         <div class="image-container">
           <v-img
             class="align-end text-white"
             height="300"
             src="/api/test"
             @load="imageLoaded"
+            
           >
             <v-row justify="end" style="margin-right: 30px; margin-bottom: 30px">
               <v-btn icon="mdi mdi-cart" variant="tonal" @click.prevent="goToCart"> </v-btn>
@@ -63,7 +64,9 @@ export default {
 
       
     },
-  
+    goToDetail(pno){
+      this.$router.push({path:'/detailPage', query:{pno : pno}})
+    },
     goToCart(){
       alert("비회원인데 넣었다 가정!")
       this.$store.commit('addCart',this.prodList)

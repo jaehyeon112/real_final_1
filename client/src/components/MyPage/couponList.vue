@@ -14,16 +14,18 @@
                 </tr>
             </thead>
             <tbody>
-                <tr :key="idx" v-for="(coupon, idx) in couponList">
-                    <td>{{ coupon.couponinfo_no }}</td>
-                    <td>{{ coupon.coupon_name }}</td>
+                
+                <tr :key="idx" v-for="(coupon, idx) in couponList" >
+                    <td>{{ coupon.coupon_no }}</td>
+                    <td v-if="coupon.coupon_name=='q1'">회원가입쿠폰</td>
+                    <td v-else >생일쿠폰</td>
                     <td>{{ coupon.coupon_content }}</td>
-                    <td>{{ coupon.coupon_discount_rate }} %</td>
+                    <td >{{ coupon.coupon_discount_rate }} %</td>
                     <td>{{ $dateFormat(coupon.start_coupon,"yyyy년MM월dd일") }}</td>
                     <td>{{ $dateFormat(coupon.end_coupon,"yyyy년MM월dd일") }}</td>
-                    <td>{{ coupon.coupon_able }}</td>
-                    
-                    
+                    <td v-if=" coupon.coupon_able==0">사용 가능</td>
+                    <td v-else ><del v-if="coupon.end_coupon < today ">사용 불가</del></td>
+                        
                 </tr>
             </tbody>
         </table>
@@ -35,17 +37,22 @@ import axios from 'axios'
 export default {
     data(){
         return{
-            couponList:[]
+            couponList:[],
+            today:''
         }
     },
     created(){
-        this.getCouponList()
+        this.getCouponList();
+        this.today=this.getToday();
     },
     methods:{
         async getCouponList(){
-            this.couponList = (await axios.get(`/api/coupon/test`,)
+            this.couponList = (await axios.get(`/api/myCoupon/${this.$store.state.user.user_id}`,)
                                             .catch(err=>console.log(err))).data
             console.log(this.couponList);                                
+        },
+        getToday(){
+            return this.$dateFormat('','yyyy년MM월dd일');
         }
     }
 }

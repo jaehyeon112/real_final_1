@@ -8,17 +8,19 @@
         <div class="row" style="width:900px;">
             <div class="col-sm-5">
                         <div class="col p-4 d-flex flex-column position-static">
-                            <strong class="d-inline-block mb-2 text-success-emphasis"> 등급 : {{ member.user_grade }}</strong>
+                            <strong class="d-inline-block mb-2 text-success-emphasis" v-if="member.user_grade=='i1'"> 등급 : 일반</strong>
+                            <strong class="d-inline-block mb-2 text-success-emphasis" v-else-if="member.user_grade=='i2'"> 등급 : 실버</strong>
+                            <strong class="d-inline-block mb-2 text-success-emphasis" v-else> 등급 : 골드</strong>
                             <h3 class="mb-0">{{ member.user_id}}님</h3>
                             <div class="mb-1 text-body-secondary">일반</div>
                             <p class="mb-auto"></p>
                             <a href="#" class="icon-link gap-1 icon-link-hover ">
                                 <div class="text-center">
                                     <v-btn color="primary" @click="dialog = true">다음달 소멸 포인트 조회</v-btn>
-                                    <v-dialog v-model="dialog" width="100px">
+                                    <v-dialog v-model="dialog" persistent width="300px">
                                     <v-card>
-                                        <v-card-text>
-                                        {{ NextMonthPoint.sump }}
+                                        <v-card-text style="text-align: center;">
+                                        {{  NextMonthPoint.sump }}Point
                                         </v-card-text>
                                         <v-card-actions>
                                         <v-btn color="primary" block @click="dialog = false">닫기</v-btn>

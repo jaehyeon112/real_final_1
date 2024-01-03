@@ -118,7 +118,10 @@ let reviews = {
   myReview:`select * from review where user_id=? `,//마이페이지에서 내가 작성한 리뷰 리스트
   reviewInfo:`select * from review where user_id=? and review_no=?`,//마이페이지 리뷰하나 보기
   orderNoReview:`select * from review where user_id=?`,
-  detailList:`select * from review where prod_no=?`, //상세페이지에서 그 상품에대한 리뷰 리스트
+  detailList:`select t2.prod_no, t1.review_title, t1.review_content, t1.review_grade, t1.user_id, t1.review_writedate, t1.like_cnt, t1.report_cnt
+                                from review t1 join order_detail t2 on t1.detail_order_no = t2.order_detail_no
+                                                     join product t3 on t3.prod_no = t2.prod_no
+                                                     where t3.prod_no=?`, //상세페이지에서 그 상품에대한 리뷰 리스트
   insertReview:`insert into review set?`,//주문상세내역->리뷰등록
   updateReview:`update review set ? where user_id= ? and review_no= ?`,
   insertReviewImage:`insert into image set?`  
@@ -132,23 +135,23 @@ let point = {
   pointExpire:`update user as t1,(select sum( point_save) as points, user_id from point where end_point_date = current_date() group by user_id) as t2
               set t1.point = t1.point- t2.points where t1.user_id=t2.user_id;`,//기간소멸
               //그리고 point table에 소멸사유로 인서트 해주는것도 같이..?
-  showNextMonth:`select sum(point_save) as sump from point where user_id =? and (year(end_point_date)=year(now()) and Month(end_point_date)=Month(DATE_ADD(curdate(),INTERVAL 1 month))); `            
+  showNextMonth:`select IFNULL(sum(point_save),0) as sump from point where user_id =? and (year(end_point_date)=year(now()) and Month(end_point_date)=Month(DATE_ADD(curdate(),INTERVAL 1 month))); `            
 
 };
 let coupon = {
-  myCoupon:`select c1.couponinfo_no, c1.user_id, c1.start_coupon, c1.end_coupon, c1.coupon_able, c2.coupon_name, c2.coupon_content, c2.coupon_discount_rate  
+  myCoupon:`select c1.coupon_no, c1.user_id, c1.start_coupon, c1.end_coupon, c1.coupon_able, c2.coupon_name, c2.coupon_content, c2.coupon_discount_rate ,c1.coupon_able 
             from coupon c1 left join couponinfo c2 
             on (c1.couponinfo_no = c2.couponinfo_no)
             where c1.user_id=?;`//마이페이지 보유 쿠폰
 };
 let orders = {
   //detailOrderLists:`select * from order_detail o1 left join orders o2 on o1.order_no = o2.order_no where o1.order_no =? and user_id = ?`,//주문창에서 상세주문내역으로 이동시 불러올 값
-  orderList:`select  ord.order_date, dord.order_detail_no, ord.delivery_charge, ord.total_payment, ord.real_payment, ord.payment_no, ord.order_no, pro.prod_name
-              from orders ord  join order_detail dord on ord.order_no = ord.order_no
-                               join product pro on pro.prod_no = dord.prod_no
-                               where ord.user_id=?
-                               group by ord.order_no
-                               order by ord.order_no`,
+  orderList:`select  ord.order_date, dord.order_detail_no, ord.delivery_charge, ord.total_payment, ord.real_payment, ord.payment_no, ord.order_no, pro.prod_name, ord.order_status, (select delivery_status from delivery where order_no=ord.order_no) as delivery
+                    from orders ord  join order_detail dord on ord.order_no = ord.order_no
+                                     join product pro on pro.prod_no = dord.prod_no
+                                     where ord.user_id=?
+                                     group by ord.order_no
+                                     order by ord.order_no `,
   //  orderListCount:`select prod_name from product pr join order_detail ord on pr.prod_no = ord.prod_no 
   //                 join user us
   //                  where ord.order_no=? and us.user_id=? limit 1`,        
@@ -162,6 +165,7 @@ let orders = {
 let delivery = {
   addDelivery: `insert into add_delivery set?`,
   deliveryList: `select * from add_delivery where user_id=?`,
+  deliveryInfo:`select * from add_delivery where user_id=? and delivery_no=?`,
   updateDelivery:`update add_delivery set? where delivery_no=? and user_id=?`,
   deleteDelivery: `delete from add_delivery where delivery_no=?`
 }
@@ -169,7 +173,7 @@ let like = {
   likeList : `select* from likes where user_id=?`
 }
 let member = {
-  memberInfo : `select t1.*, count(t2.user_id) as couponCnt from user t1 join coupon t2  on t1.user_id = t2.user_id where t1.user_id=?` //이건 나중에 로그인 세션 이용하게 되면 지우자
+  memberInfo : `select t1.*, count(case when 'coupon_able'=1 then 1 end) as couponCnt from user t1 join coupon t2  on t1.user_id = t2.user_id where t1.user_id= ?` //이건 나중에 로그인 세션 이용하게 되면 지우자
 }
 
 module.exports = {
