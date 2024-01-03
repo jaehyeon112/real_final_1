@@ -1,6 +1,7 @@
 require("dotenv").config({
   path: "./db/db.env"
 });
+
 const mysql = require("./db.js");
 const express = require("express");
 const app = express();
@@ -27,6 +28,7 @@ const oauth2Client = new google.auth.OAuth2(
   process.env.GAMIL_OAUTH_CLIENT_SECRET,
   "https://developers.google.com/oauthplayground"
 );
+
 
 oauth2Client.setCredentials({
   refresh_token: process.env.GAMIL_OAUTH_REFRESH_TOKEN
@@ -81,7 +83,6 @@ app.post('/send-email', async (req, res) => {
     res.status(500).send('Internal Server Error');
   }
 });
-
 
 io.on('connect', (socket) => {
   console.log('소켓연결테스트')
@@ -149,6 +150,12 @@ app.post("/photos", upload.array("photos", 12), (req, res) => {
   }
 });
 
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  next();
+});
 /* 
 app.listen(3000, () => {
   console.log("재현 서버 on");
