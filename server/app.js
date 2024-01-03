@@ -624,3 +624,15 @@ app.get("/searchHeader/:word", async (req, res) => {
   let list = await mysql.query('test', 'searchHeaderPage', data)
   res.send(list)
 })
+
+app.post("/cartAfterLogin", async (req, res) => {
+  let data = [req.body.param];
+  let list = await mysql.query('test', 'cartAfterLogin', data)
+  res.send(list);
+})
+
+app.put(`/cartAfterLogin/:no`, async (req, res) => {
+  let data = [req.body.param, req.params.no];
+  let list = await mysql.query('test', 'cartUpdate', data)
+  res.send(list)
+})

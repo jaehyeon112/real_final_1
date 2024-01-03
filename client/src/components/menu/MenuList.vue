@@ -18,14 +18,14 @@
             class="text-white"
             height="300"
             src="/api/test"
-            @load="imageLoaded"
+        
             style="position: relative;"
             
           >
         <v-dialog transition="dialog-top-transition" width="auto">
           <template  v-slot:activator="{ props }">
             <!--여기를 장바구니 버튼으로~-->
-            <div style="position:absolute; top:100px; left:200px"><v-btn  icon="mdi mdi-cart" variant="tonal"  v-on:click.prevent v-bind="props"> </v-btn></div>
+            <div style="position:absolute; top:100px; left:200px"><v-btn @click="quantity=1"  icon="mdi mdi-cart" variant="tonal"  v-on:click.prevent v-bind="props"> </v-btn></div>
           </template>
           <template v-slot:default="{ isActive }">
             <v-card height="300" width="450">
@@ -41,7 +41,7 @@
                 <v-row justify="end">
                   <v-col>      <v-btn @click="decreaseQuantity">-</v-btn>
       {{ quantity }}
-      <v-btn @click="increaseQuantity">+</v-btn></v-col>
+      <v-btn @click="increaseQuantity(prodList.prod_no)">+</v-btn></v-col>
                   <v-col  cols="auto">{{ $wonComma(prodList.discount_price)+'원' }}  </v-col>
                 </v-row>
                 
@@ -58,8 +58,8 @@
                       >취소</v-btn
                     >
                   </v-col>
-                  <v-col>
-                    <v-btn width="150" height="40" style="border:1px solid gray; color:white; background-color: black;" @click="isActive.value = false"
+                  <v-col @click="isActive.value=false">
+                    <v-btn width="150" height="40" style="border:1px solid gray; color:white; background-color: black;" @click="goToCart(prodList.prod_no)"
                       >장바구니</v-btn
                     >
                   </v-col>
@@ -123,13 +123,40 @@ export default {
         this.quantity--;
       }
     },
-    increaseQuantity() {
+    increaseQuantity(no) {
+      let cartQuantity = 0;
+      for(let i = 0 ; i< this.$store.state.cart.length ; i++){
+        if(no == this.$store.state.cart[i].prod_no){
+          cartQuantity = this.$store.state.cart[i].quantity;
+        }
+      }
+
+      if(this.prodList.stock > this.quantity+cartQuantity) {
       this.quantity++;
+      }else{
+        alert('보유 재고를 초과하였습니다.')
+      }
     },
-    goToCart(){
-      alert("비회원인데 넣었다 가정!")
-      this.$store.commit('addCart',this.prodList)
-      console.log(this.$store.state.cart)
+    goToCart(no){
+      let cartQuantity = 0;
+      for(let i = 0 ; i< this.$store.state.cart.length ; i++){
+        if(no == this.$store.state.cart[i].prod_no){
+          cartQuantity = this.$store.state.cart[i].quantity;
+        }
+      }
+
+      if(this.prodList.stock >= this.quantity+cartQuantity) {
+        alert("장바구니에 등록되었습니다.")
+      let items = this.prodList;
+      items.quantity = this.quantity;
+      this.$store.commit('addCart',items)
+      }else{
+        alert('보유 재고를 초과하여 장바구니에 넣을 수 없습니다.')
+      }
+
+
+
+     
     }
   },
 };

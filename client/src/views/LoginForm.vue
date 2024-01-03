@@ -100,7 +100,39 @@ let ipList = await axios.get(`/api/dologin/${this.user_id}/${this.user_password}
         return;
        }else{
          alert(users[0].user_name +'님 환영합니다');
-       }
+        
+        
+         //만약 비로그인시 장바구니에 안 담았다면, 그냥 넘어가게
+        let cartList =  (await axios.get(`/api/cartList/${users[0].user_id}`).catch(err=>console.log(err))).data
+
+        console.log(cartList[0]. +  this.$store.state.cart[0])
+
+        // for(let i = 0; i < cartList.length; i++){
+        //   for(let j = 0; this.$store.state.cart.length; j++){
+        //     if(cartList[i].prod_no == this.$store.state.cart[j].prod_no){
+        //       let obj = {
+        //         param : {
+        //           quantity : this.$store.state.cart[j].quantity + cartList[i].quantity,
+        //         }
+        //       }
+        //       await axios.put(`/api/cartAfterLogin/${cartList[i].prod_no}`,obj).catch(err=>console.log(err));
+        //     } 
+        //   }
+        // }
+
+        // for(let i = 0 ; i < this.$store.state.cart.length; i++){
+        //   let obj = {
+        //     param: {
+        //         prod_no : this.$store.state.cart[i].prod_no,
+        //         quantity : this.$store.state.cart[i].quantity,
+        //         user_id : users[0].user_id
+        //     }
+        // }
+        // await axios.post(`/api/cartAfterLogin`, obj).catch(err=>{console.log(err)})
+        // }
+        // this.$store.state.cart = [];
+        
+    }
  
 
 this.$store.commit('login',users[0]) // (함수명, 전달인자)

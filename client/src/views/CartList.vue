@@ -1,7 +1,7 @@
 <template>
   <v-container v-if="this.$store.state.user.user_id == null">
     <v-btn @click="selectAll">전체선택</v-btn>
-        <v-btn @click="deleteSelected">선택삭제</v-btn>
+        <v-btn @click="$store.commit('cartEmpty')">선택삭제</v-btn>
       <table class="rwd-table" :key="idx" v-for="(list, idx) in $store.state.cart">
         <tr>
           <td>
@@ -18,7 +18,7 @@
           </td>
         </tr>
       </table>
-      <v-btn v-model="check" @click="moveOrderForm" :disabled="box === 0">주문하기</v-btn>
+      <v-btn v-model="check" @click="goTologinForm">주문하기</v-btn>
   </v-container>
   <v-container v-else>
         <v-btn @click="selectAll">전체선택</v-btn>
@@ -87,6 +87,13 @@ export default {
           console.error(error);
         });
       },
+      // 로그인 안되어있으면 로그인 하라고 로그인 폼으로 이동 시킨다.
+      goTologinForm(){
+        alert('로그인 화면으로 이동합니다.')
+        this.$router.push('login')
+      },
+
+
       async updateCheckbox(list) {  // DB에 등록부분
         if(list.cart_checkbox == 1) {
           let result = await axios.put(`/api/CheckboxUpdate/0/${list.cart_no}`, );

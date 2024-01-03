@@ -21,14 +21,15 @@ const store = createStore({
   },
   mutations: {
     addCart(state, item) {
-      item.quantity = 1;
+
       for (let i = 0; i < state.cart.length; i++) {
         if (item.prod_no == state.cart[i].prod_no) {
-          state.cart[i].quantity += 1;
+          state.cart[i].quantity += item.quantity;
           state.cartCount = state.cart.length
           return;
         }
       }
+
       state.cart.push(item);
       state.cartCount = state.cart.length
     },
@@ -40,7 +41,7 @@ const store = createStore({
       state.user = {};
     },
     cartEmpty(state) {
-      state.cart = {}
+      state.cart = []
     }
   },
   actions: {
