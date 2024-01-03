@@ -165,6 +165,21 @@ app.post("/orderdetailInsert", async (request, res) => { // order_detail 등록
   res.send((await mysql.query("test", "orderdetailInsert", data)));
 });
 
+app.post("/pointInsert", async (request, res) => { // 포인트 사용내역 등록
+  let data = request.body.param;
+  res.send((await mysql.query("test", "pointInsert", data)));
+});
+
+app.put("/couponUpdate/:id", async (request, res) => { // 쿠폰 사용시 업데이트
+  let data = [request.body.param, request.params.id];
+  res.send((await mysql.query("test","couponUpdate", data)));
+});
+
+app.put("/pointUpdate/:id", async (request, res) => { // 사용한 포인트 user테이블 업데이트
+  let data = [request.body.param, request.params.id];
+  res.send((await mysql.query("test","pointUpdate", data)));
+});
+
 app.get("/user/:order", async (req, res) => {
   let result = req.params.order;
   let data = await mysql.query("admin", "AlluserList", result);

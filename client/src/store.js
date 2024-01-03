@@ -8,7 +8,8 @@ const store = createStore({
       subCategory:'',
       cartCount : 0,
       cart: [],
-      user:{}
+      user:{},
+      orderNo: 0
     }
   },
   getters:{
@@ -36,6 +37,9 @@ const store = createStore({
     },
     logout(state) {
       state.user = {};
+    },
+    getOrderNo(state,no) {
+     state.orderNo = no;
     }
   },
   actions:{
@@ -43,7 +47,7 @@ const store = createStore({
   },
   plugins:[
     createPersistedState({
-      paths: ['user','cart']
+      paths: ['user','cart','orderNo']
     })
   ]
 
