@@ -21,10 +21,12 @@ let test = {
   bothFilterPage: `select * from product where prod_name >= ? and prod_name < ? and discount_price between ? and ?`,
   categoryBothFilter: `select * from product where prod_name >= ? and prod_name < ? and discount_price between ? and ? and ?? = ? limit ? , 6`,
   categoryBothFilterPage: `select * from product where prod_name >= ? and prod_name < ? and discount_price between ? and ? and ?? = ?`,
+  // 헤더 검색
+  searchHeader: `select * from product where prod_name like concat(concat('%',?),'%')`,
 
   //신상품
-  newListPage: `select * from product where registration >= current_date() - 3;`,
-  newList: `select * from product where registration >= current_date() - 3 limit ?,6;`,
+  newListPage: `select * from product where registration >= DATE_SUB(CURDATE(), INTERVAL 7 DAY);`,
+  newList: `select * from product where registration >= DATE_SUB(CURDATE(), INTERVAL 7 DAY) limit ?,6;`,
 
 
   cartList: `select distinct * 

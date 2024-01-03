@@ -71,6 +71,9 @@ export default {
       this.currentPage = index;
       this.$emit("changePage", index-1);
     },
+    currentPage1(){
+      this.currentPage = 1;
+    }
   },
 };
 </script>
