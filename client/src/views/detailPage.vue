@@ -30,7 +30,14 @@
             
             <div class="d-flex">
                 <p>상품선택</p>
-                <button>-</button><input type="number" value="1"><button>+</button>
+                <v-text-field>
+                  <template v-slot:append>
+                     <v-icon color="red">mdi-plus</v-icon>
+                  </template>
+                  <template v-slot:prepend>
+                     <v-icon color="green">mdi-minus</v-icon>
+                  </template>
+                </v-text-field>
             </div>
             <div>
                 <p class="lead">할인률</p>
@@ -69,7 +76,8 @@
         <input :key="idx" v-for="(bestR, idx) in reviewList" type="file">
         <table class="table" border="1">
             <tr>
-                <th>No.</th>
+                <th>작성자</th>
+                <th>리뷰제목</th>
                 <th>리뷰내용</th>
                 <th>평점</th>
                 <th>작성일자</th>
@@ -77,7 +85,8 @@
                 <th>신고</th>
             </tr>
             <tr :key="idx" v-for="(review, idx) in reviewList">
-                <td> {{ review.review_no }}</td>
+                <td> {{ review.user_id }}</td>
+                <td> {{ review.review_title }}</td>
                 <td> {{ review.review_content }}</td>
                 <td> {{ review.review_grade }}</td>
                 <td> {{ review.review_writedate }}</td>
@@ -132,7 +141,7 @@
 
 </template>
 <script>
-//import axios from'axios';
+import axios from'axios';
 
 export default {
     data(){
@@ -142,15 +151,18 @@ export default {
             inquireList:[]
         }
     },
-    created(){  
-        this.getRivewList();
-        this.pno = this.$route.query.pno;
+    created(){ 
+      this.pno = this.$route.query.pno; 
+      console.log('pno'+this.pno)
+      this.getRivewList();
+        
     },
     methods:{
         async getRivewList() {
             let list = await axios.get(`api/detailReview/${this.pno}`)
                                   .catch(err=>console.log(err));
-            this.reviewList =list.data;                      
+            this.reviewList =list.data;
+            console.log(this.reviewList)                      
         },
         
     }

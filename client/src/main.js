@@ -16,7 +16,7 @@ import {
 loadFonts()
 window.Kakao.init("8acdd93f5a6fa89a6d2fe9190ea23ff1");
 
-const vue = 'http://localhost:3000'
+const vue = 'http://localhost:8080'
 
 const socket = io(vue);
 const app = createApp(App);

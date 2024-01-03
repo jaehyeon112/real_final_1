@@ -1,6 +1,7 @@
 require("dotenv").config({
   path: "./db/db.env"
 });
+
 const mysql = require("./db.js");
 const express = require("express");
 const app = express();
@@ -27,6 +28,7 @@ const oauth2Client = new google.auth.OAuth2(
   process.env.GAMIL_OAUTH_CLIENT_SECRET,
   "https://developers.google.com/oauthplayground"
 );
+
 
 oauth2Client.setCredentials({
   refresh_token: process.env.GAMIL_OAUTH_REFRESH_TOKEN
@@ -81,7 +83,6 @@ app.post('/send-email', async (req, res) => {
     res.status(500).send('Internal Server Error');
   }
 });
-
 
 io.on('connect', (socket) => {
   console.log('소켓연결테스트')
@@ -149,6 +150,12 @@ app.post("/photos", upload.array("photos", 12), (req, res) => {
   }
 });
 
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  next();
+});
 /* 
 app.listen(3000, () => {
   console.log("재현 서버 on");
@@ -618,26 +625,25 @@ app.get('/addDelivery/:id', async(req,res)=>{
   const list = await mysql.query('delivery','deliveryList',id);
   res.send(list);
 })
-//정보수정
-app.put("/addDelivery/:dno/:id", async(req,res)=>{
+  app.get('/deliveryInfo/:id/:dno', async(req,res)=>{
+    let datas = [ req.params.id, req.params.dno]
+    let result = await mysql.query('delivery', 'deliveryInfo', datas)[0];
+    res.send(result)
+  })
+//배송지정보수정
+app.put("/updateDelivery/:dno/:id", async(req,res)=>{
   let datas = [req.body.param, req.params[dno], req.params[id]]
   let result =  await mysql.query('delivery', 'updateDelivery',datas);
   res.send(result)
 })
 //정보삽입
-const delTable = ['delivery_no','user_id','delivery_name','delivery_address','delivery_detail_address, delivery_postcode'];
+
 app.post("/addDelivery", async(req,res)=>{
-  let data = req.body.param;
-  let delData = {};
-for(let column of delTable){  
-  let value = data[column]; 
-  if(value == '') continue;
-  delData[column] = value;    
-}
-  let result = await mysql.query('delivery', 'addDelivery')
+  let datas = req.body.param
+  let result = await mysql.query('delivery', 'addDelivery',datas)
   res.send(result);
 })
-app.delete("/addDelivery", async(req,res)=>{
+app.delete("/delDelivery", async(req,res)=>{
   let result = await mysql.query('delivery', 'deleteDelivery')
   res.send(result);
 })
@@ -648,7 +654,7 @@ app.delete("/addDelivery", async(req,res)=>{
     res.send(list);
   })
 //쿠폰
-  app.get("/coupon/:id", async(req,res)=>{
+  app.get("/myCoupon/:id", async(req,res)=>{
     let id = req.params.id;
     let list = await mysql.query('coupon','myCoupon',id)
     res.send(list);
@@ -671,17 +677,19 @@ res.send(list);
         }
       })
     });
-    cron.schedule("0 0 0 * * *", ()=>{
-    function updatePoint(){
-       mysql.query("point", 'pointExpire',(err,result)=>{
-        if(err){
-          console.log(err)
-        }else{
-          console.log(`테이블 업데이트 성공`)
-        }
-      })
-    }
-  })
+
+//     cron.schedule("0 0 0 * * *", ()=>{
+//     updatePoint()
+//   })
+//   function updatePoint(){
+//     mysql.query("point", 'pointExpire',(err,result)=>{
+//      if(err){
+//        console.log(err)
+//      }else{
+//        console.log(`테이블 업데이트 성공`)
+//      }
+//    })
+//  }
     //마이페이지 포인트 내역조회
     app.get("/myPointSave/:id", async (req,res)=>{
       let id = req.params.id;
@@ -709,7 +717,7 @@ res.send(list);
     app.get("/detailReview/:pno", async(request, response)=>{
       let pno = request.params.pno
       let list = await mysql.query('reviews','detailList',pno)
-      res.send(list);
+      response.send(list);
     })
     //마이페이지에서 리뷰목록
     app.get("/myReview/:id", async(request, response)=>{

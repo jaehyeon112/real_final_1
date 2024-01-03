@@ -18,7 +18,7 @@ import MyorderList from "@/components/MyPage/orderList.vue";
 import detailOrder from "@/components/MyPage/orderDetail.vue";
 import like from  "@/components/MyPage/likeBasket.vue";
 import delivery from "@/components/MyPage/delivery.vue";
-import addDeli from "@/components/MyPage/addDelivery.vue";
+//import addDeli from "@/components/MyPage/addDelivery.vue";
 import coupon from "@/components/MyPage/couponList.vue";
 import point from "@/components/MyPage/point.vue";
 import myReview from "@/components/MyPage/myReview.vue";
@@ -147,10 +147,10 @@ export default {
          name:"delivery",
          component:delivery
         }, 
-        {path:"addDeli",
-         name:"addDeli",
-         component:addDeli
-        },
+        // {path:"addDeli",
+        //  name:"addDeli",
+        //  component:addDeli
+        // },
         {path:"point",
          name:"point",
          component:point
