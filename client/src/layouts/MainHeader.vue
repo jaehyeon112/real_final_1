@@ -77,7 +77,7 @@
     </v-menu>    
           </div>
         <div class="col-1" style="padding-top: 15px">
-          <span @click="what">
+          <span @click="moveCartList">
             
             <!-- 장바구니 갯수 조절해야함 -->
             <v-badge color="error" :content='$store.state.cart.length'>
@@ -204,6 +204,9 @@ export default {
         this.isLnbFixed = false;
       }
     },
+    moveCartList(){ // 장바구니 이동
+      this.$router.push('/cartList');
+    }
   },
 };
 </script>

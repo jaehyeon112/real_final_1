@@ -9,8 +9,8 @@
           <td>{{ list.quantity }} 개</td>
           <td>
             <ul>
-              <li >{{ list.discount_price * list.quantity }} 원</li>
-              <li v-if="list.discount_price !== list.price" class="discount">{{ list.price * list.quantity }} 원</li>
+              <li >{{ $wonComma(list.discount_price * list.quantity) }} 원</li>
+              <li v-if="list.discount_price !== list.price" class="discount">{{ $wonComma(list.price * list.quantity) }} 원</li>
             </ul>
           </td>
         </tr>
@@ -19,11 +19,10 @@
   </template>
 <script>
 export default {
-	name: 'OrderProdInfo',
+	name: 'CartProdInfo',
     props: {
         cartList: {
             type: Array,
-            required: true,
         }
     }
 };

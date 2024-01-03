@@ -42,10 +42,10 @@ let test = {
   CheckboxUpdate: `UPDATE cart set cart_checkbox = ? WHERE cart_no = ?`,
   // 장바구니 체크된거 삭제 구현
   CheckboxDelete: `DELETE FROM cart WHERE cart_no = ?`,
-  couponList: `select a.coupon_no, start_coupon, end_coupon, coupon_name, coupon_content, coupon_discount_rate
+  couponList: `select a.coupon_no, start_coupon, end_coupon, coupon_name, coupon_content, coupon_discount_rate, coupon_able
                 from coupon a left join user b on(a.user_id = b.user_id) 
                 left join couponinfo c on(a.couponinfo_no = c.couponinfo_no)
-                where a.user_id = ?`,
+                where a.user_id = ? and a.coupon_able = 0`,
   pointList: `select *
                from user
                where user_id = ?`,
