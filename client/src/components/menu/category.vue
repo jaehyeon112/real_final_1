@@ -17,7 +17,7 @@
           @mouseleave="hideSecondCategoryList"
           class="test"
         >
-          <router-link class="nav-custom" to="/menu/meal">밀키트</router-link>
+          <span class="nav-custom" to="/menu/meal">밀키트</span>
         </li>
 
         <li class="test">
@@ -48,7 +48,7 @@
     >
       <ul>
         <li class="test">
-          <router-link class="nav-custom" to="/"
+          <router-link class="nav-custom" to="/menu/main/all"
             ><span style="width: 300px">전체</span></router-link
           >
         </li>

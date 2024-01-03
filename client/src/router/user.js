@@ -11,6 +11,7 @@ import withdrawal from "../views/Withdrawal.vue";
 import emailnum from "../views/PutEmailNum.vue";
 import putpass from "../views/PutPassword.vue";
 import test from "../views/test.vue";
+import search from '@/components/menu/search.vue';
 
 export default {
   path: "/",
@@ -21,6 +22,12 @@ export default {
       path: "main",
       name: "realmain",
       component: realmain,
+    },
+    {
+      path: "menu/search/:word",
+      name: "search",
+      props: true,
+      component: search
     },
     {
       path: "menu/:category",
