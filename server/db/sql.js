@@ -160,7 +160,19 @@ let admin = {
   return_point=(select point_use from orders where order_no=refund_cancel.order_no),cancel_status='o2',cancel_request=current_date()`,
   AllrefundOrderList: `select * from refund_cancel order by cancel_request desc`,
   refundOrderList: `select * from refund_cancel order by cancel_request desc limit ?,?`,
-  updateRefund: `update refund_cancel set cancel_status = ? where order_no= ?`
+  updateRefund : `update refund_cancel set cancel_status = ? where order_no= ?`,
+  refundState : `select * from refund_cancel where cancel_status = ? order by cancel_request desc limit ?,?`,
+  Alldelivery : `select * from delivery`,  
+  deliveryList : `select * from delivery limit ?,?`,  
+  DatedeliveryList : `select * from delivery where released_date between ? and ? limit ?,?`,
+  StatedeliveryList : `select * from delivery where delivery_status = ? limit ?,?`,
+  AllnoticeList : `select * from notice order by notice_no`,
+  noticeList : `select * from notice order by ? limit ?,?`,
+  StateNoticeList : `select * from notice where importance in(?,?) order by ?? desc limit ?,?`,
+  FNQList : `select * from fnq where ?? = ?`,
+  insertFNQ : `insert into fnq set ?`,
+  updateFNQ : `update fnq set ? where qno = ?`,
+  delFNQ : `delete from fnq where qno = ?`,
 }
 
 
