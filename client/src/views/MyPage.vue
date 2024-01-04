@@ -94,8 +94,8 @@ export default{
     methods: {
         //일단 멤버 정보를 셀렉트 해오는걸로 시험 중 나중에 로그인 세션그걸로 바꿔야 함
         async getMember(){
-            let member_id = this.$store.state.user.user_id;
-            this.member = (await axios.get(`/api/member/${member_id}`)
+            
+            this.member = (await axios.get(`/api/member`)
                                       .catch(err=>{console.log(err)})).data
                                       console.log(this.member.sump)                          
         },

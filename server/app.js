@@ -835,22 +835,15 @@ app.get("/new", async (req, res) => {
 })
 //예빈
 //멤버조회정보
-app.get("/member/:id", async (req, res) => {
-  let id = req.params.id;
-  let memberInfo = (await mysql.query("member", "memberInfo", id))[0]; // 데이터 타입 :  객체  
+
+app.get("/member", async (req,res)=>{
+  let id = req.session.user_id;
+  let memberInfo= (await mysql.query("member", "memberInfo", id))[0]; // 데이터 타입 :  객체  
   let pointInfo = (await mysql.query("point", "showNextMonth", id))[0]; // 데이터 타입 : 숫자
   memberInfo.showNextMonth = pointInfo;
+
   res.send(memberInfo);
 })
-
-// app.get("/member", async (req,res)=>{
-//   let id = req.session.id;
-//   let memberInfo= (await mysql.query("member", "memberInfo", id))[0]; // 데이터 타입 :  객체  
-//   let pointInfo = (await mysql.query("point", "showNextMonth", id))[0]; // 데이터 타입 : 숫자
-//   memberInfo.showNextMonth = pointInfo;
-
-//   res.send(memberInfo);
-// })
 // app.get("/member/:id", async (req,res)=>{
 //   let id = req.params.id;
 //   let memberInfo= (await mysql.query("member", "memberInfo", id))[0]; // 데이터 타입 :  객체  
@@ -1155,5 +1148,6 @@ app.get(`/cartSelect/:no/:id`, async (req, res) => {
 })
 
 app.get('/cart', async (req, res) => {
+  
   res.send(await mysql.query('test', 'cartList', req.session.user_id))
 })
