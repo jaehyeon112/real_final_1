@@ -6,8 +6,8 @@
     <div class="login-form">
       <div class="sign-in-htm">
         <div class="group">
-          <label for="user" class="label">ID</label>
-          <input id="user" type="text" class="input" v-model="user_id">
+          <label for="user" class="label" >ID</label>
+          <input id="user" type="text"  autocomplete="off" class="input" v-model="user_id">
         </div>
         <div class="group">
           <label for="pass" class="label">PASSWORD</label>
@@ -150,6 +150,7 @@ let ipList = await axios.post(`/api/dologin/`,obj)
         console.log('먼디?')
 
         if(cartList != null){
+          let processedProdNos = new Set();
           for(let i = 0; i > cartList.length; i++){
           for(let j = 0; j > this.$store.state.cart.length; j++){
             if(cartList[i].prod_no == this.$store.state.cart[j].prod_no){
@@ -159,24 +160,42 @@ let ipList = await axios.post(`/api/dologin/`,obj)
                 }
               }
               await axios.put(`/api/cartAfterLogin/${cartList[i].prod_no}`,obj).catch(err=>console.log(err));
+              processedProdNos.add(cartList[i].prod_no);
             } 
           }
-        }
-        }
 
+        }
+          //새로운 상품 추가
+          for (let i = 0; i < cartList.length; i++) {
+    if (!processedProdNos.has(cartList[i].prod_no)) { // 아직 처리되지 않은 상품인 경우
+      let obj = {
+        param: {
+          prod_no: cartList[i].prod_no,
+          quantity: cartList[i].quantity,
+          user_id:  users[0].user_id
+                }
+      }
+      await axios.post('/api/cartAfterLogin', obj).catch(err => console.log(err)); // 새 상품을 장바구니에 추가하는 API 호출
+    }
+  }
 
-        // for(let i = 0 ; i < this.$store.state.cart.length; i++){
-        //   let obj = {
-        //     param: {
-        //         prod_no : this.$store.state.cart[i].prod_no,
-        //         quantity : this.$store.state.cart[i].quantity,
-        //         user_id : users[0].user_id
-        //     }
-        // }
-        // await axios.post(`/api/cartAfterLogin`, obj).catch(err=>{console.log(err)})
-        // }
-        // this.$store.state.cart = [];
+        }else{
+          for(let i = 0 ; i < this.$store.state.cart.length; i++){
+           let obj = {
+             param: {
+                 prod_no : this.$store.state.cart[i].prod_no,
+                 quantity : this.$store.state.cart[i].quantity,
+                 user_id : users[0].user_id
+             }
+          }
+         await axios.post(`/api/cartAfterLogin`, obj).catch(err=>{console.log(err)})
+         }
+         this.$store.state.cart = [];
         
+        }
+
+
+         
     }
  
 

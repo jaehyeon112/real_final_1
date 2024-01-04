@@ -29,7 +29,7 @@
             <tr>
               <td>
                 <v-checkbox v-if="list.soldout == '0'" v-model="list.cart_checkbox" true-value="1" false-value="0" @click="updateCheckbox(list)"></v-checkbox>
-                <v-btn v-else disabled="list.soldout == '1'">품절로 선택불가</v-btn>
+                <v-btn v-else :disabled="list.soldout == '1'">품절로 선택불가</v-btn>
               </td>
               <td>이미지</td>
               <td>{{ list.prod_name }}</td>

@@ -1137,7 +1137,7 @@ app.get("/searchHeader/:word", async (req, res) => {
 })
 
 app.post("/cartAfterLogin", async (req, res) => {
-  let data = [req.body.param];
+  let data = req.body.param;
   let list = await mysql.query('test', 'cartAfterLogin', data)
   res.send(list);
 })
