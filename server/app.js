@@ -322,9 +322,14 @@ app.post("/join", async (req, res) => {
 
 
 //로그인 - 아이디비번 일치해야 로그인 (5회 오류시 보안프로그램실행)
-app.get("/dologin/:id/:password", async (req, res) => {
-  let data = [req.params.id, req.params.password]
+app.post("/dologin", async (req, res) => {
+  let data = req.body.param;
   let list = await mysql.query("user", "forLogin", data);
+  if (list.length != 0) {
+    req.session.user_id = req.body.param.user_id;
+    console.log(req.session.user_id);
+  }
+
   res.send(list);
 });
 
@@ -800,7 +805,8 @@ app.get("/new2/:first/:last/:A/:B/:no", async (req, res) => {
   let result = await mysql.query2(base);
   res.send(result);
 })
-// sql injection의 위험이 있음 처리해야함;;
+
+
 app.get("/frozen/:first/:last/:A/:B/:no", async (req, res) => {
   let base = `select * from product  where refrigeration = 'g1' `
 
@@ -829,6 +835,8 @@ app.get("/frozen/:first/:last/:A/:B/:no", async (req, res) => {
   let result = await mysql.query2(base, params);
   res.send(result);
 })
+
+
 
 app.get("/searchHeader/:word/:no", async (req, res) => {
   let word = [req.params.word, Number(req.params.no)];

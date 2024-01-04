@@ -84,7 +84,7 @@ let user = {
   duplicateEmail: `select user_email from user where user_email = ?`,
 
   //로그인(일단)
-  forLogin: `select * from user where user_id = ? and user_password = ?;`
+  forLogin: `select * from user where set ? ;`
 
 }
 
