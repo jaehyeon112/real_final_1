@@ -49,10 +49,10 @@
         </router-link>
       </li>
       <li>
-        <router-link to="#" class="nav-link text-white">
+        <span @click="goToUpdate" class="nav-link text-white">
           <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#people-circle"/></svg>
           개인정보수정
-        </router-link>
+        </span>
       </li>
     </ul>
     <hr>
@@ -70,6 +70,10 @@ export default{
         //resize:function(){
             //함수 생각해보자
         //}
+
+        goToUpdate(){
+          this.$router.push(`/join/${this.$store.state.user.user_id}`);
+        }
     },
     created(){
         //this.resize()

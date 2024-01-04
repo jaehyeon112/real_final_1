@@ -397,11 +397,12 @@ app.get("/dologin/:id/:password", async (req, res) => {
 
 //회원수정
   //일단 단건 데이터 불러오기
-app.get("/selectid/:id", async(req, res) => {
+app.get("/join/:id", async(req, res) => {
   let uid = req.params.id;
   let list = await mysql.query("user", "selectId", uid);
   res.send(list);
 })
+
   //회원정보수정하기
   app.put('/join/:id', async(req, res)=>{
     let data = [req.body.param, req.params.id];

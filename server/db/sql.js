@@ -89,7 +89,8 @@ let user = {
 
   //회원수정 - id > 마이페이지> 회원가입때 입력한 값 그대로 출력 > 수정
     //id 별 조회
-    selectId :  `select * from user where user_id = ?`,
+    selectId :  `select user_id, user_name, user_password, user_email, user_tel, birth, address, detail_address, postcode 
+                from user where user_id = ?`,
 
     updateUser : `update user set ? where user_id=?`,
 

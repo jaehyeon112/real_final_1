@@ -73,7 +73,14 @@
           <input id="tel" type="text" class="input" v-model="userInfo.user_tel">
           <v-btn type="button" @click ="sendVerificationPhone">휴대폰 인증</v-btn >
         </div>
-                            
+
+<!-- ** 휴대폰인증번호 입력칸 해야됨-->
+        <div class="group" v-if="isTextSent">
+          <label for="tel" class="label">인증번호입력하기</label>
+          <input id="tel" type="text" class="input" v-model="userInfo.verificationText" placeholder="인증 번호를 입력하세요">
+          <v-btn type="button" v-if="!validTextNum" @click="verifyTextNum()" >확인</v-btn>
+          <p v-if="validTextNum" style="color: green;">인증이 완료되었습니다.</p>
+        </div>                    
 
 
         <div class="group">
@@ -149,6 +156,7 @@ export default {
       phoneNo : '',
       no : '', //이메일 인증번호
       isEmailSent : false, //이메일인증창
+      isTextSent : false,
 
       //회원가입 v-model
       userInfo : {
@@ -160,7 +168,8 @@ export default {
         user_emailid: "",  // 이메일 아이디 저장 필드
         email_domain: "",  // 이메일 도메인 저장 필드
         direct_input_domain : "",
-        verificationCode : "",
+        verificationCode : "", // 이메일인증
+        verificationText : "", // 휴대폰인증
         user_tel : "",
         postcode : "",
         address : "", // 
@@ -181,7 +190,7 @@ export default {
     validId: false, 
     
     validEmailNum : false, //이메일인증완료 플래그
-     
+    validTextNum : false, // 휴대폰 인증완료 플래그
      // 주소 지번 선택 플래그
      isJibunAddressSelected: false, 
 
@@ -368,32 +377,42 @@ passwordValid() {
   
 
 //휴대폰인증
-  // async sendVerificationPhone(){
+  async sendVerificationPhone(){
 
-  // let phoneNum = JSON.stringify(Math.ceil((Math.random()*10000)+1))
-  // this.phoneNo = phoneNum;
-  //   console.log(phoneNum);
+  let phoneNum = JSON.stringify(Math.ceil((Math.random()*10000)+1))
+  this.phoneNo = phoneNum;
+    console.log(phoneNum);
 
-  // let data = {
-  //      "param" : {
-  //         to :  this.userInfo.user_tel,
-  //         from : "01063373744",
-  //         text : phoneNum
-  //      }
-  //     }
+  let data = {
+       "param" : {
+          to :  this.userInfo.user_tel,
+          from : "01063373744",
+          text : phoneNum
+       }
+      }
 
-  //     let result = await axios.post(`/api/phonecheck`, data);
-  //       console.log(result);
-  //     //    if(result.data.status == "2000" ){
-  //     //     alert('휴대폰 인증번호 보내기 성공');
-  //     //     //this.isEmailSent = true;
-  //     //     return;
-  //     //  }else{
-  //     //     alert('휴대폰 인증번호 보내기 ');
-  //     //     //this.isEmailSent = true;
-  //     //     return;
-  //     //   }
-  //   },
+      let result = await axios.post(`/api/phonecheck`, data);
+        console.log(result);
+         if(result.data.status == "2000" ){
+          alert('휴대폰 인증번호 보내기 성공');
+          this.isTextSent =true;
+  
+          return;
+       }else{
+          alert('휴대폰 인증번호 보내기 ');
+          this.isTextSent =true;
+  
+          return;
+        }
+    },
+
+    verifyTextNum(){
+      if(this.userInfo.verificationText == this.phoneNo){
+        console.log(this.phoneNo);
+        alert(`인증성공`);
+        this.validTextNum = true;
+      }
+    },
 
 
 
