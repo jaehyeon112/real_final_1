@@ -72,7 +72,7 @@
     
     methods : {
     submitForm() {
-      // 여기서 선택된 옵션에 따라 데이터를 서버로 전송하거나 다른 로직을 수행할 수 있습니다.
+      //  선택된 옵션에 따라 데이터를 서버로 전송
       if (this.selectedOption === 'findId') {
         // 아이디 찾기 옵션 선택 시 firstName과 lastName을 서버로 전송
         console.log('Find ID', this.firstName, this.lastName);
