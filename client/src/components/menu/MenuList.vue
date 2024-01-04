@@ -209,6 +209,7 @@ export default {
     if(this.prodList.stock >= this.quantity+cartQuantity) {
           await axios.post('/api/cartAfterLogin/',obj).catch(err=>console.log('로그인 이후 카트에 담길때 에러' + err))
           alert("장바구니에 등록되었습니다.")
+          this.$store.state.loginCartCount ++;
       //장바구니 추가
     }else{
       alert('보유 재고를 초과하여 장바구니에 넣을 수 없습니다.')

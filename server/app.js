@@ -422,11 +422,11 @@ app.post("/join/joinIn", async (req, res) => {
 
 //로그인 - 아이디비번 일치해야 로그인 (5회 오류시 보안프로그램실행)
 app.post("/dologin", async (req, res) => {
-  let data = req.body.param;
+  let data = [req.body.param.user_id, req.body.param.user_password];
   let list = await mysql.query("user", "forLogin", data);
   if (list.length != 0) {
     req.session.user_id = req.body.param.user_id;
-    console.log(req.session.user_id);
+    console.log('아이디 세션 값 : ' + req.session.user_id);
   }
 
   res.send(list);
@@ -1152,4 +1152,8 @@ app.get(`/cartSelect/:no/:id`, async (req, res) => {
   let data = [Number(req.params.no), req.params.id];
   let list = await mysql.query('test', 'cartSelect', data)
   res.send(list)
+})
+
+app.get('/cart', async (req, res) => {
+  res.send(await mysql.query('test', 'cartList', req.session.user_id))
 })
