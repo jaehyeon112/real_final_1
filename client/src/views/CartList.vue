@@ -81,14 +81,8 @@ export default {
       quantityPlus(list) { // 수량 플러스
         if(list.stock > list.quantity ){
           list.quantity++;
-          let obj = {
-                    param : {
-                      quantity : list.quantity,
-                      user_id : this.$store.state.user.user_id
-                    }
-                }
     
-                let result = axios.put(`/api/CartPlusquantity/${list.cart_no}/${this.$store.state.user.user_id}`, obj)
+                axios.put(`/api/CartPlusquantity/${list.prod_no}/${this.$store.state.user.user_id}`)
                                    .catch(err => console.log(err));
         }else{
             alert('현재 남은 수량이 없습니다.');
@@ -99,14 +93,8 @@ export default {
     quantityMinus(list) { // 수량 마이너스
         if(list.quantity > 1 ){
           list.quantity--;
-          let obj = {
-                    param : {
-                      quantity : list.quantity,
-                      user_id : this.$store.state.user.user_id
-                    }
-                }
-    
-                let result = axios.put(`/api/CartMinusquantity/${list.cart_no}/${this.$store.state.user.user_id}`, obj)
+
+                axios.put(`/api/CartMinusquantity/${list.prod_no}/${this.$store.state.user.user_id}`)
                                    .catch(err => console.log(err));
         }
     },
@@ -216,7 +204,7 @@ export default {
 }
 
 .rwd-table td:nth-child(4) {
-  width: 1%; 
+  width: 2%; 
 }
 
 .rwd-table td:nth-child(5) {
@@ -224,7 +212,7 @@ export default {
 }
 
 .rwd-table td:nth-child(6) {
-  width: 1%; 
+  width: 2%; 
 }
 
 .discount {
