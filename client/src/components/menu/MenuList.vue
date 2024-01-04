@@ -12,17 +12,16 @@
           max-width="300"
           v-bind="props">
       <!-- 해당 제품으로 이동 -->
-      <router-link @click.stop="goToDetail(prodList.prod_no)" to="/detailPage">
+      <span @click.stop="goToDetail">
         <div class="image-container">
           <v-img
-            class="text-white"
+            class="align-end text-white"
             height="300"
             src="/api/test"
-        
-            style="position: relative;"
+            @load="imageLoaded"
             
           >
-        <v-dialog transition="dialog-top-transition" width="auto">
+          <v-dialog transition="dialog-top-transition" width="auto">
           <template  v-slot:activator="{ props }">
             <!--여기를 장바구니 버튼으로~-->
             <div style="position:absolute; top:100px; left:200px"><v-btn @click="quantity=1"  icon="mdi mdi-cart" variant="tonal"  @click.prevent="getUserCartInfo" v-bind="props"> </v-btn></div>
@@ -68,11 +67,12 @@
             </v-card>
           </template>
         </v-dialog>
-      </v-img>
-      <div v-if="isSoldOut" class="soldout-overlay">품절</div>
-      <div v-if="isStock" class="isStock-overlay">상품준비중</div>
-    </div>
-  </router-link>
+          </v-img>
+          <div v-if="isSoldOut" class="soldout-overlay">품절</div>
+          <div v-if="isStock" class="isStock-overlay">상품준비중</div>
+        </div>
+      </span>
+   
   
   <v-card-subtitle class="pt-4"> 1조꺼 </v-card-subtitle>
   
@@ -160,7 +160,9 @@ export default {
       alert('보유 재고를 초과하였습니다.')
     }
   }
-  },
+  }, goToDetail(){
+      this.$router.push({path:'/detailPage', query:{pno : this.prodList.prod_no}})
+    },
 
 
     async goToCart(no){
