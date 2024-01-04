@@ -7,6 +7,10 @@
       <li class="nav-item">
         <span class="nav-link login" @click="logoutOrJoin" >{{ $store.state.user.user_id != null ? '로그아웃' : "회원가입"}}</span>
       </li>
+         <li class="nav-item">
+        <span class="nav-link login" @click="withdrawal" >{{ $store.state.user.user_id != null ? '회원탈퇴' : "회원가입"}}</span>
+      </li>
+
     </ul>
 
     <div class="container text-center" style="margin-bottom: 20px">
@@ -185,6 +189,15 @@ export default {
       alert('로그아웃 되었습니다~')
       this.$store.commit('logout');
     },
+
+//마이페이지 안떠서 임시로좀 쓸게요 - 회원탈퇴
+withdrawal(){
+ if(this.$store.state.user.user_id !== null){
+        this.$router.push("/withdrawal")
+      }
+},
+
+
   what(){
     const cartItems = this.$store.state.cart;
     let total = [];

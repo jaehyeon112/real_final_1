@@ -6,16 +6,15 @@
                 <v-card>
                     <OrderProdInfo
                     :orderList="orderList"/>
-
                 </v-card>
                 <v-card>
                 </v-card>
                 <v-card>
-                    <OrderAddrInfo/>
+                    <OrderAddrInfo
+                    :orderList="orderList"/>
                 </v-card>
             </v-col>
         </v-row>
-        {{ $store.state.orderNo }}
     </v-container>
 </template>
 <script>
@@ -25,7 +24,6 @@ import OrderProdInfo from '../components/order/OrderProdInfo.vue';
 import OrderAddrInfo from '../components/order/OrderAddrInfo.vue';
 
 export default{
-    name: 'OrderForm',
     components: {
         OrderProdInfo,
         OrderAddrInfo, 

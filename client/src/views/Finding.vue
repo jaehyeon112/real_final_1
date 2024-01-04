@@ -1,90 +1,107 @@
-
 <template>
-<div class = "container">
-<h1> 아이디 비밀번호 찾기 페이지 </h1>
-<div class="radio">
-     <!-- 아이디 비번 선택 - 라디오버튼 -->
-                <input type="radio" v-bind:value="아이디찾기">아이디찾기
-                <input type="radio" v-bind:value="비밀번호찾기">비밀번호찾기
-</div>
+  <v-sheet width="300" class="mx-auto">
+  <v-form fast-fail @submit.prevent>
+    <v-row>
 
-  <div>
-    <b-form @submit="onSubmit" @reset="onReset" v-if="show">
-      <b-form-group
-        id="input-group-1"
-        label="이메일"
-        label-for="input-1"
-        description="가입 시 등록한 이메일을 입력해주세요."
-      >
-        <b-form-input
-          id="input-1"
-          v-model="form.email"
-          type="email"
-          placeholder="Enter email"
-          required
-        ></b-form-input>
-      </b-form-group>
+      <v-col cols="12">
+        <div class="radio">
+          <input type="radio" name="option" value="findId" checked v-model="selectedOption">
+          <span class="radio-text">아이디찾기</span>
+          <input type="radio" name="option" value="findPwd" v-model="selectedOption">
+          <span class="radio-text">비밀번호찾기</span>
+        </div>
+      </v-col>
 
-      <b-form-group id="input-group-2" label="이름" label-for="input-2">
-        <b-form-input
-          id="input-2"
-          v-model="form.name"
-          placeholder="Enter name"
-          required
-        ></b-form-input>
-      </b-form-group>
+      <v-col cols="12">
+        <div class="field">
+          <label for="name">이름 :</label>
+          <v-text-field v-model="firstName" label="name" :rules="firstNameRules"></v-text-field>
+        </div>
+      </v-col>
 
-       <b-form-group id="input-group-2" label="아이디" label-for="input-2">
-        <b-form-input
-          id="input-2"
-          v-model="form.name"
-          placeholder="Enter name"
-          required
-        ></b-form-input>
-      </b-form-group>
+      <v-col cols="12">
+        <div class="field">
+          <label for="email">이메일 :</label>
+          <v-text-field v-model="lastName" label="email" :rules="lastNameRules"></v-text-field>
+        </div>
+      </v-col>
 
+      <v-col cols="12" v-if="selectedOption === 'findPwd'">
+        <div class="field">
+          <label for="id">ID :</label>
+          <v-text-field v-model="userId" label="userid" :rules="lastNameRules"></v-text-field>
+        </div>
+      </v-col>
 
+      <v-col cols="12">
+        <v-btn type="submit" block class="mt-2">Submit</v-btn>
+      </v-col>
 
-      <b-button type="submit" variant="primary">확인</b-button>
-      <b-button type="reset" variant="danger">초기화</b-button>
-    </b-form>
-    
-  </div>
-</div>
+    </v-row>
+
+  </v-form>
+</v-sheet>
 </template>
+
 
 <script>
   export default {
-    data() {
-      return {
-        form: {
-          email: '',
-          name: '',
-          food: null,
-          checked: []
+    data: () => ({
+
+      selectedOption : '',  
+
+
+      firstName: '',
+      firstNameRules: [
+        value => {
+          if (value?.length > 1) return true
+
+          return '두 글자 이상 입력해주세요'
         },
-        foods: [{ text: 'Select One', value: null }, 'Carrots', 'Beans', 'Tomatoes', 'Corn'],
-        show: true
-      }
-    },
-    methods: {
-      onSubmit(event) {
-        event.preventDefault()
-        alert(JSON.stringify(this.form))
-      },
-      onReset(event) {
-        event.preventDefault()
-        // Reset our form values
-        this.form.email = ''
-        this.form.name = ''
-        this.form.food = null
-        this.form.checked = []
-        // Trick to reset/clear native browser form validation state
-        this.show = false
-        this.$nextTick(() => {
-          this.show = true
-        })
-      }
-    }
+      ],
+      lastName: '입력값들어가는거',
+      lastNameRules: [
+        value => {
+          if (/[^0-9]/.test(value)) return true
+
+          return 'Last name can not contain digits.'
+        },
+      ],
+    }),
   }
 </script>
+
+
+
+
+<style scoped>
+
+.label-margin {
+  margin-right: 20px;  
+}
+.field {
+  display: flex; /* 가로로 배열*/
+  align-items: center; 
+  gap: 10px; 
+}
+
+
+.field label {
+  font-size: 15px; 
+  font-weight: bold; 
+}
+
+.v-text-field input {
+  text-align: left; /* 텍스트 필드 내용 오른쪽정렬*/
+}
+
+
+.radio-text {
+  font-size: 17px; 
+  font-weight: bold; 
+   margin-left: 10px;
+
+  margin-right: 30px;
+
+}
+</style>

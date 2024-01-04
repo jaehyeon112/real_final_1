@@ -11,6 +11,7 @@ import finding from "../views/Finding.vue";
 import withdrawal from "../views/Withdrawal.vue";
 import emailnum from "../views/PutEmailNum.vue";
 import putpass from "../views/PutPassword.vue";
+import message from "../views/Message.vue";
 import test from "../views/test.vue";
 import myPage from "@/views/MyPage.vue";
 import detailPage from "@/views/detailPage.vue";
@@ -18,7 +19,7 @@ import MyorderList from "@/components/MyPage/orderList.vue";
 import detailOrder from "@/components/MyPage/orderDetail.vue";
 import like from  "@/components/MyPage/likeBasket.vue";
 import delivery from "@/components/MyPage/delivery.vue";
-//import addDeli from "@/components/MyPage/addDelivery.vue";
+import addDeli from "@/components/MyPage/addDelivery.vue";
 import coupon from "@/components/MyPage/couponList.vue";
 import point from "@/components/MyPage/point.vue";
 import myReview from "@/components/MyPage/myReview.vue";
@@ -117,6 +118,12 @@ export default {
       component: putpass
     },
     {
+      path: "message",
+      name: "message",
+      component: message
+    },
+  
+    {
       path: "test",
       name: "test",
       component: test
@@ -148,10 +155,10 @@ export default {
          name:"delivery",
          component:delivery
         }, 
-        // {path:"addDeli",
-        //  name:"addDeli",
-        //  component:addDeli
-        // },
+        {path:"addDeli",
+         name:"addDeli",
+         component:addDeli
+        },
         {path:"point",
          name:"point",
          component:point

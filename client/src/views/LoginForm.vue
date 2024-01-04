@@ -2,7 +2,7 @@
 <div class="login-wrap">
   <div class="login-html">
     <input id="tab-1" type="radio" name="tab" class="sign-in" checked><label for="tab-1" class="tab">Sign In</label>
-    <!-- <input id="tab-2" type="radio" name="tab" class="sign-up"><label for="tab-2" class="tab">Sign Up</label> -->
+
     <div class="login-form">
       <div class="sign-in-htm">
         <div class="group">
@@ -14,10 +14,6 @@
           <input id="pass" type="password" class="input" data-type="password" v-model="user_password">
         </div>
 
-        <!-- <div class="group">
-          <input id="check" type="checkbox" class="check" checked>
-          <label for="check"><span class="icon"></span> Keep me Signed in</label>
-        </div> -->
 
         <div class="group">
             <b-button variant="link" a href="finding">ID/PASSWORD 찾기</b-button>
@@ -25,6 +21,8 @@
           
  
         </div>
+
+
 
         <div class="hr"></div>
         
@@ -46,15 +44,17 @@
       /></router-link></a>
       <div><v-btn @click="kakaoLogout()">카카오 로그아웃</v-btn></div>
 
-        <img src="../assets/naverLogo.png" @click="naverLogin" />
+    
 
             
         </div>
 
-
       <div>
       <router-link to="/finding" class="button"> 아이디비번찾기페이지로 </router-link> 
       <router-link to="/test" class="button"> test 페이지로 </router-link> 
+      <router-link to="/putpass" class="button"> 비번입력창 </router-link> 
+      <router-link to="/withdrawal" class="button"> 탈퇴페이지 </router-link> 
+      
       </div>  
 
       </div>
@@ -69,6 +69,10 @@
 </template>
 
 <script>
+
+  var onloadCallback = function() {
+    alert("grecaptcha is ready!");
+  };
 import axios from 'axios';
 
 export default {
@@ -80,9 +84,14 @@ export default {
     }
   },
 
+
+
   methods: {
 
 //Login 버튼
+
+
+
 async doLogin(){
   if(this.user_id == "" || this.user_password==""){
     alert(`아이디와 비밀번호 모두 입력해`)
@@ -102,8 +111,29 @@ let ipList = await axios.post(`/api/dologin/`,obj)
                 console.log(ipList.data)
                 
      let users = ipList.data;
-     
+      console.log('users는?', users);
        
+    
+   
+    if(users == ''){
+      this.failedAttemps++;
+      alert(`ID나 Password 확인하기!`)
+    }
+
+
+    //로그인 5회이상 실패시 보안프로그램 실행! 
+    if(this.failedAttempts >= 5){
+
+    alert(`보안프로그램 실행하기`)
+    
+  }
+  // else{
+  //   alert(users[0].user_name +'님 환영합니다');
+  // }
+  
+       
+
+
        if(users == ''){
         alert('아디 비번 확인;')
         return;
@@ -176,8 +206,8 @@ this.$store.commit('login',users[0]) // (함수명, 전달인자)
         url: "/v2/user/me",
         success: (res) => {
           const kakao_account = res.kakao_account;
-          const ninkname = kakao_account.profile.ninkname;
-          console.log("ninkname", ninkname);
+          const nickname = kakao_account.profile.nickname;
+          console.log("nickname", nickname);
 
           //로그인처리구현
           alert("로그인 성공!");
@@ -296,7 +326,7 @@ a{color:inherit;text-decoration:none}
     background:rgba(78, 48, 160, 0.1);
   }
   .login-form .group input[data-type="password"]{
-    text-security:circle;
+    -text-security:circle;
     -webkit-text-security:circle;
   }
   .login-form .group .label{
