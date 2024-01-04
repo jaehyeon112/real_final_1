@@ -98,9 +98,18 @@ async doLogin(){
     return;
   }
 
-let ipList = await axios.get(`/api/dologin/${this.user_id}/${this.user_password}`)  
+
+  let obj ={
+    param : {
+      user_id : this.user_id,
+      user_password : this.user_password
+    }
+  } 
+
+let ipList = await axios.post(`/api/dologin/`,obj)  
                 .catch(err => console.log(err));
                 console.log(ipList.data)
+                
      let users = ipList.data;
       console.log('users는?', users);
        
