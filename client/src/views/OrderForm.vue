@@ -9,11 +9,12 @@
           :cartList="cartList"/>
           <CartUserInfo/>
           <CartAddrInfo
-          @getAddress="GetAddress"/>
+          @getAddress="GetAddress"
+          @getdelivery="getdelivery"/>
           <CartPointInfo
           :cartList="cartList"
           :couponList="couponList"
-          @selectedCouponIndex="selectedCouponIndex"
+          @couponNo="couponNo"
           @discountRate="discountRate"
           @inputValue="inputValue"
           :pointList="pointList"
@@ -50,7 +51,7 @@ import CartUserInfo from '../components/cart/CartUserInfo.vue';
 import CartAddrInfo from '../components/cart/CartAddrInfo.vue';
 import CartPointInfo from '../components/cart/CartPointInfo.vue';
 import CartPayment from '../components/cart/CartPayment.vue';
-import CartPrice from '../components/cart/CartPrice.vue';
+import CartPrice from '../components/cart/cartPrice.vue';
 
 
 export default {
@@ -84,8 +85,9 @@ export default {
       addr1 : '',
       addr2 : '',
       paymentMethod : '',
-      coupons : '' //선택한 쿠폰넘버
-    };
+      coupons : 0, // 선택한 쿠폰의 번호값담기
+      deliveryrequest : '', //요청사항
+   };
   },
   created() {
     this.fetchCartCheckList();
@@ -153,9 +155,9 @@ export default {
     inputValue(point){
       this.pointInput = point;
     },
-    selectedCouponIndex(coupons){
-      this.coupons = this.couponList[coupons].coupon_no;
-      console.log(this.coupons,'쿠폰넘버');
+    couponNo(couponNo){
+      this.coupons = couponNo;
+      console.log(this.coupons,'선택한 쿠폰의 번호');
     },
     totalPrice() {
         this.total = 0;
@@ -196,6 +198,9 @@ export default {
       this.addr1 = addr1
       this.addr2 = addr2
     },
+    getdelivery(input){
+      this.deliveryrequest = input;
+    },
     savePointRate(){
       if (this.$store.state.user.user_grade === 'i1' || 'i6') { // 일반 또는 정지회원
         this.savePointrate = 1 / 100; // 1% 
@@ -218,13 +223,13 @@ export default {
         let hours = date.getHours();
         let minutes = date.getMinutes();
         let seconds = date.getSeconds();
-        this.Number = year + month + day + hours + minutes + seconds + parseInt(Math.random() * 100000) + 100000 ;
+        this.Number = year + month + day + hours + minutes + seconds + parseInt(Math.random() * 100000000) + 100000000 ; // 9자리로 계산됨
     },
     async selectedPayMethod(paymentMethod) {
          this.orderNumber();
                 for(let i=0; i<this.cartList.length; i++) {
                 }
-                if (this.cartList.length > 0) {
+                if (this.cartList.length > 1) {
                   this.prodName = this.cartList[0].prod_name + '외' + (this.cartList.length - 1) + '건';
                 } else {
                   this.prodName = this.cartList[0].prod_name;
@@ -257,7 +262,6 @@ export default {
           paymentInfo.pay_method = paymentMethod;
         } else if (paymentMethod === '0') {
           this.orderInsert(); // 바로 주문 처리
-          alert('결제완료');
           return; // 아임포트 응답 처리하지 않고 함수 종료
         }
         
@@ -269,10 +273,6 @@ export default {
             // 결제 완료 처리
             this.orderInsert(); // order테이블 
             this.orderdetailInsert(orderno); // orderdetail테이블
-            msg += '고유ID : ' + rsp.imp_uid;
-            msg += '상점 거래ID : ' + rsp.merchant_uid;
-            msg += '결제 금액 : ' + rsp.paid_amount;
-            msg += '카드 승인번호 : ' + rsp.apply_num;
           } else {
             // 결제 실패 처리
             alert('결제 취소했습니다. 장바구니로 다시 이동합니다.');
@@ -302,6 +302,7 @@ async orderInsert(){ // orders 테이블 등록
                     payment_method: this.paymentMethod,
                     payment_no: 1,
                     order_status: 'c1',
+                    delivery_request: this.deliveryrequest
                   }
                 }
                 let result = await axios.post("/api/orderInsert", obj)
@@ -309,14 +310,18 @@ async orderInsert(){ // orders 테이블 등록
             this.$router.replace("/orderSuccess")
             if(result.config.data != null){
               this.orderdetailInsert(obj.param.order_no)
+              this.couponUpdate(obj.param.order_no)
+              this.pointInsert(obj.param.order_no)
+              this.userPointUpdate()
               this.deleteCheckbox();
             }
+            this.$store.commit('getOrderNo',obj.param.order_no);
     
   },
   async orderdetailInsert(orderno){ // ordersdetail 테이블 등록 부분
              // 상품 정보를 반복해서 처리하는 부분
              for (let i = 0; i < this.cartList.length; i++) {
-                let Obj = {
+                let obj = {
                   param : {
                     order_no: orderno,
                     prod_no: this.cartList[i].prod_no,
@@ -326,8 +331,12 @@ async orderInsert(){ // orders 테이블 등록
                     order_detail_code: '1'
                   }
                 };
-                let result = await axios.post("/api/orderDetailInsert", Obj)
+                let result = await axios.post("/api/orderDetailInsert", obj)
                                         .catch(err => console.log(err));
+
+            if(result.config.data != null){
+                this.StockUpdate()
+            }
     }
     },
   async deleteCheckbox() {  // 주문서 결제완료 시 장바구니 물품 삭제!
@@ -340,6 +349,68 @@ async orderInsert(){ // orders 테이블 등록
           }
         }
   },
+  async couponUpdate(orderno){
+            let obj = {
+                param : {
+                  order_no : orderno,
+                  coupon_able : 1
+                }
+            }
+
+            let result = await axios.put(`/api/couponUpdate/${this.coupons}`, obj)
+                               .catch(err => console.log(err));
+            
+            if(result.data.changedRows > 0){
+            }
+    },
+    userPointUpdate(){
+      for(let i=0; i<this.cartList.length; i++) {
+        let point = this.cartList[0].point;
+        let obj = {
+          param : {
+            point : point - this.pointInput
+          }
+        }
+        
+        axios.put(`/api/pointUpdate/${this.$store.state.user.user_id}`, obj)
+             .catch(err => console.log(err));
+        
+
+        }
+    },
+    async pointInsert(orderno){ // point 테이블 등록 부분
+             // 상품 정보를 반복해서 처리하는 부분
+             if(this.pointInput != 0){
+                 let obj = {
+                   param : {
+                     order_no : orderno,
+                     user_id: this.$store.state.user.user_id,
+                     point_history: 'p3',
+                     point_use: this.pointInput,
+                    }
+                  };
+                  let result = await axios.post("/api/pointInsert", obj)
+                  .catch(err => console.log(err));
+                console.log('포인트사용성공')
+              }
+    },
+    async StockUpdate(){ // 결제완료 시점에서 상품재고 수정
+      for(let i=0; i<this.cartList.length; i++) {
+        let quantity = this.cartList[i].quantity;
+        let prodno = this.cartList[i].prod_no;
+        let stock = this.cartList[i].stock;
+
+        let obj = {
+            param : {
+              stock : stock - quantity
+            }
+        }
+
+        await axios.put(`/api/StockUpdate/${prodno}`, obj)
+                          .catch(err => console.log(err));
+      }
+      
+    },
   }
 }
 </script>

@@ -5,9 +5,10 @@
     <v-select v-if="Coupons"
       v-model="selectedCouponIndex" :items="coupons" label="사용가능 쿠폰" :disabled="!Coupons" @change="updateSelectedCoupon"
       return-object></v-select>
+    <v-select v-else label="사용가능한 쿠폰이 없습니다" disabled></v-select>
     <h1>포인트정보</h1>
     <hr />
-    <p>포인트 <span v-if="Points">{{ this.$store.state.user.point }} 원</span></p>
+    <p>포인트 <span v-if="Points">{{ pointList[0].point }} 원</span></p>
     <input
   style="border-bottom: 1px solid black;"
   v-if="Points || CartItems"
@@ -69,7 +70,7 @@
         alert('결제하실 금액보다 높게 사용하실수 없습니다');
         this.inputValue = 0;
       } else {
-        if (this.inputValue < this.pointList[0].point) {
+        if (this.inputValue <= this.pointList[0].point) {
           let data = this.inputValue;
           this.$emit('inputValue', data);
         } else {
@@ -98,10 +99,11 @@
       }
     },
     updateSelectedCoupon() {
-    let selectedCouponIndex = this.coupons.indexOf(this.selectedCouponIndex);
-    let discount_rate = selectedCouponIndex !== 0 ? this.couponList[selectedCouponIndex - 1].coupon_discount_rate : 0;
-    this.$emit('discountRate', discount_rate);
-    console.log(this.selectedCouponIndex,'쿠폰선택');
+      let selectedCouponIndex = this.coupons.indexOf(this.selectedCouponIndex);
+      let couponNo = selectedCouponIndex !== 0 ? this.couponList[selectedCouponIndex - 1].coupon_no : null;
+      let discountRate = selectedCouponIndex !== 0 ? this.couponList[selectedCouponIndex - 1].coupon_discount_rate : 0;
+      this.$emit('couponNo', couponNo);
+      this.$emit('discountRate', discountRate);
   
   if (selectedCouponIndex !== 0) {
     this.CheckCoupon = true;
@@ -113,17 +115,16 @@
       getLocations() {
         let coupons = ["쿠폰 선택안함"];
         for (let i = 0; i < this.couponList.length; i++) {
-          if(this.couponList[i].coupon_able == 0){
+          // if(this.couponList[i].coupon_able == 0){
             let couponName = this.couponList[i].coupon_content;
             let couponStart = this.getDateFormat(this.couponList[i].start_coupon);
             let couponEnd = this.getDateFormat(this.couponList[i].end_coupon);
             let couponrate = this.couponList[i].coupon_discount_rate;
-            let couponInfo = `${couponName} 쿠폰할인율 ${couponrate}% 발급날짜 ${couponStart} 만료날짜 ${couponEnd}`;
+            let couponInfo = `[${couponName}] 쿠폰할인율 ${couponrate}% 발급일자 ${couponStart} 만료일자 ${couponEnd}`;
             coupons.push(couponInfo);
-          }
-          return coupons;
+          // }
         }
-        this.$emit('selectedCouponIndex', coupons);
+        return coupons;
       },
     },
     watch: {

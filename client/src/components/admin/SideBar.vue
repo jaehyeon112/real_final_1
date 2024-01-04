@@ -63,7 +63,7 @@
           </button>
           <ul v-if="isorder">
             <li @click="orderList">주문 목록</li>
-            <li @click="orderList">배송 목록</li>
+            <li @click="delList">배송 목록</li>
             <li @click="refundList">취소된 주문 목록</li>
           </ul>
         </li>
@@ -75,8 +75,18 @@
           <ul v-if="isreview">
             <li @click="reviewList">리뷰 목록</li>
             <li @click="reviewReport">신고된 리뷰</li>
-            <li @click="reviewList">문의사항</li>
-            <li @click="reviewList">공지사항</li>
+            <li @click="inquireList">문의사항</li>
+            <li @click="noticeList">공지사항</li>
+          </ul>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link d-flex align-items-center gap-2"  @click="notice">
+            <svg class="bi"><use xlink:href="#gear-wide-connected"/></svg>
+            공지사항/자주하는 질문
+          </a>
+          <ul v-if="isnotice">
+            <li @click="noticeList">공지사항</li>
+            <li @click="fnaList">자주하는 질문</li>
           </ul>
         </li>
         <li class="nav-item">
@@ -91,12 +101,6 @@
       <hr class="my-3">
       
       <ul class="nav flex-column mb-auto">
-        <li class="nav-item">
-          <a class="nav-link d-flex align-items-center gap-2" href="#">
-            <svg class="bi"><use xlink:href="#gear-wide-connected"/></svg>
-            마이페이지
-          </a>
-        </li>
         <li class="nav-item">
           <a class="nav-link d-flex align-items-center gap-2" href="#">
             <svg class="bi"><use xlink:href="#door-closed"/></svg>
@@ -114,7 +118,8 @@ export default {
     return{
       isOk : false,
       isorder : false,
-      isreview : false
+      isreview : false,
+      isnotice : false
     }
   }, 
   methods : {
@@ -142,6 +147,13 @@ export default {
         this.isreview = true;
       }
     },
+    notice(){
+      if(this.isnotice==true){
+        this.isnotice = false;
+      }else{
+        this.isnotice = true;
+      }
+    },
     prodList(){
       this.$router.push({name : 'prodList'});
     },
@@ -159,6 +171,18 @@ export default {
     },
     refundList(){
       this.$router.push({name : 'refundList'})
+    },
+    delList(){
+      this.$router.push({name : 'deliveryList'})
+    },
+    inquireList(){
+      this.$router.push({name : 'inquireList'})
+    },
+    noticeList(){
+      this.$router.push({name : 'noticeList'})
+    },
+    fnaList(){
+      this.$router.push({name : 'fna'})
     },
   }
 }

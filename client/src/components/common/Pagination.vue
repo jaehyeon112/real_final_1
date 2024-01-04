@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="list != ''">
     <ul class="pagination">
       <li class="page-item">
         <button
@@ -80,10 +80,11 @@ export default {
 
 <style scope>
 .pagination {
+  z-index: 3;
   justify-content: center;
 }
 .pagination .active {
-  background-color: #007bff;
+  background-color: #7d90a5;
   color: #fff;
 }
 </style>

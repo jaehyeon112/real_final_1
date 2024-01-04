@@ -13,6 +13,7 @@
           </p>
           <p><span class="address">주소 </span><input type="text" v-model="addr1" style="width: 500px;" readonly></p>
           <p><span class="address">상세주소 </span><input type="text" v-model="addr2" style="width: 500px;" @input="getAddress"></p>
+          <p><span class="address">요청사항</span><input type="text" v-model="deliveryrequest" style="width: 500px;" @input="getdelivery"></p>
         </form>
     </v-container>
   </template>
@@ -25,6 +26,7 @@
         zip: '',
         addr1: '',
         addr2: '',
+        deliveryrequest: '',
         checkbox : false
       }
     },
@@ -80,6 +82,9 @@
       },
       getAddress() {
         this.$emit('getAddress', this.zip, this.addr1, this.addr2);
+      },
+      getdelivery(){
+        this.$emit('getdelivery', this.deliveryrequest);
       }
     }
   }
