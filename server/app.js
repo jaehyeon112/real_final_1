@@ -240,13 +240,11 @@ app.get("/show/:no", async (req, res) => {
 
 
 app.get("/couponList", async (req, res) => { // 쿠폰 리스트
-  let id = req.session.user_id;
-  let list = await mysql.query("test", "couponList", id);
+  let list = await mysql.query("test", "couponList", req.session.user_id);
   res.send(list);
 });
 app.get("/pointList", async (req, res) => { // 포인트 리스트 
-  let id = req.session.user_id;
-  let list = await mysql.query("test", "pointList", id);
+  let list = await mysql.query("test", "pointList", req.session.user_id);
   res.send(list);
 });
 
@@ -255,14 +253,14 @@ app.get("/cartList", async (req, res) => { //장바구니 리스트
   res.send(list);
 });
 
-app.put("/CheckboxUpdate/:check/:no", async (request, res) => { // 장바구니 체크박스 선택시 업데이트
-  let data = [request.params.check, request.params.no];
+app.put("/CheckboxUpdate/:check/:no", async (req, res) => { // 장바구니 체크박스 선택시 업데이트
+  let data = [req.params.check, req.params.no];
   let list = await mysql.query("test", "CheckboxUpdate", data);
   res.send(list);
 });
 
 app.put("/CheckAllUpdate/:check", async (req, res) => { // 체크박스 전체선택 업데이트
-  let data = [request.params.check, req.session.user_id];
+  let data = [req.params.check, req.session.user_id];
   let list = await mysql.query("test", "CheckAllUpdate", data);
   res.send(list);
 });
@@ -335,13 +333,13 @@ app.put("/couponUpdate/no", async (req, res) => { // 쿠폰 사용시 업데이�
   res.send((await mysql.query("test", "couponUpdate", data)));
 });
 
-app.put("/StockUpdate/:id", async (request, res) => { // 상품 재고변경
-  let data = [request.body.param, request.params.id];
+app.put("/StockUpdate", async (req, res) => { // 상품 재고변경
+  let data = [req.body.param, req.session.user_id];
   res.send((await mysql.query("test", "StockUpdate", data)));
 });
 
-app.put("/pointUpdate/:id", async (request, res) => { // 사용한 포인트 user테이블 업데이트
-  let data = [request.body.param, request.params.id];
+app.put("/pointUpdate", async (req, res) => { // 사용한 포인트 user테이블 업데이트
+  let data = [request.body.param, req.session.user_id];
   res.send((await mysql.query("test", "pointUpdate", data)));
 });
 
