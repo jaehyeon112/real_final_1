@@ -64,13 +64,14 @@
          <div class="group" v-if="isEmailSent">
           <label for="email" class="label">인증번호입력하기</label>
           <input id="email" type="text" class="input" v-model="userInfo.verificationCode" placeholder="인증 코드를 입력하세요">
-          <v-btn type="button" @click="verifyEmail">확인</v-btn>
+          <v-btn type="button" v-if="!validEmailNum" @click="verifyEmailNum()" >확인</v-btn>
+          <p v-if="validEmailNum" style="color: green;">인증이 완료되었습니다.</p>
         </div>
 
          <div class="group">
           <label for="tel" class="label">TEL</label>
           <input id="tel" type="text" class="input" v-model="userInfo.user_tel">
-          <button type="button">휴대폰 인증</button>
+          <v-btn type="button" @click ="sendVerificationPhone">휴대폰 인증</v-btn >
         </div>
                             
 
@@ -86,7 +87,7 @@
 
               <!-- 지번주소 -->
                <input type="text" id="jibunAddress" class="input" placeholder="지번주소" v-model="userInfo.address" v-if="isJibunAddressSelected">
- <span id="guide" style="color:#000;display:none"></span>
+              <span id="guide" style="color:#000;display:none"></span>
               <input type="text" id="detailAddress"  class="input" placeholder="상세주소" v-model="userInfo.detail_address">
 
             
@@ -145,8 +146,8 @@ export default {
 
   data() {
     return {
-
-    
+      phoneNo : '',
+      no : '', //이메일 인증번호
       isEmailSent : false, //이메일인증창
 
       //회원가입 v-model
@@ -162,12 +163,9 @@ export default {
         verificationCode : "",
         user_tel : "",
         postcode : "",
-        
         address : "", // 
-      
         detailAdd : "", //상세주소
         birth : "",
-       
         allCh : "false",
         ch1 : "false",
         ch2 : "false",
@@ -181,6 +179,8 @@ export default {
     
     // 사용가능한아이디메세지하려고 만든 애
     validId: false, 
+    
+    validEmailNum : false, //이메일인증완료 플래그
      
      // 주소 지번 선택 플래그
      isJibunAddressSelected: false, 
@@ -223,6 +223,7 @@ computed: {
     'userInfo.email_domain': function(newDomain, oldDomain) {
       this.updateUserEmail();
     }
+
   },
 
 
@@ -329,10 +330,70 @@ passwordValid() {
     },
 
     //이메일 인증
+    async sendVerificationEmail(){
+      //이메일에 랜덤값 보내서 이 랜덤값이랑 일치하는지 확인
+      
+      let num = JSON.stringify(Math.ceil((Math.random()*10000)+1))
+      this.no = num;
+      console.log(num);
+      let data = {
+       
+          to :  this.userInfo.user_email,
+          subject : "이메일 인증 메일입니다.",
+          body : num
+        
+      }
 
-  
+      let result = await axios.post(`/api/send-email`, data);
+      console.log(result);
+         if(result.data.status == "200" ){
+          alert('이메일로 인증번호 보내기 성공');
+          this.isEmailSent = true;
+          return;
+       }else{
+          alert('이메일 인증번호 보내기 ');
+          this.isEmailSent = true;
+          return;
+        }
+    },
+
+    //
+    verifyEmailNum(){
+      if(this.userInfo.verificationCode == this.no){
+        console.log(this.no);
+        alert(`인증성공`);
+        this.validEmailNum = true;
+      }
+    },
   
 
+//휴대폰인증
+  // async sendVerificationPhone(){
+
+  // let phoneNum = JSON.stringify(Math.ceil((Math.random()*10000)+1))
+  // this.phoneNo = phoneNum;
+  //   console.log(phoneNum);
+
+  // let data = {
+  //      "param" : {
+  //         to :  this.userInfo.user_tel,
+  //         from : "01063373744",
+  //         text : phoneNum
+  //      }
+  //     }
+
+  //     let result = await axios.post(`/api/phonecheck`, data);
+  //       console.log(result);
+  //     //    if(result.data.status == "2000" ){
+  //     //     alert('휴대폰 인증번호 보내기 성공');
+  //     //     //this.isEmailSent = true;
+  //     //     return;
+  //     //  }else{
+  //     //     alert('휴대폰 인증번호 보내기 ');
+  //     //     //this.isEmailSent = true;
+  //     //     return;
+  //     //   }
+  //   },
 
 
 

@@ -5,7 +5,7 @@
 
       <v-col cols="12">
         <div class="radio">
-          <input type="radio" name="option" value="findId" v-model="selectedOption">
+          <input type="radio" name="option" value="findId" checked v-model="selectedOption">
           <span class="radio-text">아이디찾기</span>
           <input type="radio" name="option" value="findPwd" v-model="selectedOption">
           <span class="radio-text">비밀번호찾기</span>
@@ -29,7 +29,7 @@
       <v-col cols="12" v-if="selectedOption === 'findPwd'">
         <div class="field">
           <label for="id">ID :</label>
-          <v-text-field v-model="lastName" label="userid" :rules="lastNameRules"></v-text-field>
+          <v-text-field v-model="userId" label="userid" :rules="lastNameRules"></v-text-field>
         </div>
       </v-col>
 

@@ -3,7 +3,7 @@ require("dotenv").config({
 });
 const mysql = require("./db.js");
 const bodyParser = require('body-parser');
-const { createTransport } = require('nodemailer');
+//const { createTransport } = require('nodemailer');
 //const config = require('./config'); // config 파일에 Gmail API 정보
 const express = require("express");
 const app = express();
@@ -59,7 +59,7 @@ async function sendEmail(to, subject, body) {
     }
   });
   const mailOptions = {
-    from: `Your Name <${process.env.GMAIL_OAUTH_USER}>`,
+    from: `yedam1조 Hompage명 <${process.env.GMAIL_OAUTH_USER}>`,
     to,
     subject,
     text: body
@@ -86,6 +86,47 @@ app.post('/send-email', async (req, res) => {
 }); //이메일
 
 
+
+//핸드폰인증
+app.post('/phonecheck', async (req, res) =>{
+  const {
+    to,
+    from,
+    text
+  } = req.body.param;
+
+	let data = req.body.param;
+	console.log("본인인증을 위해 넘어온 데이터 = ", data);
+
+	const coolsms = require('coolsms-node-sdk').default;
+	async function printTokenResult(phone, token){
+
+		const messageService = new coolsms("NCS2IMURYFBUZAPJ","HRV2IB3X2LNIIWQKOQ2F6XUCIMBFOUXC");
+		const result = await messageService
+		.sendOne({
+			to,
+			from ,
+			text 
+		})
+
+		let checkresult = false; //'인증번호 발송 실패';
+		console.log('핸드폰 인증 결과=', result);
+
+
+		if(result.statusCode == '2000'){
+			checkresult = true; //"인증번호 발송 성공";
+		}
+		console.log('checkresult=', checkresult);
+		res.send(checkresult);
+	res.send(true);
+	}
+	printTokenResult(data.phone,data.token);
+}) //end 핸드폰인증 
+
+
+
+
+  //소켓
 io.on('connect', (socket) => {
   console.log('소켓연결테스트')
 

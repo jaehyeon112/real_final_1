@@ -68,7 +68,6 @@ let user = {
   duplicateEmail: `select user_email from user where user_email = ?`,
 
 
-
   //로그인(일단)
   forLogin : `select * from user where user_id = ? and user_password = ?`,
 
@@ -77,6 +76,9 @@ let user = {
     selectId :  `select * from user where user_id = ?`,
 
     updateUser : `update user set ? where user_id=?`,
+
+  //ID찾기
+    findId : `select `,
 
 
   //회원탈퇴 - 탈퇴하기누르면 아이디 남기고 null 되고 withdrawal table에 insert되는거임! how...?
@@ -91,8 +93,7 @@ let user = {
     detail_address = null,
     postcode = null,
     point = null,
-    join_date = null,
-    user_grade = null
+    user_grade = 'i5'
   WHERE user_id = ?`,
 
   insertWithdrawal : `INSERT INTO withdrawal_user set ? `
