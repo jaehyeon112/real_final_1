@@ -2,6 +2,9 @@ require("dotenv").config({
   path: "./db/mail.env"
 });;
 
+//import dotenv from "dotenv";
+//dotenv.config();
+
 export default {
   mailer: {
     gmailUser: process.env.GMAIL_OAUTH_USER,

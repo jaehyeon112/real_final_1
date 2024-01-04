@@ -11,6 +11,7 @@ import finding from "../views/Finding.vue";
 import withdrawal from "../views/Withdrawal.vue";
 import emailnum from "../views/PutEmailNum.vue";
 import putpass from "../views/PutPassword.vue";
+import message from "../views/Message.vue";
 import test from "../views/test.vue";
 import myPage from "@/views/MyPage.vue";
 import detailPage from "@/views/detailPage.vue";
@@ -116,6 +117,12 @@ export default {
       name: "putpass",
       component: putpass
     },
+    {
+      path: "message",
+      name: "message",
+      component: message
+    },
+  
     {
       path: "test",
       name: "test",

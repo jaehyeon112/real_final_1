@@ -3,6 +3,9 @@ require("dotenv").config({
 });
 
 const mysql = require("./db.js");
+const bodyParser = require('body-parser');
+//const { createTransport } = require('nodemailer');
+//const config = require('./config'); // config 파일에 Gmail API 정보
 const express = require("express");
 const app = express();
 const fs = require("fs");
@@ -71,7 +74,7 @@ async function sendEmail(to, subject, body) {
     }
   });
   const mailOptions = {
-    from: `Your Name <${process.env.GMAIL_OAUTH_USER}>`,
+    from: `yedam1조 Hompage명 <${process.env.GMAIL_OAUTH_USER}>`,
     to,
     subject,
     text: body
@@ -95,14 +98,57 @@ app.post('/send-email', async (req, res) => {
       subject, // 1조 이메일 인증입니다.
       body // 글~~~ 이메일 인증 번호는 : 난수값 == 뷰에서 저장을 일단 해놈
     } = req.body;
+    console.log(to + subject + body + '이메일콘솔');
     const result = await sendEmail(to, subject, body);
     res.status(200).send(result);
   } catch (error) {
     console.error(error);
     res.status(500).send('Internal Server Error');
   }
-});
+}); //이메일
 
+
+
+//핸드폰인증
+app.post('/phonecheck', async (req, res) =>{
+  const {
+    to,
+    from,
+    text
+  } = req.body.param;
+
+	let data = req.body.param;
+	console.log("본인인증을 위해 넘어온 데이터 = ", data);
+
+	const coolsms = require('coolsms-node-sdk').default;
+	async function printTokenResult(phone, token){
+
+		const messageService = new coolsms("NCS2IMURYFBUZAPJ","HRV2IB3X2LNIIWQKOQ2F6XUCIMBFOUXC");
+		const result = await messageService
+		.sendOne({
+			to,
+			from ,
+			text 
+		})
+
+		let checkresult = false; //'인증번호 발송 실패';
+		console.log('핸드폰 인증 결과=', result);
+
+
+		if(result.statusCode == '2000'){
+			checkresult = true; //"인증번호 발송 성공";
+		}
+		console.log('checkresult=', checkresult);
+		res.send(checkresult);
+	res.send(true);
+	}
+	printTokenResult(data.phone,data.token);
+}) //end 핸드폰인증 
+
+
+
+
+  //소켓
 io.on('connect', (socket) => {
   console.log('소켓연결테스트')
 
@@ -305,6 +351,10 @@ app.get("/join-id/:id", async (req, res) => {
   res.send(list);
 })
 
+
+
+
+
 //회원가입 - 이메일 중복체크용
 app.get("/join-email/:email", async (req, res) => {
   let uemail = req.params.email;
@@ -313,11 +363,19 @@ app.get("/join-email/:email", async (req, res) => {
 })
 
 
-//회원가입용(insert) **주소수정ㅎ기! 
-app.post("/join", async (req, res) => {
+
+
+
+//회원가입용(insert) 
+app.post("/join/joinIn", async (req, res) => {
   let data = req.body.param;
-  let result = await mysql.query("user", "join", data);
+  try{  let result = await mysql.query("user","joinIn", data);
   res.send(result);
+  }catch{
+  console.error(error);
+  res.status(500).send({ error: 'Database query failed' });
+  }
+
 });
 
 
@@ -328,12 +386,48 @@ app.get("/dologin/:id/:password", async (req, res) => {
   res.send(list);
 });
 
-//로그인 세션
-app.post("/token", async (req, res) => {
+
+
+// //로그인 세션
+// app.post("/insertLogin", async(req, res)=> {
+//   let data = req.body.param;
+//   let result = await mysql.query("user","insertLogin", data);
+//   res.send(result);
+// })
+
+//회원수정
+  //일단 단건 데이터 불러오기
+app.get("/selectid/:id", async(req, res) => {
+  let uid = req.params.id;
+  let list = await mysql.query("user", "selectId", uid);
+  res.send(list);
+})
+  //회원정보수정하기
+  app.put('/join/:id', async(req, res)=>{
+    let data = [req.body.param, req.params.id];
+    let result = await mysql.query('user','updateUser', data);
+    res.send(result);
+  });
+
+
+//회원탈퇴하면 user id 뺴고 null로 수정해야됨
+app.put("/updateoutuser/:id", async(req, res)=> {
+  
+  let uid = req.params.id;
+
+  let list = await mysql.query("user", "updateOutUser", uid);
+  res.send(list);
+  
+})
+
+//탈퇴한 애 탈퇴테이블에 담는거
+app.post("/insertwithdrawal", async(req, res)=> {
   let data = req.body.param;
-  let result = await mysql.query("user", "idToken", data);
+  let result = await mysql.query("user","insertWithdrawal", data);
   res.send(result);
 })
+
+
 
 app.get("/user", async (req, res) => {
   let list = await mysql.query("admin", "userList");

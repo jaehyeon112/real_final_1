@@ -36,7 +36,8 @@ const store = createStore({
     },
     login(state, userInfo) {
       state.user = userInfo;
-
+        console.log(userInfo+'store의 값')
+      
     },
     logout(state) {
       state.user = {};
