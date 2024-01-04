@@ -95,9 +95,9 @@ export default{
         //일단 멤버 정보를 셀렉트 해오는걸로 시험 중 나중에 로그인 세션그걸로 바꿔야 함
         async getMember(){
             
-            this.member = (await axios.get(`/api/member`)
+            this.member = (await axios.get(`/api/member/${this.$store.state.user.user_id}`)
                                       .catch(err=>{console.log(err)})).data
-                                      console.log(this.member.sump)                          
+                                      console.log( '포인트소멸'+this.member.showNextMonth.sump)                          
         },
         // async getNextMontPoint(){
         //     let member_id = this.$store.state.user.user_id;

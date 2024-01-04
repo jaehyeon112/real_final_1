@@ -833,19 +833,22 @@ app.get("/new", async (req, res) => {
 //예빈
 //멤버조회정보
 
-app.get("/member", async (req,res)=>{
-  let id = req.session.user_id;
+// app.get("/member", async (req,res)=>{
+//   let id = req.session.user_id;
+//   let memberInfo= (await mysql.query("member", "memberInfo", req.session.user_id))[0]; // 데이터 타입 :  객체  
+//   let pointInfo = (await mysql.query("point", "showNextMonth", req.session.user_id))[0]; // 데이터 타입 : 숫자
+//   memberInfo.showNextMonth = pointInfo;
+
+//   res.send(memberInfo);
+// })
+app.get("/member/:id", async (req,res)=>{
+  let id = req.params.id;
   let memberInfo= (await mysql.query("member", "memberInfo", id))[0]; // 데이터 타입 :  객체  
-  let pointInfo = (await mysql.query("point", "showNextMonth", id))[0]; // 데이터 타입 : 숫자
+  let pointInfo = (await mysql.query("point", "showNextMonth",id))[0]; // 데이터 타입 : 숫자
   memberInfo.showNextMonth = pointInfo;
 
   res.send(memberInfo);
 })
-// app.get("/member/:id", async (req,res)=>{
-//   let id = req.params.id;
-//   let memberInfo= (await mysql.query("member", "memberInfo", id))[0]; // 데이터 타입 :  객체  
-//   res.send(memberInfo);
-// })
 
 // //다음달 소멸 포인트
 // app.get("/nextMonthPoint/:id", async(req,res)=>{
