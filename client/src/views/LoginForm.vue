@@ -159,7 +159,7 @@
                     quantity : this.$store.state.cart[j].quantity + cartList[i].quantity,
                   }
                 }
-                await axios.put(`/api/cartAfterLogin/${cartList[i].prod_no}`,obj).catch(err=>console.log(err));
+                 axios.put(`/api/cartAfterLogin/${cartList[i].prod_no}`,obj).catch(err=>console.log(err));
                 processedProdNos.add(cartList[i].prod_no);
               } 
             }
@@ -175,7 +175,7 @@
             user_id:  users[0].user_id
                   }
         }
-        await axios.post('/api/cartAfterLogin', obj).catch(err => console.log(err)); // 새 상품을 장바구니에 추가하는 API 호출
+         axios.post('/api/cartAfterLogin', obj).catch(err => console.log(err)); // 새 상품을 장바구니에 추가하는 API 호출
       }
     }
   
@@ -188,7 +188,7 @@
                    user_id : users[0].user_id
                }
             }
-           await axios.post(`/api/cartAfterLogin`, obj).catch(err=>{console.log(err)})
+           axios.post(`/api/cartAfterLogin`, obj).catch(err=>{console.log(err)})
            }
            this.$store.state.cart = [];
           
