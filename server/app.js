@@ -285,20 +285,22 @@ app.post("/token", async (req, res) => {
   let data = req.body.param;
   let result = await mysql.query("user", "idToken", data);
   res.send(result);
-})
-
-
-
-
+});
 
 app.get("/user", async (req, res) => {
   let list = await mysql.query("admin", "userList");
   res.send(list);
 });
 
-app.get("/user/:id/:name/:join/:grade/:order/:startNo/:no", async (req, res) => {
-  let list = [req.params.id, req.params.name, req.params.join, req.params.grade,req.params.order, Number(req.params.startNo) * Number(req.params.no), Number(req.params.no)];
+app.get("/user/:id/:name/:order/:startNo/:no", async (req, res) => {
+  let list = [req.params.id, req.params.name,req.params.order, Number(req.params.startNo) * Number(req.params.no), Number(req.params.no)];
   let data = await mysql.query("admin", "searchUser", list);
+  res.send(data);
+});
+
+app.get("/user/:join/:order/:startNo/:no", async (req, res) => {
+  let list = [req.params.join,req.params.order, Number(req.params.startNo) * Number(req.params.no), Number(req.params.no)];
+  let data = await mysql.query("admin", "filterUser", list);
   res.send(data);
 });
 
@@ -474,14 +476,13 @@ app.get('/review/:order', async (req, res) => {
   res.send(result);
 });
 
-app.post('/order/:ono/:ono/:ono', async (req, res) => {
-  let data = [req.params.ono,req.params.ono,req.params.ono];
+app.post('/order/:tracking/:ono/:ono/:ono', async (req, res) => {
+  let data = [req.params.tracking,req.params.ono,req.params.ono,req.params.ono];
   let result = await mysql.query("admin", "insertDelivery", data);
   res.send(result);
 });
 
 app.get('/order/:status/:sno/:lno', async (req, res) => {
-  console.log('실행중')
   let data = [req.params.status, Number(req.params.sno), Number(req.params.lno)]
   let result = await mysql.query("admin", "orderStatus", data);
   res.send(result);
@@ -505,7 +506,7 @@ app.get('/order/:sno/:lno', async (req, res) => {
   res.send(result);
 });
 
-app.get('/review', async (req, res) => {
+app.get('/report', async (req, res) => {
   let result = await mysql.query("admin", "AllreviewReportList");
   res.send(result);
 });

@@ -66,7 +66,8 @@
                 totals :'',
                 order : 'prod_no',
                 category : '',
-                content : ''
+                content : '',
+                
             }
         },
         components : {
@@ -90,7 +91,7 @@
                     let result = list.data;
                     this.productList = result;
                 }else{
-                    let list = await axios.get(`/api/prod/${this.content}/${this.content}/${this.order}/${this.startNum}/${pno}`).catch(err=>console.log(err));
+                    let list = await axios.get(`/api/prod/${this.word}/${this.category}/${this.order}/${this.startNum}/${pno}`).catch(err=>console.log(err));
                     let result = list.data;
                     this.productList = result;
                 }
@@ -151,12 +152,13 @@
                 let result = list.data;
                 console.log('리스트 : '+result)
                 this.productList = result;
-                this.totalList = result;
+                this.totalList = this.prodList;
             },
             refresh(){
                 this.category = '';
                 this.word = '';
             },
+            
         },
         watch : {
             nums(){
@@ -176,4 +178,5 @@
             }
         }
     }
-    </script>
+</script>
+

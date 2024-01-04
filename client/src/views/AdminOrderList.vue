@@ -40,9 +40,8 @@
           <td v-else-if="order.order_status=='c2'">상품준비중</td>
           <td v-else-if="order.order_status=='c3'">출고완료</td>
           <td v-else-if="order.order_status=='c4'">취소된 주문</td>
-          <td v-if="order.order_status=='c1'"><v-btn type="button" @click="this.orderStatus='c2',changeStatus(order.order_no)">상품 준비완료</v-btn>   <v-btn type="button" @click="modalCheck=true,this.orderNo=order.order_no">주문취소 신청</v-btn></td>
-          <td v-else-if="order.order_status=='c2'"><v-btn type="button" @click="this.orderStatus='c3',changeStatus(order.order_no)">상품 출고하기</v-btn></td>
-          <td v-else-if="order.order_status=='4'"><v-btn type="button" @click="">상세보기</v-btn></td>
+          <td v-if="order.order_status=='c1'"><v-btn type="button" @click="this.orderStatus='c2',this.orderGetOne(order.order_no),modalCheck2=true">주문상세보기</v-btn>   <v-btn type="button" @click="modalCheck=true,this.orderNo=order.order_no">주문취소 신청</v-btn></td>
+          <td v-else-if="order.order_status=='c2'"><v-btn type="button" @click="delNo=true">상품 출고하기</v-btn><p v-show="delNo">운송장번호 : <input type="number" v-model="deliveryNum"><v-btn @click="this.orderStatus='c3',changeStatus(order.order_no)">확인</v-btn></p></td>
           <td v-else><v-btn type="button">배송 조회</v-btn></td>
         </tr>
       </tbody>
@@ -65,6 +64,83 @@
         <div class="modal-btn">
             <v-btn style="border-radius: 10px;" @click="modalCheck = false,this.reason=''">닫기</v-btn>
             <v-btn style="border-radius: 10px;" @click="sendMessage">회원에게 취소 알림 보내기</v-btn>
+        </div>
+      </div>
+    </div>
+    <div class="modal-wrap2" v-show="modalCheck2">
+      <div class="modal-container2">
+        <h3>주문내역서</h3>
+        <div class="modalPop2">
+            <v-table height="250px" class="vTable1">
+      <thead>
+        <tr>
+          <th class="text-left">
+            주문 번호
+          </th>
+          <th class="text-left">
+            주문자
+          </th>
+          <th class="text-left">
+            받는사람
+          </th>
+          <th class="text-left">
+            받는사람 주소
+          </th>
+          <th class="text-left">
+            받는사람 번호
+          </th>
+          <th class="text-left">
+            주문 날짜
+          </th>
+          <th class="text-left">
+            결제금액
+          </th>
+          <th class="text-left">
+            쿠폰할인율
+          </th>
+          <th class="text-left">
+            포인트 사용액
+          </th>
+          <th class="text-left">
+            배송비
+          </th>
+          <th class="text-left">
+            실결제금액
+          </th>
+          <th class="text-left">
+            결제방법
+          </th>
+          <th class="text-left">
+            주문상태
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>{{ this.orderOne.order_no }}</td>
+          <td>{{ this.orderOne.user_id }}</td>
+          <td>{{ this.orderOne.recipient }}</td>
+          <td>{{ this.orderOne.recipient_address+' '+this.orderOne.recipient_detail_address }}</td>
+          <td>{{ this.orderOne.recipient_tel }}</td>
+          <td>{{ $dateFormat(this.orderOne.order_date,'yyyy년 MM월 dd일') }}</td>
+          <td>{{ (this.orderOne.total_payment)+'원' }}</td>
+          <td>{{ this.orderOne.coupon_discount_rate+'%' }}</td>
+          <td>{{ (this.orderOne.point_use)+'포인트' }}</td>
+          <td>{{ (this.orderOne.delivery_charge)+'원' }}</td>
+          <td>{{ (this.orderOne.real_payment)+'원' }}</td>
+          <td>{{ this.orderOne.payment_method }}</td>
+          <td v-if="this.orderOne.order_status=='c1'">주문완료</td>
+          <td v-else-if="this.orderOne.order_status=='c2'">상품준비중</td>
+          <td v-else-if="this.orderOne.order_status=='c3'">출고완료</td>
+          <td v-else-if="this.orderOne.order_status=='c4'">취소된 주문건</td>
+        </tr>
+      </tbody>
+      </v-table>
+        </div>
+        <div class="modal-btn2">
+            <v-btn style="border-radius: 10px;" @click="modalCheck2 = false">닫기</v-btn>
+            <v-btn style="border-radius: 10px;" v-if="this.orderOne.order_status=='c1'" @click="this.orderStatus='c2',changeStatus(this.orderOne.order_no)">상품 준비완료하기</v-btn>
+            <v-btn style="border-radius: 10px;" v-else-if="this.orderOne.order_status=='c2'" @click="this.orderStatus='c3',changeStatus(this.orderOne.order_no)">상품 출고하기</v-btn>
         </div>
       </div>
     </div>
@@ -95,7 +171,11 @@
                 totalList: "",
                 totals :'',
                 content:'',
-                orderNo : ''
+                orderNo : '',
+                orderOne : [],
+                modalCheck2 : false,
+                delNo : false,
+                deliveryNum : ''
             }
         },
         components : {
@@ -185,6 +265,10 @@
                     this.totalList = total.data;
                 }
             },
+            async orderGetOne(ono){
+                let result = await axios.get(`/api/order/${ono}`).catch(err=>console.log(err));
+                this.orderOne = result.data[0];
+            },
             refresh(){
                 this.getOrderList();
                 this.total();
@@ -199,6 +283,7 @@
                         if(result.data.affectedRows==1){
                             alert('상품준비중으로 변경되었습니다! ');
                             this.getOrderList();
+                            this.modalCheck2=false;
                         }else{
                             alert('오류가 남');
                         }
@@ -207,7 +292,7 @@
                     }
                 }else if(this.orderStatus=='c3'){
                     if(confirm('상품이 준비되었습니까?')){
-                        let result = await axios.put(`/api/order/${this.orderStatus}/${ono}`).catch(err=>console.log(err));
+                        let result = await axios.put(`/api/order/${this.deliveryNum}/${this.orderStatus}/${ono}`).catch(err=>console.log(err));
                         //배달에도 추가하기
                         let result2 = await axios.post(`/api/order/${ono}/${ono}/${ono}`)
                         if(result.data.affectedRows==1&&result2.data.affectedRows==1){
@@ -282,5 +367,38 @@
   }
   v-btn{
     border-radius: 10px;
+  }
+.modal-wrap2 {
+    z-index: 100;
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+  }
+  .modal-container2 {
+    z-index: 1000;
+    position :relative;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 1200px;
+    height: 400px;
+    background: #fff;
+    border-radius: 10px;
+    padding: 10px;
+    box-sizing: border-box;
+  }
+  .modalPop2{
+    z-index: 1000;
+    border: 1px solid;
+  }
+
+  .modal-btn button2{
+    z-index: 1000;
+    margin: 10px;
+    padding : 5px;
+
   }
 </style>

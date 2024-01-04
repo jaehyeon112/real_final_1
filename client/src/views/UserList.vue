@@ -12,10 +12,10 @@
             variant="underlined"
             return-object
             ></v-select>
-            <v-btn @click="searchList(this.grade,this.days)">검색</v-btn>     <v-btn @click="refresh">초기화</v-btn></div>
+            <v-btn @click="filterData(this.grade,this.days)">검색</v-btn>     <v-btn @click="refresh">초기화</v-btn></div>
         </template>
         <template #filterSearch>
-        <div><a @click="this.order='user_id'">기본순 | </a><a @click="this.order='join_date'">가입날짜순 | </a><a @click="this.order='user_grade'">등급 높은순</a><br><br>
+        <div><a @click="this.order='user_id'">기본순 | </a><a @click="this.order='join_date'">최근 가입일순 | </a><a @click="this.order='user_grade'">등급 높은순</a><br><br>
         <input class="datatable-input" v-model="word" @change="searchData" style="border-bottom: 1px black solid;float: right;width: 300px;" placeholder="회원 아이디나 이름을 검색하세요"></div>
     </template>
     <table>
@@ -55,7 +55,6 @@
             <td v-else-if="user.user_grade=='i2'">실버 회원</td>
             <td v-else-if="user.user_grade=='i3'">골드 회원</td>
             <td v-else-if="user.user_grade=='i4'">관리자</td>
-            <td v-else-if="user.user_grade=='i5'">탈퇴한 회원</td>
             <td v-if="user.user_grade=='i6'"><v-btn style="border-radius: 10px;" type="button" @click="NonStop(user.user_id)">정지풀기</v-btn></td>
             <td v-else-if="user.user_grade=='i4'||user.user_grade=='i5'"></td>
             <td v-else><v-btn style="border-radius: 10px;" type="button" @click="modalCheck=true,this.userId=user.user_id">정지하기</v-btn></td>
@@ -93,6 +92,7 @@ export default {
             word : '',
             days : '',
             userList : [],
+            filterList : [],
             modalCheck: false,
             userId : '',
             nums : 0,
@@ -101,7 +101,7 @@ export default {
             totals :'',
             conetnt:'',
             order : 'user_id',
-            grade : ''
+            grade : '',
         }
     },
     created(){
@@ -115,14 +115,15 @@ export default {
                 this.totalList = total.data;
             },
         async uList(no){
-            let list = await axios.get(`/api/user/${this.word}/${this.word}/${this.word}/${this.word}/${this.order}/${this.startNum}/${no}`).catch(err=>console.log(err));
+            let list = await axios.get(`/api/user/${this.order}/${this.startNum}/${no}`).catch(err=>console.log(err));
             let result = list.data;
             this.userList = result;
+            this.total();
         },
         async changePage(no) {
             console.log(this.word,no)
             try {
-                let page = await axios.get(`/api/user/${this.word}/${this.word}/${this.word}/${this.word}/${this.order}/${no}/${this.nums}`);
+                let page = await axios.get(`/api/user/${this.word}/${this.word}/${this.order}/${no}/${this.nums}`);
                 console.log(page.data)
                 this.userList = page.data;
                 this.totals = this.nums;
@@ -176,36 +177,14 @@ export default {
         changeChildData(childData){
             this.nums = childData;
         },
-        search(searchData1,searchData2){
-            //this.content = searchData;
-            this.searchList(searchData1,searchData2);
-        },
-        async searchList(cont,day){
-            if(cont=='일반회원'){
-                cont = 'i1'
-            }else if(cont=='실버회원'){
-                cont = 'i2'
-            }
-            else if(cont=='골드회원'){
-                cont = 'i3'
-            }
-            else if(cont=='정지회원'){
-                cont = 'i5'
-            }
-
-            if(cont==''&&day==''){
-                this.total();
+        search(searchData){
+            if(searchData==''){
                 this.uList(this.nums);
-                return;
             }
-            if(day==''){
-                day=cont
-            }
-            if(cont==''){
-                cont=day
-            }
-            console.log('실행중'+day,cont)
-            let list = await axios.get(`/api/user/${cont}/${cont}/${day}/${cont}/${this.order}/${this.startNum}/${this.nums}`).catch(err=>console.log(err));
+            this.searchList(searchData);
+        },
+        async searchList(cont){
+            let list = await axios.get(`/api/user/${cont}/${cont}/${this.order}/${this.startNum}/${this.nums}`).catch(err=>console.log(err));
             let result = list.data;
             this.userList = result;
             this.totalList = result;
@@ -214,7 +193,39 @@ export default {
             this.word ='';
             this.grade = '';
             this.days = '';
-            this.searchList(this.grade,this.days)
+            this.uList(this.nums);
+            //this.searchList(this.word);
+            this.filterList = [];
+        },
+        async filterData(grade,day){
+            this.filterList = [];
+            if(grade==''){
+                let list = await axios.get(`/api/user/${day}/${this.order}/${this.startNum}/${this.nums}`).catch(err=>console.log(err));
+                let result = list.data;
+                this.userList = result;
+                this.totalList = result;
+            }else{
+                if(grade=='일반회원'){
+                    grade = 'i1'
+                }else if(grade=='실버회원'){
+                    grade = 'i2'
+                }
+                else if(grade=='골드회원'){
+                    grade = 'i3'
+                }
+                else if(grade=='정지회원'){
+                    grade = 'i5'
+                }
+                let list = await axios.get(`/api/user/${day}/${this.order}/${this.startNum}/${this.nums}`).catch(err=>console.log(err));
+                let result = list.data;
+                for(let i=0;i<result.length;i++){
+                    if(result[i].user_grade==grade){
+                        this.filterList.push(result[i]);
+                    }
+                }
+                this.userList = this.filterList;
+                this.totalList = this.userList;
+            }
         }
     },
     components : {
@@ -226,12 +237,14 @@ export default {
             this.uList(this.nums);
         },
         content(){
-            this.searchList(this.content);
+            this.searchList(this.content,this.days);
         },
         order(){
             this.uList(this.nums);
         },
         word(){
+            this.days = '';
+            this.grade='';
             this.search(this.word);
         },
     }

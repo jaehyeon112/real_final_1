@@ -5,8 +5,8 @@
       <side/>
       
       <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-        <v-card flat title="최근 주문내역">
-    <v-table fixed-header height="250px" class="vTable1">
+        <v-card title="최근 주문내역">
+    <v-table class="vTable1">
       <thead>
         <tr>
           <th class="text-left">
@@ -25,10 +25,13 @@
             실결제금액
           </th>
           <th class="text-left">
-            주문상태<icon v-show="alarm=='주문완료'" @click="show"/>
+            주문상태(현재 주문완료 : 총 {{ this.count }}건)
           </th>
           <th class="text-left">
-            <router-link to="/admin/orderList"></router-link>
+            상태상품 처리
+          </th>
+          <th class="text-left">
+            <router-link to="/admin/orderList">더보기</router-link>
           </th>
         </tr>
       </thead>
@@ -37,7 +40,7 @@
           v-for="order in orderList"
           :key="order.order_no"
         >
-          <td v-on:click="this.orderGetOne(order.order_no),modalCheck=true">{{ order.order_no }}</td>
+          <td>{{ order.order_no }}</td>
           <td>{{ order.user_id }}</td>
           <td>{{ $dateFormat(order.order_date,'yyyy년 MM월 dd일') }}</td>
           <td>{{ $wonComma(order.total_payment)+'원' }}</td>
@@ -46,14 +49,14 @@
           <td v-else-if="order.order_status=='c2'">상품준비중</td>
           <td v-else-if="order.order_status=='c3'">출고완료</td>
           <td v-else-if="order.order_status=='c4'">취소된 주문건</td>
-          <td v-if="order.order_status=='c1'"><v-btn @click="this.orderStatus='c2',changeStatus(order.order_no)">상품 준비완료하기</v-btn></td>
+          <td v-if="order.order_status=='c1'"><v-btn @click="this.orderStatus='c2', this.orderGetOne(order.order_no),modalCheck=true">주문내역보기</v-btn></td>
           <td v-else-if="order.order_status=='c2'"><v-btn @click="this.orderStatus='c3',changeStatus(order.order_no)">상품 출고하기</v-btn></td>
           <td v-else-if="order.order_status=='c3'"><v-btn>배송 조회</v-btn></td>
           <td v-else-if="order.order_status=='c4'"><router-link to="/admin/refundList">취소목록으로 가기</router-link></td>
         </tr>
       </tbody>
-
-
+    </v-table>
+    </v-card>
       <div class="modal-wrap" v-show="modalCheck">
       <div class="modal-container">
         <h3>주문내역서</h3>
@@ -131,8 +134,6 @@
         </div>
       </div>
     </div>
-    </v-table>
-    </v-card>
     <br>
     <v-card flat title="최근 리뷰 신고내역"></v-card>
     <v-table fixed-header height="250px" class="vTable2">
@@ -151,7 +152,7 @@
             신고날짜
           </th>
           <th class="text-left">
-            신고상태<icon v-show="reviews=='새로운 신고건'" @click="show3"/>
+            신고상태(처리되지 않은 신고 : 총 {{ this.count3 }}건)
           </th>
         </tr>
       </thead>
@@ -191,7 +192,7 @@
             문의 날짜
           </th>
           <th class="text-left">
-            문의 상태<icon @click="show2" v-show="inquires=='답변 대기 중'"/>
+            문의 상태(현재 답변 대기 중인 문의 : 총 {{ this.count2 }}건)
           </th>
           <th class="text-left">
           </th>
@@ -263,10 +264,9 @@ import icon from '../components/admin/icon.vue';
         count2 : 0,
         count3 : 0,
         reviews : false,
-        alarm : false,
         inquires : false,
         months : [this.dateFormat()-2+'월',this.dateFormat()-1+'월',this.dateFormat()+'월'],
-        datas : [],
+        //datas : [],
         orderList : [],
         reviewList : [],
         inquireList : [],
@@ -279,16 +279,16 @@ import icon from '../components/admin/icon.vue';
       icon
     },
     created(){
-      this.getSum();
+      //this.getSum();
       this.getOrderList();
       this.getReviewList();
       this.getInquireList();
     },
-    watch : {
-      datas : function(){
-        this.getSum();
-      }
-    },
+    // watch : {
+    //   datas : function(){
+    //     this.getSum();
+    //   }
+    // },
     // mounted(){
     //         const ctx = document.getElementById('myChart');
     //         const myChart = new Chart(ctx,{
@@ -337,29 +337,25 @@ import icon from '../components/admin/icon.vue';
        },
        async getOrderList(){
         let result = await axios.get('/api/order').catch(err=>console.log(err));
-        this.orderList = result.data;
         for(let i=0;i<result.data.length;i++){
           if(result.data[i].order_status=='c1'){
             this.count = this.count+1;
           }
         }
+        if(result.data.length>4){
+          for(let i=0;i<4;i++){
+            this.orderList.push(result.data[i]);
+          }
+        }else{
+          this.orderList = result.data;
+        }
        },
        async orderGetOne(ono){
         let result = await axios.get(`/api/order/${ono}`).catch(err=>console.log(err));
-        console.log(result.data[0])
         this.orderOne = result.data[0];
        },
-       show(){
-        alert('현재 새로운 주문건은 '+this.count+'건입니다')
-       },
-       show2(){
-        alert('현재 새로운 문의내역은 '+this.count2+'건입니다')
-       },
-       show3(){
-        alert('현재 새로운 신고내역은 '+this.count3+'건입니다')
-       },
        async getReviewList(){
-        let result = await axios.get('/api/review').catch(err=>console.log(err));
+        let result = await axios.get('/api/report').catch(err=>console.log(err));
         this.reviewList = result.data;
         for(let i=0;i<result.data.length;i++){
           if(result.data[i].report_status=='p1'){
@@ -411,16 +407,19 @@ import icon from '../components/admin/icon.vue';
     background-color: rgba(223, 255, 231, 0.735);
     border: 1px solid;
     z-index: 1;
+    height: 280px;
   }
   .vTable2{
     background-color: rgba(231, 253, 255, 0.735);
     border: 1px solid;
     z-index: 1;
+    height: 280px;
   }
   .vTable3{
     background-color: rgba(254, 255, 233, 0.735);
     border: 1px solid;
     z-index: 1;
+    height: 280px;
   }
   .modal-wrap {
     z-index: 100;
@@ -434,7 +433,7 @@ import icon from '../components/admin/icon.vue';
   .modal-container {
     z-index: 1000;
     position :relative;
-    top: 230px;
+    top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     width: 1200px;

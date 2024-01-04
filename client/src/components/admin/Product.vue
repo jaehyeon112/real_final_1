@@ -69,7 +69,7 @@
                 <div class="col-md-4">
                   <label for="sub_category" class="form-label">서브 카테고리</label>
                   <select v-model="prod.sub_category" class="form-select" id="sub_category" required>
-                    <option value="">선택하세요</option>
+                    <option value="">기본맛</option>
                     <option value="f1">바삭한 맛</option>
                     <option value="f2">매콤한 맛</option>
                     <option value="f3">국물</option>
@@ -176,15 +176,17 @@
             if(this.prod.prod_name==''||this.prod.price==''||this.prod.stock==''||this.prod.main_category==''||this.prod.refrigeration==''){
               alert('필수정보를 채워주세요');
               this.showIcon = true;
-            }else if(this.prod.discount_price==''){
+              return;
+            }
+            if(this.prod.discount_price==''){
               data.param.discount_price = data.param.price;
-              let result = await axios.post(`/api/prod`,data).catch(err=>console.log(err));
-              if(result.data.affectedRows > 0){
-                alert('등록성공!');
-                this.$router.push({name : 'prodList'});
-              }else{
-                alert('등록 실패')
-              }
+            }
+            let result = await axios.post(`/api/prod`,data).catch(err=>console.log(err));
+            if(result.data.affectedRows > 0){
+              alert('등록성공!');
+              this.$router.push({name : 'prodList'});
+            }else{
+              alert('등록 실패')
             }
           }
         },

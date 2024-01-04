@@ -77,11 +77,12 @@ let admin = {
   weekIncome: `select sum(total_payment) from orders where order_date BETWEEN DATE_ADD(NOW(), INTERVAL -1 week ) AND NOW()`,
   monthsIncome: `select month(order_date) as month,sum(total_payment) as sum from orders group by month order by month;`,
   //회원관리
-  AlluserList: `select user_id,user_name,user_email,user_tel,join_date,user_grade from user where not user_id='admin'`,
-  userList: `select user_id,user_name,user_email,user_tel,join_date,user_grade from user where not user_id='admin' order by ?? limit ?,?`,
+  AlluserList: `select user_id,user_name,user_email,user_tel,join_date,user_grade from user where not user_grade in('i4','i5')`,
+  userList: `select user_id,user_name,user_email,user_tel,join_date,user_grade from user where not user_grade in('i4','i5') order by ?? desc limit ?,?`,
   stopUser: `update user set user_grade = ? where user_id = ?`,
   searchUser: `select user_id,user_name,user_email,user_tel,join_date,user_grade from user
-  where user_id like concat(concat('%',?),'%') or user_name like concat(concat('%',?),'%') or join_date like concat(concat('%',?),'%') or user_grade = ? order by ?? limit ?,?`,
+  where user_id like concat(concat('%',?),'%') or user_name like concat(concat('%',?),'%') order by ?? limit ?,?`,
+  filterUser : `select user_id,user_name,user_email,user_tel,join_date,user_grade from user where join_date like concat(concat('%',?),'%') order by ?? limit ?,?`,
   //상품관리
   AllprodList: `select prod_no,prod_name,price,discount_price,discount_rate,stock,main_category from product`,
   prodList: `select prod_no,prod_name,price,discount_price,discount_rate,stock,main_category,registration from product order by ?? limit ?,?`,
@@ -98,7 +99,7 @@ let admin = {
   updateOrder : `update orders set order_status = ? where order_no= ?`,
   orderStatus : `select * from orders where order_status = ? order by order_date desc limit ?,?`,
   oneOrder : `select * from orders where order_no = ?`,
-  insertDelivery : `insert into delivery set order_no=(select order_no from orders where order_no=?),tracking_no = concat(cast(DATE_FORMAT(now(),'%m%d')AS CHAR),cast(CAST(RAND() * 10000 AS SIGNED) + 1 as CHAR)),
+  insertDelivery : `insert into delivery set order_no=(select order_no from orders where order_no=?),tracking_no = ?,
   user_id=(select user_id from orders where order_no=?),delivery_request=(select delivery_request from orders where order_no=?),released_date=current_date(),delivery_status='d4'`,
   //배송관리
   AllreviewReportList : `select *,(select report_cnt from review where review_no=review_report.review_no) as cnt from review_report order by report_date desc`,
