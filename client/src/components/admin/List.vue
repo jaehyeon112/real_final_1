@@ -20,8 +20,8 @@
                         </label>
                     </div>
                     <div class="card-body">
-                    <div class="datatable-top">
-                        <div class="card-body">
+                        <div class="datatable-top">
+                            <div class="card-body">
                             <slot name="filterSearch"></slot>
                         </div>
                         <template>
