@@ -37,7 +37,7 @@
     },
     methods:{
       moveMypage(){
-        this.$router.push('/')
+        this.$router.push('/myPage')
       },
       moveMain(){
         this.$router.push('/main')
