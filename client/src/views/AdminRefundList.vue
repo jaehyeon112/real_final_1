@@ -39,7 +39,10 @@
             <td v-if="order.cancel_status=='o1'"><v-btn type="button" @click="changeStatus(order.order_no)">취소/환불처리</v-btn></td>
             <td v-else><v-btn type="button" @click="modalCheck=true">상세보기</v-btn></td>
         </tr>
-      </tbody>
+        </tbody>
+        <tbody v-if="orderList.length==0" style="text-align: center;">
+            <tr><td></td><td></td><td><h3>존재하는 데이터가 없습니다</h3></td></tr>
+        </tbody>
         <v-container>
           <page @changePage="changePage" :list="totalList" :totals="this.nums"></page>
         </v-container>
@@ -112,20 +115,18 @@
                     alert('취소되었습니다')
                 }
             },
-            // async orderState(od){
-            //     if(od=='주문완료'){
-            //         od='c1'
-            //     }else if(od=='상품준비중'){
-            //         od='c2'
-            //     }else if(od=='출고완료'){
-            //         od='c3'
-            //     }else if(od=='취소된 주문'){
-            //         od='c4'
-            //     }
-            //     let result = await axios.get(`/api/order/${od}/${this.startNum}/${this.nums}`).catch(err=>console.log(err));
-            //     console.log(result)
-            //     this.orderList = result.data;
-            // }
+            async orderState(od){
+                if(od=='취소신청'){
+                    od='o1'
+                }else if(od=='취소/환불 진행중'){
+                    od='o2'
+                }else if(od=='완료'){
+                    od='c3'
+                }
+                let result = await axios.get(`/api/refund/${od}/${this.startNum}/${this.nums}`).catch(err=>console.log(err));
+                console.log(result)
+                this.orderList = result.data;
+            }
         },
         watch : {
             nums(){
@@ -134,9 +135,9 @@
             content(){
                 this.searchList(this.content);
             },
-            // orders(){
-            //     this.orderState(this.orders);
-            // }
+            orders(){
+                this.orderState(this.orders);
+            }
     }
         
     }
