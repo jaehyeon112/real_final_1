@@ -259,28 +259,28 @@ export default {
       plusCount(){
          this.counter++;
       },              
-   //    async likes(){
-   //    //찜하기눌러서 저장하는 곳
+      async likes(){
+      //찜하기눌러서 저장하는 곳
       
-   //          if(this.love == true ){ //찜한상태라는 말
-   //             let dellike = await axios.delete(`/api/DelprodLike/${this.$store.state.user.user_id}/${this.pno}`)
-   //                                     .catch(err=>console.log(err));
-   //                if(dellike.data.affectedRows>0){                        
-   //                   alert('삭제성공')
-   //                   this.love=false
-   //                }else{
-   //                   console.log(err)
-   //                }
-   //          }else{
-   //             let likes = await axios.post(`/api/prodLike`)
-   //                                     .catch(err=>console.log(err));
-   //             if(likes.data.changedRows>0){
-   //                alert('찜상태 변화')
-   //                this.love=true
-   //             }                         
-   //           }      
+            if(this.love == true ){ //찜한상태라는 말
+               let dellike = await axios.delete(`/api/DelprodLike/${this.$store.state.user.user_id}/${this.pno}`)
+                                       .catch(err=>console.log(err));
+                  if(dellike.data.affectedRows>0){                        
+                     alert('삭제성공')
+                     this.love=false
+                  }else{
+                     console.log(err)
+                  }
+            }else{
+               let likes = await axios.post(`/api/prodLike`)
+                                       .catch(err=>console.log(err));
+               if(likes.data.changedRows>0){
+                  alert('찜상태 변화')
+                  this.love=true
+               }                         
+             }      
          
-   //   },
+     },
 
    },
      
