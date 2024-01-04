@@ -128,7 +128,10 @@ export default {
         }
     },
       fetchCartList() {
-        axios.get(`/api/cartList/${this.$store.state.user.user_id}`, {
+        for(let i=0; i<this.cartList.length; i++){
+          this.cartList[0].user_id
+        }
+        axios.get(`/api/cartList/${this.cartList[0].user_id}`, {
         })
         .then(response => {
           this.cartList = response.data;
