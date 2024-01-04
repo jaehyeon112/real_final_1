@@ -150,8 +150,8 @@ let ipList = await axios.post(`/api/dologin/`,obj)
         console.log('먼디?')
 
         if(cartList != null){
-          for(let i = 0; i < cartList.length; i++){
-          for(let j = 0; this.$store.state.cart.length; j++){
+          for(let i = 0; i > cartList.length; i++){
+          for(let j = 0; j > this.$store.state.cart.length; j++){
             if(cartList[i].prod_no == this.$store.state.cart[j].prod_no){
               let obj = {
                 param : {
