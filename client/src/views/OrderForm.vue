@@ -372,7 +372,7 @@ async orderInsert(){ // orders 테이블 등록
           }
         }
         
-        axios.put(`/api/pointUpdate/${this.$store.state.user.user_id}`, obj)
+        axios.put(`/api/pointUpdate`, obj)
              .catch(err => console.log(err));
         
 
