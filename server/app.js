@@ -578,9 +578,31 @@ app.get("/new", async (req, res) => {
 //멤버조회정보
 app.get("/member/:id", async (req,res)=>{
   let id = req.params.id;
-  let info= await mysql.query("member", "memberInfo", id);
-  res.send(info)
+  let memberInfo= (await mysql.query("member", "memberInfo", id))[0]; // 데이터 타입 :  객체  
+  let pointInfo = (await mysql.query("point", "showNextMonth", id))[0]; // 데이터 타입 : 숫자
+  memberInfo.showNextMonth = pointInfo;
+  res.send(memberInfo);
 })
+
+// app.get("/member", async (req,res)=>{
+//   let id = req.session.id;
+//   let memberInfo= (await mysql.query("member", "memberInfo", id))[0]; // 데이터 타입 :  객체  
+//   let pointInfo = (await mysql.query("point", "showNextMonth", id))[0]; // 데이터 타입 : 숫자
+//   memberInfo.showNextMonth = pointInfo;
+
+//   res.send(memberInfo);
+// })
+                      // app.get("/member/:id", async (req,res)=>{
+                      //   let id = req.params.id;
+                      //   let memberInfo= (await mysql.query("member", "memberInfo", id))[0]; // 데이터 타입 :  객체  
+                      //   res.send(memberInfo);
+                      // })
+
+                      // //다음달 소멸 포인트
+                      // app.get("/nextMonthPoint/:id", async(req,res)=>{
+                      //   let id = req.params.id;
+                      //   res.send(await mysql.query("point", "showNextMonth", id))[0]
+                      // });
 //상세페이지 정보
 app.get("/detailPro/:pno", async (req,res)=>{
   let pno = req.params.pno;
@@ -731,11 +753,7 @@ res.send(list);
         res.send(await mysql.query("reviews","reviewPoint", datas));
       
       });
-    //다음달 소멸 포인트
-    app.get("/nextMonthPoint/:id", async(req,res)=>{
-      let id = req.params.id;
-      res.send(await mysql.query("point", "showNextMonth", id))
-    })
+    
 //리뷰관련
     //상세페이지에서 리뷰목록
     app.get("/detailReview/:pno", async(request, response)=>{
@@ -771,7 +789,19 @@ res.send(list);
       let id = req.params.id
       res.send(await mysql.query("reviews", "orderNoReview",id))
     });
-  
+   //찜하기
+      app.get("/prodLike/:id/:pno", async(req,res)=>{
+        let datas = [req.params.id,req.params.pno]
+        res.send(await mysql.query("like", "likeList", datas))[0]
+      })
+      app.delete("/DelprodLike/:id:/:pno", async(req,res)=>{
+        let id = req.params.id
+        res.send(await mysql.query("like", "likeDel", id))
+      } )
+      app.post("/prodLike", async(req,res)=>{
+        let data = req.body.param
+        res.send(await mysql.query("like", "likeInsert", data))
+      })
 
     
 

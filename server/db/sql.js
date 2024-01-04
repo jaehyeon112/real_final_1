@@ -171,7 +171,9 @@ let delivery = {
   deleteDelivery: `delete from add_delivery where delivery_no=?`
 }
 let like = {
-  likeList : `select* from likes where user_id=?`
+  likeList : `select* from likes where user_id=? and prod_no=?`,
+  likeInsert:`insert into likes set;`,
+  likeDel:`delete from likes where user_id=? prod_no =?;`
 }
 let member = {
   memberInfo : `select t1.*, count(case when coupon_able=0 then 1 end) as couponCnt from user t1 join coupon t2  on t1.user_id = t2.user_id where t1.user_id= ?` 

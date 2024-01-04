@@ -2,7 +2,7 @@
   <v-container>
     <v-card class="mx-auto" max-width="300">
       <!-- 해당 제품으로 이동 -->
-      <router-link @click.stop="goToDetail(prodList.prod_no)" to="/detailPage">
+      <span @click.stop="goToDetail">
         <div class="image-container">
           <v-img
             class="align-end text-white"
@@ -18,7 +18,7 @@
           <div v-if="isSoldOut" class="soldout-overlay">품절</div>
           <div v-if="isStock" class="isStock-overlay">상품준비중</div>
         </div>
-      </router-link>
+      </span>
 
       <v-card-subtitle class="pt-4"> 1조꺼 </v-card-subtitle>
 
@@ -64,8 +64,8 @@ export default {
 
       
     },
-    goToDetail(pno){
-      this.$router.push({path:'/detailPage', query:{pno : pno}})
+    goToDetail(){
+      this.$router.push({path:'/detailPage', query:{pno : this.prodList.prod_no}})
     },
     goToCart(){
       alert("비회원인데 넣었다 가정!")

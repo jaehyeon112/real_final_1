@@ -20,7 +20,7 @@
                                     <v-dialog v-model="dialog" persistent width="300px">
                                     <v-card>
                                         <v-card-text style="text-align: center;">
-                                        {{  NextMonthPoint.sump }}Point
+                                        {{  member.showNextMonth.sump }}Point
                                         </v-card-text>
                                         <v-card-actions>
                                         <v-btn color="primary" block @click="dialog = false">닫기</v-btn>
@@ -76,7 +76,7 @@ export default{
         return {
             member:{},
             couponList:[],
-            NextMonthPoint:{},
+            //NextMonthPoint:{},
             dialog:false
         } 
     },
@@ -86,7 +86,7 @@ export default{
     },
     created(){
         this.getMember();
-        this.getNextMontPoint();
+        //this.getNextMontPoint();
     },
     watch: {
        
@@ -96,14 +96,15 @@ export default{
         async getMember(){
             let member_id = this.$store.state.user.user_id;
             this.member = (await axios.get(`/api/member/${member_id}`)
-                                      .catch(err=>{console.log(err)})).data[0]                           
+                                      .catch(err=>{console.log(err)})).data
+                                      console.log(this.member.sump)                          
         },
-        async getNextMontPoint(){
-            let member_id = this.$store.state.user.user_id;
-            this.NextMonthPoint = (await axios.get(`/api/nextMonthPoint/${member_id}`)
-                                      .catch(err=>{console.log(err)})).data[0]
-                                      console.log(this.NextMonthPoint.sump)
-        }
+        // async getNextMontPoint(){
+        //     let member_id = this.$store.state.user.user_id;
+        //     this.NextMonthPoint = (await axios.get(`/api/nextMonthPoint/${member_id}`)
+        //                               .catch(err=>{console.log(err)})).data
+        //                               console.log(this.NextMonthPoint.sump)
+        // }
     }
 }
 </script>

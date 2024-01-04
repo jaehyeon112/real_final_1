@@ -112,9 +112,9 @@ export default {
                 }
             }
              let result = await axios.post('/api/reviewInsert', obj) //sql에서 두번째로 넘어오는 데이터(body.param)를 obj에 넣는다 
-                                     .catch(err=>console.log(err))
+                                     .catch(err=>console.log('리뷰등록오류'+err))
              let point = await axios.post(`/api/reviewPoint/${this.detailNo}/${this.$store.state.user.user_id}`,obj2)
-                                    .catch(err=>console.log(err))                              
+                                    .catch(err=>console.log('포인트오류 '+err))                              
             if(result.data.insertId>0){ //글번호는 자동으로 부여되니까 obj에서 주는게 아니라 따로 빼서 
                 alert('등록완료');
                 this.reviewInfo.no = result.data.insertId; //여기에 data가 있고 없고 차이는..?
