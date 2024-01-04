@@ -308,8 +308,9 @@ app.get("/cartCheckList", async (req, res) => { //주문서의 장바구니체�
   res.send(list);
 });
 
-app.get("/orderList", async (req, res) => { // 주문완료 리스트
-  let list = await mysql.query("test", "orderList", req.session.user_id);
+app.get("/orderList:/:no", async (req, res) => { // 주문완료 리스트
+  let data = req.params.no;
+  let list = await mysql.query("test", "orderList", data);
   res.send(list);
 });
 
@@ -328,18 +329,18 @@ app.post("/pointInsert", async (request, res) => { // 포인트 사용내역 등
   res.send((await mysql.query("test", "pointInsert", data)));
 });
 
-app.put("/couponUpdate/no", async (req, res) => { // 쿠폰 사용시 업데이트
+app.put("/couponUpdate/:no", async (req, res) => { // 쿠폰 사용시 업데이트
   let data = [req.body.param, req.params.no];
   res.send((await mysql.query("test", "couponUpdate", data)));
 });
 
-app.put("/StockUpdate", async (req, res) => { // 상품 재고변경
-  let data = [req.body.param, req.session.user_id];
+app.put("/StockUpdate/:no", async (req, res) => { // 상품 재고변경
+  let data = [req.body.param, req.params.no];
   res.send((await mysql.query("test", "StockUpdate", data)));
 });
 
 app.put("/pointUpdate", async (req, res) => { // 사용한 포인트 user테이블 업데이트
-  let data = [request.body.param, req.session.user_id];
+  let data = [req.body.param, req.session.user_id];
   res.send((await mysql.query("test", "pointUpdate", data)));
 });
 

@@ -32,8 +32,7 @@ let test = {
 
   cartList: `select distinct * 
               from cart c, product p, user u
-              where c.user_id = u.user_id AND p.prod_no = c.prod_no AND c.user_id = ?
-              order by cart_no`,
+              where c.user_id = u.user_id AND p.prod_no = c.prod_no AND c.user_id = ?`,
   //로그인 후 비회원 장바구니가 로그인 장바구니로 이동
   cartAfterLogin: `insert into cart set ?`,
   //로그인 전 비회원 장바구니와 로그인 장바구니를 똑같은거 있으믄 비교해서 수량 업데이트
