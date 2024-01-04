@@ -156,17 +156,17 @@ let ipList = await axios.get(`/api/dologin/${this.user_id}/${this.user_password}
         }
 
 
-        // for(let i = 0 ; i < this.$store.state.cart.length; i++){
-        //   let obj = {
-        //     param: {
-        //         prod_no : this.$store.state.cart[i].prod_no,
-        //         quantity : this.$store.state.cart[i].quantity,
-        //         user_id : users[0].user_id
-        //     }
-        // }
-        // await axios.post(`/api/cartAfterLogin`, obj).catch(err=>{console.log(err)})
-        // }
-        // this.$store.state.cart = [];
+        for(let i = 0 ; i < this.$store.state.cart.length; i++){
+          let obj = {
+            param: {
+                prod_no : this.$store.state.cart[i].prod_no,
+                quantity : this.$store.state.cart[i].quantity,
+                user_id : users[0].user_id
+            }
+        }
+        await axios.post(`/api/cartAfterLogin`, obj).catch(err=>{console.log(err)})
+        }
+        this.$store.state.cart = [];
         
     }
  

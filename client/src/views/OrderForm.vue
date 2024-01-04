@@ -51,7 +51,7 @@ import CartUserInfo from '../components/cart/CartUserInfo.vue';
 import CartAddrInfo from '../components/cart/CartAddrInfo.vue';
 import CartPointInfo from '../components/cart/CartPointInfo.vue';
 import CartPayment from '../components/cart/CartPayment.vue';
-import CartPrice from '../components/cart/cartPrice.vue';
+import CartPrice from '../components/cart/CartPrice.vue';
 
 
 export default {

@@ -11,13 +11,14 @@
           <table class="rwd-table" :key="idx" v-for="(list, idx) in cartList">
             <tr>
               <td>
-                <v-checkbox v-if="list.soldout == '0'" v-model="list.cart_checkbox" true-value="1" false-value="0" @click="updateCheckbox(list)"></v-checkbox>
-                <v-btn v-else disabled="list.soldout == '1'">품절로 선택불가</v-btn>
+                {{ list.stock }}
+                <v-checkbox v-if="list.soldout == '0' && list.stock > '0'" v-model="list.cart_checkbox" true-value="1" false-value="0" @click="updateCheckbox(list)"></v-checkbox>
+                <v-checkbox v-else disabled label="상품 준비중"></v-checkbox>
               </td>
               <td>이미지</td>
               <td>{{ list.prod_name }}</td>
               <td>
-                <v-btn v-if="list.soldout == '0'" @click="quantityPlus(list)">
+                <v-btn v-if="list.soldout == '0' && list.stock > '0'"  @click="quantityPlus(list)">
                 <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAiIGhlaWdodD0iMzAiIHZpZXdCb3g9IjAgMCAzMCAzMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICAgIDxwYXRoIGQ9Ik0xNiAxMHY0aDR2MmgtNHY0aC0ydi00aC00di0yaDR2LTRoMnoiIGZpbGw9IiMzMzMiIGZpbGwtcnVsZT0ibm9uemVybyIvPgo8L3N2Zz4K" alt="">
                 </v-btn>
                 <v-btn v-else  disabled="list.soldout == '1'" @click="quantityPlus(list)">
@@ -26,7 +27,7 @@
               </td>
               <td>{{ list.quantity }}개</td>
               <td>
-                <v-btn v-if="list.soldout == '0'" @click="quantityMinus(list)">
+                <v-btn v-if="list.soldout == '0' && list.stock > '0'"  @click="quantityMinus(list)">
                   <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAiIGhlaWdodD0iMzAiIHZpZXdCb3g9IjAgMCAzMCAzMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICAgIDxwYXRoIGQ9Ik0yMCAxNHYySDEwdi0yeiIgZmlsbD0iIzMzMyIgZmlsbC1ydWxlPSJub256ZXJvIi8+Cjwvc3ZnPgo=" alt="">
                 </v-btn>
                 <v-btn v-else  disabled="list.soldout == '1'" @click="quantityMinus(list)">
