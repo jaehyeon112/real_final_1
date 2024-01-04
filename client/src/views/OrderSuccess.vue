@@ -22,6 +22,7 @@ import axios from 'axios';
 
 import OrderProdInfo from '../components/order/OrderProdInfo.vue';
 import OrderAddrInfo from '../components/order/OrderAddrInfo.vue';
+import CartPrice from '../components/cart/CartPrice.vue';
 
 export default{
     components: {

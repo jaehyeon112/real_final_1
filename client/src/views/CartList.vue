@@ -1,7 +1,6 @@
 <template>
   <v-container v-if="this.$store.state.user.user_id == null">
-    <v-btn @click="selectAll">전체선택</v-btn>
-        <v-btn @click="$store.commit('cartEmpty')">선택삭제</v-btn>
+      <v-btn class="right-aligned-button" @click="$store.commit('cartEmpty')">선택삭제</v-btn>
       <table class="rwd-table" :key="idx" v-for="(list, idx) in $store.state.cart">
         <tr>
           <td>
@@ -21,75 +20,108 @@
       <v-btn v-model="check" @click="goTologinForm">주문하기</v-btn>
   </v-container>
   <v-container v-else>
-        <v-main v-if="this.cartList.length > 0">
-            <h1>장바구니</h1>
-            <v-btn @click="selectAll">전체선택</v-btn>
-            <v-btn @click="deleteSelected">선택삭제</v-btn>
+    <v-card style="padding: 20px;">
+      <v-row v-if="this.cartList.length > 0">
+        <v-col cols="8">
+          <h1>장바구니</h1>
+          <v-row class="button-row">
+            <v-col cols="auto" class="button-col">
+              <v-btn class="right-aligned-button" @click="selectAll">전체선택</v-btn>
+            </v-col>
+            <v-col cols="auto" class="button-col">
+              <v-btn class="right-aligned-button" @click="deleteSelected">선택삭제</v-btn>
+            </v-col>
+          </v-row>
           <table class="rwd-table" :key="idx" v-for="(list, idx) in cartList">
             <tr>
-              <td>
-                <v-checkbox v-if="list.soldout == '0'" v-model="list.cart_checkbox" true-value="1" false-value="0" @click="updateCheckbox(list)"></v-checkbox>
-                <v-btn v-else disabled="list.soldout == '1'">품절로 선택불가</v-btn>
-              </td>
-              <td>이미지</td>
-              <td>{{ list.prod_name }}</td>
-              <td>
-                <v-btn v-if="list.soldout == '0'" @click="quantityPlus(list)">
+            <td>
+              <v-checkbox v-if="list.soldout == '0'" v-model="list.cart_checkbox" true-value="1" false-value="0" @click="updateCheckbox(list)"></v-checkbox>
+              <v-btn v-else disabled="list.soldout == '1'">품절로 선택불가</v-btn>
+            </td>
+            <td>이미지</td>
+            <td>{{ list.prod_name }}</td>
+            <td>
+              <v-btn v-if="list.soldout == '0'" @click="quantityPlus(list)">
                 <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAiIGhlaWdodD0iMzAiIHZpZXdCb3g9IjAgMCAzMCAzMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICAgIDxwYXRoIGQ9Ik0xNiAxMHY0aDR2MmgtNHY0aC0ydi00aC00di0yaDR2LTRoMnoiIGZpbGw9IiMzMzMiIGZpbGwtcnVsZT0ibm9uemVybyIvPgo8L3N2Zz4K" alt="">
-                </v-btn>
-                <v-btn v-else  disabled="list.soldout == '1'" @click="quantityPlus(list)">
+              </v-btn>
+              <v-btn v-else  disabled="list.soldout == '1'" @click="quantityPlus(list)">
                 <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAiIGhlaWdodD0iMzAiIHZpZXdCb3g9IjAgMCAzMCAzMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICAgIDxwYXRoIGQ9Ik0xNiAxMHY0aDR2MmgtNHY0aC0ydi00aC00di0yaDR2LTRoMnoiIGZpbGw9IiMzMzMiIGZpbGwtcnVsZT0ibm9uemVybyIvPgo8L3N2Zz4K" alt="">
-                </v-btn>
-              </td>
-              <td>{{ list.quantity }}개</td>
-              <td>
-                <v-btn v-if="list.soldout == '0'" @click="quantityMinus(list)">
-                  <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAiIGhlaWdodD0iMzAiIHZpZXdCb3g9IjAgMCAzMCAzMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICAgIDxwYXRoIGQ9Ik0yMCAxNHYySDEwdi0yeiIgZmlsbD0iIzMzMyIgZmlsbC1ydWxlPSJub256ZXJvIi8+Cjwvc3ZnPgo=" alt="">
-                </v-btn>
-                <v-btn v-else  disabled="list.soldout == '1'" @click="quantityMinus(list)">
-                  <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAiIGhlaWdodD0iMzAiIHZpZXdCb3g9IjAgMCAzMCAzMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICAgIDxwYXRoIGQ9Ik0yMCAxNHYySDEwdi0yeiIgZmlsbD0iIzMzMyIgZmlsbC1ydWxlPSJub256ZXJvIi8+Cjwvc3ZnPgo=" alt="">
-                </v-btn>
-              </td>
-              <td>
-                <ul>
-                  <li>{{ $wonComma(list.discount_price * list.quantity) }} 원</li>
-                  <li v-if="list.discount_price !== list.price" class="discount">{{ $wonComma(list.price * list.quantity) }} 원</li>
-                </ul>
-              </td>
+              </v-btn>
+            </td>
+            <td>{{ list.quantity }}개</td>
+            <td>
+              <v-btn v-if="list.soldout == '0'" @click="quantityMinus(list)">
+                <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAiIGhlaWdodD0iMzAiIHZpZXdCb3g9IjAgMCAzMCAzMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICAgIDxwYXRoIGQ9Ik0yMCAxNHYySDEwdi0yeiIgZmlsbD0iIzMzMyIgZmlsbC1ydWxlPSJub256ZXJvIi8+Cjwvc3ZnPgo=" alt="">
+              </v-btn>
+              <v-btn v-else  disabled="list.soldout == '1'" @click="quantityMinus(list)">
+                <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAiIGhlaWdodD0iMzAiIHZpZXdCb3g9IjAgMCAzMCAzMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICAgIDxwYXRoIGQ9Ik0yMCAxNHYySDEwdi0yeiIgZmlsbD0iIzMzMyIgZmlsbC1ydWxlPSJub256ZXJvIi8+Cjwvc3ZnPgo=" alt="">
+              </v-btn>
+            </td>
+            <td>
+              <ul>
+                <li>{{ $wonComma(list.discount_price * list.quantity) }} 원</li>
+                <li v-if="list.discount_price !== list.price" class="discount">{{ $wonComma(list.price * list.quantity) }} 원</li>
+              </ul>
+            </td>
           </tr>
         </table>
-          <v-btn v-model="check" @click="moveOrderForm" :disabled="box === 0">주문하기</v-btn>
-    </v-main>
-    <v-main v-else>
-          <h1>장바구니</h1>
-          <p>현재 장바구니에 상품이 없습니다.</p>
-        </v-main>
-    </v-container>
+      </v-col>
+      <v-col>
+        <ProdPrice
+        :cartList="cartList"
+        :total="total"
+        :discount="discount"
+        :delivery="delivery"
+        :final="final"/>
+        <v-btn v-model="check" @click="moveOrderForm" :disabled="box === 0" color="primary">주문하기</v-btn>
+      </v-col>
+    </v-row>
+  </v-card>
+<!-- <v-row v-else>
+      <v-col>
+        <h1>장바구니</h1>
+        <p>현재 장바구니에 상품이 없습니다.</p>
+      </v-col>
+  </v-row> -->
+  </v-container>
 </template>
 
 <script>
 import axios from 'axios';
 
+import ProdPrice from '../components/cart/ProdPrice.vue';
+
 export default {
   name : 'cartList',
+  components: {
+    ProdPrice
+  },
   data() {
     return {
       cartList: [],
       Checkbox : 0,
+      total : 0,
+      discount : 0,
+      delivery : 0,
+      final : 0
     }
   },
   created(){
     this.fetchCartList();
   },
+  watch :{
+    cartList(){
+      this.getBill();
+    },    
+  },
   computed :{
     check() { // 장바구니 체크안되면 주문하기버튼 활성화가 안되게 설정
-          let Checkbox = 0;
           for (let i = 0; i < this.cartList.length; i++) {
             if (this.cartList[i].cart_checkbox == 1) {
-              Checkbox = 1;
+              this.Checkbox = 1;
             }
           }
-          this.box = Checkbox;
+          this.box = this.Checkbox;
         }
   },
   // watch : {
@@ -106,26 +138,28 @@ export default {
     
                 axios.put(`/api/CartPlusquantity/${list.prod_no}`)
                                    .catch(err => console.log(err));
+        this.getBill();
         }else{
             alert('현재 남은 수량이 없습니다.');
         }
 
 
     },
-      // 로그인 안되어있으면 로그인 하라고 로그인 폼으로 이동 시킨다.
-      goTologinForm(){
-        alert('로그인 화면으로 이동합니다.')
-        this.$router.push('login')
-      },
-    
     quantityMinus(list) { // 수량 마이너스
         if(list.quantity > 1 ){
           list.quantity--;
 
                 axios.put(`/api/CartMinusquantity/${list.prod_no}`)
                                    .catch(err => console.log(err));
+        this.getBill();
         }
     },
+    // 로그인 안되어있으면 로그인 하라고 로그인 폼으로 이동 시킨다.
+    goTologinForm(){
+        alert('로그인 화면으로 이동합니다.')
+        this.$router.push('login')
+    },
+  
       fetchCartList() {
         axios.get(`/api/cartList`, {
         })
@@ -135,6 +169,32 @@ export default {
         .catch(error => {
           console.error(error);
         });
+      },
+      totalPrice() {
+        this.total = 0;
+          for (let i = 0; i < this.cartList.length; i++) {
+            this.total += (this.cartList[i].price * this.cartList[i].quantity);
+          }
+      },
+      discountPrice() {
+        this.discount = 0;
+          for (let i = 0; i < this.cartList.length; i++) {
+            if (this.cartList[i].discount_price != null) {
+              this.discount += (this.cartList[i].discount_price * this.cartList[i].quantity);
+            }
+          }
+      },
+      deliveryPrice() {
+      this.delivery = this.discount < 40000 ? 3000 : 0;
+      },
+      finalPrice() {
+        this.final = this.discount + this.delivery
+      },
+      getBill(){
+        this.totalPrice();
+        this.discountPrice();
+        this.deliveryPrice();
+        this.finalPrice();
       },
       async updateCheckbox(list) {  // 체크박스 개별 DB에 등록부분
         if(list.cart_checkbox == 1) {
@@ -209,7 +269,7 @@ export default {
           console.log('수량변경완료')
         }else{
           alert('주문서로 이동합니다~')
-          this.$router.replace('/orderForm');
+          this.$router.push('/orderForm');
         }
       }
     },
@@ -218,6 +278,19 @@ export default {
 <style>
 * {
     list-style: none;
+}
+.button-row {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.button-col {
+  display: flex;
+  margin-bottom: 10px;
+}
+
+.right-aligned-button {
+  margin-left: auto;
 }
 .rwd-table {
   margin: auto;
@@ -229,7 +302,7 @@ export default {
   border-top: 1px solid #ddd;
   border-bottom: 1px solid #ddd;
   background-color: #f5f9fc;
-  padding: .5em 3em;
+  padding: .3em 2em
 }
 
 .rwd-table tr:first-child {
@@ -237,19 +310,18 @@ export default {
 }
 
 .rwd-table td:nth-child(1) {
-  width: 15%; 
+  width: 1%; 
 }
-
 .rwd-table td:nth-child(2) {
   width: 20%; 
 }
 
 .rwd-table td:nth-child(3) {
-  width: 20%; 
+  width: 50%; 
 }
 
 .rwd-table td:nth-child(4) {
-  width: 2%; 
+  width: 1%; 
 }
 
 .rwd-table td:nth-child(5) {
@@ -257,7 +329,11 @@ export default {
 }
 
 .rwd-table td:nth-child(6) {
-  width: 2%; 
+  width: 1%; 
+}
+
+.rwd-table td:nth-child(7) {
+  width: 25%; 
 }
 
 .discount {
