@@ -50,8 +50,12 @@
                 <div class="col-12">
                   <label for="stock" class="form-label">상품 이미지 등록</label>
                   <div class="input-group has-validation">
-                    <input type="number" v-model="prod.prod_name" class="form-control" id="stock" placeholder="" required>
+                    <upload @info="info"/><v-btn @click="open==true">사진보기</v-btn>
                   </div>
+                  <v-img v-if="open=true" class="text-white" height="300"
+                    :src="`/api/test/${this.photo.path}`"
+                    style="position: relative;"
+                  >../../../../server/uploads/{{this.photo.filename}}</v-img>
                 </div>
     
                 <div class="col-md-5">
@@ -92,6 +96,7 @@
                 <v-btn @click="saveProd()">저장하기</v-btn>
               </div>
             </div>
+            
     </main>
       </div>
     </div>
@@ -100,6 +105,7 @@
     import axios from 'axios';
     import side from '../admin/SideBar.vue';
     import icon from '../admin/icon.vue';
+    import upload from "@/components/menu/upload.vue";
       export default {
         data(){
           return{
@@ -116,7 +122,9 @@
                 refrigeration : 'g1',
                 discount_rate : '',
               },
-              showIcon : false
+              showIcon : false,
+              photo : [],
+              open : false
           }
         },
         created(){
@@ -188,12 +196,17 @@
             }else{
               alert('등록 실패')
             }
+          },
+          info(data){
+            this.photo = data;
+            console.log('현재 받은 사진 : '+this.photo.path)
           }
         },
         components : {
         side,
-        icon
-        }
+        icon,
+        upload
+        },
     }
     </script>
     <style scoped>

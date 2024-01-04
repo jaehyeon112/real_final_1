@@ -28,11 +28,12 @@ export default {
         .post("/api/photos", formData)
         .then((response) => {
           console.log(response.data);
+          this.$emit('info',response.data)
         })
         .catch((error) => {
           console.error(error);
         });
-    },
+    }
   },
 };
 </script>

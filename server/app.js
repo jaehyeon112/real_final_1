@@ -213,6 +213,7 @@ const upload = multer({
 app.post("/photos", upload.array("photos", 12), (req, res) => {
   for (let file of req.files) {
     console.log(file);
+    res.send(file);
   }
 });
 
@@ -234,6 +235,14 @@ app.get("/test", async (req, res) => {
   const imagePath = "uploads\\1703574590403스페인식_감바스_상세페이지3.jpg";
   const absolutePath = path.join(__dirname, imagePath);
   res.sendFile(absolutePath);
+});
+
+app.get("/test/:imagePath", async (req, res) => {
+  // 여기서 imagePath를 db에 저장하고 불러와야할듯...
+  //const imagePath = "uploads\\1703574590403스페인식_감바스_상세페이지3.jpg";
+  let data = req.params.imagePath;
+  const absolutePath = path.join(__dirname);
+  res.sendFile(absolutePath, data);
 });
 
 app.get("/show", async (req, res) => {
