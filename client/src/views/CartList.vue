@@ -28,14 +28,13 @@
           <table class="rwd-table" :key="idx" v-for="(list, idx) in cartList">
             <tr>
               <td>
-                {{ list.stock }}
-                <v-checkbox v-if="list.soldout == '0' && list.stock > '0'" v-model="list.cart_checkbox" true-value="1" false-value="0" @click="updateCheckbox(list)"></v-checkbox>
-                <v-checkbox v-else disabled label="상품 준비중"></v-checkbox>
+                <v-checkbox v-if="list.soldout == '0'" v-model="list.cart_checkbox" true-value="1" false-value="0" @click="updateCheckbox(list)"></v-checkbox>
+                <v-btn v-else disabled="list.soldout == '1'">품절로 선택불가</v-btn>
               </td>
               <td>이미지</td>
               <td>{{ list.prod_name }}</td>
               <td>
-                <v-btn v-if="list.soldout == '0' && list.stock > '0'"  @click="quantityPlus(list)">
+                <v-btn v-if="list.soldout == '0'" @click="quantityPlus(list)">
                 <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAiIGhlaWdodD0iMzAiIHZpZXdCb3g9IjAgMCAzMCAzMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICAgIDxwYXRoIGQ9Ik0xNiAxMHY0aDR2MmgtNHY0aC0ydi00aC00di0yaDR2LTRoMnoiIGZpbGw9IiMzMzMiIGZpbGwtcnVsZT0ibm9uemVybyIvPgo8L3N2Zz4K" alt="">
                 </v-btn>
                 <v-btn v-else  disabled="list.soldout == '1'" @click="quantityPlus(list)">
@@ -44,7 +43,7 @@
               </td>
               <td>{{ list.quantity }}개</td>
               <td>
-                <v-btn v-if="list.soldout == '0' && list.stock > '0'"  @click="quantityMinus(list)">
+                <v-btn v-if="list.soldout == '0'" @click="quantityMinus(list)">
                   <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAiIGhlaWdodD0iMzAiIHZpZXdCb3g9IjAgMCAzMCAzMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICAgIDxwYXRoIGQ9Ik0yMCAxNHYySDEwdi0yeiIgZmlsbD0iIzMzMyIgZmlsbC1ydWxlPSJub256ZXJvIi8+Cjwvc3ZnPgo=" alt="">
                 </v-btn>
                 <v-btn v-else  disabled="list.soldout == '1'" @click="quantityMinus(list)">
@@ -105,7 +104,7 @@ export default {
         if(list.stock > list.quantity ){
           list.quantity++;
     
-                axios.put(`/api/CartPlusquantity/${list.prod_no}/${this.$store.state.user.user_id}`)
+                axios.put(`/api/CartPlusquantity/${list.prod_no}`)
                                    .catch(err => console.log(err));
         }else{
             alert('현재 남은 수량이 없습니다.');
@@ -123,15 +122,12 @@ export default {
         if(list.quantity > 1 ){
           list.quantity--;
 
-                axios.put(`/api/CartMinusquantity/${list.prod_no}/${this.$store.state.user.user_id}`)
+                axios.put(`/api/CartMinusquantity/${list.prod_no}`)
                                    .catch(err => console.log(err));
         }
     },
       fetchCartList() {
-        for(let i=0; i<this.cartList.length; i++){
-          this.cartList[0].user_id
-        }
-        axios.get(`/api/cartList/${this.cartList[0].user_id}`, {
+        axios.get(`/api/cartList`, {
         })
         .then(response => {
           this.cartList = response.data;
@@ -172,7 +168,7 @@ export default {
             }
           }
 
-           axios.put(`/api/CheckAllUpdate/0/${this.$store.state.user.user_id}`);
+           axios.put(`/api/CheckAllUpdate/0`);
             console.log('전체해제')
         } else { // 전체 선택
           for (let i = 0; i < this.cartList.length; i++) {
@@ -181,7 +177,7 @@ export default {
             }
           }
 
-          axios.put(`/api/CheckAllUpdate/1/${this.$store.state.user.user_id}`);
+          axios.put(`/api/CheckAllUpdate/1`);
           console.log('전체선택')
         }
        // axios.put(`/api/CheckAllUpdate/${this.$store.state.user.user_id}`,this.cartList);

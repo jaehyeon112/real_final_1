@@ -120,7 +120,7 @@ export default {
   },
   methods: {
     async fetchCartCheckList() {
-      await axios.get(`/api/cartCheckList/${this.$store.state.user.user_id}`, {
+      await axios.get(`/api/cartCheckList`, {
       })
       .then(response => {
         this.cartList = response.data;
@@ -130,7 +130,7 @@ export default {
       });
     },
     fetchCouponList() {
-      axios.get(`/api/coupon/${this.$store.state.user.user_id}`, {
+      axios.get(`/api/coupon`, {
       })
       .then(response => {
         this.couponList = response.data;
@@ -140,7 +140,7 @@ export default {
       });
     },
     fetchPointList() {
-      axios.get(`/api/point/${this.$store.state.user.user_id}`, {
+      axios.get(`/api/point`, {
       })
       .then(response => {
         this.pointList = response.data; 

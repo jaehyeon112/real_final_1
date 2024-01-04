@@ -261,7 +261,7 @@ app.put("/CheckboxUpdate/:check/:no", async (request, res) => { // 장바구니 
   res.send(list);
 });
 
-app.put("/CheckAllUpdate/:check", async (request, res) => { // 체크박스 전체선택 업데이트
+app.put("/CheckAllUpdate/:check", async (req, res) => { // 체크박스 전체선택 업데이트
   let data = [request.params.check, req.session.user_id];
   let list = await mysql.query("test", "CheckAllUpdate", data);
   res.send(list);
@@ -280,20 +280,20 @@ app.put("/CheckAllUpdate/:check", async (request, res) => { // 체크박스 전�
 //   res.send(list);
 // });
 
-app.put("/Cartquantity/:pno", async (request, res) => { // 장바구니에 담긴 상품의 재고가 빠져서 장바구니재고수정이필요한경우
-  let data = [request.params.pno, req.session.user_id];
+app.put("/Cartquantity/:pno", async (req, res) => { // 장바구니에 담긴 상품의 재고가 빠져서 장바구니재고수정이필요한경우
+  let data = [req.params.pno, req.session.user_id];
   let list = await mysql.query("test", "Cartquantity", data);
   res.send(list);
 });
 
-app.put("/CartPlusquantity/:pno", async (request, res) => { // 장바구니 수량 플러스
-  let data = [request.params.pno, req.session.user_id];
+app.put("/CartPlusquantity/:pno", async (req, res) => { // 장바구니 수량 플러스
+  let data = [req.params.pno, req.session.user_id];
   let list = await mysql.query("test", "CartPlusquantity", data);
   res.send(list);
 });
 
-app.put("/CartMinusquantity/:pno/:id", async (request, res) => { // 장바구니 수량 플러스
-  let data = [request.params.pno, request.params.id];
+app.put("/CartMinusquantity/:pno", async (req, res) => { // 장바구니 수량 마이너스
+  let data = [req.params.pno, req.session.user_id];
   let list = await mysql.query("test", "CartMinusquantity", data);
   res.send(list);
 });
@@ -306,14 +306,12 @@ app.delete("/CheckboxDelete/:no", async (req, res) => { // 체크된 장바구�
 
 
 app.get("/cartCheckList", async (req, res) => { //주문서의 장바구니체크된거만불러오는 리스트
-  let id = req.session.user_id;
-  let list = await mysql.query("test", "cartCheckList", id);
+  let list = await mysql.query("test", "cartCheckList", req.session.user_id);
   res.send(list);
 });
 
 app.get("/orderList", async (req, res) => { // 주문완료 리스트
-  let id = req.session.user_id;
-  let list = await mysql.query("test", "orderList", id);
+  let list = await mysql.query("test", "orderList", req.session.user_id);
   res.send(list);
 });
 
@@ -332,8 +330,8 @@ app.post("/pointInsert", async (request, res) => { // 포인트 사용내역 등
   res.send((await mysql.query("test", "pointInsert", data)));
 });
 
-app.put("/couponUpdate", async (request, res) => { // 쿠폰 사용시 업데이트
-  let data = [request.body.param, req.session.user_id];
+app.put("/couponUpdate/no", async (req, res) => { // 쿠폰 사용시 업데이트
+  let data = [req.body.param, req.params.no];
   res.send((await mysql.query("test", "couponUpdate", data)));
 });
 
