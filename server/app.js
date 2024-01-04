@@ -930,8 +930,8 @@ app.get('/addDelivery/:id', async (req, res) => {
   const list = await mysql.query('delivery', 'deliveryList', id);
   res.send(list);
 })
-app.get('/deliveryInfo/:id/:dno', async (req, res) => {
-  let datas = [req.params.id, req.params.dno]
+app.get("/deliveryInfo/:id/:dno", async (req, res) => {
+  let datas = [req.params.id, Number(req.params.dno)]
   let result = await mysql.query('delivery', 'deliveryInfo', datas)[0];
   res.send(result)
 })
