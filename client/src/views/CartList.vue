@@ -104,7 +104,7 @@ export default {
         if(list.stock > list.quantity ){
           list.quantity++;
     
-                axios.put(`/api/CartPlusquantity/${list.prod_no}/${this.$store.state.user.user_id}`)
+                axios.put(`/api/CartPlusquantity/${list.prod_no}`)
                                    .catch(err => console.log(err));
         }else{
             alert('현재 남은 수량이 없습니다.');
@@ -122,12 +122,12 @@ export default {
         if(list.quantity > 1 ){
           list.quantity--;
 
-                axios.put(`/api/CartMinusquantity/${list.prod_no}/${this.$store.state.user.user_id}`)
+                axios.put(`/api/CartMinusquantity/${list.prod_no}`)
                                    .catch(err => console.log(err));
         }
     },
       fetchCartList() {
-        axios.get(`/api/cartList/${this.$store.state.user.user_id}`, {
+        axios.get(`/api/cartList`, {
         })
         .then(response => {
           this.cartList = response.data;
@@ -168,7 +168,7 @@ export default {
             }
           }
 
-           axios.put(`/api/CheckAllUpdate/0/${this.$store.state.user.user_id}`);
+           axios.put(`/api/CheckAllUpdate/0`);
             console.log('전체해제')
         } else { // 전체 선택
           for (let i = 0; i < this.cartList.length; i++) {
@@ -177,7 +177,7 @@ export default {
             }
           }
 
-          axios.put(`/api/CheckAllUpdate/1/${this.$store.state.user.user_id}`);
+          axios.put(`/api/CheckAllUpdate/1`);
           console.log('전체선택')
         }
        // axios.put(`/api/CheckAllUpdate/${this.$store.state.user.user_id}`,this.cartList);

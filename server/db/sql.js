@@ -41,9 +41,8 @@ let test = {
   //장바구니 단건
   cartSelect: `select * from cart where prod_no = ? and user_id =?`,
 
-  cartList: `select * from cart where user_id = ?`,
 
-  // 장바구니 체크 리스트 
+  // 장바구니 체크 리스트
   cartCheckList: `select distinct *
               from cart c, product p, user u
               WHERE cart_checkbox = 1 AND c.user_id = u.user_id AND p.prod_no = c.prod_no AND c.user_id = ?
