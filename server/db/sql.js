@@ -117,35 +117,43 @@ let user = {
 }
 
 let admin = {
-  AlluserList: `select user_id,user_name,user_email,user_tel,join_date,user_grade from user order by ??`,
-  userList: `select user_id,user_name,user_email,user_tel,join_date,user_grade from user order by ?? limit ?,?`,
-  proList: `select prod_no,prod_name,price,discount_price,discount_rate,stock,main_category from product`,
-  AllprodList: `select prod_no,prod_name,price,discount_price,discount_rate,stock,main_category from product order by ??`,
-  pricehigh: `select prod_no,prod_name,price,discount_price,discount_rate,stock,main_category from product order by discount_price desc limit ?,?`,
-  prodList: `select prod_no,prod_name,price,discount_price,discount_rate,stock,main_category,registration from product order by ?? limit ?,?`,
-  prodInsert: `insert into product set ?`,
-  prodDelete: `update product set soldout=1 where prod_no=?`,
-  prodInfo: `select prod_no,prod_name,price,discount_price,discount_rate,stock,cooking_time,allergy,
-  main_category,sub_category,refrigeration 
-  from product where prod_no = ?`,
-  productMod: `update product set ? where prod_no = ?`,
+  //기타-통계
   weekIncome: `select sum(total_payment) from orders where order_date BETWEEN DATE_ADD(NOW(), INTERVAL -1 week ) AND NOW()`,
   monthsIncome: `select month(order_date) as month,sum(total_payment) as sum from orders group by month order by month;`,
+  //회원관리
+  AlluserList: `select user_id,user_name,user_email,user_tel,join_date,user_grade from user where not user_grade in('i4','i5')`,
+  userList: `select user_id,user_name,user_email,user_tel,join_date,user_grade from user where not user_grade in('i4','i5') order by ?? desc limit ?,?`,
   stopUser: `update user set user_grade = ? where user_id = ?`,
   searchUser: `select user_id,user_name,user_email,user_tel,join_date,user_grade from user
-  where user_id like concat(concat('%',?),'%') or user_name like concat(concat('%',?),'%') or join_date like concat(concat('%',?),'%') order by ?? limit ?,?`,
-  searchProd: `select prod_no,prod_name,price,discount_price,discount_rate,stock,main_category from product where prod_name like concat(concat('%',?),'%') order by ?? limit ?,?`,
-  AllOrderList: `select * from orders order by order_date desc`,
-  orderList: `select * from orders order by order_date desc limit ?,?`,
-  AllreviewReportList: `select *,(select report_cnt from review where review_no=review_report.review_no) as cnt from review_report order by report_date desc`,
-  reviewReportList: `select *,(select report_cnt from review where review_no=review_report.review_no) as cnt from review_report order by report_date desc limit ?,?`,
-  reasonReportList: `select *,(select report_cnt from review where review_no=review_report.review_no) as cnt from review_report 
+  where user_id like concat(concat('%',?),'%') or user_name like concat(concat('%',?),'%') order by ?? limit ?,?`,
+  filterUser : `select user_id,user_name,user_email,user_tel,join_date,user_grade from user where join_date like concat(concat('%',?),'%') order by ?? limit ?,?`,
+  //상품관리
+  AllprodList: `select prod_no,prod_name,price,discount_price,discount_rate,stock,main_category from product`,
+  prodList: `select prod_no,prod_name,price,discount_price,discount_rate,stock,main_category,registration from product order by ?? limit ?,?`,
+  pricehigh: `select prod_no,prod_name,price,discount_price,discount_rate,stock,main_category from product order by discount_price desc limit ?,?`,
+  prodInsert: `insert into product set ?`,
+  prodDelete: `update product set soldout=1 where prod_no=?`,
+  prodInfo: `select prod_no,prod_name,price,discount_price,discount_rate,stock,cooking_time,allergy,main_category,sub_category,refrigeration from product where prod_no = ?`,
+  productMod: `update product set ? where prod_no = ?`,
+  searchProd : `select prod_no,prod_name,price,discount_price,discount_rate,stock,main_category from product where prod_name like concat(concat('%',?),'%') or main_category = ? order by ?? limit ?,?`,
+  //주문관리
+  AllOrderList : `select * from orders order by order_date desc`,
+  orderList : `select * from orders order by order_date desc limit ?,?`,
+  orderDate : `select * from orders where order_date between ? and ? order by order_date desc limit ?,?`,
+  updateOrder : `update orders set order_status = ? where order_no= ?`,
+  orderStatus : `select * from orders where order_status = ? order by order_date desc limit ?,?`,
+  oneOrder : `select * from orders where order_no = ?`,
+  insertDelivery : `insert into delivery set order_no=(select order_no from orders where order_no=?),tracking_no = ?,
+  user_id=(select user_id from orders where order_no=?),delivery_request=(select delivery_request from orders where order_no=?),released_date=current_date(),delivery_status='d4'`,
+  //배송관리
+  AllreviewReportList : `select *,(select report_cnt from review where review_no=review_report.review_no) as cnt from review_report order by report_date desc`,
+  reviewReportList : `select *,(select report_cnt from review where review_no=review_report.review_no) as cnt from review_report order by report_date desc limit ?,?`,
+  reasonReportList : `select *,(select report_cnt from review where review_no=review_report.review_no) as cnt from review_report 
   where report_status=? order by report_date desc  limit ?,?`,
-  inquireList: `select * from inquire order by create_date desc`,
-  orderDate: `select * from orders where order_date between ? and ? order by order_date desc limit ?,?`,
-  updateOrder: `update orders set order_status = ? where order_no= ?`,
-  orderStatus: `select * from orders where order_status = ? order by order_date desc limit ?,?`,
-  reviewList: `select prod_name,order_detail_no,user_id,review_title,review_content,review_writedate,review_grade,like_cnt from order_detail o,product p,review r 
+  AllinquireList : `select * from inquire order by create_date desc`,
+  inquireList : `select * from inquire order by create_date desc limit ?,?`,
+  StateinquireList : ` select * from inquire where (inquire_category= ? or answer_state=?) or (inquire_category= ? and answer_state=?) order by create_date desc limit ?,?`,
+  reviewList : `select prod_name,order_detail_no,user_id,review_title,review_content,review_writedate,review_grade,like_cnt from order_detail o,product p,review r 
   where o.prod_no=p.prod_no and o.order_detail_no=r.detail_order_no order by ?? desc`,
   refundOrder: `update orders set order_status = 'c4' where order_no = ?`,
   adminRefund: `insert into refund_cancel set order_no=?,user_id=(select user_id from orders where order_no=refund_cancel.order_no),
