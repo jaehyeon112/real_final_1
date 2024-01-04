@@ -176,9 +176,7 @@ export default {
       if(this.$store.state.user.user_id == null){
         this.$router.push("/join")
       }else{
-        
         this.logout();
-        
       }
 
 

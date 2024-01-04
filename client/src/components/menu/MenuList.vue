@@ -25,7 +25,7 @@
         <v-dialog transition="dialog-top-transition" width="auto">
           <template  v-slot:activator="{ props }">
             <!--여기를 장바구니 버튼으로~-->
-            <div style="position:absolute; top:100px; left:200px"><v-btn @click="quantity=1"  icon="mdi mdi-cart" variant="tonal"  v-on:click.prevent v-bind="props"> </v-btn></div>
+            <div style="position:absolute; top:100px; left:200px"><v-btn @click="quantity=1"  icon="mdi mdi-cart" variant="tonal"  @click.prevent="getUserCartInfo" v-bind="props"> </v-btn></div>
           </template>
           <template v-slot:default="{ isActive }">
             <v-card height="300" width="450">
@@ -59,7 +59,7 @@
                     >
                   </v-col>
                   <v-col @click="isActive.value=false">
-                    <v-btn width="150" height="40" style="border:1px solid gray; color:white; background-color: black;" @click="goToCart(prodList.prod_no)"
+                    <v-btn width="150" height="40" style="border:1px solid gray; color:white; background-color: black;" @click.prevent="goToCart(prodList.prod_no)"
                       >장바구니</v-btn
                     >
                   </v-col>
@@ -95,21 +95,29 @@
 </template>
 
 <script>
+import axios from "axios";
 export default {
   data() {
     return {
       isSoldOut: false,
       isStock: false,
-      quantity : 1
+      quantity : 1,
+      cartList : ''
     };
   },
   props: ["prodList"],
   created(){
     this.soldout();
+    
   }
   ,
 
   methods: {
+    async getUserCartInfo(){
+      this.cartList =  (await axios.get(`/api/cartSelect/${this.prodList.prod_no}/${this.$store.state.user.user_id}`).catch(err=>console.log(err))).data // 유저의 장바구니 카트
+      console.log(this.cartList)
+    }
+    ,
     soldout() {
       if (this.prodList.soldout == 1) {
         this.isSoldOut = true;
@@ -123,38 +131,89 @@ export default {
         this.quantity--;
       }
     },
-    increaseQuantity(no) {
-      let cartQuantity = 0;
-      for(let i = 0 ; i< this.$store.state.cart.length ; i++){
-        if(no == this.$store.state.cart[i].prod_no){
-          cartQuantity = this.$store.state.cart[i].quantity;
-        }
-      }
 
+    async increaseQuantity(no) {
+      let cartQuantity = 0;
+
+      if(this.$store.state.user.user_id != null){ //로그인 했다
+       
+
+        if(this.cartList.length == 0 && this.prodList.stock > this.quantity){
+          this.quantity++;
+          return;
+        }else if(this.prodList.stock > this.cartList.quantity + this.quantity) {
+          this.quantity++;
+          }else{
+            alert('보유 재고를 초과하였습니다.')  
+          }
+
+    }else{
+        for(let i = 0 ; i< this.$store.state.cart.length ; i++){
+          if(no == this.$store.state.cart[i].prod_no){
+            cartQuantity = this.$store.state.cart[i].quantity;
+          }
+        }
+        
       if(this.prodList.stock > this.quantity+cartQuantity) {
       this.quantity++;
-      }else{
-        alert('보유 재고를 초과하였습니다.')
-      }
-    },
-    goToCart(no){
-      let cartQuantity = 0;
-      for(let i = 0 ; i< this.$store.state.cart.length ; i++){
-        if(no == this.$store.state.cart[i].prod_no){
-          cartQuantity = this.$store.state.cart[i].quantity;
-        }
-      }
+    }else{
+      alert('보유 재고를 초과하였습니다.')
+    }
+  }
+  },
 
-      if(this.prodList.stock >= this.quantity+cartQuantity) {
-        alert("장바구니에 등록되었습니다.")
+
+    async goToCart(no){
+      let cartQuantity = 0;
+      if(this.$store.state.user.user_id == null){ //비회원일때
+        for(let i = 0 ; i< this.$store.state.cart.length ; i++){
+          if(no == this.$store.state.cart[i].prod_no){
+            cartQuantity = this.$store.state.cart[i].quantity;
+          }
+        }
+        
+        if(this.prodList.stock >= this.quantity+cartQuantity) {
+          alert("장바구니에 등록되었습니다.")
       let items = this.prodList;
       items.quantity = this.quantity;
       this.$store.commit('addCart',items)
-      }else{
-        alert('보유 재고를 초과하여 장바구니에 넣을 수 없습니다.')
-      }
-
-
+    }else{
+      alert('보유 재고를 초과하여 장바구니에 넣을 수 없습니다.')
+    }
+  }else{ // 회원으로 로그인 이후
+    if(this.cartList.length != 0){ //해당 상품이 있다면
+      if(this.prodList.stock >= this.quantity+cartQuantity){
+            let obj = {
+              param: {
+                quantity : this.cartList.quantity + this.quantity,
+                user_id : this.$store.state.user_user_id
+              }
+            }
+            await axios.put(`/api/cartAfterLogin/${this.prodList.prod_no}`, obj)
+            alert('장바구니에 추가적으로 등록되었습니다.')
+            return
+          }else{
+            alert('보유 재고를 초과하여 장바구니에 넣을 수 없습니다.')
+            return
+          }
+      }else{ // 해당상품이 회원의 장바구니에 없다면?
+            let obj = {
+                param : {
+                  prod_no : this.prodList.prod_no,
+                  user_id : this.$store.state.user.user_id,
+                  quantity : this.quantity
+                }
+              }
+    if(this.prodList.stock >= this.quantity+cartQuantity) {
+          await axios.post('/api/cartAfterLogin/',obj).catch(err=>console.log('로그인 이후 카트에 담길때 에러' + err))
+          alert("장바구니에 등록되었습니다.")
+      //장바구니 추가
+    }else{
+      alert('보유 재고를 초과하여 장바구니에 넣을 수 없습니다.')
+    }
+  }
+}
+    
 
      
     }

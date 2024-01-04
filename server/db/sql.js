@@ -38,6 +38,9 @@ let test = {
   cartAfterLogin: `insert into cart set ?`,
   //로그인 전 비회원 장바구니와 로그인 장바구니를 똑같은거 있으믄 비교해서 수량 업데이트
   cartUpdate: `update cart set ? where prod_no = ?;`,
+  //장바구니 단건
+  cartSelect: `select * from cart where prod_no = ? and user_id =?`,
+
 
 
   // 장바구니 체크 리스트 

@@ -12,7 +12,6 @@ const store = createStore({
       cart: [],
       user: {},
       orderNo: 0,
-      user: {},
       searchList: []
     }
   },

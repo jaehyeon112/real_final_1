@@ -9,12 +9,25 @@ const fs = require("fs");
 const multer = require("multer");
 const path = require("path");
 const server = require('http').createServer(app);
-const cors = require('cors');
+const session = require('express-session');
 const io = require('socket.io')(server, {
   cors: {
     origin: "http://localhost:8080",
   }
 });
+
+app.use(session({
+  secret: 'what', // 암호화하는 데 쓰일 키
+  resave: false, // 세션을 언제나 저장할지 설정함
+  saveUninitialized: true, // 세션에 저장할 내역이 없더라도 처음부터 세션을 생성할지 설정
+  cookie: { //세션 쿠키 설정 (세션 관리 시 클라이언트에 보내는 쿠키)
+    httpOnly: true, // 자바스크립트를 통해 세션 쿠키를 사용할 수 없도록 함
+    Secure: true
+  },
+  name: 'session-cookie' // 세션 쿠키명 디폴트값은 connect.sid이지만 다른 이름을 줄수도 있다.
+}));
+
+
 app.use(express.json());
 require('dotenv').config();
 const {
@@ -72,14 +85,16 @@ server.listen(3000, () => {
   console.log('app대신 socket.io서버 on~~');
 });
 
+// 이메일 인증하기 버튼을 눌렀을때 이걸 axios실행시킨다.
+// 그 밑에 인풋ㅎ태그가 보이면서 시간초 5분 준다. ==> 
+
 app.post('/send-email', async (req, res) => {
   try {
     const {
-      to,
-      subject,
-      body
+      to, // 인풋태그에 있는 이메일값
+      subject, // 1조 이메일 인증입니다.
+      body // 글~~~ 이메일 인증 번호는 : 난수값 == 뷰에서 저장을 일단 해놈
     } = req.body;
-    console.log(to + subject + body + 'asdfasfdasfdasfd');
     const result = await sendEmail(to, subject, body);
     res.status(200).send(result);
   } catch (error) {
@@ -837,5 +852,11 @@ app.post("/cartAfterLogin", async (req, res) => {
 app.put(`/cartAfterLogin/:no`, async (req, res) => {
   let data = [req.body.param, req.params.no];
   let list = await mysql.query('test', 'cartUpdate', data)
+  res.send(list)
+})
+
+app.get(`/cartSelect/:no/:id`, async (req, res) => {
+  let data = [Number(req.params.no), req.params.id];
+  let list = await mysql.query('test', 'cartSelect', data)
   res.send(list)
 })
