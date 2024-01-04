@@ -20,7 +20,7 @@
         <p>상품 이미지 <span>이미지 들어가야함</span></p>
         <div v-if="orderList.length > 0">
             <p>상품 명 
-            <span>{{ prodname }}</span>
+            <span>{{ prodName }}</span>
             </p>
             <p style="text-align:right">총 결제 가격 
             <span style="font-size:25px; font-weight:bold; color:red;">{{ $wonComma(orderList[0].real_payment) }}원</span>
@@ -33,7 +33,8 @@ export default {
 	name: 'OrderProdInfo',
     data(){
         return {
-            prodname : '' // 상품 갯수에따라 이름 넣을려고 만듬
+            name : '',
+            prodName : '' // 상품 갯수에따라 이름 넣을려고 만듬
         }
     },
     props: {
@@ -51,16 +52,14 @@ export default {
     },
     methods : {
         getOrderList(){
-            let name = ''
             for(let i=0; i<this.orderList.length; i++){
-                name = this.orderList[0].prod_name
-                console.log(name,'확인')
+                this.prodName = this.orderList[0].prod_name;
             }
-                if(this.orderList.length <= 2){
-                    this.prodname = name + '외 ' + (this.orderList.length - 1) + '건';
+                if(this.orderList.length > 1){
+                    this.prodName = this.prodName + '외 ' + (this.orderList.length - 1) + '건';
                 }else{
-                    this.prodname = name;
-                }
+                    this.prodName = this.prodName
+            }
         }
     }
 

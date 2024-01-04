@@ -4,7 +4,8 @@
     <p>로그인 후 이용해주세요</p>
   </v-container>
   <v-container v-else>
-        <v-main>
+        <v-main v-if="this.cartList.length > 0">
+            <h1>장바구니</h1>
             <v-btn @click="selectAll">전체선택</v-btn>
             <v-btn @click="deleteSelected">선택삭제</v-btn>
           <table class="rwd-table" :key="idx" v-for="(list, idx) in cartList">
@@ -42,6 +43,10 @@
         </table>
           <v-btn v-model="check" @click="moveOrderForm" :disabled="box === 0">주문하기</v-btn>
     </v-main>
+    <v-main v-else>
+          <h1>장바구니</h1>
+          <p>현재 장바구니에 상품이 없습니다.</p>
+        </v-main>
     </v-container>
 </template>
 
@@ -137,21 +142,22 @@ export default {
           for (let i = 0; i < this.cartList.length; i++) {
             if (this.cartList[i].cart_checkbox === "1") {
               this.cartList[i].cart_checkbox = "0";
-              let result = axios.put(`/api/CheckAllUpdate/0/${this.$store.state.user.user_id}`);
-                
-
             }
           }
+
+           axios.put(`/api/CheckAllUpdate/0/${this.$store.state.user.user_id}`);
+            console.log('전체해제')
         } else { // 전체 선택
           for (let i = 0; i < this.cartList.length; i++) {
             if (this.cartList[i].cart_checkbox === "0") {
-              this.cartList[i].cart_checkbox = "1";
-              let result = axios.put(`/api/CheckAllUpdate/1/${this.$store.state.user.user_id}`,1);
-                
-
+              this.cartList[i].cart_checkbox = "1";                
             }
           }
+
+          axios.put(`/api/CheckAllUpdate/1/${this.$store.state.user.user_id}`);
+          console.log('전체선택')
         }
+       // axios.put(`/api/CheckAllUpdate/${this.$store.state.user.user_id}`,this.cartList);
 },
     deleteSelected() { 
         for(let i=0; i<this.cartList.length; i++) {
@@ -164,9 +170,25 @@ export default {
         }
       },
     moveOrderForm(){
-      alert('주문서로 이동합니다~')
-      this.$router.replace('/orderForm');
-    },
+      this.prodStock = 0;
+      this.cartQuantity = 0;
+      this.cartNo = 0;
+      for(let i=0; i<this.cartList.length; i++) {
+        this.prodStock = this.cartList[i].stock
+        this.cartQuantity = this.cartList[i].quantity
+        this.cartNo = this.cartList[i].cart_no
+      }
+        if(this.prodStock < this.cartQuantity) {
+          alert('재고가 부족한 상품이 있어 상품 수량이 변경됩니다.')
+                    axios.put(`/api/Cartquantity/${this.prodStock}/${this.cartNo}`)
+                                      .catch(err => console.log(err));
+
+          console.log('수량변경완료')
+        }else{
+          alert('주문서로 이동합니다~')
+          this.$router.replace('/orderForm');
+        }
+      }
     },
   }
 </script>

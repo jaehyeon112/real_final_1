@@ -40,10 +40,13 @@ let test = {
               order by cart_no`,
   CheckboxUpdate: `UPDATE cart set cart_checkbox = ? WHERE cart_no = ?`,
   CheckAllUpdate: `UPDATE cart set cart_checkbox = ? WHERE user_id = ?`,
+  Cartquantity: `UPDATE cart set quantity = ? WHERE cart_no = ?`,
+  // 장바구니 상품 수량 증가
   CartPlusquantity: `UPDATE cart
                  SET quantity = quantity + 1
                  WHERE prod_no = ?  
                  AND user_id = ?`,
+  // 장바구니 상품 수량 감소
   CartMinusquantity: `UPDATE cart
                  SET quantity = quantity - 1
                  WHERE prod_no = ?  
@@ -64,6 +67,8 @@ let test = {
   orderdetailInsert: `insert into order_detail set?`,
   // 주문서에서 쿠폰사용해서 결제완료했을경우 쿠폰업데이트
   couponUpdate : `update coupon set ? where coupon_no = ?`,
+  // 결제완료한경우 상품의 재고 업데이트
+  StockUpdate : `update product set ? where prod_no =  ?`,
   // 포인트를 사용한 경우에만 포인트 테이블 적용
   pointInsert : `insert into point set ?`,
   // 포인트를 사용했을때 유저테이블에 포인트를 업데이트

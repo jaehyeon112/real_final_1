@@ -42,7 +42,6 @@ export default{
             })
             .then(response => {
                 this.orderList = response.data;
-                console.log(this.orderList[0].real_payment,'테스트')
             })
             .catch(error => {
                 console.error(error);
