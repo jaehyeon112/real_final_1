@@ -11,8 +11,8 @@ const store = createStore({
       cartCount: 0,
       cart: [],
       user: {},
-      orderNo: 0,
-      searchList: []
+      searchList: [],
+      orderNo: 0
     }
   },
   getters: {
