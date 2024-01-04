@@ -71,9 +71,15 @@ export default{
             //함수 생각해보자
         //}
 
-        goToUpdate(){
-          this.$router.push(`/join/${this.$store.state.user.user_id}`);
-        }
+        goToUpdate() {
+      if (this.$store.state.user.user_id) {
+        // 로그인된 아이디가 있으면 회원 정보 수정 페이지로 이동
+        this.$router.push({ name: 'join', params: { id: this.$store.state.user.user_id } });
+      } else {
+        // 로그인된 아이디가 없으면 회원 가입 페이지로 이동
+        this.$router.push('/join');
+      }
+}
     },
     created(){
         //this.resize()

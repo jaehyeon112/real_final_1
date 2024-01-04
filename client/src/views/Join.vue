@@ -56,7 +56,7 @@
     <option>daum.net</option> 
   </select>
   <input v-if="userInfo.email_domain === '직접입력'" type="text" class="input" v-model="userInfo.direct_input_domain" placeholder="도메인 직접 입력">
-  <v-btn type="button" @click="checkEmail"> 이메일 중복확인</v-btn>
+  <v-btn type="button" @click="checkEmail(userInfo.user_email)"> 이메일 중복확인</v-btn>
   <v-btn type="button" @click="sendVerificationEmail"> 이메일 인증 메일 전송</v-btn>
 </div>
 
@@ -118,12 +118,12 @@
 
 
         <div class="group">
-          <input id="check1" type="checkbox" class="check"   v-model="userInfo.ch1">
+          <input id="check1" type="checkbox" class="check"   v-model="userInfo.ch1"  @change="updateCheck">
           <label for="check1"><span class="icon"></span> 약관1</label>
         </div>
 
         <div class="group">
-          <input id="check2" type="checkbox" class="check"   v-model="userInfo.ch2">
+          <input id="check2" type="checkbox" class="check"   v-model="userInfo.ch2"  @change="updateCheck">
           <label for="check2"><span class="icon"></span> 약관2</label>
         </div>
 
@@ -194,7 +194,7 @@ export default {
      // 주소 지번 선택 플래그
      isJibunAddressSelected: false, 
 
-
+    //oneUserId : '' // 로그인된 회원의 아이디로 그 정보 불러와야함.
   }
 
   }, 
@@ -214,7 +214,11 @@ computed: {
  
 },
   created() {
-
+    //로그인되어있으면 회원수정으로! 
+    if(this.$store.state.user.user_id){
+      this.$router.push({ name: 'join', params: { id: this.$store.state.user.user_id } });
+      //this.oneUserId = this.$route.query.id;  
+    }
 
 
   }, //created
@@ -237,8 +241,20 @@ computed: {
 
 
   methods: {
+    updateCheck(){
+      this.userInfo.allCh = this.userInfo.ch1 && this.userInfo.ch2;
+    },
+
     //아이디 중복체크: db에 아이디 있으면 중복되는 아이디 있다고 메세지 띄우기! 
     async checkId(id){
+      
+
+     if(!this.userInfo.user_id.trim()){
+      console.log(id);
+      alert(`아이디를 입력해주세요`);
+       this.validId = false;
+     } 
+
 
       let result = await axios.get(`/api/join-id/${id}`)
                   .catch(err => console.log(err));
@@ -250,13 +266,10 @@ computed: {
 
 
       // 아이디 공백 입력시 경고창
-    if(id == ""){
-      console.log(id);
-      alert(`아이디를 입력해주세요`);
-       this.validId = false;
+   
     
     // 아이디가 대소문자 영어와 숫자로 6글자 이상 12자 이하로 이루어지지 않았을 경우 경고창
-    } else if(!this.validation(id)){
+   if(!this.validation(id)){
       alert(`아이디는 영문 대소문자와 숫자로 6글자 이상 12자 이하로 구성해주세요`);
        this.validId = false;
     // } else if(list.includes(id)){
@@ -325,18 +338,22 @@ passwordValid() {
 
 
     async checkEmail(email){
+
+      if(!this.userInfo.user_email.trim()){
+        alert(`이메일을 입력해주세요`);
+        return;
+      }
+
       let result = await axios.get(`/api/join-email/${email}`)
                   .catch(err => console.log(err));
                   console.log("result.data", result.data)
       let list = result.data;
       console.log(list);
 
-      if(email == ''){
-        alert(`이메일을 입력해주세요`);
-      } else if(list.length == 1){
+       if(list.length == 1){
         alert(`중복된 이메일 입니다.`);
       }else{ alert(`사용가능한 이메일입니다.`)};
-    },
+      },
 
     //이메일 인증
     async sendVerificationEmail(){
@@ -378,6 +395,11 @@ passwordValid() {
 
 //휴대폰인증
   async sendVerificationPhone(){
+
+  if (!this.userInfo.user_tel) {
+    alert('휴대폰 번호를 입력해주세요.');
+    return;
+  }
 
   let phoneNum = JSON.stringify(Math.ceil((Math.random()*10000)+1))
   this.phoneNo = phoneNum;

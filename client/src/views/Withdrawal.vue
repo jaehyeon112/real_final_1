@@ -70,7 +70,12 @@ import axios from 'axios'
         if(!this.checkbox ){
            alert('체크박스동의해주세요.');
         }else{
-          
+          if(this.raios === 4 && !this.textarea){
+            alert(`기타사유를 입력해주세요`)
+            return;
+          }
+
+
           let uid = this.$store.state.user.user_id ;
 
           if(confirm('탈퇴 시 30일 간 재가입이 불가능합니다. 정말 탈퇴하시겠습니까?')){
@@ -82,7 +87,8 @@ import axios from 'axios'
                   param : {
               
                       "user_id" : this.$store.state.user.user_id,
-                      "withdrawal_reason" : this.radios
+                      "withdrawal_reason" : this.radios,
+                      "withdrawal_reaon_detail" : this.textarea // **이부분 추가하기! 
                     }
           } //data
 
@@ -99,31 +105,7 @@ import axios from 'axios'
                 return;
           }
           
-          // console.log(uid);
-
-          // let resultt = await axios.put(`/api/updateoutuser/${uid}`)
-          //                     .catch(err => console.log(err));
-          //       console.log(result);
-          
-          // let dataa = {
-          //   param : {
-              
-          //     "user_id" : this.$store.state.user.user_id,
-          //     "withdrawal_reason" : this.radios
-          //   }
-          // } //data
-
-          // let result3 = await axios.post(`/api/insertwithdrawal`, data);
-          //     if(result2.data.affectedRows > 0 ){
-          //       alert('탈퇴 성공');
-          //       // +로그아웃처리하기
-          //       this.$store.commit('logout');
-          //       this.$router.push({name : 'realmain'});
-          //       return;
-          //     }else{
-          //       alert('탈퇴 실패');
-          //       return;
-          //   }
+        
 
          }
       }
