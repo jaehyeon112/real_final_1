@@ -31,15 +31,57 @@
             <input v-model='word'  @keyup.enter="search" type="search" placeholder="Search..." />
         </div>
         <div class="col-1" style="width: 45px; padding-top: 15px">
-          <router-link to="/">
             <!-- 알람 갯수 조절해야함 -->
-            <v-badge color="error" content='0'>
+            <v-menu>
+      <template v-slot:activator="{ props }">
+        <span
+          v-bind="props"
+        >
+        <v-badge color="error" content='0'>
               <span class="mdi mdi-bell-outline" style="font-size: 30px"></span>
             </v-badge>
-          </router-link>
-        </div>
+        </span>
+      </template>
+      <v-list 
+      style="padding:20px"
+      width="450"
+      height="600">
+      <v-row justify="end" style="margin-right: 30px; height: 50px;">
+        <router-link to="/"><span class="text-style" style="margin-right: 20px;">알람페이지로</span></router-link>
+      </v-row>
+        <v-row>
+          <v-col cols="3" >
+              <v-list-item-title style="font-size: 12px;">알람종류 </v-list-item-title>
+            </v-col>
+            <v-col cols="5">
+              <v-list-item-title style="font-size: 12px;">알람내용</v-list-item-title>
+            </v-col>
+            <v-col cols="3">
+              <v-list-item-title style="font-size: 12px;">상태</v-list-item-title>
+            </v-col>
+          </v-row>
+        <v-list-item
+          v-for="(item, index) in items"
+          :key="index"
+          :value="index"
+          >
+          <v-row>
+            <v-col cols="3">
+              <v-list-item-title style="font-size: 12px;">{{ item.title }}</v-list-item-title>
+            </v-col>
+            <v-col cols="5">
+              <v-list-item-title style="font-size: 12px;">{{ item.title }}</v-list-item-title>
+            </v-col >
+            <v-col cols="3">
+              <v-list-item-title style="font-size: 12px;">{{ item.title }}</v-list-item-title>
+            </v-col>
+          </v-row>
+        </v-list-item>
+      </v-list>
+    </v-menu>    
+          </div>
         <div class="col-1" style="padding-top: 15px">
-          <span @click="what">
+          <span @click="moveCartList">
             
             <!-- 장바구니 갯수 조절해야함 -->
             <v-badge color="error" :content='$store.state.cart.length'>
@@ -81,7 +123,7 @@
           <router-link class="nav-custom" to="/">리뷰</router-link>
         </div>
         <div class="col">
-          <router-link class="nav-custom" to="/">마이페이지</router-link>
+          <router-link class="nav-link" to="/myPage">마이페이지</router-link>
         </div>
         <div class="col"></div>
       </div>
@@ -98,7 +140,13 @@ export default {
     return {
       lnbOffsetTop: 0,
       isLnbFixed: false,
-      word : ''
+      word : '',
+      items: [
+        { title: 'Click Me' },
+        { title: 'Click Me' },
+        { title: 'Click Me' },
+        { title: 'Click Me 2' },
+      ],
     };
   },
   mounted() {
@@ -132,9 +180,7 @@ export default {
       if(this.$store.state.user.user_id == null){
         this.$router.push("/join")
       }else{
-        
         this.logout();
-        
       }
 
 
@@ -169,11 +215,19 @@ withdrawal(){
         this.isLnbFixed = false;
       }
     },
+    moveCartList(){ // 장바구니 이동
+      this.$router.push('/cartList');
+    }
   },
 };
 </script>
 
 <style scoped>
+
+.text-style {
+  font-size: 12px;
+  color:gray
+}
 .login {
   color: #bbb;
   font-size: 12px;

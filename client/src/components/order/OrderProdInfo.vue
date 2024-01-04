@@ -1,72 +1,49 @@
 <template>
     <v-container>
-      <h1>주문 상품</h1>
+        <v-row justify="center">
+            <v-col style="text-align:center">
+                <p> 1조 짱 을 이용해주셔서 감사합니다.</p>
+                <div class="h">
+                    <p style="font-size:25px; font-weight:bold">고객님, <span style="color:red;">주문이 완료</span>되었습니다.</p>
+                </div>
+                <p>{{ this.$store.state.user.user_name }} 님이 주문하신<br>
+                    주문번호는<span style="color:red; font-size:25px;">  {{ $store.state.orderNo }}  </span>입니다. </p>
+                <br>
+                <p style="font-size:25px; font-weight:bold">주문 내역 확인은 배송/마이페이지의<br>
+                "주문/배송조회" 에서 확인하실수 있습니다.</p>
+                <h1 style="text-align:left">주문정보</h1>
+            </v-col>
+            
+        </v-row>
       <hr>
-      <table class="rwd-table" :key="idx" v-for="(list, idx) in cartList">
+      <table class="rwd-table" :key="idx" v-for="(list, idx) in orderList">
         <tr>
-          <td>이미지</td>
+          <td>상품 이미지</td>
           <td>{{ list.prod_name }}</td>
           <td>{{ list.quantity }} 개</td>
           <td>
             <ul>
-              <li >{{ list.discount_price * list.quantity }} 원</li>
-              <li v-if="list.discount_price !== list.price" class="discount">{{ list.price * list.quantity }} 원</li>
+              <li >{{ $wonComma(list.discount_price * list.quantity) }} 원</li>
+              <li v-if="list.discount_price !== list.price" class="discount">{{ $wonComma(list.price * list.quantity) }} 원</li>
             </ul>
           </td>
         </tr>
       </table>
     </v-container>
-  </template>
+</template>
 <script>
 export default {
 	name: 'OrderProdInfo',
     props: {
-        cartList: {
+        orderList: {
             type: Array,
         }
     }
 };
-
 </script>
 <style scoped>
-* {
-    list-style: none;
-}
-.rwd-table {
-  margin: auto;
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.rwd-table td {
-  border-top: 1px solid #ddd;
-  border-bottom: 1px solid #ddd;
-  background-color: #f5f9fc;
-  padding: .5em 3em;
-}
-
-.rwd-table td:nth-child(1) {
-  width: 10%; 
-}
-
-.rwd-table td:nth-child(2) {
-  width: 40%; 
-}
-
-.rwd-table td:nth-child(3) {
-  width: 5%; 
-}
-
-.rwd-table td:nth-child(4) {
-  width: 10%; 
-}
-.discount {
-    display: block;
-    line-height: 24px;
-    color: rgb(181, 181, 181);
-    word-break: break-all;
-    text-decoration: line-through;
-    font-size: 14px;
-    padding-left: 8px;
-}
+    .h{
+        background-color:lightgreen;
+    }
+    
 </style>

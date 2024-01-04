@@ -5,28 +5,31 @@
       <v-col cols="8">
         <h1 style="text-align: center;">주문서</h1>
         <v-card>
-          <OrderProdInfo
+          <CartProdInfo
           :cartList="cartList"/>
-          <OrderUserInfo/>
-          <OrderAddrInfo
-          @getAddress="GetAddress"/>
-          <OrderPointInfo
+          <CartUserInfo/>
+          <CartAddrInfo
+          @getAddress="GetAddress"
+          @getdelivery="getdelivery"/>
+          <CartPointInfo
           :cartList="cartList"
           :couponList="couponList"
+          @couponNo="couponNo"
           @discountRate="discountRate"
           @inputValue="inputValue"
           :pointList="pointList"
           :delivery="delivery"
           :discount="discount"
           :coupon="coupon"/>
-          <OrderPayment
+          <CartPayment
           @selectedPayMethod="selectedPayMethod"
           :cartList="cartList"
           :final="final"/>
         </v-card>
       </v-col>
       <v-col>
-        <OrderPrice
+        <CartPrice
+        style="position: sticky; top:100px;"
         :cartList="cartList"
         :pointInput="pointInput"
         :couponRate="couponRate"
@@ -38,30 +41,28 @@
         :final="final"/>
       </v-col>
     </v-row>
-    {{ savePointprice }}
-    <v-btn @click="cancelPay">환불하기</v-btn>
     </v-container>
 </template>
 <script>
 import axios from 'axios';
 
-import OrderProdInfo from '../components/order/OrderProdInfo.vue';
-import OrderUserInfo from '../components/order/OrderUserInfo.vue';
-import OrderAddrInfo from '../components/order/OrderAddrInfo.vue';
-import OrderPointInfo from '../components/order/OrderPointInfo.vue';
-import OrderPayment from '../components/order/OrderPayment.vue';
-import OrderPrice from '../components/order/OrderPrice.vue';
+import CartProdInfo from '../components/cart/CartProdInfo.vue';
+import CartUserInfo from '../components/cart/CartUserInfo.vue';
+import CartAddrInfo from '../components/cart/CartAddrInfo.vue';
+import CartPointInfo from '../components/cart/CartPointInfo.vue';
+import CartPayment from '../components/cart/CartPayment.vue';
+import CartPrice from '../components/cart/CartPrice.vue';
 
 
 export default {
   name: 'OrderForm',
   components: {
-    OrderProdInfo,
-    OrderUserInfo, 
-    OrderAddrInfo, 
-    OrderPointInfo, 
-    OrderPayment, 
-    OrderPrice
+    CartProdInfo,
+    CartUserInfo, 
+    CartAddrInfo, 
+    CartPointInfo, 
+    CartPayment, 
+    CartPrice
   },
   data() {
     return {
@@ -84,7 +85,9 @@ export default {
       addr1 : '',
       addr2 : '',
       paymentMethod : '',
-    };
+      coupons : 0, // 선택한 쿠폰의 번호값담기
+      deliveryrequest : '' //요청사항
+   };
   },
   created() {
     this.fetchCartCheckList();
@@ -152,6 +155,10 @@ export default {
     inputValue(point){
       this.pointInput = point;
     },
+    couponNo(couponNo){
+      this.coupons = couponNo;
+      console.log(this.coupons,'선택한 쿠폰의 번호');
+    },
     totalPrice() {
         this.total = 0;
         for (let i = 0; i < this.cartList.length; i++) {
@@ -190,6 +197,9 @@ export default {
       this.zip = zip
       this.addr1 = addr1
       this.addr2 = addr2
+    },
+    getdelivery(input){
+      this.deliveryrequest = input;
     },
     savePointRate(){
       if (this.$store.state.user.user_grade === 'i1' || 'i6') { // 일반 또는 정지회원
@@ -252,7 +262,6 @@ export default {
           paymentInfo.pay_method = paymentMethod;
         } else if (paymentMethod === '0') {
           this.orderInsert(); // 바로 주문 처리
-          alert('결제완료');
           return; // 아임포트 응답 처리하지 않고 함수 종료
         }
         
@@ -264,6 +273,10 @@ export default {
             // 결제 완료 처리
             this.orderInsert(); // order테이블 
             this.orderdetailInsert(orderno); // orderdetail테이블
+            msg += '고유ID : ' + rsp.imp_uid;
+            msg += '상점 거래ID : ' + rsp.merchant_uid;
+            msg += '결제 금액 : ' + rsp.paid_amount;
+            msg += '카드 승인번호 : ' + rsp.apply_num;
           } else {
             // 결제 실패 처리
             alert('결제 취소했습니다. 장바구니로 다시 이동합니다.');
@@ -293,6 +306,7 @@ async orderInsert(){ // orders 테이블 등록
                     payment_method: this.paymentMethod,
                     payment_no: 1,
                     order_status: 'c1',
+                    delivery_request: this.deliveryrequest
                   }
                 }
                 let result = await axios.post("/api/orderInsert", obj)
@@ -300,7 +314,12 @@ async orderInsert(){ // orders 테이블 등록
             this.$router.replace("/orderSuccess")
             if(result.config.data != null){
               this.orderdetailInsert(obj.param.order_no)
+              this.couponUpdate(obj.param.order_no)
+              this.pointInsert(obj.param.order_no)
+              this.userPointUpdate(obj.param.point_use)
+              this.deleteCheckbox();
             }
+            this.$store.commit('getOrderNo',obj.param.order_no);
     
   },
   async orderdetailInsert(orderno){ // ordersdetail 테이블 등록 부분
@@ -316,33 +335,66 @@ async orderInsert(){ // orders 테이블 등록
                     order_detail_code: '1'
                   }
                 };
-                console.log(this.order_no,'확인디테일')
                 let result = await axios.post("/api/orderDetailInsert", Obj)
                                         .catch(err => console.log(err));
-                console.log(result);
-                console.log(result);
     }
+    },
+  async deleteCheckbox() {  // 주문서 결제완료 시 장바구니 물품 삭제!
+        for(let i=0; i<this.cartList.length; i++) {
+          console.log(this.cartList[i].cart_checkbox,'삭제');
+          if(this.cartList[i].cart_checkbox == 1){
+
+            await axios.delete(`/api/CheckboxDelete/${this.cartList[i].cart_no}`);
+            
+          }
+        }
   },
-  cancelPay() {
-    jQuery.ajax({
-      // 예: http://www.myservice.com/payments/cancel
-      "url": "{환불정보를 수신할 가맹점 서비스 URL}", 
-      "type": "POST",
-      "contentType": "application/json",
-      "data": JSON.stringify({
-        "merchant_uid": "187747", // 예: ORD20180131-0000011
-        "cancel_request_amount": 2000, // 환불금액
-        "reason": "테스트 결제 환불", // 환불사유
-        // [가상계좌 환불시 필수입력] 환불 수령계좌 예금주
-        "refund_holder": "홍길동", 
-        // [가상계좌 환불시 필수입력] 환불 수령계좌 은행코드(예: KG이니시스의 경우 신한은행은 88번)
-        "refund_bank": "88", 
-        // [가상계좌 환불시 필수입력] 환불 수령계좌 번호
-        "refund_account": "56211105948400" 
-      }),
-      "dataType": "json"
-    });
-    }
+  async couponUpdate(orderno){
+            let obj = {
+                param : {
+                  order_no : orderno,
+                  coupon_able : 1
+                }
+            }
+
+            let result = await axios.put(`/api/couponUpdate/${this.coupons}`, obj)
+                               .catch(err => console.log(err));
+            
+            if(result.data.changedRows > 0){
+            }
+    },
+    async userPointUpdate(pointuse){
+            let obj = {
+                param : {
+                  point : this.$store.state.user.point - pointuse,
+                }
+            }
+
+            let result = await axios.put(`/api/pointUpdate/${this.$store.state.user.user_id}`, obj)
+                               .catch(err => console.log(err));
+            
+            if(result.data.changedRows > 0){
+            }
+    },
+    async pointInsert(orderno){ // point 테이블 등록 부분
+             // 상품 정보를 반복해서 처리하는 부분
+             if(this.pointInput != 0){
+
+               for (let i = 0; i < this.cartList.length; i++) {
+                 let Obj = {
+                   param : {
+                     order_no : orderno,
+                     user_id: this.$store.state.user.user_id,
+                     point_history: 'p3',
+                     point_use: this.pointInput,
+                    }
+                  };
+                  let result = await axios.post("/api/pointInsert", Obj)
+                  .catch(err => console.log(err));
+                }
+                console.log('포인트사용성공')
+              }
+    },
   }
 }
 </script>
