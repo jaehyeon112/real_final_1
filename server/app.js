@@ -271,6 +271,43 @@ app.put("/CheckboxUpdate/:check/:no", async (request, res) => { // 장바구니 
   res.send(list);
 });
 
+app.put("/CheckAllUpdate/:check/:id", async (request, res) => { // 체크박스 전체선택 업데이트
+  let data = [request.params.check, request.params.id];
+  let list = await mysql.query("test", "CheckAllUpdate", data);
+  res.send(list);
+});
+
+// app.put("/CheckboxUpdate/:id", async (request, res) => { // 체크박스  업데이트
+//   let cartList = request.body; // 배열
+
+ //같은 자바스크립트 이기 때문에 for문 사용가능
+//   let list = 0;
+//   for(let cart  of cartList){
+//     let data = [cart.cart_checkbox, cart.cart_no];
+//     list = await mysql.query("test", "CheckboxUpdate", data);
+//   }
+  
+//   res.send(list);
+// });
+
+app.put("/Cartquantity/:pno/:cno", async (request, res) => { // 장바구니에 담긴 상품의 재고가 빠져서 장바구니재고수정이필요한경우
+  let data = [request.params.pno, request.params.cno];
+  let list = await mysql.query("test", "Cartquantity", data);
+  res.send(list);
+});
+
+app.put("/CartPlusquantity/:pno/:id", async (request, res) => { // 장바구니 수량 플러스
+  let data = [request.params.pno, request.params.id];
+  let list = await mysql.query("test", "CartPlusquantity", data);
+  res.send(list);
+});
+
+app.put("/CartMinusquantity/:pno/:id", async (request, res) => { // 장바구니 수량 플러스
+  let data = [request.params.pno, request.params.id];
+  let list = await mysql.query("test", "CartMinusquantity", data);
+  res.send(list);
+});
+
 app.delete("/CheckboxDelete/:no", async (req, res) => { // 체크된 장바구니 삭제
   let data = req.params.no;
   let result = await mysql.query("test", 'CheckboxDelete', data);
@@ -308,6 +345,11 @@ app.post("/pointInsert", async (request, res) => { // 포인트 사용내역 등
 app.put("/couponUpdate/:id", async (request, res) => { // 쿠폰 사용시 업데이트
   let data = [request.body.param, request.params.id];
   res.send((await mysql.query("test", "couponUpdate", data)));
+});
+
+app.put("/StockUpdate/:id", async (request, res) => { // 상품 재고변경
+  let data = [request.body.param, request.params.id];
+  res.send((await mysql.query("test","StockUpdate", data)));
 });
 
 app.put("/pointUpdate/:id", async (request, res) => { // 사용한 포인트 user테이블 업데이트
@@ -792,13 +834,58 @@ app.get("/new", async (req, res) => {
   let result = await mysql.query("test", "newListPage");
   res.send(result);
 })
+//예빈
 //멤버조회정보
 app.get("/member/:id", async (req, res) => {
   let id = req.params.id;
-  let info = await mysql.query("member", "memberInfo", id);
-  res.send(info)
+  let memberInfo= (await mysql.query("member", "memberInfo", id))[0]; // 데이터 타입 :  객체  
+  let pointInfo = (await mysql.query("point", "showNextMonth", id))[0]; // 데이터 타입 : 숫자
+  memberInfo.showNextMonth = pointInfo;
+  res.send(memberInfo);
 })
 
+// app.get("/member", async (req,res)=>{
+//   let id = req.session.id;
+//   let memberInfo= (await mysql.query("member", "memberInfo", id))[0]; // 데이터 타입 :  객체  
+//   let pointInfo = (await mysql.query("point", "showNextMonth", id))[0]; // 데이터 타입 : 숫자
+//   memberInfo.showNextMonth = pointInfo;
+
+//   res.send(memberInfo);
+// })
+                      // app.get("/member/:id", async (req,res)=>{
+                      //   let id = req.params.id;
+                      //   let memberInfo= (await mysql.query("member", "memberInfo", id))[0]; // 데이터 타입 :  객체  
+                      //   res.send(memberInfo);
+                      // })
+
+                      // //다음달 소멸 포인트
+                      // app.get("/nextMonthPoint/:id", async(req,res)=>{
+                      //   let id = req.params.id;
+                      //   res.send(await mysql.query("point", "showNextMonth", id))[0]
+                      // });
+//상세페이지 정보
+app.get("/detailPro/:pno", async (req,res)=>{
+  let pno = req.params.pno;
+  let info = await mysql.query('orders','detailInfo',pno);
+  res.send(info);
+})
+//상세페이지-> 장바구니
+app.post("/savingCart",async(req,res)=>{
+  let data= req.body.param;
+  let result = await mysql.query('orders', 'savingCart',data);
+  res.send(result);
+})
+app.put("/updateCart/:pno/:id", async(req,res)=>{
+  let datas = [req.body.param,req.params.pno,req.params.id];
+  let result = await mysql.query('orders','updateCart',datas);
+  res.send(result);
+})
+//장바구니 넣을시 추가할지 업데이트할지
+app.get("/comparisonCart/:id", async(req,res)=>{
+  let id = req.params.id;
+  let result = await mysql.query('orders','comparisonCart',id);
+  res.send(result)
+})
 //주문내역 관련
 app.get("/myOrders/:id", async (req, res) => {
   let id = req.params.id
@@ -908,28 +995,25 @@ cron.schedule("0 0 0 * * *", async () => {
 //      }
 //    })
 //  }
-//마이페이지 포인트 내역조회
-app.get("/myPointSave/:id", async (req, res) => {
-  let id = req.params.id;
-  let list = await mysql.query("point", "myPointSaveHistory", id);
-  res.send(list);
-})
-app.get("/myPointUse/:id", async (req, res) => {
-  let id = req.params.id;
-  let list = await mysql.query("point", "myPointUseHistory", id);
-  res.send(list);
-})
-//리뷰등록시 포인트 지급
-app.post("/reviewPoint/:ono/:id", async (req, res) => {
-  let datas = [request.body.param, Number(req.params.ono), req.params.id]
-  res.send(await mysql.query("reviews", "reviewPoint", datas));
-
-});
-//다음달 소멸 포인트
-app.get("/nextMonthPoint/:id", async (req, res) => {
-  let id = req.params.id;
-  res.send(await mysql.query("point", "showNextMonth", id))
-})
+    //마이페이지 포인트 내역조회
+    app.get("/myPointSave/:id", async (req,res)=>{
+      let id = req.params.id;
+      let list = await mysql.query("point", "myPointSaveHistory", id);
+      res.send(list);
+    })
+    app.get("/myPointUse/:id", async (req,res)=>{
+      let id = req.params.id;
+      let list = await mysql.query("point", "myPointUseHistory", id);
+      res.send(list);
+    })
+    //리뷰등록시 포인트 지급
+    app.post("/reviewPoint/:id", async(req,res)=>{
+        //let datas = [request.body.param,Number(req.params.ono),req.params.id]
+        let datas = [req.body.point_no,req.body.order_no,req.params.id]
+        res.send(await mysql.query("reviews","reviewPoint", datas));
+      
+      });
+    
 //리뷰관련
 //상세페이지에서 리뷰목록
 app.get("/detailReview/:pno", async (request, response) => {
@@ -967,6 +1051,24 @@ app.get("/orderNoReview/:id", async (req, res) => {
 });
 
 
+    //상세페이지 버튼 disable용
+    app.get("/orderNoReview/:id", async(req,res)=>{
+      let id = req.params.id
+      res.send(await mysql.query("reviews", "orderNoReview",id))
+    });
+   //찜하기
+      app.get("/prodLike/:id/:pno", async(req,res)=>{
+        let datas = [req.params.id,req.params.pno]
+        res.send(await mysql.query("like", "likeList", datas))[0]
+      })
+      app.delete("/DelprodLike/:id:/:pno", async(req,res)=>{
+        let id = req.params.id
+        res.send(await mysql.query("like", "likeDel", id))
+      } )
+      app.post("/prodLike", async(req,res)=>{
+        let data = req.body.param
+        res.send(await mysql.query("like", "likeInsert", data))
+      })
 
 
 // sql injection의 위험이 있음 처리해야함;;

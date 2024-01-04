@@ -15,8 +15,8 @@
         </div>
         <br>
         <p>배송비 <span>{{ $wonComma(delivery) }} 원</span></p>
-        <p class="discount">쿠폰 할인 <span>{{ $wonComma(coupon) }} 원</span></p>
-        <p class="discount">포인트 <span>{{ $wonComma(pointInput) }} 원</span></p>
+        <p>쿠폰 할인 <span>{{ $wonComma(coupon) }} 원</span></p>
+        <p>포인트 <span>{{ $wonComma(pointInput) }} 원</span></p>
         <hr>
         <p>최종 결제금액<span style="color: red; font-size: 40px;">{{ $wonComma(final) }} 원</span></p>
         <span class="a">적립 </span><span class="b">구매 시 </span><span class="b">{{ $wonComma(savePoint) }} 원 </span>

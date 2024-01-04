@@ -49,6 +49,18 @@ let test = {
               WHERE cart_checkbox = 1 AND c.user_id = u.user_id AND p.prod_no = c.prod_no AND c.user_id = ?
               order by cart_no`,
   CheckboxUpdate: `UPDATE cart set cart_checkbox = ? WHERE cart_no = ?`,
+  CheckAllUpdate: `UPDATE cart set cart_checkbox = ? WHERE user_id = ?`,
+  Cartquantity: `UPDATE cart set quantity = ? WHERE cart_no = ?`,
+  // 장바구니 상품 수량 증가
+  CartPlusquantity: `UPDATE cart
+                 SET quantity = quantity + 1
+                 WHERE prod_no = ?  
+                 AND user_id = ?`,
+  // 장바구니 상품 수량 감소
+  CartMinusquantity: `UPDATE cart
+                 SET quantity = quantity - 1
+                 WHERE prod_no = ?  
+                 AND user_id = ?`,
   // 장바구니 체크된거 삭제 구현
   CheckboxDelete: `DELETE FROM cart WHERE cart_no = ?`,
   couponList: `select a.coupon_no, start_coupon, end_coupon, coupon_name, coupon_content, coupon_discount_rate, coupon_able
@@ -59,12 +71,14 @@ let test = {
                from user
                where user_id = ?`,
   orderList: `  select distinct * 
-                from orders a, order_detail b 
-                where a.order_no = b.order_no AND b.order_no = ?`,
+                from orders a, order_detail b , product c 
+                where a.order_no = b.order_no AND b.prod_no = c.prod_no AND b.order_no = ?`,
   orderInsert: `insert into orders set?`,
   orderdetailInsert: `insert into order_detail set?`,
   // 주문서에서 쿠폰사용해서 결제완료했을경우 쿠폰업데이트
-  couponUpdate: `update coupon set ? where coupon_no = ?`,
+  couponUpdate : `update coupon set ? where coupon_no = ?`,
+  // 결제완료한경우 상품의 재고 업데이트
+  StockUpdate : `update product set ? where prod_no =  ?`,
   // 포인트를 사용한 경우에만 포인트 테이블 적용
   pointInsert: `insert into point set ?`,
   // 포인트를 사용했을때 유저테이블에 포인트를 업데이트
@@ -191,15 +205,15 @@ let reviews = {
   insertReviewImage: `insert into image set?`
 };
 let point = {
-  myPoint: `select point from user where user_id=?`, //마이페이지 보유 포인트
-  myPointSaveHistory: `select * from point where user_id= ? and point_save > 0 order by end_point_date `,
-  myPointUseHistory: `select * from point where user_id=? and point_use > 0 order by end_point_date `,
-  reviewPoint: `insert into point set point_no = ?, order_no=?, user_id=?, point_history='리뷰등록',
-              point_save = 500, point_use=null, point_date =current_date(), end_point_date = date_add(current_date(), interval 1 Year);`, //리뷰등록시 포인트 지급
-  pointExpire: `update user as t1,(select sum( point_save) as points, user_id from point where end_point_date = current_date() group by user_id) as t2
-              set t1.point = t1.point- t2.points where t1.user_id=t2.user_id;`, //기간소멸
-  //그리고 point table에 소멸사유로 인서트 해주는것도 같이..?
-  showNextMonth: `select IFNULL(sum(point_save),0) as sump from point where user_id =? and (year(end_point_date)=year(now()) and Month(end_point_date)=Month(DATE_ADD(curdate(),INTERVAL 1 month))); `
+  myPoint:`select point from user where user_id=?`,//마이페이지 보유 포인트
+  myPointSaveHistory:`select * from point where user_id= ? and point_save > 0 order by end_point_date `,
+  myPointUseHistory:`select * from point where user_id=? and point_use > 0 order by end_point_date `,
+  reviewPoint:`insert into point set point_no = ?, order_no=?, user_id=?, point_history='리뷰등록',
+              point_save = 500, point_use=0, point_date =current_date(), end_point_date = date_add(current_date(), interval 1 Year);`, //리뷰등록시 포인트 지급
+  pointExpire:`update user as t1,(select sum( point_save) as points, user_id from point where end_point_date = current_date() group by user_id) as t2
+              set t1.point = t1.point- t2.points where t1.user_id=t2.user_id;`,//기간소멸
+              //그리고 point table에 소멸사유로 인서트 해주는것도 같이..?
+  showNextMonth:`select IFNULL(sum(point_save),0) as sump from point where user_id =? and (year(end_point_date)=year(now()) and Month(end_point_date)=Month(DATE_ADD(curdate(),INTERVAL 1 month))); `            
 
 };
 let coupon = {
@@ -209,17 +223,18 @@ let coupon = {
             where c1.user_id=?;` //마이페이지 보유 쿠폰
 };
 let orders = {
+  savingCart:`insert into cart set ?`,
+  updateCart:`update cart set quantity=quantity+? where prod_no =? and user_id=?;`,
+  comparisonCart:`select * from cart where user_id=?`,
+  detailInfo:`select * from product where prod_no=?`,
   //detailOrderLists:`select * from order_detail o1 left join orders o2 on o1.order_no = o2.order_no where o1.order_no =? and user_id = ?`,//주문창에서 상세주문내역으로 이동시 불러올 값
-  orderList: `select  ord.order_date, dord.order_detail_no, ord.delivery_charge, ord.total_payment, ord.real_payment, ord.payment_no, ord.order_no, pro.prod_name, ord.order_status, (select delivery_status from delivery where order_no=ord.order_no) as delivery
-                    from orders ord  join order_detail dord on ord.order_no = ord.order_no
-                                     join product pro on pro.prod_no = dord.prod_no
-                                     where ord.user_id=?
-                                     group by ord.order_no
-                                     order by ord.order_no `,
-  //  orderListCount:`select prod_name from product pr join order_detail ord on pr.prod_no = ord.prod_no 
-  //                 join user us
-  //                  where ord.order_no=? and us.user_id=? limit 1`,        
-  orderCancle: `update orders set order_status=m3 where order_no=? and user_id=?`, //주문전체취소
+  orderList:`select  ord.order_date, dord.order_detail_no, ord.delivery_charge, ord.total_payment, ord.real_payment, ord.payment_no, ord.order_no, pro.prod_name
+              from orders ord  join order_detail dord on ord.order_no = ord.order_no
+                               join product pro on pro.prod_no = dord.prod_no
+                               where ord.user_id=?
+                               group by ord.order_no
+                               order by ord.order_no`,       
+  orderCancle:`update orders set order_status=m3 where order_no=? and user_id=?`,//주문전체취소
 
   detailOrderLists: `select * from order_detail od join product pr on od.prod_no = pr.prod_no	
                                                   join orders ods on ods.order_no = od.order_no
@@ -234,10 +249,12 @@ let delivery = {
   deleteDelivery: `delete from add_delivery where delivery_no=?`
 }
 let like = {
-  likeList: `select* from likes where user_id=?`
+  likeList : `select* from likes where user_id=? and prod_no=?`,
+  likeInsert:`insert into likes set;`,
+  likeDel:`delete from likes where user_id=? prod_no =?;`
 }
 let member = {
-  memberInfo: `select t1.*, count(case when 'coupon_able'=1 then 1 end) as couponCnt from user t1 join coupon t2  on t1.user_id = t2.user_id where t1.user_id= ?` //이건 나중에 로그인 세션 이용하게 되면 지우자
+  memberInfo : `select t1.*, count(case when coupon_able=0 then 1 end) as couponCnt from user t1 join coupon t2  on t1.user_id = t2.user_id where t1.user_id= ?` 
 }
 
 module.exports = {
