@@ -1,27 +1,43 @@
 
-
 <template>
-  <div class = "container">
-    <h1>이메일 인증번호 입력</h1>
-    <label>인증번호</label>
-    <b-form-input v-model="text" placeholder="이메일에서 인증번호 어떻게 보내지 하"></b-form-input>
-
-    <div>
-          <b-button  type="submit" squared variant="success">입력</b-button>
-        <!-- <input type="submit" class="button" value="입력"> -->
-    </div>
-
-
-    <div class="mt-2">Value: {{ text }}</div>
-  </div>
+  <v-sheet width="300" class="mx-auto">
+    <v-form @submit.prevent>
+      <div class= "field"> <label for="emailNum">이메일 인증번호</label>  
+      <v-text-field
+        v-model="firstName"
+        :rules="rules"
+        label="emailNum"
+      ></v-text-field>
+      </div>
+      <v-btn type="submit" block class="mt-2">입력하기</v-btn>
+    </v-form>
+  </v-sheet>
 </template>
+
+
+
 
 <script>
   export default {
-    data() {
-      return {
-        text: ''
-      }
-    }
+    data: () => ({
+      firstName: '',
+      rules: [
+        value => {
+          if (value) return true
+
+          return '이메일로 전송된 인증번호를 입력해주세요'
+        },
+      ],
+    }),
   }
 </script>
+
+<style>
+.field {
+  display: flex; /* 가로로 배열. */
+  align-items: center; /*  수직 방향으로 가운데 정렬 */
+  gap: 10px; 
+}
+</style>
+
+

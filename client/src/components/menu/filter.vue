@@ -1,5 +1,5 @@
 <template>
-  <div style="width: 300px; margin-left: 40px">
+  <div style="width: 300px; margin-left: 40px; position:sticky; top:200px">
     <v-container >
       <v-card   elevation="0">
 

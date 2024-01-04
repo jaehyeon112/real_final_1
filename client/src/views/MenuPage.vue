@@ -2,6 +2,7 @@
   
   
   <div>
+
     <bread :breadcrumb="breadcrumb" />
     <v-row>
       <v-col cols="3">
@@ -374,13 +375,7 @@ export default {
         }
       }
     },
-    socketTest(){
-      this.$socket.on('connect', () => {
-      console.log('Connected to the server');
-    });
-    this.$socket.emit('send',1,2,3)  
-    },
-    
+  
     bread(){
       this.breadcrumb.push(this.$route.fullPath)
     }

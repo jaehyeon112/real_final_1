@@ -1,38 +1,30 @@
-const nodemailer = require('nodemailer');
-const senderInfo = require('../config/senderInfo.json');
-// 메일발송 객체
-const mailSender = {
-  // 메일발송 함수
-  sendGmail: function (param) {
-    var transporter = nodemailer.createTransport({
-      service: 'gmail',   // 메일 보내는 곳
-      prot: 587,
-      host: 'smtp.gmlail.com',  
-      secure: false,  
-      requireTLS: true ,
+import { createTransport } from "nodemailer";
+
+static register = async (userDTO: RegisterUserDTO) => {
+  try {
+    // ... 회원가입 관련 로직들
+    const transporter = createTransport({
+      service: "gmail",
+      host: "smtp.gmail.com",
+      port: 587,
+      secure: true,
       auth: {
-        user: senderInfo.user,  // 보내는 메일의 주소
-        pass: senderInfo.pass   // 보내는 메일의 비밀번호
-      }
+        type: "OAuth2",
+        user: config.mailer.gmailUser,
+        clientId: config.mailer.gmailClientId,
+        clientSecret: config.mailer.gmailClientSecret,
+        refreshToken: config.mailer.gmailRefreshToken,
+      },
     });
-    // 메일 옵션
-    var mailOptions = {
-      from: senderInfo.user, // 보내는 메일의 주소
-      to: param.toEmail, // 수신할 이메일
-      subject: param.subject, // 메일 제목
-      text: param.text // 메일 내용
+
+    const mailOptions = {
+      to: userDTO.email,
+      subject: "[헬로디벨로퍼] 회원가입 이메일 인증 메일입니다.",
+      html: `인증링크 : <a href="http://www.naver.com?token=${emailVerifyToken}">여기를 눌러주세요</a>`,
     };
-    
-    // 메일 발송    
-    transporter.sendMail(mailOptions, function (error, info) {
-      if (error) {
-        console.log(error);
-      } else {
-        console.log('Email sent: ' + info.response);
-      }
-    });
 
+    await transporter.sendMail(mailOptions);
+  } catch (err) {
+    console.error(err)
   }
-}
-
-module.exports = mailSender;
+};
