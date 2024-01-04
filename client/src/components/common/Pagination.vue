@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="list != ''">
     <ul class="pagination">
       <li class="page-item">
         <button
