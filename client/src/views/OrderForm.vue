@@ -227,6 +227,8 @@ export default {
     },
     async selectedPayMethod(paymentMethod) {
          this.orderNumber();
+                for(let i=0; i<this.cartList.length; i++) {
+                }
                 if (this.cartList.length > 1) {
                   this.prodName = this.cartList[0].prod_name + '외' + (this.cartList.length - 1) + '건';
                 } else {
