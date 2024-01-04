@@ -1,7 +1,24 @@
 <template>
   <v-container v-if="this.$store.state.user.user_id == null">
-    <h1>장바구니</h1>
-    <p>로그인 후 이용해주세요</p>
+    <v-btn @click="selectAll">전체선택</v-btn>
+        <v-btn @click="$store.commit('cartEmpty')">선택삭제</v-btn>
+      <table class="rwd-table" :key="idx" v-for="(list, idx) in $store.state.cart">
+        <tr>
+          <td>
+            <v-checkbox v-model="list.cart_checkbox" true-value="1" false-value="0" @click="updateCheckbox(list)"></v-checkbox>
+          </td>
+          <td>이미지</td>
+          <td>{{ list.prod_name }}</td>
+          <td>{{ list.quantity }} 개</td>
+          <td>
+            <ul>
+              <li >{{ $wonComma(list.discount_price * list.quantity) }} 원</li>
+              <li v-if="list.discount_price !== list.price" class="discount">{{ $wonComma(list.price * list.quantity) }} 원</li>
+            </ul>
+          </td>
+        </tr>
+      </table>
+      <v-btn v-model="check" @click="goTologinForm">주문하기</v-btn>
   </v-container>
   <v-container v-else>
         <v-main v-if="this.cartList.length > 0">
@@ -96,6 +113,12 @@ export default {
 
 
     },
+      // 로그인 안되어있으면 로그인 하라고 로그인 폼으로 이동 시킨다.
+      goTologinForm(){
+        alert('로그인 화면으로 이동합니다.')
+        this.$router.push('login')
+      },
+    
     quantityMinus(list) { // 수량 마이너스
         if(list.quantity > 1 ){
           list.quantity--;
