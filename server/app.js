@@ -271,6 +271,43 @@ app.put("/CheckboxUpdate/:check/:no", async (request, res) => { // 장바구니 
   res.send(list);
 });
 
+app.put("/CheckAllUpdate/:check/:id", async (request, res) => { // 체크박스 전체선택 업데이트
+  let data = [request.params.check, request.params.id];
+  let list = await mysql.query("test", "CheckAllUpdate", data);
+  res.send(list);
+});
+
+// app.put("/CheckboxUpdate/:id", async (request, res) => { // 체크박스  업데이트
+//   let cartList = request.body; // 배열
+
+ //같은 자바스크립트 이기 때문에 for문 사용가능
+//   let list = 0;
+//   for(let cart  of cartList){
+//     let data = [cart.cart_checkbox, cart.cart_no];
+//     list = await mysql.query("test", "CheckboxUpdate", data);
+//   }
+  
+//   res.send(list);
+// });
+
+app.put("/Cartquantity/:pno/:cno", async (request, res) => { // 장바구니에 담긴 상품의 재고가 빠져서 장바구니재고수정이필요한경우
+  let data = [request.params.pno, request.params.cno];
+  let list = await mysql.query("test", "Cartquantity", data);
+  res.send(list);
+});
+
+app.put("/CartPlusquantity/:pno/:id", async (request, res) => { // 장바구니 수량 플러스
+  let data = [request.params.pno, request.params.id];
+  let list = await mysql.query("test", "CartPlusquantity", data);
+  res.send(list);
+});
+
+app.put("/CartMinusquantity/:pno/:id", async (request, res) => { // 장바구니 수량 플러스
+  let data = [request.params.pno, request.params.id];
+  let list = await mysql.query("test", "CartMinusquantity", data);
+  res.send(list);
+});
+
 app.delete("/CheckboxDelete/:no", async (req, res) => { // 체크된 장바구니 삭제
   let data = req.params.no;
   let result = await mysql.query("test", 'CheckboxDelete', data);
@@ -308,6 +345,11 @@ app.post("/pointInsert", async (request, res) => { // 포인트 사용내역 등
 app.put("/couponUpdate/:id", async (request, res) => { // 쿠폰 사용시 업데이트
   let data = [request.body.param, request.params.id];
   res.send((await mysql.query("test", "couponUpdate", data)));
+});
+
+app.put("/StockUpdate/:id", async (request, res) => { // 상품 재고변경
+  let data = [request.body.param, request.params.id];
+  res.send((await mysql.query("test","StockUpdate", data)));
 });
 
 app.put("/pointUpdate/:id", async (request, res) => { // 사용한 포인트 user테이블 업데이트

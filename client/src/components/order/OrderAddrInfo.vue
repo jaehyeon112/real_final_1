@@ -2,11 +2,24 @@
     <v-container>
       <h1>배송지 정보</h1>
       <hr>
-      <div>
-        <p>배송지 <span style="font-size: 30px;">{{ this.$store.state.user.address }}  {{ this.$store.state.user.detail_address }} {{ this.$store.state.user.postcode }}</span></p>
+      <div v-if="orderList.length > 0">
+        <p>이름
+          <span>{{ orderList[0].recipient }}</span>
+        </p>
+        <p>전화번호
+          <span>{{ orderList[0].recipient_tel }}</span>
+        </p>
+        <p>받으실 주소
+          <span>{{ '['+orderList[0].recipient_postcode + '] ' + orderList[0].recipient_address + orderList[0].recipient_detail_address  }}</span>
+        </p>
+        <p>요청사항
+          <span>{{ orderList[0].delivery_request }}</span>
+        </p>
       </div>
-      <v-btn @click="moveMypage">마이페이지</v-btn>
-      <v-btn @click="moveMain">메인페이지</v-btn>
+      <div>
+        <v-btn @click="moveMypage" style="background-color: lightgreen;">마이페이지</v-btn>
+        <v-btn @click="moveMain" style="background-color: lightgreen;">메인페이지</v-btn>
+      </div>
     </v-container>
 </template>
 <script>
@@ -14,6 +27,12 @@
     data(){
         return{
 
+        }
+        
+    },
+    props: {
+        orderList: {
+            type: Array,
         }
     },
     methods:{
