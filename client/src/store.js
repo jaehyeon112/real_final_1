@@ -11,6 +11,8 @@ const store = createStore({
       cartCount: 0,
       cart: [],
       user: {},
+      orderNo: 0,
+      user: {},
       searchList: []
     }
   },
@@ -42,6 +44,9 @@ const store = createStore({
     },
     cartEmpty(state) {
       state.cart = []
+    },
+    getOrderNo(state, no) {
+      state.orderNo = no;
     }
   },
   actions: {
@@ -49,7 +54,7 @@ const store = createStore({
   },
   plugins: [
     createPersistedState({
-      paths: ['user', 'cart']
+      paths: ['user', 'cart', 'orderNo']
     })
   ]
 

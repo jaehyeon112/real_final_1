@@ -9,11 +9,12 @@
           :cartList="cartList"/>
           <CartUserInfo/>
           <CartAddrInfo
-          @getAddress="GetAddress"/>
+          @getAddress="GetAddress"
+          @getdelivery="getdelivery"/>
           <CartPointInfo
           :cartList="cartList"
           :couponList="couponList"
-          @selectedCouponIndex="selectedCouponIndex"
+          @couponNo="couponNo"
           @discountRate="discountRate"
           @inputValue="inputValue"
           :pointList="pointList"
@@ -84,8 +85,9 @@ export default {
       addr1 : '',
       addr2 : '',
       paymentMethod : '',
-      coupons : '' //선택한 쿠폰넘버
-    };
+      coupons : 0, // 선택한 쿠폰의 번호값담기
+      deliveryrequest : '' //요청사항
+   };
   },
   created() {
     this.fetchCartCheckList();
@@ -153,9 +155,9 @@ export default {
     inputValue(point){
       this.pointInput = point;
     },
-    selectedCouponIndex(coupons){
-      this.coupons = this.couponList[coupons].coupon_no;
-      console.log(this.coupons,'쿠폰넘버');
+    couponNo(couponNo){
+      this.coupons = couponNo;
+      console.log(this.coupons,'선택한 쿠폰의 번호');
     },
     totalPrice() {
         this.total = 0;
@@ -195,6 +197,9 @@ export default {
       this.zip = zip
       this.addr1 = addr1
       this.addr2 = addr2
+    },
+    getdelivery(input){
+      this.deliveryrequest = input;
     },
     savePointRate(){
       if (this.$store.state.user.user_grade === 'i1' || 'i6') { // 일반 또는 정지회원
@@ -257,7 +262,6 @@ export default {
           paymentInfo.pay_method = paymentMethod;
         } else if (paymentMethod === '0') {
           this.orderInsert(); // 바로 주문 처리
-          alert('결제완료');
           return; // 아임포트 응답 처리하지 않고 함수 종료
         }
         
@@ -302,6 +306,7 @@ async orderInsert(){ // orders 테이블 등록
                     payment_method: this.paymentMethod,
                     payment_no: 1,
                     order_status: 'c1',
+                    delivery_request: this.deliveryrequest
                   }
                 }
                 let result = await axios.post("/api/orderInsert", obj)
@@ -309,8 +314,12 @@ async orderInsert(){ // orders 테이블 등록
             this.$router.replace("/orderSuccess")
             if(result.config.data != null){
               this.orderdetailInsert(obj.param.order_no)
+              this.couponUpdate(obj.param.order_no)
+              this.pointInsert(obj.param.order_no)
+              this.userPointUpdate(obj.param.point_use)
               this.deleteCheckbox();
             }
+            this.$store.commit('getOrderNo',obj.param.order_no);
     
   },
   async orderdetailInsert(orderno){ // ordersdetail 테이블 등록 부분
@@ -340,6 +349,52 @@ async orderInsert(){ // orders 테이블 등록
           }
         }
   },
+  async couponUpdate(orderno){
+            let obj = {
+                param : {
+                  order_no : orderno,
+                  coupon_able : 1
+                }
+            }
+
+            let result = await axios.put(`/api/couponUpdate/${this.coupons}`, obj)
+                               .catch(err => console.log(err));
+            
+            if(result.data.changedRows > 0){
+            }
+    },
+    async userPointUpdate(pointuse){
+            let obj = {
+                param : {
+                  point : this.$store.state.user.point - pointuse,
+                }
+            }
+
+            let result = await axios.put(`/api/pointUpdate/${this.$store.state.user.user_id}`, obj)
+                               .catch(err => console.log(err));
+            
+            if(result.data.changedRows > 0){
+            }
+    },
+    async pointInsert(orderno){ // point 테이블 등록 부분
+             // 상품 정보를 반복해서 처리하는 부분
+             if(this.pointInput != 0){
+
+               for (let i = 0; i < this.cartList.length; i++) {
+                 let Obj = {
+                   param : {
+                     order_no : orderno,
+                     user_id: this.$store.state.user.user_id,
+                     point_history: 'p3',
+                     point_use: this.pointInput,
+                    }
+                  };
+                  let result = await axios.post("/api/pointInsert", Obj)
+                  .catch(err => console.log(err));
+                }
+                console.log('포인트사용성공')
+              }
+    },
   }
 }
 </script>

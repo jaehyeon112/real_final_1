@@ -12,7 +12,7 @@
           max-width="300"
           v-bind="props">
       <!-- 해당 제품으로 이동 -->
-      <router-link to="/">
+      <router-link @click.stop="goToDetail(prodList.prod_no)" to="/detailPage">
         <div class="image-container">
           <v-img
             class="text-white"
