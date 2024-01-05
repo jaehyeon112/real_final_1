@@ -20,10 +20,12 @@ import detailOrder from "@/components/MyPage/orderDetail.vue";
 import like from  "@/components/MyPage/likeBasket.vue";
 import delivery from "@/components/MyPage/delivery.vue";
 import addDeli from "@/components/MyPage/addDelivery.vue";
+import myInquire from "@/components/MyPage/myInquire.vue";
 import coupon from "@/components/MyPage/couponList.vue";
 import point from "@/components/MyPage/point.vue";
 import myReview from "@/components/MyPage/myReview.vue";
 import reviewForm from "../views/ReviewForm.vue";
+import inquireForm from "../views/inquireForm.vue";
 import search from '@/components/menu/search.vue';
 
 
@@ -167,6 +169,11 @@ export default {
          name:"coupon",
          component:coupon
         },
+        {
+          path:"myInquire",
+          name:"myInquire",
+          component:myInquire
+         }
  
       ]
     },
@@ -180,5 +187,11 @@ export default {
       name:"reviewForm",
       component:reviewForm
     },
+    {
+      path:"inquireForm",
+      name:"inquireForm",
+      component:inquireForm
+    },
+
   ],
 };

@@ -32,7 +32,7 @@
                             </a>
                         </div>
             </div>
-                <div class="col-sm-3 " style="background-color: lightgreen; margin:10px">
+                <div class="col-sm-3 " style="background-color: rgb(138, 38, 215); margin:10px">
                     <div class="col p-4 d-flex flex-column position-static">
                         <strong class="d-inline-block mb-2 text-success-emphasis">잔여포인트</strong>
                         <h3 class="mb-0">{{ member.point }} p</h3>
@@ -40,7 +40,7 @@
                     </div>
                 </div>
            
-                <div class="col-sm-3"  style="background-color: lightgreen; margin:10px">
+                <div class="col-sm-3"  style="background-color: rgb(138, 38, 215); margin:10px">
                     <div class="col p-4 d-flex flex-column position-static">
                         <strong class="d-inline-block mb-2 text-success-emphasis">잔여쿠폰</strong>
                         

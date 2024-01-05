@@ -10,14 +10,8 @@
             <input type="text" id="title"  v-model="reviewInfo.review_title">
 
              <label for="grade">평점</label>
-            <div><v-slider  id="grade" label="별점(5점 만점)" track-color="white" :ticks="tickLabels" :max="5" step="1" show-ticks tick-size="6" thumb-size="20" v-model="reviewInfo.review_grade"></v-slider></div>
-            <!-- <v-item-group v-model="model" class="d-flex justify-sm-space-between px-6 pt-2 pb-6">
-                <v-item v-for="n in 5" :key="n">
-                    <template v-slot:default="{ toggle }">
-                    <v-btn :icon="`mdi-numeric-${n}`" :active="model != null && model + 1 >= n" height="40" variant="text" width="40" @click="toggle"></v-btn>
-                    </template>
-                </v-item>
-            </v-item-group> -->
+            <div> <v-rating  hover :length="5" :size="67" v-model="reviewInfo.review_grade" color="deep-purple-lighten-1" active-color="deep-purple-lighten-1"  label="별점(5점 만점)"/></div>
+               
 
             <label for="content">내용</label>
             <textarea id="content" style="height:200px" v-model="reviewInfo.review_content"></textarea>
@@ -27,8 +21,8 @@
             <input type="regdate" id="regdate" v-if="reviewInfo.review_no > 0" v-model="reviewInfo.review_updatedate" readonly > <!--model필드명 칼럼명이랑 일치-->
             <input type="regdate" id="regdate" v-else v-model="reviewInfo.review_writedate" readonly >
 
-            <label for="image">이미지 첨부</label>
-
+            <label for="File input">이미지 첨부</label>
+            <v-file-input multiple label="File input"></v-file-input>
             <button type="button" class="btn btn-xs btn-info" @click="isUpdated? reviewUpdate() :reviewInsert()" >저장</button>
 
         </form>
@@ -135,7 +129,7 @@ export default {
             }
             let result = await axios.put(`/api/reviewUpdate/${this.$store.state.user.user_id}/${this.reviewNo}`, obj) //얘는 왜 searchNo아니고..?
                                     .catch((err=>console.log(err))) //수정된 정보를 저장한다
-            if(result.data.changedRows > 0){
+            if(result.data.affectedRows > 0){
                 alert('수정완료');
                 this.$router.push({path:'myPage/myReview'})
             }                        

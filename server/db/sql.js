@@ -202,6 +202,7 @@ let reviews = {
   updateReview: `update review set ? where user_id= ? and review_no= ?`,
   insertReviewImage: `insert into image set?`
 };
+
 let point = {
   myPoint: `select point from user where user_id=?`, //마이페이지 보유 포인트
   myPointSaveHistory: `select * from point where user_id= ? and point_save > 0 order by end_point_date `,
@@ -225,7 +226,6 @@ let orders = {
   updateCart: `update cart set quantity=quantity+? where prod_no =? and user_id=?;`,
   comparisonCart: `select * from cart where user_id=?`,
   detailInfo: `select * from product where prod_no=?`,
-  //detailOrderLists:`select * from order_detail o1 left join orders o2 on o1.order_no = o2.order_no where o1.order_no =? and user_id = ?`,//주문창에서 상세주문내역으로 이동시 불러올 값
   orderList: `select  ord.order_date, dord.order_detail_no, ord.delivery_charge, ord.total_payment, ord.real_payment, ord.payment_no, ord.order_no, pro.prod_name
               from orders ord  join order_detail dord on ord.order_no = ord.order_no
                                join product pro on pro.prod_no = dord.prod_no
@@ -247,9 +247,16 @@ let delivery = {
   deleteDelivery: `delete from add_delivery where delivery_no=?`
 }
 let like = {
-  likeList: `select* from likes where user_id=? and prod_no=?`,
-  likeInsert: `insert into likes set;`,
-  likeDel: `delete from likes where user_id=? prod_no =?;`
+  likeInfo: `select* from likes where user_id=? and prod_no=?`,
+  likeInsert: `insert into likes set?`,
+  likeDel: `delete from likes where user_id=? and prod_no =?`,
+  likeList:`select * from likes where user_id=?`
+}
+let inquire={
+  inquireList:`select * from inquire where user_id=?`,
+  inquireInfo:`select * from inquire where user_id=? and inquire_no=?`,
+  inquireInsert:`insert into inquire set?`,
+  inquireUpdate:`Update inquire set? where user_id=? and inquire_no=?`
 }
 let member = {
   memberInfo: `select t1.*, count(case when coupon_able=0 then 1 end) as couponCnt from user t1 join coupon t2  on t1.user_id = t2.user_id where t1.user_id= ?`
@@ -265,5 +272,6 @@ module.exports = {
   delivery,
   like,
   member,
-  admin
+  admin,
+  inquire
 };

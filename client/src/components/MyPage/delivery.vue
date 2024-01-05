@@ -1,7 +1,9 @@
 <template>
     
     <div>       
-    <v-row justify="center">
+    <br>    
+    <br>    
+    <v-row justify="end">
     <v-dialog
       v-model="dialog"
       persistent
@@ -42,7 +44,7 @@
           <v-btn
             color="blue-darken-1"
             variant="text"
-            @click="dialog = false, isUpdated? UpdateDelivery() :InsertDelivery()"
+            @click="dialog = false, InsertDelivery()"
           >
             Close
           </v-btn>
@@ -58,13 +60,12 @@
     </v-dialog>
   </v-row>
 
-
+<br>
         <table class="table" border="1">
             <thead>
                 <tr>
                     <th>선택</th>
                     <th >주소</th>
-                    <th >수정</th>
                     <th >삭제</th>
                 </tr>
             </thead>
@@ -75,8 +76,7 @@
                     <td><v-radio :label= "`${delivery.delivery_name}`" :value="idx"></v-radio></td>
                     </v-radio-group> 
                     <td>{{ delivery.delivery_name }}<hr style="color: aliceblue;">{{delivery.delivery_address }}{{ delivery.delivery_detail_address }}</td>
-                    <td><v-btn @click="UpdateDeliverye(deliveryList.delivery_no)">수정버튼</v-btn></td>
-                    <td><v-btn @click="deleteList">삭제버튼</v-btn></td>
+                    <td><v-btn @click="deleteList" justify="center">삭제버튼</v-btn></td>
                 </tr>
                 
             </tbody>    
@@ -111,7 +111,7 @@ export default {
     created(){
     
         this.getDeliveryList();
-        this.getDelivery();
+        //this.getDelivery();
         
       
     },
@@ -146,30 +146,30 @@ export default {
             }                
      
         },
-        async getDelivery(){
-            let result = (await axios.get(`/api/deliveryInfo/${this.$store.state.user.user_id}/${this.delivery.delivery_no}`) //sql.js 단건조회 경로 그대로 가져오기 api붙여주는 이유 proxy와 관련
-                                    .catch(err=>{console.log(err)}))
-            this.delivery=result.data[0]   
-        },
-        async UpdateDelivery(){
-            let obj ={
-                param: {
-                    delivery_no:this.delivery.delivery_no,
-                    user_id : this.$store.state.user.user_id,
-                    delivery_name : this.delivery.delivery_name,
-                    delivery_address: this.delivery.delivery_address,
-                    delivery_detail_address: this.delivery.delivery_detail_address,
-                    delivery_postcode: this.delivery.delivery_postcode
-                }
-            }
-            let result = await axios.put(`/api/updateDelivery/${this.delivery.delivery_no }/${this.$store.state.user.user_id}`, obj)
-                                    .catch((err=>console.log(err))) //수정된 정보를 저장한다
-            if(result.data.changedRows > 0){
-                alert('수정완료');
+        // async getDelivery(){
+        //     let result = (await axios.get(`/api/deliveryInfo/${this.$store.state.user.user_id}/${this.delivery.delivery_no}`) //sql.js 단건조회 경로 그대로 가져오기 api붙여주는 이유 proxy와 관련
+        //                             .catch(err=>{console.log(err)}))
+        //     this.delivery=result.data[0]   
+        // },
+        // async UpdateDelivery(){
+        //     let obj ={
+        //         param: {
+        //             delivery_no:this.delivery.delivery_no,
+        //             user_id : this.$store.state.user.user_id,
+        //             delivery_name : this.delivery.delivery_name,
+        //             delivery_address: this.delivery.delivery_address,
+        //             delivery_detail_address: this.delivery.delivery_detail_address,
+        //             delivery_postcode: this.delivery.delivery_postcode
+        //         }
+        //     }
+        //     let result = await axios.put(`/api/updateDelivery/${this.delivery.delivery_no }/${this.$store.state.user.user_id}`, obj)
+        //                             .catch((err=>console.log(err))) //수정된 정보를 저장한다
+        //     if(result.data.changedRows > 0){
+        //         alert('수정완료');
                 
-            }                        
+        //     }                        
             
-        },
+        // },
 
 
 

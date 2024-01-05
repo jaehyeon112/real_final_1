@@ -304,7 +304,6 @@ app.delete("/CheckboxDelete/:no", async (req, res) => { // 체크된 장바구�
   res.send(result);
 });
 
-
 app.get("/cartCheckList", async (req, res) => { //주문서의 장바구니체크된거만불러오는 리스트
   let list = await mysql.query("test", "cartCheckList", req.session.user_id);
   res.send(list);
@@ -1049,17 +1048,43 @@ app.get("/orderNoReview/:id", async (req, res) => {
   res.send(await mysql.query("reviews", "orderNoReview", id))
 });
 //찜하기
+
+app.delete("/prodDisike/:id/:pno", async (req, res) => {
+  console.log('????');
+  let datas = [req.params.id, req.params.pno]
+  console.log(datas);
+  res.send(await mysql.query("like", "likeDel", datas))
+});
 app.get("/prodLike/:id/:pno", async (req, res) => {
   let datas = [req.params.id, req.params.pno]
-  res.send(await mysql.query("like", "likeList", datas))[0]
-})
-app.delete("/DelprodLike/:id:/:pno", async (req, res) => {
+  res.send(await mysql.query("like", "likeInfo", datas))[0]
+});
+app.get("/prodLikes/:id", async (req, res) => {
   let id = req.params.id
-  res.send(await mysql.query("like", "likeDel", id))
-})
+  res.send(await mysql.query("like", "likeList", id))
+});
+
 app.post("/prodLike", async (req, res) => {
   let data = req.body.param
   res.send(await mysql.query("like", "likeInsert", data))
+});
+
+//문의하기
+app.get("/inquire/:id", async(req,res)=>{
+  let id = req.params.id;
+  res.send(await mysql.query("inquire", "inquireList", id))
+})
+app.get("/inquireInfo/:id/:ino", async (req,res)=>{
+  let id = req.params.id
+  res.send(await mysql.query("inquire", "inquireInfo", id))[0]
+})
+app.post("/inquire", async(req,res)=>{
+  let data = req.body.param
+  res.send(await mysql.query("inquire", "inquireInsert", data))
+})
+app.put("/inquire/:id/:ino", async ( req, res)=>{
+  let datas = [req.params.id, req.params.ino]
+  res.send(await mysql.query("inquire", "inquireUpdate", datas))
 })
 
 
