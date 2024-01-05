@@ -49,15 +49,14 @@
     
                 <div class="col-12">
                   <label for="stock" class="form-label">상품 이미지 등록</label>
-                  <div class="input-group has-validation">
-                    <upload @info="info"/><v-btn @click="open==true">사진보기</v-btn>
+                  <div :key="i" v-for="i in nums" style="width: 500px;">
+                    <upload @info="info" />
+                    <v-btn v-show="this.nums==i" @click="this.nums=this.nums+1">추가</v-btn><v-btn v-show="this.nums==i&&this.nums!=1" @click="this.nums=this.nums-1">빼기</v-btn>
                   </div>
-                  <v-img v-if="open=true" class="text-white" height="300"
-                    :src="`/api/test/${this.photo.path}`"
-                    style="position: relative;"
-                  >../../../../server/uploads/{{this.photo.filename}}</v-img>
+                  <div v-show="open==true" v-for="idx in photo"><img id="ima" :src="getPath(idx)" style="position: relative;height=300"></div>
+                  <v-btn @click="showing">사진보기</v-btn>
                 </div>
-    
+                
                 <div class="col-md-5">
                   <label for="main_category" class="form-label">메인 카테고리 <icon v-if="showIcon">필수</icon></label>
                   <select v-model="prod.main_category" class="form-select" id="main_category" required>
@@ -101,38 +100,40 @@
       </div>
     </div>
     </template>
-    <script>
-    import axios from 'axios';
-    import side from '../admin/SideBar.vue';
-    import icon from '../admin/icon.vue';
-    import upload from "@/components/menu/upload.vue";
-      export default {
-        data(){
-          return{
-              prodNo: '',
-              prod : {
-                prod_name : '',
-                price : '',
-                discount_price : '',
-                stock : '',
-                cooking_time : '',
-                allergy : '',
-                main_category : '',
-                sub_category : '',
-                refrigeration : 'g1',
-                discount_rate : '',
-              },
-              showIcon : false,
-              photo : [],
-              open : false
-          }
-        },
-        created(){
-          this.prodNo = this.$route.query.pno;
-          if(this.prodNo > 0){
-            this.prodUpdateList();
-          }
-        },
+<script>
+import axios from 'axios';
+import side from '../admin/SideBar.vue';
+import icon from '../admin/icon.vue';
+import upload from "@/components/menu/upload.vue";
+export default {
+  data(){
+      return{
+          prodNo: '',
+          prod : {
+            prod_name : '',
+            price : '',
+            discount_price : '',
+            stock : '',
+            cooking_time : '',
+            allergy : '',
+            main_category : '',
+            sub_category : '',
+            refrigeration : 'g1',
+            discount_rate : '',
+          },
+          showIcon : false,
+          photo : [],
+          open : false,
+          nums : 1,
+          delWord : ''
+      }
+  },
+  created(){
+    this.prodNo = this.$route.query.pno;
+    if(this.prodNo > 0){
+      this.prodUpdateList();
+    }
+  },
         methods : {
           refresh(){
             this.prod.prod_name = '';
@@ -198,9 +199,21 @@
             }
           },
           info(data){
-            this.photo = data;
-            console.log('현재 받은 사진 : '+this.photo.path)
-          }
+            for(let i=0;i<data.length;i++){
+              this.photo.push(data[i]);
+            }
+          },
+          showing(){
+            if(this.open == true){
+              this.open = false;
+            }else if(this.open == false){
+              this.open = true;
+              //this.getPath()
+            }
+          },
+          getPath(name){
+              return `/api/fileCall/${name}`;
+          },
         },
         components : {
         side,
@@ -209,12 +222,14 @@
         },
     }
     </script>
-    <style scoped>
+<style scoped>
         .container{
-            background-color: rgb(241, 221, 224);
-            width: 800px;
-            padding: 20px;
-            margin-top: 100px;
+          border: 2px solid;
+          border-color: rgb(174, 118, 238);
+          width: 1000px;
+          padding: 20px;
+          margin-top: 100px;
+          box-shadow:0 12px 15px 0 rgba(0,0,0,.24),0 17px 50px 0 rgba(0,0,0,.19);
         }
     
         #buttonBox{
@@ -222,10 +237,14 @@
         }
     
         button{
-            border-radius: 10px;
-            padding: 8px;
-            margin: 10px;
-            border: none;
+          color : rgb(174, 118, 238);
+          border-radius: 10px;
+          padding: 8px;
+          margin: 10px;
+          border: none;
         }
-    
-    </style>
+        #ima{
+          width: 200px;
+          height: 200px;
+        }
+</style>

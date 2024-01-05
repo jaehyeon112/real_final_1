@@ -27,7 +27,8 @@
                 <td>{{ delivery.tracking_no }}</td>
                 <td>{{ delivery.order_no }}</td>
                 <td>{{ delivery.user_id }}</td>
-                <td>{{ delivery.delivery_request }}</td>
+                <td v-if="delivery.delivery_request==''">요청사항이 없습니다.</td>
+                <td v-else>{{ delivery.delivery_request }}</td>
                 <td>{{ $dateFormat(delivery.released_date,'yyyy년 MM월 dd일') }}</td>
                 <td v-if="delivery.delivery_status=='d4'">배송중</td>
                 <td v-else-if="delivery.delivery_status=='d5'">배송완료</td>
