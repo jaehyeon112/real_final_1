@@ -200,7 +200,8 @@ let reviews = {
                                                      where t3.prod_no=?`, //상세페이지에서 그 상품에대한 리뷰 리스트
   insertReview: `insert into review set?`, //주문상세내역->리뷰등록
   updateReview: `update review set ? where user_id= ? and review_no= ?`,
-  insertReviewImage: `insert into image set?`
+  insertReviewImage: `insert into image set?`,
+  deleteReview:`delete review where review_no=?`
 };
 
 let point = {

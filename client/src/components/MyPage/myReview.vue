@@ -52,6 +52,13 @@ export default {
         goToUpdate(reviewNo){// 여기 변수는..? value(필드명)
             this.$router.push({path : '/reviewForm', query : {reviewNo : reviewNo}});//{키:필드명}
         },
+        async deleteReview(){
+        let data = await axios.delete(`/api/delReview/${this.review_no}`)
+                              .catch(err=>console.log(err));
+                  if(data.data.affectedRows>0){                        
+                     alert('리뷰가 삭제되었습니다')
+                  }
+      },          
     }
 }
 </script>

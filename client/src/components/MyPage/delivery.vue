@@ -44,14 +44,14 @@
           <v-btn
             color="blue-darken-1"
             variant="text"
-            @click="dialog = false, InsertDelivery()"
+            @click="dialog = false"
           >
             Close
           </v-btn>
           <v-btn
             color="blue-darken-1"
             variant="text"
-            @click="dialog = false"
+            @click="dialog = false, InsertDelivery()"
           >
             Save
           </v-btn>
@@ -76,7 +76,7 @@
                     <td><v-radio :label= "`${delivery.delivery_name}`" :value="idx"></v-radio></td>
                     </v-radio-group> 
                     <td>{{ delivery.delivery_name }}<hr style="color: aliceblue;">{{delivery.delivery_address }}{{ delivery.delivery_detail_address }}</td>
-                    <td><v-btn @click="deleteList" justify="center">삭제버튼</v-btn></td>
+                    <td><v-btn @click="deletedelivery" justify="center">삭제버튼</v-btn></td>
                 </tr>
                 
             </tbody>    
@@ -146,35 +146,13 @@ export default {
             }                
      
         },
-        // async getDelivery(){
-        //     let result = (await axios.get(`/api/deliveryInfo/${this.$store.state.user.user_id}/${this.delivery.delivery_no}`) //sql.js 단건조회 경로 그대로 가져오기 api붙여주는 이유 proxy와 관련
-        //                             .catch(err=>{console.log(err)}))
-        //     this.delivery=result.data[0]   
-        // },
-        // async UpdateDelivery(){
-        //     let obj ={
-        //         param: {
-        //             delivery_no:this.delivery.delivery_no,
-        //             user_id : this.$store.state.user.user_id,
-        //             delivery_name : this.delivery.delivery_name,
-        //             delivery_address: this.delivery.delivery_address,
-        //             delivery_detail_address: this.delivery.delivery_detail_address,
-        //             delivery_postcode: this.delivery.delivery_postcode
-        //         }
-        //     }
-        //     let result = await axios.put(`/api/updateDelivery/${this.delivery.delivery_no }/${this.$store.state.user.user_id}`, obj)
-        //                             .catch((err=>console.log(err))) //수정된 정보를 저장한다
-        //     if(result.data.changedRows > 0){
-        //         alert('수정완료');
-                
-        //     }                        
-            
-        // },
-
-
-
-
-
+      async deletedelivery(){
+        let data = await axios.delete(`/api/deleteDelivery/${this.delivery_no}`)
+                              .catch(err=>console.log(err));
+                  if(data.data.affectedRows>0){                        
+                     alert('배송지 삭제')
+                  }
+      },              
     //주소api
     search(){ //@click을 사용할 때 함수는 이렇게 작성해야 한다.
             const vueObj = this;

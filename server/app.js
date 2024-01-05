@@ -939,8 +939,9 @@ app.post("/addDelivery", async (req, res) => {
   let result = await mysql.query('delivery', 'addDelivery', datas)
   res.send(result);
 })
-app.delete("/delDelivery", async (req, res) => {
-  let result = await mysql.query('delivery', 'deleteDelivery')
+app.delete("/delDelivery/:dno", async (req, res) => {
+  let dno = req.params.dno
+  let result = await mysql.query('delivery', 'deleteDelivery',dno)
   res.send(result);
 })
 //찜하기 리스트
@@ -1034,7 +1035,11 @@ app.put("/reviewUpdate/:id/:rno", async (req, res) => {
   let datas = [req.body.param, req.params.id, Number(req.params.rno)]
   res.send(await mysql.query("reviews", "updateReview", datas));
 })
-
+app.delete("/deleteReview/:rno", async (req, res) => {
+  let rno = req.params.rno
+  let result = await mysql.query('reviews', 'deleteReviews',rno)
+  res.send(result);
+})
 //상세페이지 버튼 disable용
 app.get("/orderNoReview/:id", async (req, res) => {
   let id = req.params.id

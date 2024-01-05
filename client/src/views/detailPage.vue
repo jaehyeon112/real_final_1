@@ -135,7 +135,7 @@
                      <td> {{ review.review_content }}</td>
                      <td> {{ review.review_grade }}</td>
                      <td> {{ review.review_writedate }}</td>
-                     <td> <v-btn class="ma-2" variant="text" icon="mdi-thumb-up" color="blue-lighten-2" @click="reviewLike"></v-btn>{{ review.like_cnt }}</td>
+                     <td> <v-btn class="ma-2" variant="text" icon="mdi-thumb-up" :color="likeR?'blue-lighten-2':'black'" @click="getLikeCount"></v-btn>{{ review.like_cnt }}</td>
                      <td> <v-btn class="ma-2" variant="text" icon="mdi-thumb-down" color="red-lighten-2"></v-btn></td>
                   </tr>
             </table>
@@ -217,6 +217,7 @@ export default {
             inquireList:[],
             counter:1,
             isShow:false,
+            likeR:false,
             sheet:false
 
         }
@@ -256,11 +257,24 @@ export default {
             let list = await axios.get(`/api/detailReview/${this.pno}`)
                                   .catch(err=>console.log(err));
             this.reviewList =list.data;
-          
+            console.log
             console.log(this.reviewList)    
-            console.log(this.isShow)    
+            console.log(this.likeR)    
         },
-       
+        
+          async getLikeCount(){
+            let obj ={
+                param: {
+                  like_cnt :this.reviewList.like_cnt + 1
+                }
+            }
+            let result = await axios.put(`/api/reviewUpdate/${this.reviewList.user_id}/${this.reviewNo}`, obj) //얘는 왜 searchNo아니고..?
+                                    .catch((err=>console.log(err))) //수정된 정보를 저장한다
+            if(result.data.affectedRows > 0){
+                alert('좋아요~~');
+            }                        
+            
+        },
          async cartInsert(){
          let obj ={
              param: {
@@ -362,9 +376,6 @@ export default {
 </script>
 
 <style scoped>
-   .v-btn{
-
-   }
    #arrow{
       position:relative;
       top:10px;
