@@ -8,6 +8,7 @@ const bodyParser = require('body-parser');
 //const config = require('./config'); // config 파일에 Gmail API 정보
 const express = require("express");
 const app = express();
+const axios = require("axios");
 const fs = require("fs");
 const multer = require("multer");
 const path = require("path");
@@ -25,7 +26,7 @@ app.use(session({
   saveUninitialized: true, // 세션에 저장할 내역이 없더라도 처음부터 세션을 생성할지 설정
   cookie: { //세션 쿠키 설정 (세션 관리 시 클라이언트에 보내는 쿠키)
     httpOnly: true, // 자바스크립트를 통해 세션 쿠키를 사용할 수 없도록 함
-    Secure: true
+    Secure: true,
   },
   name: 'session-cookie' // 세션 쿠키명 디폴트값은 connect.sid이지만 다른 이름을 줄수도 있다.
 }));
@@ -57,6 +58,7 @@ async function getAccessToken() {
   } = await oauth2Client.getAccessToken();
   return token;
 }
+
 
 // 이메일 전송 함수
 async function sendEmail(to, subject, body) {
@@ -196,11 +198,6 @@ const upload = multer({
   storage: storage
 });
 
-
-
-
-
-
 app.post("/photos", upload.array("photos", 12), (req, res) => {
   for (let file of req.files) {
     console.log(file);
@@ -238,6 +235,63 @@ app.get("/show/:no", async (req, res) => {
   res.send(list);
 });
 
+// 아임포트 액세스토큰 저장
+app.get('/saveAccessToken', async (req, res) => {
+  try {
+    const getToken = await axios({
+      url: 'https://api.iamport.kr/users/getToken',
+      method: 'post',
+      headers: { 'Content-Type': 'application/json' },
+      data: {
+        imp_key: '1300467618678700', // REST API 키
+        imp_secret: 'xQbiqzngwzGJ7JaeaSMfZ99DHYKOBFTKf5jn7aEU8dlyzvE2rxBb5jvwxG5eUAZcc8jGhpU4AZMNhhbk' // REST API Secret
+      }
+    });
+
+    const accessToken = getToken.data.response.access_token;
+
+    req.session.accessToken = accessToken; // 세션에 토큰 값을 저장
+
+    console.log('아임포트 액세스 토큰이 성공적으로 저장되었습니다.');
+
+    res.send(accessToken);
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('토큰 저장 중에 에러가 발생했습니다.');
+  }
+});
+
+app.post("/cancel", async (req, res, next) => {
+  try {
+      /* 결제정보 조회 */
+      const { body } = req;
+
+      console.log(body)
+      // 클라이언트로부터 전달받은 주문번호, 환불사유, 환불금액
+      const { merchant_uid, reason, cancel_request_amount, access_token } = body;
+      
+      console.log(merchant_uid, reason, cancel_request_amount,access_token,'hi');
+        /* 포트원 REST API로 결제환불 요청 */
+        const getCancelData = await axios({
+          url: "https://api.iamport.kr/payments/cancel",
+          method: "post",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": access_token // 포트원 서버로부터 발급받은 엑세스 토큰
+          },
+          data: {
+            merchant_uid : merchant_uid, // merchant_uid를 환불 `unique key`로 입력
+            reason: reason, // 가맹점 클라이언트로부터 받은 환불사유
+            amount: cancel_request_amount, // 가맹점 클라이언트로부터 받은 환불금액
+          }
+        });
+        const { response } = getCancelData.data; // 환불 결과
+        /* 환불 결과 동기화 */
+    } catch (error) {
+      res.status(400).send(error);
+    }
+})
 
 app.get("/couponList", async (req, res) => { // 쿠폰 리스트
   let list = await mysql.query("test", "couponList", req.session.user_id);
@@ -308,7 +362,7 @@ app.get("/cartCheckList", async (req, res) => { //주문서의 장바구니체�
   res.send(list);
 });
 
-app.get("/orderList:/:no", async (req, res) => { // 주문완료 리스트
+app.get("/orderList/:no", async (req, res) => { // 주문완료 리스트
   let data = req.params.no;
   let list = await mysql.query("test", "orderList", data);
   res.send(list);
@@ -342,6 +396,11 @@ app.put("/StockUpdate/:no", async (req, res) => { // 상품 재고변경
 app.put("/pointUpdate", async (req, res) => { // 사용한 포인트 user테이블 업데이트
   let data = [req.body.param, req.session.user_id];
   res.send((await mysql.query("test", "pointUpdate", data)));
+});
+
+app.put("/orderUpdate/:no", async (req, res) => { // 취소되었을때 orders 주문상태 업데이트
+  let data = [req.body.param, req.params.no];
+  res.send((await mysql.query("test", "orderUpdate", data)));
 });
 
 app.get("/user/:order", async (req, res) => {

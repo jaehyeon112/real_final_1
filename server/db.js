@@ -43,5 +43,14 @@ const query2 = async (query, values) => {
 
 module.exports = {
   query,
-  query2
+  query2,
+    proxy: {
+      '/api': {
+        target: 'https://api.iamport.kr',
+        changeOrigin: true,
+        pathRewrite: {
+          '^/api': ''
+        }
+      }
+  }
 };

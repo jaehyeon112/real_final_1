@@ -6,7 +6,9 @@
           <td>
             <v-checkbox v-model="list.cart_checkbox" true-value="1" false-value="0" @click="updateCheckbox(list)"></v-checkbox>
           </td>
-          <td>이미지</td>
+          <td style="border-radius: 1px black;">
+            <img src="/api/test" alt="상품이미지" style="width: 150px;">
+          </td>
           <td>{{ list.prod_name }}</td>
           <td>{{ list.quantity }} 개</td>
           <td>
@@ -20,8 +22,8 @@
       <v-btn v-model="check" @click="goTologinForm">주문하기</v-btn>
   </v-container>
   <v-container v-else>
-    <v-card style="padding: 20px;">
-      <v-row v-if="this.cartList.length > 0">
+    <v-card style="padding: 20px;" v-if="this.cartList.length > 0">
+      <v-row>
         <v-col cols="8">
           <h1>장바구니</h1>
           <v-row class="button-row">
@@ -38,7 +40,9 @@
               <v-checkbox v-if="list.soldout == '0'" v-model="list.cart_checkbox" true-value="1" false-value="0" @click="updateCheckbox(list)"></v-checkbox>
               <v-btn v-else disabled="list.soldout == '1'">품절로 선택불가</v-btn>
             </td>
-            <td>이미지</td>
+            <td>
+              <img src="/api/test" alt="상품이미지" style="width: 100px;">
+            </td>
             <td>{{ list.prod_name }}</td>
             <td>
               <v-btn v-if="list.soldout == '0'" @click="quantityPlus(list)">
@@ -66,8 +70,8 @@
           </tr>
         </table>
       </v-col>
-      <v-col>
-        <ProdPrice
+      <v-col style="position: sticky; top:100px;">
+        <ProdPrice 
         :cartList="cartList"
         :total="total"
         :discount="discount"
@@ -77,12 +81,12 @@
       </v-col>
     </v-row>
   </v-card>
-<!-- <v-row v-else>
-      <v-col>
-        <h1>장바구니</h1>
-        <p>현재 장바구니에 상품이 없습니다.</p>
-      </v-col>
-  </v-row> -->
+  <v-card v-else>
+        <v-col>
+          <h1>장바구니</h1>
+          <p>현재 장바구니에 상품이 없습니다.</p>
+        </v-col>
+    </v-card>
   </v-container>
 </template>
 
@@ -116,12 +120,13 @@ export default {
   },
   computed :{
     check() { // 장바구니 체크안되면 주문하기버튼 활성화가 안되게 설정
+          let checkbox = 0;
           for (let i = 0; i < this.cartList.length; i++) {
             if (this.cartList[i].cart_checkbox == 1) {
-              this.Checkbox = 1;
+              checkbox = 1;
             }
           }
-          this.box = this.Checkbox;
+              this.box = checkbox
         }
   },
   // watch : {
@@ -132,6 +137,8 @@ export default {
   //   }
   // },
   methods : {
+    test(){
+    },
       quantityPlus(list) { // 수량 플러스
         if(list.stock > list.quantity ){
           list.quantity++;
@@ -142,8 +149,6 @@ export default {
         }else{
             alert('현재 남은 수량이 없습니다.');
         }
-
-
     },
     quantityMinus(list) { // 수량 마이너스
         if(list.quantity > 1 ){
@@ -173,22 +178,34 @@ export default {
       totalPrice() {
         this.total = 0;
           for (let i = 0; i < this.cartList.length; i++) {
+            if(this.cartList[i].cart_checkbox == 1){
             this.total += (this.cartList[i].price * this.cartList[i].quantity);
+            }
           }
       },
       discountPrice() {
         this.discount = 0;
-          for (let i = 0; i < this.cartList.length; i++) {
-            if (this.cartList[i].discount_price != null) {
+        for (let i = 0; i < this.cartList.length; i++) {
+            if(this.cartList[i].cart_checkbox == 1){
+              if (this.cartList[i].discount_price != null) {
               this.discount += (this.cartList[i].discount_price * this.cartList[i].quantity);
+              }
             }
-          }
+        }
       },
       deliveryPrice() {
-      this.delivery = this.discount < 40000 ? 3000 : 0;
+        for (let i = 0; i < this.cartList.length; i++) {
+            if(this.cartList[i].cart_checkbox == 1){
+              this.delivery = this.discount < 40000 ? 3000 : 0;
+            }
+        }
       },
       finalPrice() {
-        this.final = this.discount + this.delivery
+        for (let i = 0; i < this.cartList.length; i++) {
+          if(this.cartList[i].cart_checkbox == 1){
+          this.final = this.discount + this.delivery
+          }
+        }
       },
       getBill(){
         this.totalPrice();
@@ -199,7 +216,6 @@ export default {
       async updateCheckbox(list) {  // 체크박스 개별 DB에 등록부분
         if(list.cart_checkbox == 1) {
           let result = await axios.put(`/api/CheckboxUpdate/0/${list.cart_no}`, );
-          
           console.log(result.data,'0으로 바꾸기');
           if(result.data.affectedRows> 0){
           }
@@ -211,10 +227,13 @@ export default {
             }
           }
           console.log(list.cart_checkbox,'체크박스리스트');
+          this.delivery = 0;
+          this.final = 0;
+          this.getBill();
         },
         selectAll() {
           let allChecked = true;
-
+          
           for (let i = 0; i < this.cartList.length; i++) {
             if (this.cartList[i].cart_checkbox !== "1") {
               allChecked = false;
@@ -239,7 +258,11 @@ export default {
 
           axios.put(`/api/CheckAllUpdate/1`);
           console.log('전체선택')
-        }
+        } 
+          this.delivery = 0;
+          this.final = 0;
+          this.getBill();
+
        // axios.put(`/api/CheckAllUpdate/${this.$store.state.user.user_id}`,this.cartList);
 },
     deleteSelected() { 
@@ -251,6 +274,9 @@ export default {
             this.cartList.splice(i, 1); // 리스트에서 삭제
           }
         }
+        this.delivery = 0;
+        this.final = 0;
+        this.getBill();
       },
     moveOrderForm(){
       this.prodStock = 0;

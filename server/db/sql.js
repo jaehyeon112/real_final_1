@@ -80,8 +80,12 @@ let test = {
   // 포인트를 사용한 경우에만 포인트 테이블 적용
   pointInsert: `insert into point set ?`,
   // 포인트를 사용했을때 유저테이블에 포인트를 업데이트
-  pointUpdate: `update user set ? where user_id = ?`
+  pointUpdate: `update user set ? where user_id = ?`,
+  // 주문 취소했을때 주문상태 업데이트
+  orderUpdate : `update orders set ? where order_no = ?`
+  // 취소 된 상품 재고살리기
 
+  // 결제 취소되었을때 환불/취소 테이블에 등록
 
 };
 
