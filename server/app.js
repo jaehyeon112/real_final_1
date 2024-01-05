@@ -391,6 +391,8 @@ app.get("/orderCount", async (req, res) => {
   res.send(list);
 });
 
+//여기 박현아
+
 // 회원가입 - 아이디 중복체크용
 app.get("/join-id/:id", async (req, res) => {
   let uid = req.params.id;
@@ -399,18 +401,12 @@ app.get("/join-id/:id", async (req, res) => {
 })
 
 
-
-
-
 //회원가입 - 이메일 중복체크용
 app.get("/join-email/:email", async (req, res) => {
   let uemail = req.params.email;
   let list = await mysql.query("user", "duplicateEmail", uemail);
   res.send(list);
 })
-
-
-
 
 
 //회원가입용(insert) 
@@ -431,18 +427,44 @@ app.get("/dologin/:id/:password", async (req, res) => {
   let data = [req.params.id, req.params.password]
   let list = await mysql.query("user", "forLogin", data);
   res.send(list);
-});
+})
 
 
+//아이디비번찾기
+  //아이디찾기
+  app.get("/find/findid/:name/:email", async(req, res) => {
+    let data = [req.params.name, req.params.email]
+    let list = await mysql.query("user", "findId", data);
+    res.send(list);
+  })
 
-// //로그인 세션
-// app.post("/insertLogin", async(req, res)=> {
-//   let data = req.body.param;
-//   let result = await mysql.query("user","insertLogin", data);
-//   res.send(result);
-// })
+
+  // app.post("/find/findid", async(req, res)=> {
+  //  let  {user_name, user_email} = req.body;
+
+  //   console.log(user_name)
+  //   console.log(user_email)
+     
+  //   res.send(`${user_password}`);
+  // })
+
+  //비번찾기
+  app.get("/find/findpass/:name/:email/:id", async(req, res) => {
+    let data = [req.params.name, req.params.email, req.params.id]
+    let list = await mysql.query("user", "findPass", data);
+    console.log(list);
+    res.send(list);
+  })
+
 
 //회원수정
+  //수정페이지 가기전 비번입력창
+  app.get("/putpass/:id", async(req, res) => {
+    let uid = req.params.id;
+    let list = await mysql.query("user", "putPass", uid);
+    res.send(list);
+  })
+
   //일단 단건 데이터 불러오기
 app.get("/join/:id", async(req, res) => {
   let uid = req.params.id;
@@ -450,13 +472,22 @@ app.get("/join/:id", async(req, res) => {
   res.send(list);
 })
 
-  //회원정보수정하기
+//회원정보수정하기
   app.put('/join/:id', async(req, res)=>{
     let data = [req.body.param, req.params.id];
     let result = await mysql.query('user','updateUser', data);
     res.send(result);
   });
 
+ //비밀번호 변경
+ app.put('/changepass/:pwd/:id', async(req, res)=> {
+  console.log("비번변경");
+  let data = [req.params.pwd, req.params.id]
+  let result = await mysql.query('user', 'changePass', data);
+  console.log(result);
+  res.send(result);
+ })
+ 
 
 //회원탈퇴하면 user id 뺴고 null로 수정해야됨
 app.put("/updateoutuser/:id", async(req, res)=> {
@@ -1152,3 +1183,4 @@ app.get(`/cartSelect/:no/:id`, async (req, res) => {
   let list = await mysql.query('test', 'cartSelect', data)
   res.send(list)
 })
+

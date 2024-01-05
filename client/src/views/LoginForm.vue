@@ -198,7 +198,10 @@ this.$store.commit('login',users[0]) // (함수명, 전달인자)
         success: (res) => {
           const kakao_account = res.kakao_account;
           const nickname = kakao_account.profile.nickname;
+          
+          console.log("res", res);
           console.log("nickname", nickname);
+          console.log("kakao_account", kakao_account);
 
           //로그인처리구현
           alert("로그인 성공!");

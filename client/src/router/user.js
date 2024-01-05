@@ -9,9 +9,10 @@ import join from "../views/Join.vue";
 import login from "../views/LoginForm.vue";
 import finding from "../views/Finding.vue";
 import withdrawal from "../views/Withdrawal.vue";
-import emailnum from "../views/PutEmailNum.vue";
+
 import putpass from "../views/PutPassword.vue";
 import message from "../views/Message.vue";
+import changePass from "../views/ChangePass.vue"
 import test from "../views/test.vue";
 import myPage from "@/views/MyPage.vue";
 import detailPage from "@/views/detailPage.vue";
@@ -107,11 +108,7 @@ export default {
       name: "withdrawal",
       component: withdrawal
     },
-    {
-      path: "emailnum",
-      name: "emailnum",
-      component: emailnum
-    },
+
     {
       path: "putpass",
       name: "putpass",
@@ -122,7 +119,11 @@ export default {
       name: "message",
       component: message
     },
-  
+    {
+      path: "changePass",
+      name: "changePass",
+      component: changePass
+    },
     {
       path: "test",
       name: "test",

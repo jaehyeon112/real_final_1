@@ -49,10 +49,10 @@
         </router-link>
       </li>
       <li>
-        <span @click="goToUpdate" class="nav-link text-white">
+        <router-link to="/putpass" class="nav-link text-white">
           <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#people-circle"/></svg>
           개인정보수정
-        </span>
+        </router-link>
       </li>
     </ul>
     <hr>
@@ -67,12 +67,10 @@ export default{
         return{}
     },
     methods:{
-        //resize:function(){
-            //함수 생각해보자
-        //}
-
-        goToUpdate(){
-          this.$router.push(`/join/${this.$store.state.user.user_id}`);
+      
+        goToUpdate(id){
+          //this.$router.push(`/join/${this.$store.state.user.user_id}`);
+          this.$router.push({path: 'join', query: {user_id : this.$store.state.user.user_id}})
         }
     },
     created(){

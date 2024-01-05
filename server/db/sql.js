@@ -102,6 +102,9 @@ let user = {
   forLogin : `select * from user where user_id = ? and user_password = ?`,
 
   //회원수정 - id > 마이페이지> 회원가입때 입력한 값 그대로 출력 > 수정
+   // 수정하기전에 비번입력해야함
+   putPass : `select user_password from user where user_id = ?`,
+
     //id 별 조회
     selectId :  `select user_id, user_name, user_password, user_email, user_tel, birth, address, detail_address, postcode 
                 from user where user_id = ?`,
@@ -109,10 +112,15 @@ let user = {
     updateUser : `update user set ? where user_id=?`,
 
   //ID찾기
-    findId : `select `,
+    findId : `select user_id from user where user_name=? and user_email=? `,
 
+  //비번찾기
+    findPass : `select user_password from user where user_name=? and user_email=? and user_id=?`,
 
-  //회원탈퇴 - 탈퇴하기누르면 아이디 남기고 null 되고 withdrawal table에 insert되는거임! how...?
+  //비밀번호변경 
+    changePass: `update user set user_password=? where user_id =?`,
+
+  //회원탈퇴 - 탈퇴하기누르면 아이디 남기고 null 되고 withdrawal table에 insert
   updateOutUser : `UPDATE user
   SET
     user_name = null,
@@ -253,6 +261,7 @@ let like = {
   likeList : `select* from likes where user_id=? and prod_no=?`,
   likeInsert:`insert into likes set;`,
   likeDel:`delete from likes where user_id=? prod_no =?;`
+ 
 }
 let member = {
   memberInfo : `select t1.*, count(case when coupon_able=0 then 1 end) as couponCnt from user t1 join coupon t2  on t1.user_id = t2.user_id where t1.user_id= ?` 

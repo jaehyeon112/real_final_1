@@ -1,13 +1,14 @@
 <template>
 <div class="login-wrap">
   <div class="login-html">
+    <h2>{{ mode === 'edit' ? '회원 정보 수정' : '회원 가입' }}</h2>
     <input id="tab-2" type="radio" name="tab" class="sign-up"><label for="tab-2" class="tab">Sign Up</label>
     <div class="login-form">
       <div class="sign-up-htm">
-
+        <!-- 회원 수정 시 id랑 이름은 readonly로 수정못하게 해야함 -->
         <div class="group">
           <label for="user" class="label"> ID </label>
-          <input id="user" type="text" class="input" v-model="userInfo.user_id" autofocus placeholder="영문+숫자 조합 6자이상 11자 이하" >
+          <input  id="user" type="text" class="input" v-model="userInfo.user_id" autofocus placeholder="영문+숫자 조합 6자이상 11자 이하" >
           <div>
           <v-btn type="button" v-if="!validId" @click="checkId(userInfo.user_id)">중복체크</v-btn >
            <p v-if="validId" style="color: green;">사용 가능한 아이디입니다.</p>
@@ -19,7 +20,7 @@
         <div class="group">
           <!-- type 두개 password로 바꾸기 -->
           <label for="pass" class="label">Password</label>
-          <input id="pass" type="text" class="input" data-type="text" maxlength=16 v-model="userInfo.user_password" @blur="passwordValid">
+          <input id="pass" type="text" class="input" data-type="text" maxlength=16 v-model="userInfo.user_password" @blur="passwordValid" v-bind:="isUpdated">
           <div v-if="!passwordValidFlag"  style="color: red;">
             유효하지 않은 비밀번호 입니다.
           </div>
@@ -46,7 +47,7 @@
 <div class="group">
   <label for="email" class="label">Email Address</label>
   
-  <input id="email" type="text" class="input" v-model="userInfo.user_emailid" placeholder="이메일아이디 입력">
+  <input id="email" type="text" class="input" v-model="userInfo.user_emailid" placeholder="이메일아이디 입력" v-bind:="isUpdated"> 
 <span>@</span>
   <select v-model="userInfo.email_domain" class="input">
     <option disabled value="">도메인 선택</option>
@@ -55,7 +56,7 @@
     <option>naver.com</option>
     <option>daum.net</option> 
   </select>
-  <input v-if="userInfo.email_domain === '직접입력'" type="text" class="input" v-model="userInfo.direct_input_domain" placeholder="도메인 직접 입력">
+  <input v-if="userInfo.email_domain === '직접입력'" type="text" class="input" v-model="userInfo.direct_input_domain" placeholder="도메인 직접 입력" v-bind:="isUpdated">
   <v-btn type="button" @click="checkEmail"> 이메일 중복확인</v-btn>
   <v-btn type="button" @click="sendVerificationEmail"> 이메일 인증 메일 전송</v-btn>
 </div>
@@ -70,7 +71,7 @@
 
          <div class="group">
           <label for="tel" class="label">TEL</label>
-          <input id="tel" type="text" class="input" v-model="userInfo.user_tel">
+          <input id="tel" type="text" class="input" v-model="userInfo.user_tel" v-bind:="isUpdated">
           <v-btn type="button" @click ="sendVerificationPhone">휴대폰 인증</v-btn >
         </div>
 
@@ -87,15 +88,15 @@
           <label for="address" class="label">주소</label>
             <div class="address">
              <v-btn @click="search()">우편번호 찾기</v-btn><br>
-              <input type="text" id="postcode"  class="input" placeholder="우편번호" v-model="userInfo.postcode">
+              <input type="text" id="postcode"  class="input" placeholder="우편번호" v-model="userInfo.postcode" v-bind:="isUpdated">
               
               <!-- 도로명주소 -->
-                    <input type="text" id="roadAddress" class="input" placeholder="도로명주소" v-model="userInfo.address" v-if="!isJibunAddressSelected">
+                    <input type="text" id="roadAddress" class="input" placeholder="도로명주소" v-model="userInfo.address" v-if="!isJibunAddressSelected" v-bind:="isUpdated">
 
               <!-- 지번주소 -->
-               <input type="text" id="jibunAddress" class="input" placeholder="지번주소" v-model="userInfo.address" v-if="isJibunAddressSelected">
+               <input type="text" id="jibunAddress" class="input" placeholder="지번주소" v-model="userInfo.address" v-if="isJibunAddressSelected" v-bind:="isUpdated">
               <span id="guide" style="color:#000;display:none"></span>
-              <input type="text" id="detailAddress"  class="input" placeholder="상세주소" v-model="userInfo.detail_address">
+              <input type="text" id="detailAddress"  class="input" placeholder="상세주소" v-model="userInfo.detail_address" v-bind:="isUpdated">
 
             
   </div>
@@ -103,7 +104,7 @@
 
       <div class="group"> 
         <label for="birth" class="label">생년월일</label>
-          <input type="date" v-model="userInfo.birth" class="input" >
+          <input type="date" v-model="userInfo.birth" class="input" v-bind:="isUpdated">
       </div>
 
 
@@ -153,6 +154,10 @@ export default {
 
   data() {
     return {
+      mode: 'sign-up', //모드에 따라서 가입창, 수정창 바뀜
+      isUpdated : false,
+      oneUserId : '', //수정용 - 개인 아이디찾으려고
+
       phoneNo : '',
       no : '', //이메일 인증번호
       isEmailSent : false, //이메일인증창
@@ -214,6 +219,22 @@ computed: {
  
 },
   created() {
+    // $route.params.id로 전달된 파라미터에 접근
+    this.oneUserId = this.$route.query.user_id;
+
+    // userId가 존재하면 회원 수정 모드로 변경
+    if (this.oneUserId) {
+      this.mode = 'edit';
+      // 기존정보 불러오거나 수정작업 수행하기.
+      this.getUserInfo();
+      this.isUpdated = true;
+       this.userInfo.birth = this.getToday();
+    }else{
+        this.userInfo.birth = this.getToday();
+    } 
+
+   
+
 
 
 
@@ -237,6 +258,9 @@ computed: {
 
 
   methods: {
+     getToday(){
+      return this.$dateFormat('', 'yyyy-MM-dd');
+    },
     //아이디 중복체크: db에 아이디 있으면 중복되는 아이디 있다고 메세지 띄우기! 
     async checkId(id){
 
@@ -535,8 +559,22 @@ passwordValid() {
             }
         }).open();
       
+        }, //주소api
+
+        //회원수정시 그 id 정보 뿌릴거
+        async getUserInfo(){
+            let result = await axios.get(`/api/join/${this.oneUserId}`)
+                                    .catch(err => console.log(err));
+                console.log(result.data);
+                this.userInfo  = result.data[0];   
+
         }
-  }
+
+
+
+
+
+  } //endmethods
 
 };
 
@@ -571,7 +609,9 @@ a{color:inherit;text-decoration:none}
   height:100%;
   position:absolute;
   padding:90px 70px 50px 70px;
-  background:rgba(239, 233, 183, 0.9);
+  background:rgba(252, 252, 252, 0.9);
+  border-color : rgba(142, 4, 184, 0.9);
+  border : 2px solid;
 }
 .login-html .sign-in-htm,
 .login-html .sign-up-htm{
@@ -639,7 +679,7 @@ a{color:inherit;text-decoration:none}
   font-size:12px;
 }
 .login-form .group .button{
-  background:#c5b438;
+  background:#590969;
 }
 .login-form .group label .icon{
   width:15px;
