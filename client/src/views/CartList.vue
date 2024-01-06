@@ -238,6 +238,7 @@ export default {
           if(this.cartList[i].cart_checkbox == "1"){
             if(this.$store.state.user_user_id != null){
               axios.delete(`/api/CheckboxDelete/${this.cartList[i].cart_no}`);
+              this.$store.commit('loginCart')
             }else{
               this.$store.commit('cartDelete',this.cartList[i].prod_no)
             }

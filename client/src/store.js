@@ -41,6 +41,9 @@ const store = createStore({
       state.user = userInfo;
       state.loginCartCount = (await axios.get('/api/cartList')).data.length;
     },
+    async loginCart() {
+      state.loginCartCount = (await axios.get('/api/cartList')).data.length;
+    },
     logout(state) {
       state.user = '';
       state.cartCount = state.cart.length
