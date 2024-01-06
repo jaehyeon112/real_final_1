@@ -1039,6 +1039,18 @@ app.delete("/deleteReview/:rno", async (req, res) => {
   let rno = req.params.rno
   let result = await mysql.query('reviews', 'deleteReviews',rno)
   res.send(result);
+}),
+app.get("/rLikeCnt/:rno/:id", async(req,res)=>{
+  let datas = [req.params.rno, req.params.id]
+  res.send(await mysql.query("reviews", "selectReviewLike", datas))
+})
+app.post("/reviewLike", async(req,res)=>{
+ let data= req.body.param
+  res.send(await mysql.query("reviews", "insertReviewLike", data))
+})
+app.delete("/reviewLike/:rno/:id", async (req,res)=>{
+  let datas = [req.params.rno,req.params.id]
+  res.send(await mysql.query("reviews", "deleteReviewLike", datas))
 })
 //상세페이지 버튼 disable용
 app.get("/orderNoReview/:id", async (req, res) => {
@@ -1046,12 +1058,6 @@ app.get("/orderNoReview/:id", async (req, res) => {
   res.send(await mysql.query("reviews", "orderNoReview", id))
 });
 
-
-//상세페이지 버튼 disable용
-app.get("/orderNoReview/:id", async (req, res) => {
-  let id = req.params.id
-  res.send(await mysql.query("reviews", "orderNoReview", id))
-});
 //찜하기
 
 app.delete("/prodDisike/:id/:pno", async (req, res) => {

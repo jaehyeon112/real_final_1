@@ -130,12 +130,14 @@
                      <th>신고</th>
                   </tr>
                   <tr :key="idx" v-for="(review, idx) in reviewList">
+                     <!-- <td> {{ review.review_no }}</td> -->
                      <td> {{ review.user_id }}</td>
                      <td> {{ review.review_title }}</td>
                      <td> {{ review.review_content }}</td>
                      <td> {{ review.review_grade }}</td>
                      <td> {{ review.review_writedate }}</td>
-                     <td> <v-btn class="ma-2" variant="text" icon="mdi-thumb-up" :color="likeR?'blue-lighten-2':'black'" @click="getLikeCount"></v-btn>{{ review.like_cnt }}</td>
+                     {{ review }}
+                     <td> <v-btn class="ma-2" variant="text" icon="mdi-thumb-up" :color=" likeState1 ? 'blue-lighten-2':'black'" @click="getLikeCount(review.review_no, review.user_id, review.like_cnt)"></v-btn>{{ review.like_cnt }}</td>
                      <td> <v-btn class="ma-2" variant="text" icon="mdi-thumb-down" color="red-lighten-2"></v-btn></td>
                   </tr>
             </table>
@@ -217,7 +219,7 @@ export default {
             inquireList:[],
             counter:1,
             isShow:false,
-            likeR:false,
+            likeState1:false,
             sheet:false
 
         }
@@ -231,9 +233,7 @@ export default {
         
     },
     watch:{
-      isShow(){
-         this.getLikes()
-      }
+      
     },
     methods:{
         async getProductInfo(){
@@ -253,7 +253,7 @@ export default {
                this.isShow= true;
             }
          },
-        async getRivewList() {
+        async getRivewList() { //여기 조인해라
             let list = await axios.get(`/api/detailReview/${this.pno}`)
                                   .catch(err=>console.log(err));
             this.reviewList =list.data;
@@ -262,19 +262,61 @@ export default {
             console.log(this.likeR)    
         },
         
-          async getLikeCount(){
+          async getLikeCount(no, writer, cnt){
+            let likestate = await axios.get(`/api/rLikeCnt/${this.$store.state.user.user_id}/${no}`)
+                                       .catch(err=>console.log(err));                 
+            let k=0;
+            console.log("==============================")
+            console.log(no)
+            console.log(writer)
+            console.log(likestate.data)
+            console.log('엄지' +this.likeState)
+            if(likestate.data.length == 1){
+               k=-1
+            }else{
+               k=+1
+            }
             let obj ={
                 param: {
-                  like_cnt :this.reviewList.like_cnt + 1
+                  like_cnt : cnt + k
                 }
             }
-            let result = await axios.put(`/api/reviewUpdate/${this.reviewList.user_id}/${this.reviewNo}`, obj) //얘는 왜 searchNo아니고..?
-                                    .catch((err=>console.log(err))) //수정된 정보를 저장한다
-            if(result.data.affectedRows > 0){
-                alert('좋아요~~');
-            }                        
-            
-        },
+            let obj2={
+               param: { 
+                  review_no : no,
+                  user_id : this.$store.state.user.user_id
+               }
+            }
+            console.log(writer+ no + obj)
+            let result = await axios.put(`/api/reviewUpdate/${writer}/${no}`, obj) 
+                                    .catch((err=>console.log(err)))
+                                    console.log('좋아요 수 업데이트'+result.data)
+                                    console.log('현재k'+k)
+
+
+            if(likestate.data.length == 0){        
+            let result2 = await axios.post(`/api/reviewLike`,obj2)   
+                                    .catch(err=>console.log(err)) 
+                                    console.log('좋아요 한 사람 추가' + result2)
+                                    
+                     alert(result2.data)
+               if( result2.data.affectedRows > 0){
+                     alert('좋아요 성공~~');
+                     this.likeState1=true 
+                                 
+               }
+            }else{                       
+            let result3 = await axios.delete(`/api/reviewLike/${no}/${this.$store.state.user.user_id}`)         
+                                    .catch(err=>console.log(err))
+                                    console.log('result3'+result3)
+            if(result3.data.affectedRows >0){
+             this.likeState1=false  
+             alert('좋아요 취소~~')
+            }      
+         }                                                            
+      },
+
+
          async cartInsert(){
          let obj ={
              param: {

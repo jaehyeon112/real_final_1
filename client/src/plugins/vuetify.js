@@ -12,5 +12,6 @@ export default createVuetify({
       color: 'deep-purple-lighten-1',
       rounded: true,
     },
+    
   }
 })

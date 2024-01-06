@@ -72,11 +72,13 @@
             <tbody> 
                
                 <tr :key="idx" v-for="(delivery, idx) in deliveryList">
+                    <td style="display:none">{{delivery.delivery_no}}</td>
                     <v-radio-group v-model="picked">
                     <td><v-radio :label= "`${delivery.delivery_name}`" :value="idx"></v-radio></td>
                     </v-radio-group> 
                     <td>{{ delivery.delivery_name }}<hr style="color: aliceblue;">{{delivery.delivery_address }}{{ delivery.delivery_detail_address }}</td>
-                    <td><v-btn @click="deletedelivery" justify="center">삭제버튼</v-btn></td>
+                    
+                    <td><v-btn @click="deletedelivery(delivery.delivery_no)" justify="center">삭제버튼</v-btn></td>
                 </tr>
                 
             </tbody>    
@@ -146,8 +148,9 @@ export default {
             }                
      
         },
-      async deletedelivery(){
-        let data = await axios.delete(`/api/deleteDelivery/${this.delivery_no}`)
+      async deletedelivery(idx){
+        console.log(idx + '이기만나')
+        let data = await axios.delete(`/api/delDelivery/${idx}`)
                               .catch(err=>console.log(err));
                   if(data.data.affectedRows>0){                        
                      alert('배송지 삭제')

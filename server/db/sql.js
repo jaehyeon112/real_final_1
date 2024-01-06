@@ -194,14 +194,38 @@ let reviews = {
   myReview: `select * from review where user_id=? `, //마이페이지에서 내가 작성한 리뷰 리스트
   reviewInfo: `select * from review where user_id=? and review_no=?`, //마이페이지 리뷰하나 보기
   orderNoReview: `select * from review where user_id=?`,
-  detailList: `select t2.prod_no, t1.review_title, t1.review_content, t1.review_grade, t1.user_id, t1.review_writedate, t1.like_cnt, t1.report_cnt
-                                from review t1 join order_detail t2 on t1.detail_order_no = t2.order_detail_no
-                                                     join product t3 on t3.prod_no = t2.prod_no
-                                                     where t3.prod_no=?`, //상세페이지에서 그 상품에대한 리뷰 리스트
+  detailList: `SELECT 
+  t1.review_no, 
+  t2.prod_no, 
+  t1.review_title, 
+  t1.review_content, 
+  t1.review_grade, 
+  t1.user_id AS 'writer', 
+  t1.review_writedate, 
+  COALESCE(like_data.like_cnt, 0) AS like_cnt, 
+  t1.report_cnt,
+  CASE 
+      WHEN t4.user_id IS NOT NULL THEN TRUE 
+      ELSE FALSE 
+  END AS 'likestate'
+FROM review t1 
+JOIN order_detail t2 ON t1.detail_order_no = t2.order_detail_no
+JOIN product t3 ON t3.prod_no = t2.prod_no
+LEFT JOIN (
+  SELECT review_no, COUNT(*) AS like_cnt
+  FROM review_like 
+  GROUP BY review_no
+) AS like_data ON like_data.review_no = t1.review_no 
+LEFT JOIN review_like t4 ON t4.review_no = t1.review_no AND t4.user_id = ?
+WHERE t3.prod_no = ?`, //상세페이지에서 그 상품에대한 리뷰 리스트
   insertReview: `insert into review set?`, //주문상세내역->리뷰등록
   updateReview: `update review set ? where user_id= ? and review_no= ?`,
   insertReviewImage: `insert into image set?`,
-  deleteReview:`delete review where review_no=?`
+  deleteReview:`delete review where review_no=?`,
+  selectReviewLike:`select * from review_like where user_id=? and review_no=?`,
+  insertReviewLike:`insert into review_like set ?`,
+  deleteReviewLike:`delete from review_like where review_no=? and user_id=?`
+
 };
 
 let point = {
@@ -247,6 +271,7 @@ let delivery = {
   updateDelivery: `update add_delivery set? where delivery_no=? and user_id=?`,
   deleteDelivery: `delete from add_delivery where delivery_no=?`
 }
+//찜테이블
 let like = {
   likeInfo: `select* from likes where user_id=? and prod_no=?`,
   likeInsert: `insert into likes set?`,

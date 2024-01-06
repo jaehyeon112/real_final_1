@@ -37,20 +37,24 @@ export default {
    },
    created(){
     
-    this.orderNo = this.$route.query.orderNo;
-    this.getDetailList();
-
-   },
+       this.getDetailList();
+       
+    },
     
-   methods:{
-    
-    async getDetailList(){
+    methods:{
+        
+        async getDetailList(){
+        this.orderNo = this.$route.query.orderNo;
         let member_id = this.$store.state.user.user_id;
         let a = (await axios.get(`/api/myDetailOrders/${this.orderNo}/${member_id}`)
                                         .catch(err=>console.log(err))).data // 상세의 데이터
+                                        
         let b = (await axios.get(`/api/orderNoReview/${member_id}`)
                                    .catch(err => console.log(err))).data;  // 리뷰의 데이터 
-
+         console.log('a의 값')
+         console.log(a)                           
+         console.log('b의 값')
+         console.log(b)                           
         for(let i =0; i<a.length; i ++){
             for( let j = 0 ; j < b.length; j++){
             if(a[i].order_detail_no == b[j].detail_order_no){
