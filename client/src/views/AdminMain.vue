@@ -154,6 +154,9 @@
           <th class="text-left">
             신고상태(처리되지 않은 신고 : 총 {{ this.count3 }}건)
           </th>
+          <th class="text-left">
+            <router-link to="/admin/reviewReport">더보기</router-link>
+          </th>
         </tr>
       </thead>
       <tbody>
@@ -195,6 +198,10 @@
             문의 상태(현재 답변 대기 중인 문의 : 총 {{ this.count2 }}건)
           </th>
           <th class="text-left">
+            답변처리
+          </th>
+          <th class="text-left">
+            <router-link to="/admin/inquireList">더보기</router-link>
           </th>
         </tr>
       </thead>
@@ -213,7 +220,7 @@
           <td>{{ $dateFormat(inquire.create_date,'yyyy년 MM월 dd일') }}</td>
           <td v-if="inquire.answer_state==0">{{this.inquires='답변 대기 중'}}</td>
           <td v-else-if="inquire.answer_state==1">답변완료</td>
-          <td v-if="inquire.answer_state==0"><router-link to="">답변하러 가기</router-link></td>
+          <td v-if="inquire.answer_state==0"><router-link to="">답변하기</router-link></td>
           <td v-else-if="inquire.answer_state==1"><router-link to="">답변보기</router-link></td>
         </tr>
       </tbody>

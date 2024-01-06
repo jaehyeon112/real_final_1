@@ -84,6 +84,7 @@ async function sendEmail(to, subject, body) {
   return result;
 }
 
+
 server.listen(3000, () => {
   console.log('app대신 socket.io서버 on~~');
 });
@@ -196,16 +197,32 @@ const upload = multer({
   storage: storage
 });
 
-
-
-
-
-
-app.post("/photos", upload.array("photos", 12), (req, res) => {
-  for (let file of req.files) {
-    console.log(file);
+app.post("/photos", upload.array("photos", 10), (req, res) => {
+  console.log(req)
+  let imgArray = new Array();
+  for (let i=0;i<req.files.length;i++) {
+    imgArray.push(`${req.files[i].filename}`)
+    console.log(imgArray[i]);
   }
+  //let jsonImg = JSON.stringify(imgArray);
+  res.send(imgArray);
 });
+
+
+// app.delete("/photos", async (req, res) => {
+//   if (fs.existsSync(req.files)) {
+//     // 파일이 존재한다면 true 그렇지 않은 경우 false 반환
+//     try {
+//       fs.unlinkSync(req.files);
+//       console.log("image delete");
+//     } catch (error) {
+//       console.log(error);
+//     }
+//   }else{
+//     console.log('실패')
+//   }
+// }); //이미지 삭제 end
+ 
 
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -220,12 +237,25 @@ app.listen(3000, () => {
  */
 
 
+//정적파일
+app.use('/fileCall', express.static('uploads'));
+
+
 app.get("/test", async (req, res) => {
   // 여기서 imagePath를 db에 저장하고 불러와야할듯...
   const imagePath = "uploads\\1703574590403스페인식_감바스_상세페이지3.jpg";
   const absolutePath = path.join(__dirname, imagePath);
+  console.log('경로1' + absolutePath)
   res.sendFile(absolutePath);
 });
+
+// app.get("/test/uploads/:imagePath", async (req, res) => {
+//   let data = req.params.imagePath;
+//   console.log('여기까지 넘ㄴ어옴',data)
+//   const absolutePath = path.join(__dirname,data);
+//   console.log('경로2' + absolutePath)
+//   res.sendFile(absolutePath);
+// });
 
 app.get("/show", async (req, res) => {
   let data = await mysql.query("test", "list");
@@ -366,10 +396,16 @@ app.get("/user", async (req, res) => {
   res.send(data);
 });
 
-app.get("/user/:order/:startNo/:no", async (req, res) => {
-  let data = [req.params.order, Number(req.params.startNo) * Number(req.params.no), Number(req.params.no)];
+app.get("/outUser", async (req, res) => {
+  let data = await mysql.query("admin", "outList");
+  res.send(data);
+});
+
+app.get("/user/:order/:startNo", async (req, res) => {
+  let data = [req.params.order, Number(req.params.startNo) * 10];
   let list = await mysql.query("admin", "userList", data);
   res.send(list);
+  console.log('실행 : ',list)
 });
 
 app.put("/order/:status/:ono", async (req, res) => {
@@ -487,23 +523,31 @@ app.get("/user", async (req, res) => {
   res.send(list);
 });
 
-app.get("/user/:id/:name/:order/:startNo/:no", async (req, res) => {
-  let list = [req.params.id, req.params.name, req.params.order, Number(req.params.startNo) * Number(req.params.no), Number(req.params.no)];
+app.get("/user/:id/:name/:order/:startNo", async (req, res) => {
+  let list = [req.params.id, req.params.name,req.params.order, Number(req.params.startNo) * 10];
   let data = await mysql.query("admin", "searchUser", list);
   res.send(data);
 });
 
-app.get("/user/:join/:order/:startNo/:no", async (req, res) => {
-  let list = [req.params.join, req.params.order, Number(req.params.startNo) * Number(req.params.no), Number(req.params.no)];
+app.get("/user/:join/:order/:startNo", async (req, res) => {
+  let list = [req.params.join,req.params.order, Number(req.params.startNo) * 10];
   let data = await mysql.query("admin", "filterUser", list);
   res.send(data);
 });
 
 app.get("/prod/:name/:cate/:order/:startNo/:no", async (req, res) => {
-  let list = [req.params.name, req.params.cate, req.params.order, Number(req.params.startNo) * Number(req.params.no), Number(req.params.no)];
-  let data = await mysql.query("admin", "searchProd", list);
-  res.send(data);
+  if(Number(req.params.startNo)==null||Number(req.params.no)==null){
+    let test = "select prod_no,prod_name,price,discount_price,discount_rate,stock,main_category from product where prod_name like concat(concat('%',?),'%') or main_category = ? order by ??"
+    let list2 = [req.params.name,req.params.cate, req.params.order];
+    let data2 = await mysql.query("admin", "searchProd", list2);
+    res.send(data2);
+  }else{
+    let list = [req.params.name,req.params.cate, req.params.order,Number(req.params.startNo) * Number(req.params.no), Number(req.params.no)];
+    let data = await mysql.query("admin", "searchProd", list);
+    res.send(data);
+  }
 });
+
 
 app.get("/prod", async (req, res) => {
   let data = await mysql.query("admin", "AllprodList");
@@ -671,8 +715,8 @@ app.get('/review/:order', async (req, res) => {
   res.send(result);
 });
 
-app.post('/order/:tracking/:ono/:ono/:ono', async (req, res) => {
-  let data = [req.params.tracking, req.params.ono, req.params.ono, req.params.ono];
+app.post('/order/:ono/:tracking/:ono/:ono', async (req, res) => {
+  let data = [req.params.ono,req.params.tracking,req.params.ono,req.params.ono];
   let result = await mysql.query("admin", "insertDelivery", data);
   res.send(result);
 });

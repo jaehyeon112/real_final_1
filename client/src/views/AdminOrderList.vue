@@ -41,7 +41,7 @@
           <td v-else-if="order.order_status=='c3'">출고완료</td>
           <td v-else-if="order.order_status=='c4'">취소된 주문</td>
           <td v-if="order.order_status=='c1'"><v-btn type="button" @click="this.orderStatus='c2',this.orderGetOne(order.order_no),modalCheck2=true">주문상세보기</v-btn>   <v-btn type="button" @click="modalCheck=true,this.orderNo=order.order_no">주문취소 신청</v-btn></td>
-          <td v-else-if="order.order_status=='c2'"><v-btn type="button" @click="delNo=true">상품 출고하기</v-btn><p v-show="delNo">운송장번호 : <input type="number" v-model="deliveryNum"><v-btn @click="this.orderStatus='c3',changeStatus(order.order_no)">확인</v-btn></p></td>
+          <td v-else-if="order.order_status=='c2'"><v-btn type="button" @click="delNo=true">상품 출고하기</v-btn><p v-show="delNo">운송장번호 : <input type="number" v-model="deliveryNum"><v-btn @click="this.orderStatus='c3',changeStatus(order.order_no)">배송출발</v-btn></p></td>
           <td v-else><v-btn type="button">배송 조회</v-btn></td>
         </tr>
       </tbody>
@@ -291,10 +291,10 @@
                         alert('취소되었습니다')
                     }
                 }else if(this.orderStatus=='c3'){
-                    if(confirm('상품이 준비되었습니까?')){
-                        let result = await axios.put(`/api/order/${this.deliveryNum}/${this.orderStatus}/${ono}`).catch(err=>console.log(err));
+                    if(confirm('배송을 정말 보내시겠습니까?')){
+                        let result = await axios.put(`/api/order/${this.orderStatus}/${ono}`).catch(err=>console.log(err));
                         //배달에도 추가하기
-                        let result2 = await axios.post(`/api/order/${ono}/${ono}/${ono}`)
+                        let result2 = await axios.post(`/api/order/${ono}/${this.deliveryNum}/${ono}/${ono}`)
                         if(result.data.affectedRows==1&&result2.data.affectedRows==1){
                             alert('출고완료되었습니다!\n배송리스트에서 확인해주세요.');
                             this.getOrderList();
