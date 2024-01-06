@@ -40,11 +40,15 @@
               메인페이지
             </a>
           </li>
-          <li class="nav-item" @click="userList">
+          <li class="nav-item" @click="user">
             <button class="nav-link d-flex align-items-center gap-2 active">
               <svg class="bi"><use xlink:href="#people"/></svg>
               회원관리
           </button>
+          <ul class="centers" v-if="isUser">
+            <li @click="userList">회원 목록</li>
+            <li @click="outList">탈퇴 회원</li>
+          </ul>
         </li>
         <li class="nav-item">
           <button class="nav-link d-flex align-items-center gap-2 active" @click="product">
@@ -119,7 +123,8 @@ export default {
       isOk : false,
       isorder : false,
       isreview : false,
-      isnotice : false
+      isnotice : false,
+      isUser : false
     }
   }, 
   methods : {
@@ -154,6 +159,13 @@ export default {
         this.isnotice = true;
       }
     },
+    user(){
+      if(this.isUser==true){
+        this.isUser = false;
+      }else{
+        this.isUser = true;
+      }
+    },
     prodList(){
       this.$router.push({name : 'prodList'});
     },
@@ -184,6 +196,12 @@ export default {
     fnaList(){
       this.$router.push({name : 'fna'})
     },
+    userList(){
+      this.$router.push({name : 'userList'})
+    },
+    outList(){
+      this.$router.push({name : 'out'})
+    }
   }
 }
 </script>

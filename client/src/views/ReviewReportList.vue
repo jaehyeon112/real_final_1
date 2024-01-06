@@ -90,32 +90,32 @@
             this.total();
         },
         methods : {
-            // async sendMessage(){
-            //     if(confirm('정말 취소하시겠습니까?')){
-            //         let result = await axios.put(`/api/refund/${this.orderNo}`).catch(err=>console.log(err));
-            //         let result2 = await axios.post(`/api/refund/${this.orderNo}`).catch(err=>console.log(err));
-            //         if(result.data.affectedRows==1&&result2.data.affectedRows==1){
-            //             alert('회원님에게 알림을 보냈습니다');
-            //             if(this.reason='기타'){
-            //                 this.$socket.emit('report', `${this.reasons}으로 인한 주문취소!`)
-            //             }else{
-            //                 this.$socket.emit('report', `${this.reason}으로 인한 주문취소!`)
-            //             }
-            //             this.getOrderList();
-            //             this.modalCheck = false;
-            //             this.reason = '';
-            //             //스케쥴러 사용--한달동안 정지시킴
-            //         }else{
-            //             alert('오류가 남'); 
-            //         }
-            //     }else{
-            //         alert('취소되었습니다');
-            //         this.modalCheck = false;
-            //         this.reason = '';
-            //     }
-            // },
+            async sendMessage(){
+                if(confirm('정말 취소하시겠습니까?')){
+                    let result = await axios.put(`/api/refund/${this.orderNo}`).catch(err=>console.log(err));
+                    let result2 = await axios.post(`/api/refund/${this.orderNo}`).catch(err=>console.log(err));
+                    if(result.data.affectedRows==1&&result2.data.affectedRows==1){
+                        alert('회원님에게 알림을 보냈습니다');
+                        if(this.reason='기타'){
+                            this.$socket.emit('report', `${this.reasons}으로 인한 주문취소!`)
+                        }else{
+                            this.$socket.emit('report', `${this.reason}으로 인한 주문취소!`)
+                        }
+                        this.getOrderList();
+                        this.modalCheck = false;
+                        this.reason = '';
+                        //스케쥴러 사용--한달동안 정지시킴
+                    }else{
+                        alert('오류가 남'); 
+                    }
+                }else{
+                    alert('취소되었습니다');
+                    this.modalCheck = false;
+                    this.reason = '';
+                }
+            },
             async total() {
-                let total = await axios.get(`/api/review`).catch((err) => {
+                let total = await axios.get(`/api/report`).catch((err) => {
                     console.log(err);
                 });
                 this.totalList = total.data;
