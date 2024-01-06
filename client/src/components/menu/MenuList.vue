@@ -102,13 +102,13 @@ export default {
       isSoldOut: false,
       isStock: false,
       quantity : 1,
-      cartList : ''
+      cartList : {}
     };
   },
   props: ["prodList"],
   created(){
     this.soldout();
-    
+    this.getUserCartInfo()
   }
   ,
 
@@ -168,14 +168,14 @@ export default {
     async goToCart(no){
       let cartQuantity = 0;
       if(this.$store.state.user.user_id == null){ //비회원일때
-        for(let i = 0 ; i< this.$store.state.cart.length ; i++){
+        for(let i = 0 ; i < this.$store.state.cart.length ; i++){
           if(no == this.$store.state.cart[i].prod_no){
             cartQuantity = this.$store.state.cart[i].quantity;
           }
         }
-        
+   
         if(this.prodList.stock >= this.quantity+cartQuantity) {
-          alert("장바구니에 등록되었습니다.")
+          alert("장바구니에 등록되었습니다. 비회원")
       let items = this.prodList;
       items.quantity = this.quantity;
       this.$store.commit('addCart',items)
@@ -183,16 +183,22 @@ export default {
       alert('보유 재고를 초과하여 장바구니에 넣을 수 없습니다.')
     }
   }else{ // 회원으로 로그인 이후
-    if(this.cartList.length != 0){ //해당 상품이 있다면
-      if(this.prodList.stock >= this.quantity+cartQuantity){
+    if(this.cartList.length != 0){ //해당 아이디의 장바구니가 비어있지 않고
+      for(let i = 0 ; i < this.cartList.length; i++){
+        if(no == this.cartList[i].prod_no){
+            cartQuantity = this.cartList[i].quantity;
+          }
+      }
+      if(this.prodList.stock >= this.quantity+cartQuantity){ // 
             let obj = {
               param: {
-                quantity : this.cartList.quantity + this.quantity,
+                quantity : cartQuantity+ this.quantity,
                 user_id : this.$store.state.user_user_id
               }
             }
             await axios.put(`/api/cartAfterLogin/${this.prodList.prod_no}`, obj)
-            alert('장바구니에 추가적으로 등록되었습니다.')
+            alert('장바구니에 추가적으로 등록되었습니다. 회원')
+            this.$store.commit('loginCart')
             return
           }else{
             alert('보유 재고를 초과하여 장바구니에 넣을 수 없습니다.')
@@ -208,8 +214,8 @@ export default {
               }
     if(this.prodList.stock >= this.quantity+cartQuantity) {
           await axios.post('/api/cartAfterLogin/',obj).catch(err=>console.log('로그인 이후 카트에 담길때 에러' + err))
-          alert("장바구니에 등록되었습니다.")
-          this.$store.state.loginCartCount ++;
+          alert("장바구니에 등록되었습니다. 회원" )
+          this.$store.commit('loginCart')
       //장바구니 추가
     }else{
       alert('보유 재고를 초과하여 장바구니에 넣을 수 없습니다.')

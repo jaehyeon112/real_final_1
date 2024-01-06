@@ -205,7 +205,7 @@ export default {
                   
                 }
               }
-              if(this.$store.state.user_user_id != null){
+              if(this.$store.state.user.user_id != null){
                 axios.put(`/api/CheckAllUpdate/0`);
               }else{
                 this.$store.commit('allCheck',"0")
@@ -218,7 +218,7 @@ export default {
                 }
           }
           
-          if(this.$store.state.user_user_id != null){
+          if(this.$store.state.user.user_id != null){
             axios.put(`/api/CheckAllUpdate/1`);
           }else{
             this.$store.commit('allCheck',"1")
@@ -236,11 +236,13 @@ export default {
           console.log('해당 체크유무 : ' + this.cartList[i].cart_checkbox )
           console.log('=== 구분선 === ')
           if(this.cartList[i].cart_checkbox == "1"){
-            if(this.$store.state.user_user_id != null){
+            if(this.$store.state.user.user_id != null){
               axios.delete(`/api/CheckboxDelete/${this.cartList[i].cart_no}`);
+              console.log('회원!')
               this.$store.commit('loginCart')
             }else{
               this.$store.commit('cartDelete',this.cartList[i].prod_no)
+              console.log('비회원')
             }
             this.cartList.splice(i, 1); // 리스트에서 삭제 이거때문에 오류 걸리는듯
           }
