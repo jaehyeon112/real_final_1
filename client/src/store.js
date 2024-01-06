@@ -2,6 +2,7 @@ import {
   createStore
 } from "vuex";
 import createPersistedState from "vuex-persistedstate";
+import axios from "axios"
 
 const store = createStore({
   state() {
@@ -12,7 +13,8 @@ const store = createStore({
       cart: [],
       user: {},
       searchList: [],
-      orderNo: 0
+      orderNo: 0,
+      loginCartCount: 0
     }
   },
   getters: {
@@ -34,10 +36,12 @@ const store = createStore({
       state.cart.push(item);
       state.cartCount = state.cart.length
     },
-    login(state, userInfo) {
+    async login(state, userInfo) {
       state.user = userInfo;
-        console.log(userInfo+'store의 값')
-      
+      state.loginCartCount = (await axios.get('/api/cart')).data.length;
+      console.log(state.loginCartCount + '로그인 한 사람의 장바구니 갯수');
+      console.log(userInfo + 'store의 값')
+
     },
     logout(state) {
       state.user = {};
@@ -54,7 +58,7 @@ const store = createStore({
   },
   plugins: [
     createPersistedState({
-      paths: ['user', 'cart', 'orderNo']
+      paths: ['user', 'cart', 'cartCount', 'loginCartCount', 'orderNo']
     })
   ]
 

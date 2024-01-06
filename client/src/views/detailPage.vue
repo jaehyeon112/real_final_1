@@ -8,8 +8,8 @@
             <b>상세이미지 삽입하는 곳</b>
          </div>
          <div class="col-md-6">
-            <h1 class="display-4 fw-bolder">상품이름{{ 상품이름 }}</h1>
-            <h1 class="display-7 fw-bolder">상품원가격{{ 상품가격 }}</h1>
+            <h1 class="display-5 fw-bolder">상품이름{{ productInfo.prod_name }}</h1>
+            <h1 class="display-7 fw-bolder">상품원가격{{ productInfo.price }}</h1>
             <div class="fs-5 mb-5">
                 <br>
               <table class="table" border="1">
@@ -18,36 +18,32 @@
                     <td>최고다최고</td>
                 </tr>
                 <tr>
-                    <th>원산지</th>
-                    <td>정보{{ 원산지정보 }}</td>
+                    <th>냉장/냉동</th>
+                    <td>정보{{ productInfo.refrigeration }}</td>
                 </tr>
                 <tr>
                     <th>알레르기 정보</th>
-                    <td>알레르기 정보 {{ 알레르기정보 }}</td>
+                    <td>알레르기 정보 {{ productInfo.allergy }}</td>
                 </tr>
               </table>
             </div>
             
             <div class="d-flex">
                 <p>상품선택</p>
-                <v-text-field>
-                  <template v-slot:append>
-                     <v-icon color="red">mdi-plus</v-icon>
-                  </template>
-                  <template v-slot:prepend>
-                     <v-icon color="green">mdi-minus</v-icon>
-                  </template>
-                </v-text-field>
+                  <v-btn @click="minusCount">-</v-btn>
+                  <span >{{ counter }} </span>
+                  <v-btn @click="plusCount">+</v-btn>
             </div>
             <div>
-                <p class="lead">할인률</p>
-                <p class="lead">할인률 적용된 가격</p>
+                <p class="lead">할인률{{ productInfo.discount_rate }}</p>
+                <p class="lead">할인률 적용된 가격{{  productInfo.discount_price }}</p>
             <br>
                <p style="margin-left:20px;margin-bottom:0;color:black">무료배송 (40,000원 이상 구매 시)</p>
                <br>
             </div>
             <div>
-               <button @click="goToCart">장바구니 담기</button> <button @click="likes">♡</button>
+               <v-btn @click="cartInsert">장바구니 담기</v-btn><v-btn  @click="likes" :color="love?red:blue">찜</v-btn>
+                                                                    
             </div>
          </div>
       </div>
@@ -64,16 +60,19 @@
          <hr>
       </div>
       <!--상세정보?-->
+      <a id="detail"></a>
          <div class="container px-4 px-lg-5 my-5" style="text-align:center;" id="detail">
             
          </div>
       <hr>
 
        <!--리뷰게시판  부분 -->
+       <a id="review"></a>
       <div id="review" class="reviewTable">
         <p> 베스트 리뷰</p>
         <p>리뷰 베스트 5 나열할 곳</p>
-        <input :key="idx" v-for="(bestR, idx) in reviewList" type="file">
+        <!--
+        <input :key="idx" v-for="(bestR, idx) in reviewList" type="file">-->
         <table class="table" border="1">
             <tr>
                 <th>작성자</th>
@@ -90,14 +89,14 @@
                 <td> {{ review.review_content }}</td>
                 <td> {{ review.review_grade }}</td>
                 <td> {{ review.review_writedate }}</td>
-                <td> <v-btn class="ma-2" variant="text" icon="mdi-thumb-up" color="blue-lighten-2"></v-btn>{{ review.like_cnt }}</td>
-                <td> <v-btn class="ma-2" variant="text" icon="mdi-thumb-down" color="red-lighten-2"></v-btn>아이콘</td>
+                <td> <v-btn class="ma-2" variant="text" icon="mdi-thumb-up" color="blue-lighten-2" @click="reviewLike"></v-btn>{{ review.like_cnt }}</td>
+                <td> <v-btn class="ma-2" variant="text" icon="mdi-thumb-down" color="red-lighten-2"></v-btn></td>
             </tr>
         </table>
        </div>
       <hr>
       <!-- 문의게시판 건드린 부분 -->
-     
+      <a id="qna"></a>
       <div id="qna" class="qnaTable">
         <table class="table" border="1">
             <tr>
@@ -120,6 +119,7 @@
       
       
       <!--주문정보 파트-->
+      <a id="order"></a>
       <div id="order">
          <div id="arrow"></div>
          <h2 id="text1">취소/교환/반품안내</h2>
@@ -143,29 +143,149 @@
 <script>
 import axios from'axios';
 
+
 export default {
     data(){
         return{
             pno:'',
+            cart:{
+               cart_no:'',
+                 cart_checkbox :0,
+                 prod_no:'',
+                 user_id:'',
+                 quantity:''
+            },
+            productInfo:{},
+            likeList:{},
             reviewList:[],
-            inquireList:[]
+            inquireList:[],
+            counter:1,
+            love:''
+            
         }
     },
     created(){ 
       this.pno = this.$route.query.pno; 
-      console.log('pno'+this.pno)
+      this.getProductInfo();
+      this.getLikes();
       this.getRivewList();
+      
         
     },
     methods:{
+        async getProductInfo(){
+            let info = await axios.get(`/api/detailPro/${this.pno}`)
+                                    .catch(err=>console.log(err));
+            this.productInfo = info.data[0]                       
+        },
+        async getLikes(){
+        let list = await axios.get(`/api/prodLike/${this.$store.state.user.user_id}/${this.pno}`)
+                                  .catch(err=>console.log(err));
+            this.likeList =list.data
+            console.log(this.likeList)
+            if(list.data != null){
+               console.log('찜한상태'+list.data)
+               this.love= true;
+            }else{
+               this.love=false;
+            }
+         },
         async getRivewList() {
-            let list = await axios.get(`api/detailReview/${this.pno}`)
+            let list = await axios.get(`/api/detailReview/${this.pno}`)
                                   .catch(err=>console.log(err));
             this.reviewList =list.data;
             console.log(this.reviewList)                      
         },
-        
-    }
+       
+         async cartInsert(){
+         let obj ={
+             param: {
+                
+                 prod_no:this.pno,
+                 user_id:this.$store.state.user.user_id,
+                 quantity:this.counter
+             }
+         }
+         console.log('삽입전?' +this.counter)
+         let obj2 ={
+             param: {
+                
+                 quantity:this.cart.quantity+this.counter
+             }
+            }
+         console.log(this.$store.state.user.user_id)
+          let result = await axios.get(`/api/comparisonCart/${this.$store.state.user.user_id}`) //카트 안에 같은 상품이 있는지 정보가져오기 
+                                  .catch(err=>console.log(err)).data
+                                   console.log( '장바구니 불러오기'+ result + this.cart)
+                                   console.log(result)
+                                   console.log( '장바구니 불러오기'+ result)
+                           if(result != null ){
+                              for(let i=0; i < result.length; i++){
+                                 if( this.pno == result[i].prod_no) {   
+                                    console.log(this.pno + 'result'+result[i])                   
+                                    let carts = await axios.put(`/api/updateCart/${this.pno}/${this.$store.state.user.user_id}`,obj2)
+                                    .catch(err=>console.log(err))
+                                    this.cart = this.carts.data
+                                    if(carts.data.changedRows > 0){
+                                       alert('장바구니 수량 변견 완료');
+                                       //this.$router.push({path:'card'})
+                                    }                          
+                                 }else{
+                                    let carts2 = await axios.post(`/api/savingCart`,obj)
+                                    .catch(err=>console.log(err))                           
+                                    if(carts2.data.insertId>0){ 
+                                       alert('장바구니에 담겼습니다');
+                                       console.log('장바구니에 담겼습니다' +this.counter)
+                                       this.cart.cart_no = carts2.data.insertId; 
+                                       //this.$router.push({path:'cart'})
+                                    }
+                                 }               
+                              }                        
+                           }else{
+                              let carts2 = await axios.post(`/api/savingCart`,obj)
+                                    .catch(err=>console.log(err))                           
+                                    if(carts2.data.insertId>0){ 
+                                       alert('장바구니에 담겼습니다');
+                                       this.cart.cart_no = carts2.data.insertId; 
+                                       //this.$router.push({path:'cart'})
+                                    }
+                           }
+                        },
+      minusCount(){
+         if(this.counter > 1){
+            this.counter--;
+         }
+      },
+      plusCount(){
+         this.counter++;
+      },              
+   //    async likes(){
+   //    //찜하기눌러서 저장하는 곳
+      
+   //          if(this.love == true ){ //찜한상태라는 말
+   //             let dellike = await axios.delete(`/api/DelprodLike/${this.$store.state.user.user_id}/${this.pno}`)
+   //                                     .catch(err=>console.log(err));
+   //                if(dellike.data.affectedRows>0){                        
+   //                   alert('삭제성공')
+   //                   this.love=false
+   //                }else{
+   //                   console.log(err)
+   //                }
+   //          }else{
+   //             let likes = await axios.post(`/api/prodLike`)
+   //                                     .catch(err=>console.log(err));
+   //             if(likes.data.changedRows>0){
+   //                alert('찜상태 변화')
+   //                this.love=true
+   //             }                         
+   //           }      
+         
+   //   },
+
+   },
+     
+     
+    
 }
 </script>
 

@@ -326,6 +326,7 @@ export default {
           this.list = listResult.data
           return;
         }
+        // queryString으로 처리하자...흠;;이거왜이래ㅑ
       }else if(this.mainCategory='특가'){
         if(this.first == '' && this.price == ''){ // 필터 없이 전체
           return;

@@ -4,8 +4,8 @@
             <label class="list-group-item d-flex gap-2" :key="idx" v-for="(detail, idx) in productList" ><!--여기 포문 돌려라-->
             <input class="form-check-input flex-shrink-0" type="checkbox" value="" checked="">
             <span>
-                <p>주문번호-{{ detail.order_no }}</p>
-                <p>주문상세번호-{{ detail.order_detail_no }}</p>
+                <p>주문번호: {{ detail.order_no }}</p>
+                <p>주문상세번호: {{ detail.order_detail_no }}</p>
                 여기 사진 넣는다 치고
                 <small class="d-block text-body-secondary">상품명:{{ detail.prod_name }}</small>
                 <hr>
@@ -32,7 +32,7 @@ export default {
         productList:[],
         reviewList:[],
         orderNo:'',
-        test:''
+        test:false
     }
    },
    created(){
@@ -66,17 +66,25 @@ export default {
         let b = (await axios.get(`/api/orderNoReview/${member_id}`)
                                    .catch(err => console.log(err))).data;  // 리뷰의 데이터 
 
-        for(let i = 0; i < a.length; i++){
+        // for(let i = 0; i < a.length; i++){
+        //     for( let j = 0 ; j < b.length; j++){
+        //         if(a[i].order_detail_no == b[j].detail_order_no){
+        //             a[i].test = true;
+        //         }else{
+        //             a[i].test= false;
+        //         }
+        //     }
+        // }
+        //                          this.reviewList = b;
+        //                          this.productList = a;   
+        for(let i =0; i<a.length; i ++){
             for( let j = 0 ; j < b.length; j++){
-                if(a[i].order_detail_no == b[j].detail_order_no){
-                    a[i].test = true;
-                }else{
-                    a[i].test= false;
-                }
+            if(a[i].order_detail_no == b[j].detail_order_no){
+                a[i].test = true
             }
         }
-                                 this.reviewList = b;
-                                 this.productList = a;       
+            this.productList = a
+        }    
     },
     
     goToReview(detailNo){

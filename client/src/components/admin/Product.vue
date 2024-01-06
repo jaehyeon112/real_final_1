@@ -16,18 +16,6 @@
                     <input type="text" v-model="prod.prod_name" class="form-control" id="prod_name" required readonly>
                   </div>
                 </div>
-    
-                <div class="col-sm-6">
-                  <label for="price" class="form-label">원가 <icon v-if="showIcon">필수</icon></label>
-                  <input v-if="this.prodNo==null" type="number" v-model.number="prod.price" class="form-control" id="prod_name" required>
-                  <input v-else type="number" v-model.number="prod.price" class="form-control" id="prod_name" required readonly>
-                </div>
-    
-                <div class="col-sm-6">
-                  <label for="discount_price" class="form-label" v-if="prod.price==''">판매가</label>
-                  <label for="discount_price" class="form-label" v-else>판매가{{'(할인율 : '+Math.floor((1-((prod.discount_price)/(prod.price)))*100)+'%)' }}</label>
-                  <input type="number" v-model.number="prod.discount_price" class="form-control" id="price">
-                </div>
 
                 <div class="col-sm-6">
                   <label for="stock" class="form-label">재고 <icon v-if="showIcon">필수</icon></label>

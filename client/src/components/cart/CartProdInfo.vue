@@ -4,7 +4,7 @@
       <hr>
       <table class="rwd-table" :key="idx" v-for="(list, idx) in cartList">
         <tr>
-          <td>상품 이미지</td>
+          <td>이미지</td>
           <td>{{ list.prod_name }}</td>
           <td>{{ list.quantity }} 개</td>
           <td>
