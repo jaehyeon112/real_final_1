@@ -12,6 +12,7 @@ import deliveryList from '../views/AdminDeliveryList.vue';
 import inquireList from '../views/AdminInquireList.vue';
 import noticeList from '../views/AdminNoticeList.vue';
 import fna from '../views/FNA.vue';
+import out from '../views/AdminOutList.vue'
 
 
 export default{
@@ -83,6 +84,11 @@ export default{
           path : "fna",
           name : "fna",
           component : fna
+        },
+        {
+          path : "out",
+          name : "out",
+          component : out
         },
       ]
   }

@@ -360,10 +360,16 @@ app.get("/user", async (req, res) => {
   res.send(data);
 });
 
-app.get("/user/:order/:startNo/:no", async (req, res) => {
-  let data = [req.params.order, Number(req.params.startNo) * Number(req.params.no), Number(req.params.no)];
+app.get("/outUser", async (req, res) => {
+  let data = await mysql.query("admin", "outList");
+  res.send(data);
+});
+
+app.get("/user/:order/:startNo", async (req, res) => {
+  let data = [req.params.order, Number(req.params.startNo) * 10];
   let list = await mysql.query("admin", "userList", data);
   res.send(list);
+  console.log('실행 : ',list)
 });
 
 app.put("/order/:status/:ono", async (req, res) => {
@@ -473,23 +479,31 @@ app.get("/user", async (req, res) => {
   res.send(list);
 });
 
-app.get("/user/:id/:name/:order/:startNo/:no", async (req, res) => {
-  let list = [req.params.id, req.params.name,req.params.order, Number(req.params.startNo) * Number(req.params.no), Number(req.params.no)];
+app.get("/user/:id/:name/:order/:startNo", async (req, res) => {
+  let list = [req.params.id, req.params.name,req.params.order, Number(req.params.startNo) * 10];
   let data = await mysql.query("admin", "searchUser", list);
   res.send(data);
 });
 
-app.get("/user/:join/:order/:startNo/:no", async (req, res) => {
-  let list = [req.params.join,req.params.order, Number(req.params.startNo) * Number(req.params.no), Number(req.params.no)];
+app.get("/user/:join/:order/:startNo", async (req, res) => {
+  let list = [req.params.join,req.params.order, Number(req.params.startNo) * 10];
   let data = await mysql.query("admin", "filterUser", list);
   res.send(data);
 });
 
 app.get("/prod/:name/:cate/:order/:startNo/:no", async (req, res) => {
-  let list = [req.params.name,req.params.cate, req.params.order, Number(req.params.startNo) * Number(req.params.no), Number(req.params.no)];
-  let data = await mysql.query("admin", "searchProd", list);
-  res.send(data);
+  if(Number(req.params.startNo)==null||Number(req.params.no)==null){
+    let test = "select prod_no,prod_name,price,discount_price,discount_rate,stock,main_category from product where prod_name like concat(concat('%',?),'%') or main_category = ? order by ??"
+    let list2 = [req.params.name,req.params.cate, req.params.order];
+    let data2 = await mysql.query("admin", "searchProd", list2);
+    res.send(data2);
+  }else{
+    let list = [req.params.name,req.params.cate, req.params.order,Number(req.params.startNo) * Number(req.params.no), Number(req.params.no)];
+    let data = await mysql.query("admin", "searchProd", list);
+    res.send(data);
+  }
 });
+
 
 app.get("/prod", async (req, res) => {
   let data = await mysql.query("admin", "AllprodList");
