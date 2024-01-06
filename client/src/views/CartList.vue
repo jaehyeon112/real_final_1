@@ -1,15 +1,31 @@
 <template>
   <v-container v-if="this.$store.state.user.user_id == null">
     <v-btn @click="selectAll">전체선택</v-btn>
-        <v-btn @click="$store.commit('cartEmpty')">선택삭제</v-btn>
-      <table class="rwd-table" :key="idx" v-for="(list, idx) in $store.state.cart">
+        <v-btn @click="deleteSelected">선택삭제</v-btn>
+      <table class="rwd-table" :key="idx" v-for="(list, idx) in cartList">
         <tr>
           <td>
             <v-checkbox v-model="list.cart_checkbox" true-value="1" false-value="0" @click="updateCheckbox(list)"></v-checkbox>
           </td>
           <td>이미지</td>
           <td>{{ list.prod_name }}</td>
-          <td>{{ list.quantity }} 개</td>
+          <td>
+                <v-btn v-if="list.soldout == '0'" @click="quantityPlus(list)">
+                <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAiIGhlaWdodD0iMzAiIHZpZXdCb3g9IjAgMCAzMCAzMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICAgIDxwYXRoIGQ9Ik0xNiAxMHY0aDR2MmgtNHY0aC0ydi00aC00di0yaDR2LTRoMnoiIGZpbGw9IiMzMzMiIGZpbGwtcnVsZT0ibm9uemVybyIvPgo8L3N2Zz4K" alt="">
+                </v-btn>
+                <v-btn v-else  disabled="list.soldout == '1'" @click="quantityPlus(list)">
+                <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAiIGhlaWdodD0iMzAiIHZpZXdCb3g9IjAgMCAzMCAzMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICAgIDxwYXRoIGQ9Ik0xNiAxMHY0aDR2MmgtNHY0aC0ydi00aC00di0yaDR2LTRoMnoiIGZpbGw9IiMzMzMiIGZpbGwtcnVsZT0ibm9uemVybyIvPgo8L3N2Zz4K" alt="">
+                </v-btn>
+              </td>
+              <td>{{ list.quantity }}개</td>
+              <td>
+                <v-btn v-if="list.soldout == '0'" @click="quantityMinus(list)">
+                  <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAiIGhlaWdodD0iMzAiIHZpZXdCb3g9IjAgMCAzMCAzMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICAgIDxwYXRoIGQ9Ik0yMCAxNHYySDEwdi0yeiIgZmlsbD0iIzMzMyIgZmlsbC1ydWxlPSJub256ZXJvIi8+Cjwvc3ZnPgo=" alt="">
+                </v-btn>
+                <v-btn v-else  disabled="list.soldout == '1'" @click="quantityMinus(list)">
+                  <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAiIGhlaWdodD0iMzAiIHZpZXdCb3g9IjAgMCAzMCAzMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICAgIDxwYXRoIGQ9Ik0yMCAxNHYySDEwdi0yeiIgZmlsbD0iIzMzMyIgZmlsbC1ydWxlPSJub256ZXJvIi8+Cjwvc3ZnPgo=" alt="">
+                </v-btn>
+              </td>
           <td>
             <ul>
               <li >{{ $wonComma(list.discount_price * list.quantity) }} 원</li>
@@ -101,15 +117,18 @@ export default {
   // },
   methods : {
       quantityPlus(list) { // 수량 플러스
-        if(list.stock > list.quantity ){
-          list.quantity++;
-    
-                axios.put(`/api/CartPlusquantity/${list.prod_no}`)
-                                   .catch(err => console.log(err));
-        }else{
-            alert('현재 남은 수량이 없습니다.');
-        }
+        
 
+          if(list.stock > list.quantity ){
+            list.quantity++;
+            if( this.$store.state.user.user_id !=null){
+            axios.put(`/api/CartPlusquantity/${list.prod_no}`)
+            .catch(err => console.log(err));
+            }
+          }else{
+            alert('현재 남은 수량이 없습니다.');
+          }
+          
 
     },
       // 로그인 안되어있으면 로그인 하라고 로그인 폼으로 이동 시킨다.
@@ -121,74 +140,108 @@ export default {
     quantityMinus(list) { // 수량 마이너스
         if(list.quantity > 1 ){
           list.quantity--;
-
+          if( this.$store.state.user.user_id !=null){
                 axios.put(`/api/CartMinusquantity/${list.prod_no}`)
                                    .catch(err => console.log(err));
+          }
         }
     },
-      fetchCartList() {
-        axios.get(`/api/cartList`, {
-        })
+     async fetchCartList() {
+        if(this.$store.state.user.user_id !=null){
+
+          await axios.get(`/api/cartList`, {
+          })
         .then(response => {
           this.cartList = response.data;
         })
         .catch(error => {
           console.error(error);
         });
+      }else{
+          this.cartList = await this.$store.state.cart
+          console.log('비회원 장바구니')
+        console.log(this.cartList)
+        console.log('비회원 장바구니')
+        }
       },
-      async updateCheckbox(list) {  // 체크박스 개별 DB에 등록부분
-        if(list.cart_checkbox == 1) {
-          let result = await axios.put(`/api/CheckboxUpdate/0/${list.cart_no}`, );
-          
-          console.log(result.data,'0으로 바꾸기');
-          if(result.data.affectedRows> 0){
-          }
-        }else {
-            let result = await axios.put(`/api/CheckboxUpdate/1/${list.cart_no}`);
-            
+       async updateCheckbox(list) {  // 체크박스 개별 DB에 등록부분
+        let result = ''
+        if(this.$store.state.user.user_id !=null){
+          if(list.cart_checkbox == 1) {
+              result = await axios.put(`/api/CheckboxUpdate/0/${list.cart_no}`, );
+            console.log(result.data,'0으로 바꾸기');
+            if(result.data.affectedRows> 0){
+            }
+          }else {
+               result =  await axios.put(`/api/CheckboxUpdate/1/${list.cart_no}`, );
             console.log(result,'1으로 바꾸기');
             if(result.data.affectedRows > 0){
             }
           }
-          console.log(list.cart_checkbox,'체크박스리스트');
+        }else {
+          if(list.cart_checkbox == 1){
+            list.cart_checkbox = 0;
+            this.$store.commit('selectCheck',list.prod_no )
+          }else{
+            list.cart_checkbox = 1;
+            this.$store.commit('selectCheck',list.prod_no )
+          }
+        }
         },
         selectAll() {
           let allChecked = true;
-
-          for (let i = 0; i < this.cartList.length; i++) {
-            if (this.cartList[i].cart_checkbox !== "1") {
-              allChecked = false;
+          
+            
+            for (let i = 0; i < this.cartList.length; i++) {
+              if (this.cartList[i].cart_checkbox != "1") {
+                allChecked = false;
+              }
             }
+            
+            if (allChecked) { // 전체 선택 해제
+              for (let i = 0; i < this.cartList.length; i++) {
+                if (this.cartList[i].cart_checkbox == "1") {
+                  this.cartList[i].cart_checkbox = "0";
+                  
+                }
+              }
+              if(this.$store.state.user_user_id != null){
+                axios.put(`/api/CheckAllUpdate/0`);
+              }else{
+                this.$store.commit('allCheck',"0")
+              }
+              console.log('전체해제')
+            } else { // 전체 선택
+              for (let i = 0; i < this.cartList.length; i++) {
+                if (this.cartList[i].cart_checkbox == "0") {
+                  this.cartList[i].cart_checkbox = "1";                
+                }
           }
-
-        if (allChecked) { // 전체 선택 해제
-          for (let i = 0; i < this.cartList.length; i++) {
-            if (this.cartList[i].cart_checkbox === "1") {
-              this.cartList[i].cart_checkbox = "0";
-            }
+          
+          if(this.$store.state.user_user_id != null){
+            axios.put(`/api/CheckAllUpdate/1`);
+          }else{
+            this.$store.commit('allCheck',"1")
           }
-
-           axios.put(`/api/CheckAllUpdate/0`);
-            console.log('전체해제')
-        } else { // 전체 선택
-          for (let i = 0; i < this.cartList.length; i++) {
-            if (this.cartList[i].cart_checkbox === "0") {
-              this.cartList[i].cart_checkbox = "1";                
-            }
-          }
-
-          axios.put(`/api/CheckAllUpdate/1`);
           console.log('전체선택')
         }
-       // axios.put(`/api/CheckAllUpdate/${this.$store.state.user.user_id}`,this.cartList);
-},
-    deleteSelected() { 
-        for(let i=0; i<this.cartList.length; i++) {
-          console.log(this.cartList[i].cart_checkbox,'삭제');
-          if(this.cartList[i].cart_checkbox == 1){
-
-            axios.delete(`/api/CheckboxDelete/${this.cartList[i].cart_no}`);
-            this.cartList.splice(i, 1); // 리스트에서 삭제
+        // axios.put(`/api/CheckAllUpdate/${this.$store.state.user.user_id}`,this.cartList);
+ 
+      },
+      deleteSelected() { 
+        console.log(this.cartList)
+        for(let i = this.cartList.length - 1; i >= 0; i--) { // 역순으로 해야함;
+          console.log('=== 구분선 === ')
+          console.log('해당 상품번호 : ' + this.cartList[i].prod_no )
+          console.log('해당 체크유무 : ' + this.cartList[i].cart_checkbox )
+          console.log('=== 구분선 === ')
+          if(this.cartList[i].cart_checkbox == "1"){
+            if(this.$store.state.user_user_id != null){
+              axios.delete(`/api/CheckboxDelete/${this.cartList[i].cart_no}`);
+            }else{
+              this.$store.commit('cartDelete',this.cartList[i].prod_no)
+            }
+            this.cartList.splice(i, 1); // 리스트에서 삭제 이거때문에 오류 걸리는듯
           }
         }
       },

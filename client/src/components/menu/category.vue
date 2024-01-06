@@ -5,7 +5,7 @@
     @mouseover="showCategoryList"
     @mouseleave="hideCategoryList"
   >
-    <router-link to="/">카테고리</router-link>
+    <span>카테고리</span>
     <div v-if="showCategory" class="category-list">
       <!-- 카테고리?  -->
       <ul>

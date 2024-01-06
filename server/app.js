@@ -249,9 +249,21 @@ app.get("/pointList", async (req, res) => { // 포인트 리스트
 });
 
 app.get("/cartList", async (req, res) => { //장바구니 리스트
-  let list = await mysql.query("test", "cartList", req.session.user_id);
-  res.send(list);
-});
+  let userId = req.session.user_id;
+  if (!userId) { // user_id가 없을때
+    return res.status(400).send('400에러~')
+  }
+
+  try {
+    let list = await mysql.query("test", "cartList", userId);
+    res.send(list);
+  } catch (err) { // db에서 뭐 오류뜨면~
+    console.log(err);
+    res.status(500).send({
+      err: '서버에서 오류난듯?'
+    })
+  }
+})
 
 app.put("/CheckboxUpdate/:check/:no", async (req, res) => { // 장바구니 체크박스 선택시 업데이트
   let data = [req.params.check, req.params.no];
@@ -825,6 +837,7 @@ app.get("/new/:no", async (req, res) => {
   let result = await mysql.query("test", "newList", data);
   res.send(result);
 })
+
 app.get("/new", async (req, res) => {
   let result = await mysql.query("test", "newListPage");
   res.send(result);
