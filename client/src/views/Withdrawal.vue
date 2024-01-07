@@ -62,6 +62,7 @@ import axios from 'axios'
         radios: '',
         textarea: '',
         checkbox: false,
+         withdrawalReason: ''
       }
     },
 
@@ -70,12 +71,17 @@ import axios from 'axios'
         if(!this.checkbox ){
            alert('체크박스동의해주세요.');
         }else{
-          if(this.raios === 4 && !this.textarea){
-            alert(`기타사유를 입력해주세요`)
-            return;
+          this.withdrawalReason = this.radios;
           }
 
-
+   if (this.radios === 4) {
+        if (!this.textarea.trim()) {
+          alert('기타 사유를 입력해주세요.');
+          return;
+        }
+        this.withdrawalReason = this.textarea;
+      }
+      
           let uid = this.$store.state.user.user_id ;
 
           if(confirm('탈퇴 시 30일 간 재가입이 불가능합니다. 정말 탈퇴하시겠습니까?')){
@@ -87,8 +93,8 @@ import axios from 'axios'
                   param : {
               
                       "user_id" : this.$store.state.user.user_id,
-                      "withdrawal_reason" : this.radios,
-                      "withdrawal_reaon_detail" : this.textarea // **이부분 추가하기! 
+                      "withdrawal_reason" : this.withdrawalReason,
+                    
                     }
           } //data
 
@@ -109,6 +115,6 @@ import axios from 'axios'
 
          }
       }
-    }
+    
   } //methods
 </script>

@@ -404,8 +404,10 @@ app.get("/join-id/:id", async (req, res) => {
 //회원가입 - 이메일 중복체크용
 app.get("/join-email/:email", async (req, res) => {
   let uemail = req.params.email;
+    console.log(uemail);
   let list = await mysql.query("user", "duplicateEmail", uemail);
   res.send(list);
+  console.log(list);
 })
 
 
