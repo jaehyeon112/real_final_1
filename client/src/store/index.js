@@ -1,30 +1,32 @@
-
-import { createStore } from 'vuex'
+import {
+    createStore
+} from 'vuex'
 import loginStore from './modules/loginStore'
 
 //새로고침 사라지는거 때문에
-import createPersistedState from 'vuex-persistedstate' 
+import createPersistedState from 'vuex-persistedstate'
 
 export default createStore({
     state: {
 
     },
-    getters : {
+    getters: {
 
     },
-    mutations : {
+    mutations: {
 
     },
-    actions : {
-        
+    actions: {
+
     },
-    modules : {
-        loginStore, refreshstoken
+    modules: {
+        loginStore,
+        refreshstoken
     },
-    
+
     plugins: [
         createPersistedState({
-            paths : ['loginStore']
+            paths: ['loginStore']
         })
     ]
 

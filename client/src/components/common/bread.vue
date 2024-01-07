@@ -54,10 +54,10 @@
           this.items.push({title : "동남아" , href : "/menu/main/e6"})
           break;
           case "new" :
-          this.items.push({title : "신상품" , href : "/menu/main/e6"})
+          this.items.push({title : "신상품" ,})
           break;
           case "best" :
-          this.items.push({title : "신상품" , href : "/menu/main/e6"})
+          this.items.push({title : "베스트" ,})
           break;
           case "sub" :
             this.items.push({title : "갑자기 땡긴다면"})

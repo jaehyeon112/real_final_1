@@ -200,7 +200,7 @@ const upload = multer({
 app.post("/photos", upload.array("photos", 10), (req, res) => {
   console.log(req)
   let imgArray = new Array();
-  for (let i=0;i<req.files.length;i++) {
+  for (let i = 0; i < req.files.length; i++) {
     imgArray.push(`${req.files[i].filename}`)
     console.log(imgArray[i]);
   }
@@ -222,7 +222,7 @@ app.post("/photos", upload.array("photos", 10), (req, res) => {
 //     console.log('실패')
 //   }
 // }); //이미지 삭제 end
- 
+
 
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -405,7 +405,7 @@ app.get("/user/:order/:startNo", async (req, res) => {
   let data = [req.params.order, Number(req.params.startNo) * 10];
   let list = await mysql.query("admin", "userList", data);
   res.send(list);
-  console.log('실행 : ',list)
+  console.log('실행 : ', list)
 });
 
 app.put("/order/:status/:ono", async (req, res) => {
@@ -524,25 +524,25 @@ app.get("/user", async (req, res) => {
 });
 
 app.get("/user/:id/:name/:order/:startNo", async (req, res) => {
-  let list = [req.params.id, req.params.name,req.params.order, Number(req.params.startNo) * 10];
+  let list = [req.params.id, req.params.name, req.params.order, Number(req.params.startNo) * 10];
   let data = await mysql.query("admin", "searchUser", list);
   res.send(data);
 });
 
 app.get("/user/:join/:order/:startNo", async (req, res) => {
-  let list = [req.params.join,req.params.order, Number(req.params.startNo) * 10];
+  let list = [req.params.join, req.params.order, Number(req.params.startNo) * 10];
   let data = await mysql.query("admin", "filterUser", list);
   res.send(data);
 });
 
 app.get("/prod/:name/:cate/:order/:startNo/:no", async (req, res) => {
-  if(Number(req.params.startNo)==null||Number(req.params.no)==null){
+  if (Number(req.params.startNo) == null || Number(req.params.no) == null) {
     let test = "select prod_no,prod_name,price,discount_price,discount_rate,stock,main_category from product where prod_name like concat(concat('%',?),'%') or main_category = ? order by ??"
-    let list2 = [req.params.name,req.params.cate, req.params.order];
+    let list2 = [req.params.name, req.params.cate, req.params.order];
     let data2 = await mysql.query("admin", "searchProd", list2);
     res.send(data2);
-  }else{
-    let list = [req.params.name,req.params.cate, req.params.order,Number(req.params.startNo) * Number(req.params.no), Number(req.params.no)];
+  } else {
+    let list = [req.params.name, req.params.cate, req.params.order, Number(req.params.startNo) * Number(req.params.no), Number(req.params.no)];
     let data = await mysql.query("admin", "searchProd", list);
     res.send(data);
   }
@@ -716,7 +716,7 @@ app.get('/review/:order', async (req, res) => {
 });
 
 app.post('/order/:ono/:tracking/:ono/:ono', async (req, res) => {
-  let data = [req.params.ono,req.params.tracking,req.params.ono,req.params.ono];
+  let data = [req.params.ono, req.params.tracking, req.params.ono, req.params.ono];
   let result = await mysql.query("admin", "insertDelivery", data);
   res.send(result);
 });
@@ -1123,30 +1123,10 @@ app.post("/prodLike", async (req, res) => {
 })
 
 
-// sql injection의 위험이 있음 처리해야함;;
-app.get("/new2/:first/:last/:A/:B/:no", async (req, res) => {
-  let base = 'SELECT * FROM product WHERE registration >= CURRENT_DATE() - INTERVAL 7 DAY ';
-  let no = req.params.no;
-  let first = req.params.first;
-  let last = req.params.last;
-  let A = req.params.A;
-  let B = req.params.B;
-  if (first != 'X' && last != 'X') {
-    base += ` and  prod_name >= '${first}' and prod_name < '${last}'`;
-  }
-  if (A != 'X' && B != 'X') {
-    base += ` and discount_price between ${A} and ${B} `
-  }
-  if (no != 'X') { // 2번째가 X라면 전체페이지, 아니면 6페이지씩
-    base += ' limit ' + no * 6 + ', 6';
-  }
-  let result = await mysql.query2(base);
-  res.send(result);
-})
-
 
 app.get("/frozen/:first/:last/:A/:B/:no", async (req, res) => {
-  let base = `select * from product  where refrigeration = 'g1' `
+  let base = `select p.*, FORMAT(avg(review_grade),1) AS 'star' from product p left join order_detail d on p.prod_no = d.prod_no
+  left join review r  on r.detail_order_no = d.order_detail_no where refrigeration = 'g1' `
 
   let params = [];
 
@@ -1166,6 +1146,9 @@ app.get("/frozen/:first/:last/:A/:B/:no", async (req, res) => {
     base += ` AND discount_price BETWEEN ? AND ?`;
     params.push(Number(A), Number(B));
   }
+
+  base += ` group by d.prod_no `
+
   if (no !== 'X') {
     base += ` LIMIT ?, 6`;
     params.push(Number(no) * 6);
@@ -1209,4 +1192,89 @@ app.get(`/cartSelect/:no/:id`, async (req, res) => {
 
 app.get('/cart', async (req, res) => {
   res.send(await mysql.query('test', 'cartList', req.session.user_id))
+})
+
+
+app.get(`/best`, async (req, res) => {
+  const {
+    no,
+    first,
+    last,
+    A,
+    B,
+  } = req.query;
+
+
+  let base = `SELECT p.*, COUNT(*) AS hotItem, FORMAT(AVG(r.review_grade), 1) AS avg_grade
+  FROM order_detail o 
+  LEFT JOIN product p ON o.prod_no = p.prod_no
+  LEFT JOIN review r ON r.detail_order_no = o.order_detail_no
+  WHERE 1=1  `
+
+  if (first && last) {
+    base += ` and prod_name >= '${first}' and prod_name < '${last}'`
+  }
+
+  if (A && B) {
+    base += ` and discount_price between ${A} and ${B} `
+  }
+
+  base += ` GROUP BY p.prod_no HAVING hotItem > 1 and avg_grade > 4 ORDER BY hotItem DESC`
+
+  if (no) {
+    base += ' limit ' + no * 6 + ' , 6';
+  }
+  let result = await mysql.query2(base);
+  res.send(result);
+})
+app.get(`/sale`, async (req, res) => {
+  const {
+    no,
+    first,
+    last,
+    A,
+    B,
+  } = req.query;
+
+
+  let base = `select * from product where discount_rate > 40  `
+
+  if (first && last) {
+    base += ` and prod_name >= '${first}' and prod_name < '${last}'`
+  }
+
+  if (A && B) {
+    base += ` and discount_price between ${A} and ${B} `
+  }
+
+  if (no) {
+    base += ' limit ' + no * 6 + ' , 6';
+  }
+  let result = await mysql.query2(base);
+  res.send(result);
+})
+
+
+// sql injection의 위험이 있음 처리해야함;;
+app.get("/new2/:first/:last/:A/:B/:no", async (req, res) => {
+  let base = `SELECT p.*, FORMAT(avg(review_grade),1) AS 'star' from product p left join order_detail d on p.prod_no = d.prod_no
+  left join review r  on r.detail_order_no = d.order_detail_no WHERE registration >= CURRENT_DATE() - INTERVAL 7 DAY `;
+  let no = req.params.no;
+  let first = req.params.first;
+  let last = req.params.last;
+  let A = req.params.A;
+  let B = req.params.B;
+  if (first != 'X' && last != 'X') {
+    base += ` and  prod_name >= '${first}' and prod_name < '${last}'`;
+  }
+  if (A != 'X' && B != 'X') {
+    base += ` and discount_price between ${A} and ${B} `
+  }
+  base += ` group by d.prod_no`
+
+  if (no != 'X') { // 2번째가 X라면 전체페이지, 아니면 6페이지씩
+    base += ' limit ' + no * 6 + ', 6';
+  }
+  let result = await mysql.query2(base);
+  res.send(result);
 })
