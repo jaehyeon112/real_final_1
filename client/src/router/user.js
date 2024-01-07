@@ -115,7 +115,7 @@ export default {
       component: putpass
     },
     {
-      path: "message",
+      path: "message/:message",
       name: "message",
       component: message
     },

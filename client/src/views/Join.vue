@@ -504,7 +504,9 @@ passwordValid() {
     let result = await axios.post(`/api/join/joinIn`, data);
     if(result.data.affectedRows > 0 ){
       alert('가입 성공');
-      this.$router.push({name : 'message'});
+       
+     
+      this.$router.push({ name: 'message', params: { message: '회원가입이 완료되었습니다.' } });
       return;
     }else{
       alert('가입 실패');

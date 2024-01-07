@@ -83,8 +83,10 @@ import axios from 'axios'
 
 
           let uid = result.data[0]
+          console.log('uid in findingvue : ', uid); 
+
           if(uid != null){
-            this.$router.push({path : 'message'})
+            this.$router.push({name : 'message', params : {message: `찾으신 아이디는 " ${uid.user_id} " 입니다`}})
           }else{
             alert(`입력하신 정보와 일치하는 id가 없습니다.`)
           }
