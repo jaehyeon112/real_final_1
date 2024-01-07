@@ -173,8 +173,6 @@ io.on('connect', (socket) => {
 })
 
 
-
-
 const cron = require("node-cron");
 
 
@@ -198,29 +196,53 @@ const upload = multer({
 });
 
 app.post("/photos", upload.array("photos", 10), (req, res) => {
-  console.log(req)
   let imgArray = new Array();
   for (let i=0;i<req.files.length;i++) {
     imgArray.push(`${req.files[i].filename}`)
-    console.log(imgArray[i]);
+    console.log('현재 넘어온 사진 ' + req.files[i])
   }
   //let jsonImg = JSON.stringify(imgArray);
   res.send(imgArray);
 });
 
+app.post("/text", upload.array("text", 10), (req, res) => {
+  let textArray = new Array();
+  for (let i=0;i<req.files.length;i++) {
+    textArray.push(`${req.files[i].originalname}`)
+    console.log('현재 넘어온 파일 ' + req.files[i])
+  }
+  res.send(textArray);
+});
+
+app.post("/photo",async (req, res) => {
+  let data = req.body.param;
+  let result = await mysql.query("admin","insertFile",data)
+  res.send(result);
+});
+
+app.get("/photo/:pno",async (req, res) => {
+  let data = req.params.pno;
+  let result = await mysql.query("admin","photoList",data)
+  res.send(result);
+  console.log('실행'+result)
+});
+
+app.delete("/photo/:name",async (req, res) => {
+  let data = req.params.name;
+  let result = await mysql.query("admin","delPhoto",data);
+  console.log('삭제중'+result)
+  res.send(result);
+});
 
 // app.delete("/photos", async (req, res) => {
-//   if (fs.existsSync(req.files)) {
-//     // 파일이 존재한다면 true 그렇지 않은 경우 false 반환
+//   console.log('삭제실행??')
 //     try {
 //       fs.unlinkSync(req.files);
 //       console.log("image delete");
 //     } catch (error) {
+//       console.log(req.files)
 //       console.log(error);
 //     }
-//   }else{
-//     console.log('실패')
-//   }
 // }); //이미지 삭제 end
  
 
@@ -578,9 +600,26 @@ app.patch("/prod/:pno", async (req, res) => {
   let result = await mysql.query("admin", "prodDelete", data);
   res.send(result);
 });
-
+//통계
 app.get("/sum", async (req, res) => {
   let result = await mysql.query("admin", "monthsIncome");
+  res.send(result);
+});
+
+app.get("/weeksum/:agoweek/:week", async (req, res) => {
+  let datas = [Number(req.params.agoweek),Number(req.params.week)]
+  let result = await mysql.query("admin", "weekIncome",datas);
+  res.send(result);
+});
+
+app.get("/counting", async (req, res) => {
+  let result = await mysql.query("admin", "counting");
+  res.send(result);
+});
+
+app.get("/withMe/:outday/:joinday", async (req, res) => {
+  let datas = [Number(req.params.outday),Number(req.params.joinday)]
+  let result = await mysql.query("admin", "withUser",datas);
   res.send(result);
 });
 
@@ -592,6 +631,12 @@ app.put("/user/:grade/:uid", async (req, res) => {
 
 app.get("/notice", async (req, res) => {
   let result = await mysql.query("admin", "AllnoticeList");
+  res.send(result);
+});
+
+app.post("/notice", async (req, res) => {
+  let datas = req.body.param;
+  let result = await mysql.query("admin", "insertNotice",datas);
   res.send(result);
 });
 

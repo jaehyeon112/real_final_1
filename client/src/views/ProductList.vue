@@ -32,7 +32,8 @@
                 <td>{{ prod.prod_name }}</td>
                 <td>{{ prod.price }}</td>
                 <td>{{ prod.discount_price }}</td>
-                <td>{{ prod.stock }}</td>
+                <td v-if="prod.stock==0" style="color: red;">품절상품</td>
+                <td v-else>{{ prod.stock }}</td>
                 <td v-if="prod.main_category=='e1'">한식</td>
                 <td v-else-if="prod.main_category=='e2'">중식</td>
                 <td v-else-if="prod.main_category=='e3'">양식</td>

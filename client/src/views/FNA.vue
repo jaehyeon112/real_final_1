@@ -100,6 +100,7 @@
         <br>
         <div style="width: 200px;">
             내용 : <textarea v-model = "this.one.q_content" type="text" placeholder="질문 내용">{{ this.one.q_content }}</textarea>
+            내용 : <textarea v-model = "this.one.q_content" type="text" placeholder="질문 내용">{{ this.one.q_content }}</textarea>
         </div>
         <div class="modal-btn">
             <v-btn style="border-radius: 10px;" @click="modCheck = false,this.category=''">닫기</v-btn>
@@ -151,6 +152,16 @@ import side from '../components/admin/SideBar.vue';
             },
             async getOneList(){
                 let result = await axios.get(`/api/fnq/qno/${this.qno}`).catch(err=>console.log(err));
+                for(let i=0;i<result.data.length;i++){
+                    if(result.data[i].q_category='m1'){
+                        result.data[i].q_category = '주문/결제'
+                    }else if(result.data[i].q_category='m2'){
+                        result.data[i].q_category = '배송'
+                    }else if(result.data[i].q_category='m3'){
+                        result.data[i].q_category = '취소/환불'
+                    }
+
+                }
                 this.one = result.data[0];
             },
             async insertFNQ(){
@@ -185,6 +196,13 @@ import side from '../components/admin/SideBar.vue';
                 }
             },
             async modfnq(){
+                if(this.one.q_category=='배송'){
+                    this.one.q_category = 'm2'
+                }else if(this.one.q_category=='주문/결제'){
+                    this.one.q_category = 'm1'
+                }else if(this.one.q_category=='취소/환불'){
+                    this.one.q_category = 'm3'
+                }
                 let data = {
                     param : this.one
                 }

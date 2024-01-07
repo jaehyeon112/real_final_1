@@ -3,7 +3,7 @@ import adminMain from "@/views/AdminMain.vue";
 import userList from "@/views/UserList.vue";
 import prodList from "@/views/ProductList.vue";
 import product from '@/components/admin/Product.vue';
-import chart from '@/components/admin/chart.vue';
+
 import orderList from '@/views/AdminOrderList.vue';
 import reviewList from '../views/reviewList.vue';
 import reviewReport from '../views/ReviewReportList.vue';
@@ -13,6 +13,12 @@ import inquireList from '../views/AdminInquireList.vue';
 import noticeList from '../views/AdminNoticeList.vue';
 import fna from '../views/FNA.vue';
 import out from '../views/AdminOutList.vue'
+import insertNotice from '../views/insertNotice.vue'
+
+import Barchart from '../views/Barchart.vue';
+import Linechart from '../views/LineChart.vue';
+import sumChart from '../views/sumChart.vue';
+import userChart from '../views/userChart.vue';
 
 
 export default{
@@ -39,11 +45,6 @@ export default{
           path : "product",
           name : "product",
           component : product
-        },
-        {
-          path : "chart",
-          name : "chart",
-          component : chart
         },
         {
           path : "orderList",
@@ -89,6 +90,31 @@ export default{
           path : "out",
           name : "out",
           component : out
+        },
+        {
+          path : "insertNotice",
+          name : "insertNotice",
+          component : insertNotice
+        },
+        {
+          path : "Barchart",
+          name : "Barchart",
+          component : Barchart
+        },
+        {
+          path : "Linechart",
+          name : "Linechart",
+          component : Linechart
+        },
+        {
+          path : "userChart",
+          name : "userChart",
+          component : userChart
+        },
+        {
+          path : "sumChart",
+          name : "sumChart",
+          component : sumChart
         },
       ]
   }

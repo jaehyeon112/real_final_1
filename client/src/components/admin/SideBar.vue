@@ -80,7 +80,6 @@
             <li @click="reviewList">리뷰 목록</li>
             <li @click="reviewReport">신고된 리뷰</li>
             <li @click="inquireList">문의사항</li>
-            <li @click="noticeList">공지사항</li>
           </ul>
         </li>
         <li class="nav-item">
@@ -94,11 +93,14 @@
           </ul>
         </li>
         <li class="nav-item">
-          <button class="nav-link d-flex align-items-center gap-2 active">
+          <button class="nav-link d-flex align-items-center gap-2 active" @click="chart">
             <svg class="bi"><use xlink:href="#graph-up"/></svg>
             통계
           </button>
-          <ul slot="charList"></ul>
+          <ul v-if="isChart">
+            <li @click="sumChart">매출통계</li>
+            <li @click="userChart">회원통계</li>
+          </ul>
         </li>
       </ul>
       
@@ -124,7 +126,8 @@ export default {
       isorder : false,
       isreview : false,
       isnotice : false,
-      isUser : false
+      isUser : false,
+      isChart : false
     }
   }, 
   methods : {
@@ -166,6 +169,13 @@ export default {
         this.isUser = true;
       }
     },
+    chart(){
+      if(this.isChart==true){
+        this.isChart = false;
+      }else{
+        this.isChart = true;
+      }
+    },
     prodList(){
       this.$router.push({name : 'prodList'});
     },
@@ -201,6 +211,12 @@ export default {
     },
     outList(){
       this.$router.push({name : 'out'})
+    },
+    sumChart(){
+      this.$router.push({name : 'sumChart'})
+    },
+    userChart(){
+      this.$router.push({name : 'userChart'})
     }
   }
 }

@@ -16,11 +16,21 @@
                     <input type="text" v-model="prod.prod_name" class="form-control" id="prod_name" required readonly>
                   </div>
                 </div>
-
+                <div class="col-sm-6">
+                <label for="price" class="form-label">원가 <icon v-if="showIcon">필수</icon></label>
+                <input v-if="this.prodNo==null" type="number" v-model.number="prod.price" class="form-control" id="prod_name" required>
+                <input v-else type="number" v-model.number="prod.price" class="form-control" id="prod_name" required readonly>
+              </div>
+  
+              <div class="col-sm-6">
+                <label for="discount_price" class="form-label" v-if="prod.price==''">판매가</label>
+                <label for="discount_price" class="form-label" v-else>판매가{{'(할인율 : '+Math.ceil((1-((prod.discount_price)/(prod.price)))*100)+'%)' }}</label>
+                <input type="number" v-model.number="prod.discount_price" class="form-control" id="price">
+              </div>
                 <div class="col-sm-6">
                   <label for="stock" class="form-label">재고 <icon v-if="showIcon">필수</icon></label>
                   <input v-if="this.prodNo==null" type="number" v-model.number="prod.stock" class="form-control" id="stock" placeholder="" value="" required>
-                  <input v-else type="number" v-model.number="prod.stock" class="form-control" id="stock" placeholder="" value="" required>
+                  <input v-else type="number" v-model.number="prod.stock" class="form-control" id="stock" placeholder="" value="" required readonly>
                 </div>
     
                 <div class="col-sm-6">
@@ -38,11 +48,12 @@
                 <div class="col-12">
                   <label for="stock" class="form-label">상품 이미지 등록</label>
                   <div :key="i" v-for="i in nums" style="width: 500px;">
-                    <upload @info="info" />
-                    <v-btn v-show="this.nums==i" @click="this.nums=this.nums+1">추가</v-btn><v-btn v-show="this.nums==i&&this.nums!=1" @click="this.nums=this.nums-1">빼기</v-btn>
+                    <upload :numbers=this.nums @info="info" @text="text"/>
+                    <v-btn v-show="this.nums==i" @click="this.nums=this.nums+1">+</v-btn><v-btn v-show="this.nums==i&&this.nums!=1" @click="this.nums=this.nums-1">-</v-btn>
                   </div>
-                  <div v-show="open==true" v-for="idx in photo"><img id="ima" :src="getPath(idx)" style="position: relative;height=300"></div>
-                  <v-btn @click="showing">사진보기</v-btn>
+                  <div v-for="idx in file">첨부파일 : {{ idx }}<p @click="delMultiple(idx)">삭제</p></div>
+                  <div v-show="open==true" v-for="idx in photo"><img id="ima" :src="getPath(idx)" style="position: relative;height=300"><p @click="delPhoto(idx)">삭제</p></div>
+                  <v-btn @click="showing" v-show="photo.length>0">사진보기</v-btn> <!-- <v-btn @click="uploadPhoto">저장완료</v-btn> -->
                 </div>
                 
                 <div class="col-md-5">
@@ -111,15 +122,19 @@ export default {
           },
           showIcon : false,
           photo : [],
+          file : [],
           open : false,
           nums : 1,
-          delWord : ''
+          delWord : '',
+          ods : '',
       }
   },
   created(){
     this.prodNo = this.$route.query.pno;
     if(this.prodNo > 0){
+      this.photoList(this.prodNo);
       this.prodUpdateList();
+      this.open = true;
     }
   },
         methods : {
@@ -133,6 +148,15 @@ export default {
             this.prod.main_category = '';
             this.prod.sub_category = '';
             this.prod.discount_rate = '';
+          },
+          async photoList(no){
+            this.photo = [];
+            console.log(no)
+            let list = await axios.get(`/api/photo/${no}`).catch(err=>console.log(err));
+            for(let i=0;i<list.data.length;i++){
+              this.photo.push(list.data[i].file_name);
+              console.log('사진 리스트 ' +list.data[i])
+            }
           },
           async prodUpdateList(){
             let result = await axios.get(`/api/prods/${this.prodNo}`).catch(err=>console.log(err));
@@ -153,20 +177,37 @@ export default {
                     "sub_category" : this.prod.sub_category,
                     "cooking_time" : this.prod.cooking_time,
                     "allergy" : this.prod.allergy,
-                    "discount_rate" : Math.floor((1-(this.prod.discount_price/this.prod.price))*100)
+                    "discount_rate" : Math.ceil((1-(this.prod.discount_price/this.prod.price))*100)
                 }
               }
-              console.log('할인율 : '+this.prod.discount_rate)
               let result = await axios.put(`/api/prod/${this.prodNo}`,datas).catch(err=>console.log(err));
               if(result.data.affectedRows > 0){
+                
                 alert('수정성공!');
+                for(let i=0;i<this.photo.length;i++){
+                  this.ods = 's'+i
+                  let photos = {
+                    param : {
+                      "file_category" : 'r3',
+                      "file_name" : this.photo[i],
+                      "orders" : this.ods,
+                      "prod_no" : this.prodNo,
+                      "path" : 'uploads\\'+this.photo[i]
+                    }
+                  }
+                  let result1 = axios.post("/api/photo",photos).catch(err=>console.log(err));
+                  alert('테이블ㅇㅔ 추가');
+                }
                 this.$router.push({name : 'prodList'});
               }else{
                   alert('수정 실패')
               }
           },
           async insertProduct(){
-            this.prod.discount_rate = Math.floor((1-(this.prod.discount_price/this.prod.price))*100);
+            if(this.prod.discount_price==''){
+              this.prod.discount_price = this.prod.price;
+            }
+            this.prod.discount_rate = Math.ceil((1-(this.prod.discount_price/this.prod.price))*100);
             let data = {
               param : this.prod
             }
@@ -176,11 +217,26 @@ export default {
               return;
             }
             if(this.prod.discount_price==''){
-              data.param.discount_price = data.param.price;
+              this.param.discount_price = this.param.price;
             }
             let result = await axios.post(`/api/prod`,data).catch(err=>console.log(err));
             if(result.data.affectedRows > 0){
               alert('등록성공!');
+              for(let i=0;i<this.photo.length;i++){
+              console.log(this.photo[i])
+              let photos = {
+                param : {
+                  "file_category" : 'r3',
+                  "file_name" : this.photo[i],
+                  "orders" : i,
+                  "prod_no" : result.data.insertId,
+                  "path" : 'uploads\\'+this.photo[i]
+                }
+              }
+              let result1 = axios.post("/api/photo",photos).catch(err=>console.log(err));
+              alert('테이블ㅇㅔ 추가')
+            }
+              console.log('현재 등록된 상품' + result.data.insertId)
               this.$router.push({name : 'prodList'});
             }else{
               alert('등록 실패')
@@ -191,17 +247,65 @@ export default {
               this.photo.push(data[i]);
             }
           },
+          text(data){
+            for(let i=0;i<data.length;i++){
+              this.file.push(data[i]);
+            }
+          },
           showing(){
             if(this.open == true){
               this.open = false;
             }else if(this.open == false){
               this.open = true;
-              //this.getPath()
             }
           },
           getPath(name){
               return `/api/fileCall/${name}`;
           },
+          // delMultiple(file){
+          //   const fileName = file;
+          //   const encodedFileName = encodeURIComponent(fileName);
+          //   console.log('현재파일'+encodedFileName)
+          //   let list = axios.delete(`/api/photo/${encodedFileName}`).catch((error) => {console.error(error)});
+          //   alert('삭제')
+          //   this.photoList(this.prodNo);
+          // },
+          delPhoto(name){
+            for(let i = 0; i < this.photo.length; i++) {
+                if(this.photo[i] === name)  {
+                    this.photo.splice(i, 1);
+                    i--;
+                }
+            }
+          },
+          delMultiple(name){
+            for(let i = 0; i < this.file.length; i++) {
+                if(this.file[i] === name)  {
+                    this.file.splice(i, 1);
+                    i--;
+                }
+            }
+        },
+          // uploadPhoto(){
+          //   for(let i=0;i<this.photo.length;i++){
+          //     console.log(this.photo[i])
+          //     let photos = {
+          //       param : {
+          //         "file_category" : 'r3',
+          //         "file_name" : this.photo[i],
+          //         "orders" : i,
+          //         "prod_no" : this.prodNo,
+          //         "path" : 'uploads\\'+this.photo[i]
+          //       }
+          //     }
+          //     let result1 = axios.post("/api/photo",photos).catch(err=>console.log(err));
+          //       if(result1.data.affectedRows>0){
+          //         alert('테이블ㅇㅔ 추가')
+          //       }else{
+          //         alert('테이블ㅇㅔ 실패')
+          //       }
+          //   }
+          // }
         },
         components : {
         side,

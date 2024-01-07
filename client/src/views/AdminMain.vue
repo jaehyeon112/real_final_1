@@ -1,12 +1,33 @@
 <template>
 
-  <div class="container-fluid" style:width="50px">
+  <div class="container-fluid">
     <div class="row">
       <side/>
-      
       <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-        <v-card title="최근 주문내역">
-    <v-table class="vTable1">
+        <table class="table">
+                    <tr>
+                      <th>주문완료</th>
+                      <RouterLink to="/admin/orderList">{{counting.orderNo}}건</RouterLink>
+                    </tr>
+                    <tr>
+                      <th>배송 준비중</th>
+                      <RouterLink to="/admin/orderList">{{counting.delNo}}건</RouterLink>
+                    </tr>
+                    <tr>
+                      <th>주문 취소건</th>
+                      <RouterLink to="/admin/refundList">{{counting.refundNo}}건</RouterLink>
+                    </tr>
+                    <tr>
+                      <th>리뷰신고건</th>
+                      <RouterLink to="/admin/reviewReport">{{counting.reportNo}}건</RouterLink>
+                    </tr>
+                    <tr>
+                      <th>문의진행건</th>
+                      <RouterLink to="/admin/inquireList">{{counting.inquireNo}}건</RouterLink>
+                    </tr>
+            </table>
+      <v-card title="최근 주문내역">
+      <v-table class="vTable1">
       <thead>
         <tr>
           <th class="text-left">
@@ -225,31 +246,15 @@
         </tr>
       </tbody>
     </v-table>
-    <!-- <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-        </div>
-                        <div class="row">
-                            <div class="col-xl-6">
-                                <div class="card mb-4">
-                                    <div class="card-header">
-                                        <i class="fas fa-chart-area me-1"></i>
-                                        최근 3개월 매출내역
-                                    </div>
-                                    <div style="width: 600px;height: 600px;"><canvas id="myChart"></canvas></div>
-                                </div>
-                            </div>
-   
-                            <div class="col-xl-6">
-                                <div class="card mb-4">
-                                    <div class="card-header">
-                                        <i class="fas fa-chart-bar me-1"></i>
-                                        새로운 회원
-                                    </div>
-                                    <div class="card-body"><canvas id="myBarChart" width="100%" height="40"></canvas></div>
+    <div>
+      <div class="col-sm-4" style="width: 1000px;">
+          <Bar style="width: 40%;height: 40%;"/>
+      </div>
+      <div class="col-sm-4" style="width: 1000px;">
+        <Line style="width: 40%;height: 40%;"/>
+      </div>
 
-                                </div>
-                            </div>
-                        </div> -->
-
+    </div>
     </main>
   </div>
 </div>
@@ -258,7 +263,8 @@
 <script>
 import list from '../components/admin/List.vue';
 import side from '../components/admin/SideBar.vue';
-import Chart from 'chart.js/auto';
+import Bar from '../views/Barchart.vue';
+import Line from '../views/LineChart.vue';
 import axios from 'axios';
 import icon from '../components/admin/icon.vue';
   export default {
@@ -272,64 +278,27 @@ import icon from '../components/admin/icon.vue';
         count3 : 0,
         reviews : false,
         inquires : false,
-        months : [this.dateFormat()-2+'월',this.dateFormat()-1+'월',this.dateFormat()+'월'],
-        //datas : [],
         orderList : [],
         reviewList : [],
         inquireList : [],
-        orderOne : []
+        orderOne : [],
+        counting : '',
       }
     },
     components : {
       side,
       list,
-      icon
+      icon,
+      Bar,
+      Line
     },
     created(){
       //this.getSum();
       this.getOrderList();
       this.getReviewList();
       this.getInquireList();
+      this.getCounting();
     },
-    // watch : {
-    //   datas : function(){
-    //     this.getSum();
-    //   }
-    // },
-    // mounted(){
-    //         const ctx = document.getElementById('myChart');
-    //         const myChart = new Chart(ctx,{
-    //         type: 'line',
-    //         data: {
-    //             labels : this.months,
-    //             datasets: [{
-    //                 label : '최근 3개월 매출액',
-    //                 data: this.datas.sum,
-    //                 // backgroundColor: [
-    //                 //     'rgb(255, 99, 132)',
-    //                 //     'rgb(54, 162, 235)',
-    //                 //     'rgb(255, 205, 86)'
-    //                 // ],
-    //                 //hoverOffset: 3
-    //                 fill: false,
-    //                 borderColor: 'rgb(75, 192, 192)',
-    //                 tension: 0.1    //선을 부드럽게
-    //             }]
-    //         },
-    //         options : {
-    //           scales: {
-    //             xAxes: [{
-    //               ticks: {
-    //                 min: 0,
-    //                 stepSize : 100000,
-    //                 fontSize : 18,
-    //               }
-    //             }]
-		// 	        }
-    //         }
-    //         })
-    //         myChart;
-    //   },
       methods : {
         dateFormat(){
         let date = new Date();
@@ -341,6 +310,10 @@ import icon from '../components/admin/icon.vue';
         for(let i=0;i<result.data.length;i++){
           this.datas.push(result.data[i]);
         }
+       },
+       async getCounting(){
+        let result = await axios.get(`/api/counting`).catch(err=>console.log(err));
+          this.counting = result.data[0];
        },
        async getOrderList(){
         let result = await axios.get('/api/order').catch(err=>console.log(err));
@@ -459,6 +432,15 @@ import icon from '../components/admin/icon.vue';
     z-index: 1000;
     margin: 10px;
     padding : 5px;
-
   }
+.table{
+    width: 250px;
+    border: 1px solid;
+    text-align: center;
+    background-color: rgb(255, 255, 255);
+    position: fixed;
+    z-index: 10;
+    bottom: 0;
+    right: 0;
+}
 </style>
