@@ -8,7 +8,7 @@
         <!-- 회원 수정 시 id랑 이름은 readonly로 수정못하게 해야함 -->
         <div class="group">
           <label for="user" class="label"> ID </label>
-          <input  id="user" type="text" class="input" v-model="userInfo.user_id" autofocus placeholder="영문+숫자 조합 6자이상 11자 이하" >
+          <input  id="user" type="text" class="input" v-model="userInfo.user_id" :readonly="mode =='edit'" autofocus placeholder="영문+숫자 조합 6자이상 11자 이하" >
           <div>
           <v-btn type="button" v-if="!validId" @click="checkId(userInfo.user_id)">중복체크</v-btn >
            <p v-if="validId" style="color: green;">사용 가능한 아이디입니다.</p>
@@ -37,7 +37,7 @@
 
         <div class="group">
           <label for="name" class="label" > Name </label>
-          <input id="name" type="text" class="input" v-model="userInfo.user_name">
+          <input id="name" type="text" class="input" v-model="userInfo.user_name" :readonly="mode =='edit'">
         </div>
 
 
@@ -130,7 +130,7 @@
 
 
         <div class="group">
-          <input type="submit" class="button" @click="joinInsert()" value="Sign Up">
+          <input type="submit" class="button" @click="isUpdated? joinUpdate(): joinInsert() " value="Sign Up">
         </div>
 
 
@@ -155,7 +155,7 @@ export default {
   data() {
     return {
       mode: 'sign-up', //모드에 따라서 가입창, 수정창 바뀜
-      isUpdated : false,
+      isUpdated : false, // 수정?등록? => 수정일때 true
       oneUserId : '', //수정용 - 개인 아이디찾으려고
 
       phoneNo : '',
@@ -203,7 +203,23 @@ export default {
   }
 
   }, 
+  created() {
+    // $route.params.id로 전달된 파라미터에 접근
+    this.oneUserId = this.$route.query.user_id;
 
+    // userId가 존재하면 회원 수정 모드로 변경
+    if (this.oneUserId) {
+      this.mode = 'edit';
+      // 기존정보 불러오거나 수정작업 수행하기.
+      this.getUserInfo();
+      this.isUpdated = true;
+      
+    }else{
+        this.userInfo.birth = this.getToday();
+    } 
+
+   
+  }, //created
 computed: {
 
 
@@ -218,27 +234,7 @@ computed: {
   
  
 },
-  created() {
-    // $route.params.id로 전달된 파라미터에 접근
-    this.oneUserId = this.$route.query.user_id;
 
-    // userId가 존재하면 회원 수정 모드로 변경
-    if (this.oneUserId) {
-      this.mode = 'edit';
-      // 기존정보 불러오거나 수정작업 수행하기.
-      this.getUserInfo();
-      this.isUpdated = true;
-       this.userInfo.birth = this.getToday();
-    }else{
-        this.userInfo.birth = this.getToday();
-    } 
-
-   
-
-
-
-
-  }, //created
 
   watch:{
     // 아이디 입력값 변화 감지해서 변경되면 false로 설정
@@ -349,10 +345,14 @@ passwordValid() {
  //Email
 
     updateUserEmail: function() {
+      this.userInfo = this.userInfo || {};  //객체가 아니면 초기화 (changedRows 떄문에)
+
       if (this.userInfo.email_domain === '직접입력') {
         this.userInfo.user_email = `${this.userInfo.user_emailid}@${this.userInfo.direct_input_domain}`;
+        console.log(this.userInfo.user_email )
       } else {
         this.userInfo.user_email = `${this.userInfo.user_emailid}@${this.userInfo.email_domain}`;
+        console.log(this.userInfo.user_email )
       }
 },
 
@@ -581,15 +581,44 @@ passwordValid() {
       
         }, //주소api
 
-        //회원수정시 그 id 정보 뿌릴거
+        //회원수정시 id 정보 뿌릴거
         async getUserInfo(){
             let result = await axios.get(`/api/join/${this.oneUserId}`)
                                     .catch(err => console.log(err));
                 console.log(result.data);
                 this.userInfo  = result.data[0];   
 
+            this.userInfo.birth = this.$dateFormat(this.userInfo.birth, 'yyyy-MM-dd');
+
+        },
+
+       
+
+        // 회원정보수정 - 
+      async joinUpdate(){
+
+        let obj = {
+          param : {
+            user_password : this.userInfo.user_password,
+            user_email : this.userInfo.user_email,
+            user_tel : this.userInfo.user_tel,
+            user_address : this.userInfo.user_address,
+            birth : this.userInfo.user_birth
+          }
         }
 
+        let result = await axios.put(`/api/join/${this.oneUserId}`, obj)
+                                .catch(err => console.log(err));
+          console.log('회원수정 result : ', result);                     
+         console.log(result);      
+         
+         if(result.data.changedRows > 0){
+          alert(`수정성공! `)
+          console.log('changedRows')
+          console.log(result.data.changedRows);
+          this.userInfo = result.data.changedRows;
+         }
+      }
 
 
 
@@ -699,7 +728,7 @@ a{color:inherit;text-decoration:none}
   font-size:12px;
 }
 .login-form .group .button{
-  background:#590969;
+  background:#ca7dd9;
 }
 .login-form .group label .icon{
   width:15px;

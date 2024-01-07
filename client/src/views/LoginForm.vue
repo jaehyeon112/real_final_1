@@ -37,11 +37,11 @@
         <div class="foot-lnk" >
 
       <a id="custom-login-btn" @click="kakaoLogin()">
-      <router-link to="/join">카카오회원가입하고회원가입페이지로<img
+     <img
         src="https://k.kakaocdn.net/14/dn/btroDszwNrM/I6efHub1SN5KCJqLm1Ovx1/o.jpg"
         width="222"
         alt="카카오 로그인 버튼"
-      /></router-link></a>
+      /></a>
       <div><v-btn @click="kakaoLogout()">카카오 로그아웃</v-btn></div>
 
     
