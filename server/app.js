@@ -426,6 +426,8 @@ app.post("/dologin", async (req, res) => {
   }
 
   res.send(list);
+  io.emit('login', '안녕!')
+
 });
 
 
