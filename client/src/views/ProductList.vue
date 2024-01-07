@@ -10,7 +10,7 @@
                 return-object
                 style="width: 100%;"
                 ></v-select>
-                <v-btn @click="refresh">초기화</v-btn></div>
+                <v-btn @click="searchList(this.category)">검색</v-btn>  <v-btn @click="refresh">초기화</v-btn></div>
         </template>
         <template #filterSearch>
             <div><a @click="this.order='prod_no'">기본순 | </a><a @click="this.order='registration'">최근 등록순 | </a><a @click="this.order='high'">높은 가격순(판매가 기준) | </a><a @click="this.order='discount_price'">낮은 가격순(판매가 기준)</a></div>
@@ -67,7 +67,6 @@
                 order : 'prod_no',
                 category : '',
                 content : '',
-                
             }
         },
         components : {
@@ -132,15 +131,16 @@
             },
             async searchList(cont){
                 if(cont=='한식'){
-                    cont = 'e1'
+                    cont = 'e1';
+                    this.word = '';
                 }else if(cont=='중식'){
-                    cont = 'e2'
+                    cont = 'e2';
                 }else if(cont=='양식'){
-                    cont = 'e3'
+                    cont = 'e3';
                 }else if(cont=='일식'){
-                    cont = 'e4'
+                    cont = 'e4';
                 }else if(cont=='분식'){
-                    cont = 'e5'
+                    cont = 'e5';
                 }
 
                 if(cont==''){
@@ -148,15 +148,19 @@
                     this.prodList(this.nums);
                     return;
                 }
+                
                 let list = await axios.get(`/api/prod/${cont}/${cont}/${this.order}/${this.startNum}/${this.nums}`).catch(err=>console.log(err));
+                let list2 = await axios.get(`/api/prod/${cont}/${cont}/${this.order}//`).catch(err=>console.log(err));
                 let result = list.data;
+                let result2 = list2.data;
                 console.log('리스트 : '+result)
                 this.productList = result;
-                this.totalList = this.prodList;
+                this.totalList = list2;
             },
             refresh(){
                 this.category = '';
                 this.word = '';
+                this.prodList(this.nums);
             },
             
         },
@@ -169,13 +173,11 @@
             },
             word(){
                 this.search(this.word);
+                this.category = '';
             },
             content(){
                 this.searchList(this.content);
             },
-            category(){
-                this.search(this.category)
-            }
         }
     }
 </script>
