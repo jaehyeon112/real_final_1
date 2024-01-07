@@ -379,8 +379,8 @@ app.put("/CheckAllUpdate/:check", async (req, res) => { // 체크박스 전체�
 //   res.send(list);
 // });
 
-app.put("/Cartquantity/:pno", async (req, res) => { // 장바구니에 담긴 상품의 재고가 빠져서 장바구니재고수정이필요한경우
-  let data = [req.params.pno, req.session.user_id];
+app.put("/Cartquantity/:no/:cno", async (req, res) => { // 장바구니에 담긴 상품의 재고가 빠져서 장바구니재고수정이필요한경우
+  let data = [req.params.no,req.params.cno];
   let list = await mysql.query("test", "Cartquantity", data);
   res.send(list);
 });
@@ -446,7 +446,7 @@ app.put("/pointUpdate", async (req, res) => { // 사용한 포인트 user테이�
 });
 
 app.put("/orderUpdate/:no", async (req, res) => { // 취소되었을때 orders 주문상태 업데이트
-  let data = [req.body.param, req.params.no];
+  let data = req.params.no;
   res.send((await mysql.query("test", "orderUpdate", data)));
 });
 

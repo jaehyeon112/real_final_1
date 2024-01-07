@@ -92,7 +92,7 @@
         :discount="discount"
         :delivery="delivery"
         :final="final"/>
-        <v-btn v-model="check" @click="moveOrderForm" :disabled="box === 0" color="primary">주문하기</v-btn>
+        <v-btn v-model="check" @click="showMenu" :disabled="box === 0" color="primary">주문하기</v-btn>
       </v-col>
     </v-row>
   </v-card>
@@ -128,11 +128,6 @@ export default {
   created(){
     this.fetchCartList();
   },
-  watch :{
-    cartList(){
-      this.getBill();
-    },    
-  },
   computed :{
     check() { // 장바구니 체크안되면 주문하기버튼 활성화가 안되게 설정
           let checkbox = 0;
@@ -144,6 +139,11 @@ export default {
               this.box = checkbox
         }
   },
+  watch : {
+    cartList(){
+      this.getBill();
+    }
+  },
   // watch : {
   //   cartList(){
   //     for (let i = 0; i < this.cartList.length; i++) {              
@@ -152,8 +152,50 @@ export default {
   //   }
   // },
   methods : {
-    test(){
+    totalPrice() {
+        this.total = 0;
+          for (let i = 0; i < this.cartList.length; i++) {
+            if(this.cartList[i].cart_checkbox == 1){
+            this.total += (this.cartList[i].price * this.cartList[i].quantity);
+            console.log(this.total,'전체금액')
+            }
+          }
     },
+      discountPrice() {
+        this.discount = 0;
+          for (let i = 0; i < this.cartList.length; i++) {
+            if (this.cartList[i].discount_price != null) {
+        for (let i = 0; i < this.cartList.length; i++) {
+            if(this.cartList[i].cart_checkbox == 1){
+              if (this.cartList[i].discount_price != null) {
+              this.discount = (this.cartList[i].discount_price * this.cartList[i].quantity) - (this.cartList[i].price * this.cartList[i].quantity);
+              }
+              console.log(this.discount,'상품할인ㄱ듬액')
+            }
+          }
+        }
+      }
+    },
+      deliveryPrice() {
+        for (let i = 0; i < this.cartList.length; i++) {
+            if(this.cartList[i].cart_checkbox == 1){
+              this.delivery = this.discount < 40000 ? 3000 : 0;
+            }
+        }
+      },
+      finalPrice() {
+        for (let i = 0; i < this.cartList.length; i++) {
+          if(this.cartList[i].cart_checkbox == 1){
+          this.final = this.total + this.discount + this.delivery
+          }
+        }
+      },
+      getBill(){
+        this.totalPrice();
+        this.discountPrice();
+        this.deliveryPrice();
+        this.finalPrice();
+      },
       quantityPlus(list) { // 수량 플러스
         
 
@@ -219,6 +261,9 @@ export default {
             this.$store.commit('selectCheck',list.prod_no )
           }
         }
+        this.delivery = 0;
+        this.final = 0;
+        this.getBill();
         },
         selectAll() {
           let allChecked = true;
@@ -257,6 +302,9 @@ export default {
           }
           console.log('전체선택')
         }
+        this.delivery = 0;
+        this.final = 0;
+        this.getBill();
         // axios.put(`/api/CheckAllUpdate/${this.$store.state.user.user_id}`,this.cartList);
  
       },
@@ -283,7 +331,7 @@ export default {
         this.final = 0;
         this.getBill();
       },
-    moveOrderForm(){
+    async moveOrderForm(){
       this.prodStock = 0;
       this.cartQuantity = 0;
       this.cartNo = 0;
@@ -293,18 +341,26 @@ export default {
         this.cartNo = this.cartList[i].cart_no
       }
         if(this.prodStock < this.cartQuantity) {
+          console.log(this.prodStock,'상품재고')
           alert('재고가 부족한 상품이 있어 상품 수량이 변경됩니다.')
-                    axios.put(`/api/Cartquantity/${this.prodStock}/${this.cartNo}`)
+          console.log(this.cartNo,'상품번호')
+
+                    await axios.put(`/api/Cartquantity/${this.prodStock}/${this.cartNo}`,)
                                       .catch(err => console.log(err));
 
           console.log('수량변경완료')
         }else{
-          alert('주문서로 이동합니다~')
           this.$router.push('/orderForm');
         }
+      },
+      showMenu() {
+      let Option = confirm("주문하시겠습니까?");
+      if (Option) {
+          this.moveOrderForm();
       }
     },
   }
+}
 </script>
 <style>
 * {

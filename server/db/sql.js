@@ -48,7 +48,7 @@ let test = {
               order by cart_no`,
   CheckboxUpdate: `UPDATE cart set cart_checkbox = ? WHERE cart_no = ?`,
   CheckAllUpdate: `UPDATE cart set cart_checkbox = ? WHERE user_id = ?`,
-  Cartquantity: `UPDATE cart set quantity = ? WHERE cart_no = ?`,
+  Cartquantity: `update cart set quantity = ? WHERE cart_no = ?`,
   // 장바구니 상품 수량 증가
   CartPlusquantity: `UPDATE cart
                  SET quantity = quantity + 1
@@ -82,7 +82,7 @@ let test = {
   // 포인트를 사용했을때 유저테이블에 포인트를 업데이트
   pointUpdate: `update user set ? where user_id = ?`,
   // 주문 취소했을때 주문상태 업데이트
-  orderUpdate : `update orders set ? where order_no = ?`
+  orderUpdate : `update orders set order_status = 'c4' where order_no = ?`
   // 취소 된 상품 재고살리기
 
   // 결제 취소되었을때 환불/취소 테이블에 등록
@@ -230,7 +230,7 @@ let orders = {
   comparisonCart: `select * from cart where user_id=?`,
   detailInfo: `select * from product where prod_no=?`,
   //detailOrderLists:`select * from order_detail o1 left join orders o2 on o1.order_no = o2.order_no where o1.order_no =? and user_id = ?`,//주문창에서 상세주문내역으로 이동시 불러올 값
-  orderList: `select  ord.order_date, dord.order_detail_no, ord.delivery_charge, ord.total_payment, ord.real_payment, ord.payment_no, ord.order_no, pro.prod_name
+  orderList: `select  ord.order_date, dord.order_detail_no, ord.delivery_charge, ord.total_payment, ord.real_payment, ord.payment_no, ord.order_no, pro.prod_name, ord.order_status
               from orders ord  join order_detail dord on ord.order_no = ord.order_no
                                join product pro on pro.prod_no = dord.prod_no
                                where ord.user_id=?

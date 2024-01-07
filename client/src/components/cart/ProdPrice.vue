@@ -1,10 +1,9 @@
 <template>
     <v-container>
       <v-card class="c">
-        <p>상품 금액 <span>{{ $wonComma(discount) }} 원</span></p>
+        <p>상품 금액 <span>{{ $wonComma(total) }} 원</span></p>
         <div>
-          <p>상품 전체금액 <span>{{ $wonComma(total) }} 원</span></p>
-          <p>상품 할인금액 <span>{{ $wonComma(total - discount) }}</span>원</p>
+          <p>상품 할인금액 <span>{{ $wonComma(discount) }}</span>원</p>
           <p>배송비 <span>{{ $wonComma(delivery) }} 원</span></p>
           <hr>
           <p>결제예정금액 <span style="font-size: 24px; font-weight: bold;">{{ $wonComma(final) }} 원</span></p>
