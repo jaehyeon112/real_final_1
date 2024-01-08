@@ -2,14 +2,10 @@
     <v-container>
         <v-row>
             <v-col col="12">
-                <h1 style="text-align: left;">주문완료</h1>
                 <v-card>
+                    <h1 style="text-align: center;">주문완료</h1>
                     <OrderProdInfo
                     :orderList="orderList"/>
-                </v-card>
-                <v-card>
-                </v-card>
-                <v-card>
                     <OrderAddrInfo
                     :orderList="orderList"/>
                 </v-card>
@@ -50,3 +46,8 @@ export default{
     }
 }
 </script>
+<style scoped>
+ * {
+    padding: 15px;
+ }
+</style>

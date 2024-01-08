@@ -238,6 +238,7 @@ export default {
         // 결제 정보 설정
         let paymentInfo = {
           pg: '', //pg사
+          imp_uid: this.Number, // 상점고유번호
           pay_method: paymentMethod, //결제방법
           name: this.prodName, //상품이름
           merchant_uid: this.Number, //주문번호
@@ -245,6 +246,9 @@ export default {
           buyer_name: this.$store.state.user.user_name, //결제이름
           buyer_tel: this.$store.state.user.user_tel, // 결제전화번호
           buyer_email: this.$store.state.user.user_email, //결제이메일
+          buyer_postcode : this.zip, // 결제시 우편번호
+          buyer_addr: this.addr1 + this.addr2 // 결제시 주소와 상세주소
+
         };
 
         // 선택한 결제 방법에 따라 결제 정보 설정
@@ -261,18 +265,17 @@ export default {
           paymentInfo.pg = 'html5_inicis';
           paymentInfo.pay_method = paymentMethod;
         } else if (paymentMethod === '0') {
-          this.orderInsert(); // 바로 주문 처리
+          this.orderInsert(this.Number); // 바로 주문 처리
           return; // 아임포트 응답 처리하지 않고 함수 종료
         }
         
         let iamport = window.IMP;
         iamport.init('imp61344571'); // 아임포트에서 발급받은 가맹점 식별코드 입력
 
-        iamport.request_pay(paymentInfo, (response) => {
-          if (response.success) {
+        iamport.request_pay(paymentInfo, (rsp) => {
+          if (rsp.success) {
             // 결제 완료 처리
-            this.orderInsert(); // order테이블 
-            this.orderdetailInsert(orderno); // orderdetail테이블
+            this.orderInsert(this.Number)
           } else {
             // 결제 실패 처리
             alert('결제 취소했습니다. 장바구니로 다시 이동합니다.');
@@ -281,11 +284,11 @@ export default {
         });
       },
 
-async orderInsert(){ // orders 테이블 등록
+async orderInsert(orderNo){ // orders 테이블 등록
         this.orderNumber();
             let obj = {
                 param : {
-                    order_no: this.Number,
+                    order_no: orderNo,
                     user_id: this.$store.state.user.user_id,
                     delivery_charge: this.delivery,
                     recipient: this.$store.state.user.user_name,
