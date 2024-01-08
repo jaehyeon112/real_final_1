@@ -49,7 +49,7 @@
         </router-link>
       </li>
       <li>
-        <router-link to="/join" class="nav-link text-white">
+        <router-link to="/putpass" class="nav-link text-white">
           <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#people-circle"/></svg>
           개인정보수정
         </router-link>
@@ -70,6 +70,16 @@ export default{
         //resize:function(){
             //함수 생각해보자
         //}
+
+        goToUpdate() {
+      if (this.$store.state.user.user_id) {
+        // 로그인된 아이디가 있으면 회원 정보 수정 페이지로 이동
+        this.$router.push({ name: 'join', params: { id: this.$store.state.user.user_id } });
+      } else {
+        // 로그인된 아이디가 없으면 회원 가입 페이지로 이동
+        this.$router.push('/join');
+      }
+}
     },
     created(){
         //this.resize()

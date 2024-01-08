@@ -14,7 +14,8 @@ const store = createStore({
       user: {},
       searchList: [],
       orderNo: 0,
-      loginCartCount: 0
+      loginCartCount: 0,
+      kakaoId:''
     }
   },
   getters: {
@@ -37,9 +38,12 @@ const store = createStore({
       state.cart.push(item);
       state.cartCount = state.cart.length
     },
-    async login(state, userInfo) {
+    login(state, userInfo) {
       state.user = userInfo;
       state.loginCartCount = (await axios.get('/api/cartList')).data.length;
+    },
+    loginCartCheck(state, count) {
+      state.loginCartCount -= count;
     },
     async loginCart(state) {
       state.loginCartCount = (await axios.get('/api/cartList')).data.length;
@@ -89,7 +93,12 @@ const store = createStore({
   },
   plugins: [
     createPersistedState({
-      paths: ['user', 'cart', 'cartCount', 'loginCartCount', 'orderNo']
+      paths: ['cart', 'cartCount', 'loginCartCount', 'orderNo'],
+      storage: window.localStorage,
+    }),
+    createPersistedState({
+      paths: ['user'], // 세션 스토리지에만 유지할 상태
+      storage: window.sessionStorage, // 세션 스토리지 사용
     })
   ]
 
