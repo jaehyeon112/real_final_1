@@ -27,7 +27,8 @@
                 <td>{{ delivery.tracking_no }}</td>
                 <td>{{ delivery.order_no }}</td>
                 <td>{{ delivery.user_id }}</td>
-                <td>{{ delivery.delivery_request }}</td>
+                <td v-if="delivery.delivery_request==''">요청사항이 없습니다.</td>
+                <td v-else>{{ delivery.delivery_request }}</td>
                 <td>{{ $dateFormat(delivery.released_date,'yyyy년 MM월 dd일') }}</td>
                 <td v-if="delivery.delivery_status=='d4'">배송중</td>
                 <td v-else-if="delivery.delivery_status=='d5'">배송완료</td>
@@ -52,8 +53,8 @@
             return{
                 deliveryList : [],
                 nums : 0,
-                startDate : '',
-                lastDate : '',
+                startDate : '2000-01-01',
+                lastDate : this.dateFormat('','yyyy-MM-dd'),
                 startNum : 0,
                 totalList: "",
                 totals :'',
@@ -86,6 +87,14 @@
                 let result = list.data;
                 this.deliveryList = result;
             },
+            dateFormat(value,format){
+            let date = value == '' ? new Date() : new Date(value);
+            let year = date.getFullYear();
+            let month = ('0'+(date.getMonth()+1)).slice(-2);
+            let day = ('0'+date.getDate()).slice(-2);
+            let result = format.replace('yyyy',year).replace('MM',month).replace('dd',day);
+            return result;
+            },
             changeChildData(childData){
                 console.log('받음'+childData);
                 this.nums = childData;
@@ -108,8 +117,8 @@
             },
             refresh(){
                 this.delList(this.nums);
-                this.startDate ='';
-                this.lastDate = '';
+                this.startDate = '2000-01-01';
+                this.lastDate = this.dateFormat('','yyyy-MM-dd');
                 this.orders = '';
             }
         },

@@ -16,6 +16,7 @@
             <p>{{ detail.delivery_status }}</p>
                 <v-btn @click="goToReview(detail.order_detail_no)" :disabled="detail.test">리뷰작성</v-btn>
                 <v-btn  @click="goToInquire(detail.order_detail_no)" >문의하기</v-btn>
+                <v-btn @click="orderCancel">주문취소</v-btn>
             </label>
             <div>
                 <p>결제정보</p>
@@ -74,7 +75,33 @@ export default {
         console.log(detailNo)
     },
 
+        },
+
+    orderCancel() {
+        try {
+            // 액세스 토큰을 파일에서 읽어옴
+                let accessToken = "3e4566eff341e534d314fb2e7f6ed76ed9ed9021"
+                let orderNo = 0;
+                for (let i = 0; i < this.orderList.length; i++) {
+                    orderNo = this.orderList[i].order_no;
+                    console.log(orderNo, '주문번호');
+                }
+                
+                let obj = {
+                    merchant_uid: 109446514 // 주문번호
+                };
+                axios.post('/api.iamport.kr/payments/cancel', obj, {
+                    headers: {
+                    Authorization: accessToken 
+                    }
+                });
+
+                console.log(`주문번호 ${orderNo}의 주문이 취소되었습니다.`);
+            } catch (error) {
+                console.error(error);
+            }
+        }
    }
    
-}
+
 </script>

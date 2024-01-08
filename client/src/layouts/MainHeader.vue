@@ -15,7 +15,7 @@
 
     <div class="container text-center" style="margin-bottom: 20px">
       <div class="row">
-        <div class="col-4">
+        <div class="col-2">
           <router-link
             to="/main"
             class="d-flex align-items-center mb-3 mb-lg-0 me-lg-auto link-body-emphasis text-decoration-none"
@@ -83,7 +83,6 @@
         <div class="col-1" style="padding-top: 15px">
           <span @click="moveCartList">
             <!-- 장바구니 갯수 조절해야함 -->
-            {{ "비회원 장바구니 갯수 : " +   $store.state.cartCount }}
             <v-badge color="error" :content='$store.state.user.user_id == null ? $store.state.cartCount : $store.state.loginCartCount'>
               <span class="mdi mdi-cart-minus" style="font-size: 30px"></span>
             </v-badge>
@@ -110,17 +109,23 @@
         <div class="col"></div>
         <div class="col">
           
-          <category id="ca" />
+          <category id="ca"/>
         
         </div>
         <div class="col">
           <router-link class="nav-custom" to="/">소개</router-link>
         </div>
         <div class="col">
-          <router-link class="nav-custom" to="/menu">메뉴</router-link>
+          <router-link class="nav-custom" to="/menu/new">신제품</router-link>
         </div>
         <div class="col">
-          <router-link class="nav-custom" to="/">리뷰</router-link>
+          <router-link class="nav-custom" to="/menu/best">베스트</router-link>
+        </div>
+        <div class="col">
+          <router-link class="nav-custom" to="/menu/sale">특가</router-link>
+        </div>
+        <div class="col">
+          <router-link class="nav-custom" to="/menu/frozen">냉동밀키트</router-link>
         </div>
         <div class="col">
           <router-link class="nav-link" to="/myPage">마이페이지</router-link>
@@ -288,11 +293,18 @@ a {
   text-decoration: none;
   color: black;
 }
+.col {
+font-size: 20px;
+margin-bottom : 5px;
+
+}
+
 #lnb {
   z-index: 9999;
 }
 
 #ca {
   z-index: 9999;
+  
 }
 </style>

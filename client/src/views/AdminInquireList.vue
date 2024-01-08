@@ -46,7 +46,7 @@
           <td>{{ $dateFormat(inquire.create_date,'yyyy년 MM월 dd일') }}</td>
           <td v-if="inquire.answer_state==0">답변대기중</td>
           <td v-else-if="inquire.answer_state==1">답변완료</td>
-          <td v-if="inquire.answer_state==0"><router-link to="">답변하기</router-link></td>
+          <td v-if="inquire.answer_state==0" @click="replyInsert(inquire.inquire_no)">답변하기</td>
           <td v-else-if="inquire.answer_state==1"><router-link to="">답변보기</router-link></td>
         </tr>
       </tbody>
@@ -171,9 +171,10 @@
                     console.log(result)
                     this.inquireList = result;
                 }
-                
-                
             },
+            replyInsert(ino){
+                this.$router.push({path : "reply",query : {ino:ino}})
+            }
         },
         watch : {
             nums(){

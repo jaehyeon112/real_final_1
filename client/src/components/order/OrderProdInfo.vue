@@ -17,8 +17,10 @@
             </v-col>
         </v-row>
       <hr>
-        <p>상품 이미지 <span>이미지 들어가야함</span></p>
-        <div v-if="orderList.length > 0">
+      <div v-if="orderList.length > 0" style="padding: 100px; margin: ;">
+        <p>상품 이미지
+            <img src="/api/test" alt="상품이미지" style="width: 200px; margin-left: 100px; margin-bottom: 20px;">
+        </p>
             <p>상품 명 
             <span>{{ prodName }}</span>
             </p>

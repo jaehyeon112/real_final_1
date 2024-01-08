@@ -1,4 +1,3 @@
-
 import main from "@/views/MainHome.vue";
 import cartList from "@/views/CartList.vue";
 import orderForm from "@/views/OrderForm.vue";
@@ -9,24 +8,27 @@ import join from "../views/Join.vue";
 import login from "../views/LoginForm.vue";
 import finding from "../views/Finding.vue";
 import withdrawal from "../views/Withdrawal.vue";
-import emailnum from "../views/PutEmailNum.vue";
+
 import putpass from "../views/PutPassword.vue";
 import message from "../views/Message.vue";
+import changePass from "../views/ChangePass.vue"
 import test from "../views/test.vue";
 import myPage from "@/views/MyPage.vue";
 import detailPage from "@/views/detailPage.vue";
 import MyorderList from "@/components/MyPage/orderList.vue";
 import detailOrder from "@/components/MyPage/orderDetail.vue";
-import like from  "@/components/MyPage/likeBasket.vue";
+import like from "@/components/MyPage/likeBasket.vue";
 import delivery from "@/components/MyPage/delivery.vue";
-import addDeli from "@/components/MyPage/addDelivery.vue";
-import myInquire from "@/components/MyPage/myInquire.vue";
+//import addDeli from "@/components/MyPage/addDelivery.vue";
+import myInquire from "@/components/ServiceCenter/inquire.vue";
+import myInquireInfo from "@/components/ServiceCenter/inquireInfo.vue";
 import coupon from "@/components/MyPage/couponList.vue";
 import point from "@/components/MyPage/point.vue";
 import myReview from "@/components/MyPage/myReview.vue";
 import reviewForm from "../views/ReviewForm.vue";
 import inquireForm from "../views/inquireForm.vue";
 import search from '@/components/menu/search.vue';
+import replyList from'@/components/common/replyList.vue'
 
 
 export default {
@@ -109,88 +111,100 @@ export default {
       name: "withdrawal",
       component: withdrawal
     },
-    {
-      path: "emailnum",
-      name: "emailnum",
-      component: emailnum
-    },
+
     {
       path: "putpass",
       name: "putpass",
       component: putpass
     },
     {
-      path: "message",
+      path: "message/:message",
       name: "message",
       component: message
     },
-  
+    {
+      path: "changePass",
+      name: "changePass",
+      component: changePass
+    },
     {
       path: "test",
       name: "test",
       component: test
     },
     {
-      path:"myPage",
-      name:"myPage",
-      component:myPage, 
-      children:[
-        { path:"MyOrderList", //   /myPage/orderList
-          name:"MyOrderList",
-          component:MyorderList
+      path: "myPage",
+      name: "myPage",
+      component: myPage,
+      children: [{
+          path: "MyOrderList", //   /myPage/orderList
+          name: "MyOrderList",
+          component: MyorderList
         },
         {
-          path:"detailOrder",
-          name:"detailOrder",
-          component:detailOrder
+          path: "detailOrder",
+          name: "detailOrder",
+          component: detailOrder
         },
         {
-          path:"myReview",
-          name:"myReview",
-          component:myReview
+          path: "myReview",
+          name: "myReview",
+          component: myReview
         },
-         {path:"like",
-          name:"like",
-          component:like
+        {
+          path: "like",
+          name: "like",
+          component: like
         },
-        {path:"delivery",
-         name:"delivery",
-         component:delivery
-        }, 
-        {path:"addDeli",
-         name:"addDeli",
-         component:addDeli
+        {
+          path: "delivery",
+          name: "delivery",
+          component: delivery
         },
-        {path:"point",
-         name:"point",
-         component:point
-        },
-        {path:"coupon",
-         name:"coupon",
-         component:coupon
+        {
+          path: "point",
+          name: "point",
+          component: point
         },
         {
           path:"myInquire",
           name:"myInquire",
           component:myInquire
-         }
- 
+         },
+         {
+          path:"myInquireInfo",
+          name:"myInquireInfo",
+          component:myInquireInfo
+         },
+         
+         {
+
+          path: "coupon",
+          name: "coupon",
+          component: coupon
+        },
+
       ]
     },
     {
-      path:"detailPage",
-      name:"detailPage",
-      component:detailPage
+      path: "detailPage",
+      name: "detailPage",
+      component: detailPage
     },
     {
-      path:"reviewForm",
-      name:"reviewForm",
-      component:reviewForm
+      path: "reviewForm",
+      name: "reviewForm",
+      component: reviewForm
     },
     {
       path:"inquireForm",
       name:"inquireForm",
       component:inquireForm
+     },
+    {
+      path:"replyList",
+      name:"replyList",
+      component:replyList
     },
 
   ],

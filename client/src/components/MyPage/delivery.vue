@@ -70,13 +70,17 @@
                 </tr>
             </thead>
             <tbody> 
-               
-                <tr :key="idx" v-for="(delivery, idx) in deliveryList">
+                    <!-- <tr>
+                      <td> 기본배송지 <hr style="color: aliceblue;">{{deliveryList[0].joinaddress }}{{ deliveryList[0].joinDetail }}{{ deliveryList[0].joinPost }}</td>
+                      <td><v-btn>수정버튼</v-btn></td>
+                    </tr> -->
+
+                    <tr :key="idx" v-for="(delivery, idx) in deliveryList">
                     <td style="display:none">{{delivery.delivery_no}}</td>
                     <v-radio-group v-model="picked">
                     <td><v-radio :label= "`${delivery.delivery_name}`" :value="idx"></v-radio></td>
                     </v-radio-group> 
-                    <td>{{ delivery.delivery_name }}<hr style="color: aliceblue;">{{delivery.delivery_address }}{{ delivery.delivery_detail_address }}</td>
+                    <td>{{ delivery.delivery_name }}<hr style="color: aliceblue;">{{delivery.delivery_address }}{{ delivery.delivery_detail_address }}{{ delivery.delivery_postcode }}</td>
                     
                     <td><v-btn @click="deletedelivery(delivery.delivery_no)" justify="center">삭제버튼</v-btn></td>
                 </tr>
@@ -124,7 +128,7 @@ export default {
 
     methods:{
         async getDeliveryList() {
-         this.deliveryList = (await axios.get(`/api/addDelivery/${this.$store.state.user.user_id}`)
+         this.deliveryList = (await axios.get(`/api/addDelivery/${this.$store.state.user.user_id}/${this.$store.state.user.user_id}/${this.$store.state.user.user_id}/${this.$store.state.user.user_id}`)
                                             .catch(err=>console.log(err))).data
         },
         

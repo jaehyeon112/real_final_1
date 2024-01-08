@@ -1,6 +1,6 @@
 <template>
-    <v-container class="container">
-      <v-card>
+    <v-container>
+      <v-card class="container">
         <p>주문 금액 <span>{{ $wonComma(discount) }} 원</span></p>
         <div class="discount">
           <svg width="16" height="20" viewBox="0 0 16 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -11,7 +11,7 @@
           <svg width="16" height="20" viewBox="0 0 16 20" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path fill-rule="evenodd" clip-rule="evenodd" d="M1 5H0V10V11H1H6V10H1V5Z" fill="#ddd"></path>
           </svg>
-          <span>상품 할인금액 -<span>{{ $wonComma(total - discount) }}</span>원</span>
+          <span>상품 할인금액 <span>{{ $wonComma(total - discount) }}</span>원</span>
         </div>
         <br>
         <p>배송비 <span>{{ $wonComma(delivery) }} 원</span></p>
@@ -78,12 +78,12 @@
   
   .container {
     margin: auto 0;
-    color: rgb(102, 102, 102);
+    padding: 19px 18px 18px 20px;
+    border: 1px solid rgb(242, 242, 242);
+    background-color: rgb(250, 250, 250);
   }
   
   .discount {
-    display: block;
-    line-height: 24px;
     color: rgb(153, 153, 153);
     font-size: 14px;
     padding-left: 8px;
@@ -99,12 +99,9 @@
     line-height: 18px;
     height: 18px;
     color: rgb(255, 255, 255);
-    font-weight: 500;
   }
   .b{
-      -webkit-box-pack: end;
       justify-content: flex-end;
-      -webkit-box-align: center;
       align-items: center;
       margin-top: 15px;
       font-size: 12px;
