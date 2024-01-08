@@ -363,6 +363,26 @@ export default {
           }
         }
       },
+      async moveOrderForm(){
+      this.prodStock = 0;
+      this.cartQuantity = 0;
+      this.cartNo = 0;
+      for(let i=0; i<this.cartList.length; i++) {
+        this.prodStock = this.cartList[i].stock
+        this.cartQuantity = this.cartList[i].quantity
+        this.cartNo = this.cartList[i].cart_no
+      }
+        if(this.prodStock < this.cartQuantity) {
+          console.log(this.prodStock,'상품재고')
+          alert('재고가 부족한 상품이 있어 상품 수량이 변경됩니다.')
+          console.log(this.cartNo,'상품번호')
+                    await axios.put(`/api/Cartquantity/${this.prodStock}/${this.cartNo}`,)
+                                      .catch(err => console.log(err));
+          console.log('수량변경완료')
+        }else{
+          this.$router.push('/orderForm');
+        }
+      },
   }
 }
 </script>
