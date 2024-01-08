@@ -175,6 +175,11 @@ export default {
           name:"myInquire",
           component:myInquire
          },
+         {
+          path:"myInquireInfo",
+          name:"myInquireInfo",
+          component:myInquireInfo
+         },
          
          {
 

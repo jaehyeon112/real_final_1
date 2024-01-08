@@ -18,7 +18,16 @@
             <label for="regdate">작성일자</label>
             <input type="regdate" id="regdate" v-model="inquireInfo.create_date" readonly > <!--model필드명 칼럼명이랑 일치-->
             <div>
-                <uploads/>
+                <div class="col-12">
+                  <label for="stock" class="form-label">첨부파일</label>
+                  <div :key="i" v-for="i in nums" style="width: 500px;">
+                    <upload :numbers=this.nums @info="info" @text="text"/>
+                    <v-btn v-show="this.nums==i" @click="this.nums=this.nums+1">+</v-btn><v-btn v-show="this.nums==i&&this.nums!=1" @click="this.nums=this.nums-1">-</v-btn>
+                  </div>
+                  <div :key= idx v-for="idx in file">첨부파일 : {{ idx }}<p @click="delMultiple(idx)">삭제</p></div>
+                  <div :key=idx v-show="open==true" v-for="idx in photo"><img id="ima" :src="getPath(idx)" style="position: relative;height=300"><p @click="delPhoto(idx)">삭제</p></div>
+                  <v-btn @click="showing" v-show="photo.length>0">사진보기</v-btn> <!-- <v-btn @click="uploadPhoto">저장완료</v-btn> -->
+                </div>
             </div>
             <button type="button" class="btn btn-xs btn-info" @click="isUpdated? inquireUpdate() :inquireInsert()" >문의하기</button>
 
@@ -64,6 +73,11 @@ export default {
           explanation: '그 외의 사항에 대하여  문의할게 있나용...?',
         }
       ],
+      photo : [],
+        file : [],
+        open : false,
+        ods : '',
+        nums:1
 
         };
     },
@@ -145,12 +159,79 @@ export default {
             } 
             let result = await axios.post('/api/inquire', obj) 
                                      .catch(err=>console.log('문의등록오류'+err))
-                                    
-            if(result.data.insertId>0){ //글번호는 자동으로 부여되니까 obj에서 주는게 아니라 따로 빼서 
-                alert('등록완료');
+                if(result.affectedRows==1){
+                alert('공지사항이 등록되었습니다 현재 파일',this.file.length,'현재사진',this.photo.length);
+                for(let i=0;i<this.file.length;i++){
+                  this.ods = 's'+i
+                  let photos = {
+                    param : {
+                      "file_category" : 'r4',
+                      "file_name" : this.file[i],
+                      "orders" : this.ods,
+                      "notice_no" : result.insertId,
+                      "path" : 'uploads\\'+this.file[i]
+                    }
+                  }
+                  let result1 = axios.post("/api/photo",photos).catch(err=>console.log(err));
+                  console.log(result1)
+                  alert('테이블ㅇㅔ 추가');
+                }
+                for(let i=0;i<this.photo.length;i++){
+                  this.ods = 's'+i
+                  let ph = {
+                    param : {
+                      "file_category" : 'r4',
+                      "file_name" : this.photo[i],
+                      "orders" : this.ods,
+                      "notice_no" : result.insertId,
+                      "path" : 'uploads\\'+this.photo[i]
+                    }
+                  }
+                  let result1 = axios.post("/api/photo",ph).catch(err=>console.log(err));
+                  console.log(result1)
+                  alert('테이블ㅇㅔ 추가');
+                }                        
+            // if(result.data.insertId>0){ //글번호는 자동으로 부여되니까 obj에서 주는게 아니라 따로 빼서 
+            //     alert('등록완료');
                 this.inquireInfo.no = result.data.insertId; //여기에 data가 있고 없고 차이는..?
                 this.$router.push({path:'myPage/myInquire'})
             }                         
+        },
+        info(data){
+            for(let i=0;i<data.length;i++){
+              this.photo.push(data[i]);
+            }
+        },
+        text(data){
+            for(let i=0;i<data.length;i++){
+              this.file.push(data[i]);
+            }
+        },
+        showing(){
+            if(this.open == true){
+              this.open = false;
+            }else if(this.open == false){
+              this.open = true;
+            }
+        },
+        getPath(name){
+            return `/api/fileCall/${name}`;
+        },
+        delMultiple(name){
+            for(let i = 0; i < this.file.length; i++) {
+                if(this.file[i] === name)  {
+                    this.file.splice(i, 1);
+                    i--;
+                }
+            }
+        },
+        delPhoto(name){
+            for(let i = 0; i < this.photo.length; i++) {
+                if(this.photo[i] === name)  {
+                    this.photo.splice(i, 1);
+                    i--;
+                }
+            }
         },
         async inquireUpdate(){
                 if(inquireInfo.answer_state ==1){
