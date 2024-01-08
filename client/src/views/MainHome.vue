@@ -20,7 +20,9 @@ export default {
     this.$socket.on('alert',(m)=>{
       this.showNotification(m)
     })
-    
+    this.$socket.on('login',(m)=>{
+      this.showNotification(m)
+    })
     if (Notification.permission !== 'granted') {
       Notification.requestPermission();
     }
