@@ -140,7 +140,7 @@ app.post('/phonecheck', async (req, res) =>{
 		}
 		console.log('checkresult=', checkresult);
 		res.send(checkresult);
-	res.send(true);
+	//res.send(true);
 	}
 	printTokenResult(data.phone,data.token);
 }) //end 핸드폰인증 
@@ -431,6 +431,13 @@ app.get("/dologin/:id/:password", async (req, res) => {
   res.send(list);
 })
 
+//카카오로그인 - 카카오아이디있는지 체크
+app.get("/login/kakao", async(req, res)=> {
+  let list = await mysql.query("user", "checkKakao");
+  console.log(list);
+  res.send(list);
+})
+
 
 //아이디비번찾기
   //아이디찾기
@@ -471,6 +478,7 @@ app.get("/dologin/:id/:password", async (req, res) => {
 app.get("/join/:id", async(req, res) => {
   let uid = req.params.id;
   let list = await mysql.query("user", "selectId", uid);
+  console.log(list)
   res.send(list);
 })
 

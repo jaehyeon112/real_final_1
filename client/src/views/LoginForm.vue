@@ -89,9 +89,6 @@ export default {
   methods: {
 
 //Login 버튼
-
-
-
 async doLogin(){
   if(this.user_id == "" || this.user_password==""){
     alert(`아이디와 비밀번호 모두 입력해`)
@@ -121,9 +118,6 @@ let ipList = await axios.get(`/api/dologin/${this.user_id}/${this.user_password}
   // else{
   //   alert(users[0].user_name +'님 환영합니다');
   // }
-  
-       
-
 
        if(users == ''){
         alert('아디 비번 확인;')
@@ -195,17 +189,56 @@ this.$store.commit('login',users[0]) // (함수명, 전달인자)
     getKakaoAccount() {
       window.Kakao.API.request({
         url: "/v2/user/me",
-        success: (res) => {
+        success: async (res) => {
           const kakao_account = res.kakao_account;
           const nickname = kakao_account.profile.nickname;
           
           console.log("res", res);
+          console.log("res.id", res.id);
           console.log("nickname", nickname);
           console.log("kakao_account", kakao_account);
 
           //로그인처리구현
           alert("로그인 성공!");
           
+          //db에 카카오 아이디 
+          let result = await axios.get(`/api/login/kakao`)
+                      .catch(err => console.log(err));
+          
+          console.log("카카오 악시오스 데이터 result ")
+          console.log(result); 
+
+          // console.log("result.data")
+           console.log(result.data);
+
+          // console.log("[0]");
+          // console.log(result.data[0]);
+
+          //console.log(result.data[0].user_id);   
+  
+
+          let myKakao = res.id; // 3244970366
+          console.log("myKakao");
+          console.log(myKakao);
+
+     
+
+      //let checkKakao = result.data[0].user_id;
+      // console.log("checkKakao")
+      // console.log(checkKakao.indexOf('3244970366'));
+      //checkKakao.indexOf('3244970366') == -1 || 
+
+
+          if(result.data.length == 0){
+             this.$store.commit('kakaoLogin', res.id)
+          alert(this.$store.state.kakaoId)
+          this.$router.push({ name: 'join' });
+          } else {
+           this.$router.push({name : 'realmain'})
+          }
+
+
+        
         },
         fail: (error) => {
           console.log(error);

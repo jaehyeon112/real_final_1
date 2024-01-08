@@ -10,9 +10,15 @@
         <!-- 회원 수정 시 id랑 이름은 readonly로 수정못하게 해야함 -->
         <div class="group">
           <label for="user" class="label"> ID </label>
-          <input  id="user" type="text" class="input" v-model="userInfo.user_id" :readonly="mode =='edit'" autofocus placeholder="영문+숫자 조합 6자이상 11자 이하" >
+          <p>{{ $store.state.kakaoId != '' ? '카카오로로그인함' : '걍로그인함' }}</p>
+          <div v-if="$store.state.kakaoId != ''" ><input  id="user" type="text" class="input" v-model="userInfo.kakaoid" :readonly="mode =='edit' || $store.state.kakaoId != ''" autofocus >
+            카카오 input
+          </div>
+          <div v-else>
+          <input  id="user" type="text" class="input" v-model="userInfo.user_id" :readonly="mode =='edit'" autofocus placeholder="영문+숫자 조합 6자이상 11자 이하" 
+           ></div>
           <div>
-          <v-btn type="button" v-if="!validId" @click="checkId(userInfo.user_id)">중복체크</v-btn >
+          <v-btn type="button" v-if="!validId " @click="checkId(userInfo.user_id)">중복체크</v-btn >
            <p v-if="validId" style="color: green;">사용 가능한 아이디입니다.</p>
            <div v-if="!userInfo.user_id && !isFieldValid.user_id" class="error-message"  :style="{ color: 'red' }">{{ fieldErrorMessages.user_id }}</div>
 
@@ -52,7 +58,7 @@
 
     <div class="group">
       <label for="email" class="label">Email Address</label>
-      
+      {{userInfo}}
       <input id="email" type="text" class="input" v-model="userInfo.user_emailid" placeholder="이메일아이디 입력" v-bind:="isUpdated"> 
               <div v-if="!userInfo.user_emailid && !isFieldValid.user_emailid" class="error-message"  :style="{ color: 'red' }">{{ fieldErrorMessages.user_emailid }}</div>
     <span>@</span>
@@ -143,15 +149,51 @@
           <input id="check" type="checkbox" class="check"  v-model="userInfo.allCh" @change="updateAll">
           <label for="check"><span class="icon"></span> 전체 동의합니다.</label>
         </div>
+<!-- -->
 
-        <div class="group">
+    <div class="group">
           <input id="check1" type="checkbox" class="check"   v-model="userInfo.ch1"  @change="updateCheck">
-          <label for="check1"><span class="icon"></span> 약관1</label>
-        </div>
+          <label for="check1"><span class="icon"></span>
+           <v-dialog width="500">
+            <template v-slot:activator="{ props }">
+              <v-btn v-bind="props" text="약관1"> </v-btn>
+            </template>
+
+              <template v-slot:default="{ isActive }">
+              <v-card title="Dialog">
+                <v-card-text> 약관내용좌르르르르륵 </v-card-text>
+
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+                  <v-btn text="닫기" @click="isActive.value = false" ></v-btn>
+                </v-card-actions>
+              </v-card>
+            </template>
+          </v-dialog>
+          </label>
+    </div>
+
 
         <div class="group">
           <input id="check2" type="checkbox" class="check"   v-model="userInfo.ch2"  @change="updateCheck">
-          <label for="check2"><span class="icon"></span> 약관2</label>
+          <label for="check2"><span class="icon"></span> 
+          <v-dialog width="500">
+            <template v-slot:activator="{ props }">
+              <v-btn v-bind="props" text="약관2"> </v-btn>
+            </template>
+
+              <template v-slot:default="{ isActive }">
+              <v-card title="Dialog">
+                <v-card-text> 약관2내용좌르르르르륵 </v-card-text>
+
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+                  <v-btn text="닫기" @click="isActive.value = false" ></v-btn>
+                </v-card-actions>
+              </v-card>
+            </template>
+          </v-dialog>
+          </label>
         </div>
 
 
@@ -198,6 +240,7 @@ export default {
 
       //회원가입 v-model
       userInfo : {
+        //kakaoid : "kakao" + this.$store.state.kakaoId, 
         user_id : "",
         user_password : "",
         userChPass : "",
@@ -289,8 +332,8 @@ export default {
     // userId가 존재하면 회원 수정 모드로 변경
     if (this.oneUserId) {
       this.mode = 'edit';
-      // 기존정보 불러오거나 수정작업 수행하기.
       this.getUserInfo();
+      // 기존정보 불러오거나 수정작업 수행하기.
       this.isUpdated = true;
       
     }
@@ -379,17 +422,17 @@ computed: {
       console.log(id);
       alert(`아이디를 입력해주세요`);
        this.validId = false;
-     } 
+     } else{
 
 
       let result = await axios.get(`/api/join-id/${id}`)
                   .catch(err => console.log(err));
-              console.log(result.data)
+             
       //let list = result.data.length;
       console.log(result.data);
       let list = result.data;
       console.log(list);
-
+     }
 
       // 아이디 공백 입력시 경고창
    
@@ -455,14 +498,18 @@ passwordValid() {
  //Email
 
     updateUserEmail: function() {
-      //this.userInfo = this.userInfo || {};  //객체가 아니면 초기화 (changedRows 떄문에)
+      this.userInfo = this.userInfo || {};  //객체가 아니면 초기화 (changedRows 떄문에)
 
       if (this.userInfo.email_domain === '직접입력') {
+     
         this.userInfo.user_email = `${this.userInfo.user_emailid}@${this.userInfo.direct_input_domain}`;
-        console.log(this.userInfo.user_email )
+         // console.log(this.userInfo.user_email )
       } else {
+           //console.log('여기보세요1')
+        //console.log(`${this.userInfo.user_emailid}@${this.userInfo.direct_input_domain}`)
+       // console.log('여기보세요')
         this.userInfo.user_email = `${this.userInfo.user_emailid}@${this.userInfo.email_domain}`;
-        console.log(this.userInfo.user_email )
+        //console.log(this.userInfo.user_email )
       }
 },
   // 이메일 인증 시간제한 걸기! 
@@ -597,7 +644,7 @@ passwordValid() {
 
       let result = await axios.post(`/api/phonecheck`, data);
         console.log(result);
-         if(result.data.status == "2000" ){
+         if(result.data.statusCode == "2000" ){
           alert('휴대폰 인증번호 보내기 성공');
           this.isTextSent =true;
           this.goTextVerifTimer(); //타이머 시작! 
@@ -622,11 +669,11 @@ passwordValid() {
 
 //생년월일 체크 - 14세미만 가입불가..
 checkAge(){
-  const birth = new Date(this.userInfo.birth);
+  let birth = new Date(this.userInfo.birth);
 
-  const currentD = new Date();
+  let currentD = new Date();
 
-  const userAge = currentD.getFullYear() - birth.getFullYear() //나이계산
+  let userAge = currentD.getFullYear() - birth.getFullYear() //나이계산
 
   //하.. 생일 지났는지 안지나는지도 확인해야되는구만
   if(currentD.getMonth() < birth.getMonth() || (currentD.getMonth() == birth.getMonth() && currentD.getMonth() < birth.getMonth())){
@@ -660,8 +707,6 @@ checkAge(){
      }
 
  
-
-
 //필드가 모두 채워져 있는지 확인 - 일단! 나중ㅇ에 바꿔야함
   if (
     !this.userInfo.user_id ||
@@ -694,8 +739,6 @@ checkAge(){
     return;
   }
 
-
-
     let info = this.userInfo;
     let data = {
 
@@ -703,6 +746,8 @@ checkAge(){
         "user_id" : this.userInfo.user_id,
         "user_name" : this.userInfo.user_name,
         "user_password" : this.userInfo.user_password,
+        "user_emailid" : this.userInfo.user_emailid,
+        "email_domain" : this.userInfo.email_domain,
         "user_email" : this.userInfo.user_email,
         "user_tel" : this.userInfo.user_tel,
         "birth" : this.userInfo.birth,
@@ -796,12 +841,28 @@ checkAge(){
         async getUserInfo(){
             let result = await axios.get(`/api/join/${this.oneUserId}`)
                                     .catch(err => console.log(err));
-                console.log(result.data);
-                this.userInfo  = result.data[0];   
 
+            this.userInfo  = result.data[0];   
             this.userInfo.birth = this.$dateFormat(this.userInfo.birth, 'yyyy-MM-dd');
 
+            let email = this.userInfo.user_email;
+            console.log(email);
+            console.log(email.split('@'));
+            this.userInfo.user_emailid = email.split('@')[0];
+            this.userInfo.email_domain =  email.split('@')[1];
+
+            
+
+            //this.userInfo.email = `${this.userInfo.emailid}@${this.userInfo.email_domain}`;
+            console.log("이메일뭐냐고");
+            console.log( this.userInfo.user_emailid);
+            console.log( this.userInfo.email_domain);
+            console.log( this.userInfo.user_email);
+                console.log(this.userInfo);
+
         },
+
+  
 
        
 
@@ -811,23 +872,29 @@ checkAge(){
         let obj = {
           param : {
             user_password : this.userInfo.user_password,
+            //user_emailid : this.userInfo.user_emailid,
+            //email_domain : this.userInfo.email_domain,
             user_email : this.userInfo.user_email,
             user_tel : this.userInfo.user_tel,
-            user_address : this.userInfo.user_address,
-            birth : this.userInfo.user_birth
+            address : this.userInfo.address,
+            detail_address : this.userInfo.detail_address,
+            birth : this.userInfo.birth
           }
         }
 
         let result = await axios.put(`/api/join/${this.oneUserId}`, obj)
                                 .catch(err => console.log(err));
           console.log('회원수정 result : ', result);                     
-         console.log(result);      
+          console.log(result);      
          
          if(result.data.changedRows > 0){
           alert(`수정성공! `)
           console.log('changedRows')
           console.log(result.data.changedRows);
-          this.userInfo = result.data.changedRows;
+          //this.userInfo = result.data.changedRows;
+          this.$router.push({name : 'realmain'})
+         }else{
+          alert(`수정실패`)
          }
       }
 

@@ -101,6 +101,9 @@ let user = {
   //로그인(일단)
   forLogin : `select * from user where user_id = ? and user_password = ?`,
 
+  //로그인- 카카오아이디 있는지 체크
+  checkKakao : `select user_id from user where user_id like '%3244970366%'`,
+
   //회원수정 - id > 마이페이지> 회원가입때 입력한 값 그대로 출력 > 수정
    // 수정하기전에 비번입력해야함
    putPass : `select user_password from user where user_id = ?`,

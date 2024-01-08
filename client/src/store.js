@@ -12,7 +12,8 @@ const store = createStore({
       cart: [],
       user: {},
       searchList: [],
-      orderNo: 0
+      orderNo: 0,
+      kakaoId:''
     }
   },
   getters: {
@@ -33,6 +34,9 @@ const store = createStore({
 
       state.cart.push(item);
       state.cartCount = state.cart.length
+    },
+    kakaoLogin(state,id){
+      state.kakaoId = id;
     },
     login(state, userInfo) {
       state.user = userInfo;
