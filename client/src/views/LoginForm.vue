@@ -66,7 +66,7 @@
   </div>
   
   
-  </template>
+</template>
   
   <script>
   
@@ -209,41 +209,80 @@
   
   
   
-  
-  //1. 카카오
-      kakaoLogin() {
-        window.Kakao.Auth.login({
-       
-          scope: "profile_nickname",
-          success: this.getKakaoAccount,
-        });
-      },
-      getKakaoAccount() {
-        window.Kakao.API.request({
-          url: "/v2/user/me",
-          success: (res) => {
-            const kakao_account = res.kakao_account;
-            const nickname = kakao_account.profile.nickname;
-            console.log("nickname", nickname);
-  
-            //로그인처리구현
-            alert("로그인 성공!");
-            
-          },
-          fail: (error) => {
-            console.log(error);
-          },
-        });
-      }, //end getKakaoAccount
-  
-      kakaoLogout() {
-        window.Kakao.Auth.logout((res) => {
-          console.log(res);
-        });
-      },
-  
-    //네이버로그인
+  // 카카오
+  kakaoLogin() {
+      window.Kakao.Auth.login({
      
+        scope: "profile_nickname",
+        success: this.getKakaoAccount,
+      });
+    },
+    getKakaoAccount() {
+      window.Kakao.API.request({
+        url: "/v2/user/me",
+        success: async (res) => {
+          const kakao_account = res.kakao_account;
+          const nickname = kakao_account.profile.nickname;
+          
+          console.log("res", res);
+          console.log("res.id", res.id);
+          console.log("nickname", nickname);
+          console.log("kakao_account", kakao_account);
+
+          //로그인처리구현
+          alert("로그인 성공!");
+          
+          //db에 카카오 아이디 
+          let result = await axios.get(`/api/login/kakao`)
+                      .catch(err => console.log(err));
+          
+          console.log("카카오 악시오스 데이터 result ")
+          console.log(result); 
+
+          // console.log("result.data")
+           console.log(result.data);
+
+          // console.log("[0]");
+          // console.log(result.data[0]);
+
+          //console.log(result.data[0].user_id);   
+  
+
+          let myKakao = res.id; // 3244970366
+          console.log("myKakao");
+          console.log(myKakao);
+
+     
+
+      //let checkKakao = result.data[0].user_id;
+      // console.log("checkKakao")
+      // console.log(checkKakao.indexOf('3244970366'));
+      //checkKakao.indexOf('3244970366') == -1 || 
+
+
+          if(result.data.length == 0){
+             this.$store.commit('kakaoLogin', res.id)
+          alert(this.$store.state.kakaoId)
+          this.$router.push({ name: 'join' });
+          } else {
+           this.$router.push({name : 'realmain'})
+          }
+
+
+        
+        },
+        fail: (error) => {
+          console.log(error);
+        },
+      });
+    }, //end getKakaoAccount
+
+    kakaoLogout() {
+      window.Kakao.Auth.logout((res) => {
+        console.log(res);
+      });
+    },
+
   
     } //methods
   };

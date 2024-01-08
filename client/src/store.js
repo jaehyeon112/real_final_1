@@ -14,7 +14,8 @@ const store = createStore({
       user: {},
       searchList: [],
       orderNo: 0,
-      loginCartCount: 0
+      loginCartCount: 0,
+      kakaoId:''
     }
   },
   getters: {
@@ -37,7 +38,7 @@ const store = createStore({
       state.cart.push(item);
       state.cartCount = state.cart.length
     },
-    async login(state, userInfo) {
+    login(state, userInfo) {
       state.user = userInfo;
       state.loginCartCount = (await axios.get('/api/cartList')).data.length;
     },
