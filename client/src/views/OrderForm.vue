@@ -345,6 +345,7 @@ async orderInsert(){ // orders 테이블 등록
           if(this.cartList[i].cart_checkbox == 1){
 
             await axios.delete(`/api/CheckboxDelete/${this.cartList[i].cart_no}`);
+            this.$store.commit('loginCart')
             
           }
         }

@@ -17,7 +17,7 @@
           style="border-radius: 50%"
           src="https://cdn.vuetifyjs.com/images/cards/docks.jpg"
           cover
-          >상품사진</v-img
+          >원본사진</v-img
         ></v-img
       >
     </v-row>
