@@ -241,8 +241,8 @@
           <td>{{ $dateFormat(inquire.create_date,'yyyy년 MM월 dd일') }}</td>
           <td v-if="inquire.answer_state==0">{{this.inquires='답변 대기 중'}}</td>
           <td v-else-if="inquire.answer_state==1">답변완료</td>
-          <td v-if="inquire.answer_state==0"><router-link to="">답변하기</router-link></td>
-          <td v-else-if="inquire.answer_state==1"><router-link to="">답변보기</router-link></td>
+          <td v-if="inquire.answer_state==0" @click="replyInsert(inquire.inquire_no)">답변하기</td>
+          <td v-else-if="inquire.answer_state==1" @click="replyInsert(inquire.inquire_no)">답변보기</td>
         </tr>
       </tbody>
     </v-table>
@@ -299,23 +299,23 @@ import icon from '../components/admin/icon.vue';
       this.getInquireList();
       this.getCounting();
     },
-      methods : {
+    methods : {
         dateFormat(){
         let date = new Date();
         let month = ('0'+(date.getMonth()+1)).slice(-2);
         return month;
-       },
-       async getSum(){
+      },
+      async getSum(){
         let result = await axios.get(`/api/sum`).catch(err=>console.log(err));
         for(let i=0;i<result.data.length;i++){
           this.datas.push(result.data[i]);
         }
-       },
-       async getCounting(){
+      },
+      async getCounting(){
         let result = await axios.get(`/api/counting`).catch(err=>console.log(err));
           this.counting = result.data[0];
-       },
-       async getOrderList(){
+      },
+      async getOrderList(){
         let result = await axios.get('/api/order').catch(err=>console.log(err));
         for(let i=0;i<result.data.length;i++){
           if(result.data[i].order_status=='c1'){
@@ -329,12 +329,12 @@ import icon from '../components/admin/icon.vue';
         }else{
           this.orderList = result.data;
         }
-       },
-       async orderGetOne(ono){
+      },
+      async orderGetOne(ono){
         let result = await axios.get(`/api/order/${ono}`).catch(err=>console.log(err));
         this.orderOne = result.data[0];
-       },
-       async getReviewList(){
+      },
+      async getReviewList(){
         let result = await axios.get('/api/report').catch(err=>console.log(err));
         this.reviewList = result.data;
         for(let i=0;i<result.data.length;i++){
@@ -342,8 +342,8 @@ import icon from '../components/admin/icon.vue';
             this.count3 = this.count3+1;
           }
         }
-       },
-       async getInquireList(){
+      },
+      async getInquireList(){
         let result = await axios.get('/api/inquire').catch(err=>console.log(err));
         this.inquireList = result.data;
         for(let i=0;i<result.data.length;i++){
@@ -351,7 +351,10 @@ import icon from '../components/admin/icon.vue';
             this.count2 = this.count2+1;
           }
         }
-       },
+      },
+      replyInsert(ino){
+          this.$router.push({path : "reply",query : {ino:ino}})
+      },
        async changeStatus(ono){
                 if(this.orderStatus=='c2'){
                     if(confirm('주문을 확인하셨습니까?')){

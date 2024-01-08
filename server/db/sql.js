@@ -131,7 +131,7 @@ let admin = {
   //기타-통계
   weekIncome: `select sum(total_payment) as sum from orders where order_date BETWEEN DATE_ADD(NOW(), INTERVAL -?-1 week ) AND DATE_ADD(NOW(), INTERVAL -? week);`,
   //최근 3개월 주문내역 매출액
-  monthsIncome: `select month(order_date) as month,sum(total_payment) as sum from orders where order_date > now() - INTERVAL 3 MONTH group by month order by month desc`,
+  monthsIncome: `select year(order_date) as year,month(order_date) as month,sum(total_payment) as sum from orders where order_date > now() - INTERVAL 3 MONTH group by month order by year, month`,
   withUser : `select count(*) as ours,(select count(*) from withdrawal_user where withdrawal_date = curdate()-?) as yours from user where join_date = curdate()-?;`,
   counting : `select count(*) as orderNo,(select count(*) from orders where order_status = 'c2') as delNo,
   (select count(*) from refund_cancel where cancel_status='o1') as refundNo,
@@ -155,7 +155,54 @@ let admin = {
   prodInfo: `select prod_no,prod_name,price,discount_price,discount_rate,stock,cooking_time,allergy,main_category,sub_category,refrigeration from product where prod_no = ?`,
   productMod: `update product set ? where prod_no = ?`,
   searchProd: `select prod_no,prod_name,price,discount_price,discount_rate,stock,main_category from product where prod_name like concat(concat('%',?),'%') or main_category = ? order by ?? limit ?,?`,
-  photoList : `select file_name from file where prod_no = ?`,
+  //주문관리
+  AllOrderList: `select * from orders order by order_status`,
+  orderList: `select *,(select user_tel from user where user_id = orders.user_id) as phone from orders order by order_date desc limit ?,?`,
+  orderDate: `select * from orders where order_date between ? and ? order by order_date desc limit ?,?`,
+  updateOrder: `update orders set order_status = ? where order_no= ?`,
+  orderStatus: `select * from orders where order_status = ? order by order_date desc limit ?,?`,
+  oneOrder: `select * from orders where order_no = ?`,
+  insertDelivery: `insert into delivery set order_no=(select order_no from orders where order_no=?),tracking_no = ?,
+  user_id=(select user_id from orders where order_no=?),delivery_request=(select delivery_request from orders where order_no=?),released_date=current_date(),delivery_status='d4'`,
+  //배송관리
+  deliveryList: `select * from delivery limit ?,?`,
+  DatedeliveryList: `select * from delivery where released_date between ? and ? limit ?,?`,
+  StatedeliveryList: `select * from delivery where delivery_status = ? limit ?,?`,
+  Alldelivery: `select * from delivery`,
+  //리뷰
+  AllreviewReportList: `select *,(select report_cnt from review where review_no=review_report.review_no) as cnt from review_report order by report_date desc`,
+  reviewReportList: `select *,(select report_cnt from review where review_no=review_report.review_no) as cnt from review_report order by report_date desc limit ?,?`,
+  reasonReportList: `select *,(select report_cnt from review where review_no=review_report.review_no) as cnt from review_report 
+  where report_status=? order by report_date desc  limit ?,?`,
+  reviewList: `select prod_name,order_detail_no,user_id,review_title,review_content,review_writedate,review_grade,like_cnt from order_detail o,product p,review r 
+  where o.prod_no=p.prod_no and o.order_detail_no=r.detail_order_no order by ?? desc`,
+  //문의사항,공지사항,자주하는질문
+  AllinquireList: `select * from inquire order by answer_state,create_date desc`,
+  inquireList: `select * from inquire order by answer_state,create_date desc limit ?,?`,
+  StateinquireList: ` select * from inquire where (inquire_category= ? or answer_state=?) or (inquire_category= ? and answer_state=?) order by create_date desc limit ?,?`,
+  inquireInfo: `select * from inquire where inquire_no = ?`,
+  noticeList: `select * from notice order by ? limit ?,?`,
+  AllnoticeList: `select * from notice order by notice_no`,
+  StateNoticeList: `select * from notice where importance in(?,?) order by ?? desc limit ?,?`,
+  insertNotice: `insert into notice set ?`,
+  FNQList: `select * from fnq where ?? = ?`,
+  insertFNQ: `insert into fnq set ?`,
+  updateFNQ: `update fnq set ? where qno = ?`,
+  delFNQ: `delete from fnq where qno = ?`,
+  insertReply : `insert into reply set ?`,
+  replyInfo : `select * from reply where inquire_no = ?`,
+  updateInquire : `update inquire set answer_state = 1 where inquire_no = ?`,
+  //주문취소
+  refundOrder: `update orders set order_status = 'c4' where order_no = ?`,
+  adminRefund: `insert into refund_cancel set order_no=?,user_id=(select user_id from orders where order_no=refund_cancel.order_no),
+  return_point=(select point_use from orders where order_no=refund_cancel.order_no),cancel_status='o2',cancel_request=current_date()`,
+  AllrefundOrderList: `select * from refund_cancel order by cancel_request desc`,
+  refundOrderList: `select * from refund_cancel order by cancel_request desc limit ?,?`,
+  updateRefund: `update refund_cancel set cancel_status = ? where order_no= ?`,
+  refundState: `select * from refund_cancel where cancel_status = ? order by cancel_request desc limit ?,?`,
+  //첨부파일
+  insertFile : `insert into file set ?`,
+  photoList : `select file_name,types from file where ?? = ?`,
   delPhoto : `DELETE file 
   FROM file 
   JOIN (
@@ -164,45 +211,6 @@ let admin = {
     WHERE file_name = ?
   ) AS subquery 
   ON file.file_no = subquery.file_no`,
-  //주문관리
-  AllOrderList: `select * from orders order by order_status`,
-  orderList: `select * from orders order by order_date desc limit ?,?`,
-  orderDate: `select * from orders where order_date between ? and ? order by order_date desc limit ?,?`,
-  updateOrder: `update orders set order_status = ? where order_no= ?`,
-  orderStatus: `select * from orders where order_status = ? order by order_date desc limit ?,?`,
-  oneOrder: `select * from orders where order_no = ?`,
-  insertDelivery: `insert into delivery set order_no=(select order_no from orders where order_no=?),tracking_no = ?,
-  user_id=(select user_id from orders where order_no=?),delivery_request=(select delivery_request from orders where order_no=?),released_date=current_date(),delivery_status='d4'`,
-  //배송관리
-  AllreviewReportList: `select *,(select report_cnt from review where review_no=review_report.review_no) as cnt from review_report order by report_date desc`,
-  reviewReportList: `select *,(select report_cnt from review where review_no=review_report.review_no) as cnt from review_report order by report_date desc limit ?,?`,
-  reasonReportList: `select *,(select report_cnt from review where review_no=review_report.review_no) as cnt from review_report 
-  where report_status=? order by report_date desc  limit ?,?`,
-  AllinquireList: `select * from inquire order by create_date desc`,
-  inquireList: `select * from inquire order by create_date desc limit ?,?`,
-  StateinquireList: ` select * from inquire where (inquire_category= ? or answer_state=?) or (inquire_category= ? and answer_state=?) order by create_date desc limit ?,?`,
-  reviewList: `select prod_name,order_detail_no,user_id,review_title,review_content,review_writedate,review_grade,like_cnt from order_detail o,product p,review r 
-  where o.prod_no=p.prod_no and o.order_detail_no=r.detail_order_no order by ?? desc`,
-  refundOrder: `update orders set order_status = 'c4' where order_no = ?`,
-  adminRefund: `insert into refund_cancel set order_no=?,user_id=(select user_id from orders where order_no=refund_cancel.order_no),
-  return_point=(select point_use from orders where order_no=refund_cancel.order_no),cancel_status='o2',cancel_request=current_date()`,
-  AllrefundOrderList: `select * from refund_cancel order by cancel_request desc`,
-  refundOrderList: `select * from refund_cancel order by cancel_request desc limit ?,?`,
-  updateRefund: `update refund_cancel set cancel_status = ? where order_no= ?`,
-  refundState: `select * from refund_cancel where cancel_status = ? order by cancel_request desc limit ?,?`,
-  Alldelivery: `select * from delivery`,
-  deliveryList: `select * from delivery limit ?,?`,
-  DatedeliveryList: `select * from delivery where released_date between ? and ? limit ?,?`,
-  StatedeliveryList: `select * from delivery where delivery_status = ? limit ?,?`,
-  AllnoticeList: `select * from notice order by notice_no`,
-  noticeList: `select * from notice order by ? limit ?,?`,
-  StateNoticeList: `select * from notice where importance in(?,?) order by ?? desc limit ?,?`,
-  insertNotice: `insert into notice set ?`,
-  FNQList: `select * from fnq where ?? = ?`,
-  insertFNQ: `insert into fnq set ?`,
-  updateFNQ: `update fnq set ? where qno = ?`,
-  delFNQ: `delete from fnq where qno = ?`,
-  insertFile : `insert into file set ?`,
 }
 
 

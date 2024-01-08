@@ -124,7 +124,7 @@ app.post('/phonecheck', async (req, res) => {
   const coolsms = require('coolsms-node-sdk').default;
   async function printTokenResult(phone, token) {
 
-    const messageService = new coolsms("NCS2IMURYFBUZAPJ", "HRV2IB3X2LNIIWQKOQ2F6XUCIMBFOUXC");
+    const messageService = new coolsms("NCSX69ZDDZ3AMPOA", "RTFTFKLPESGNPPFMBL0I88LTS2CHRNET");
     const result = await messageService
       .sendOne({
         to,
@@ -141,7 +141,6 @@ app.post('/phonecheck', async (req, res) => {
     }
     console.log('checkresult=', checkresult);
     res.send(checkresult);
-    res.send(true);
   }
   printTokenResult(data.phone, data.token);
 }) //end 핸드폰인증 
@@ -220,8 +219,8 @@ app.post("/photo",async (req, res) => {
   res.send(result);
 });
 
-app.get("/photo/:pno",async (req, res) => {
-  let data = req.params.pno;
+app.get("/photo/:column/:pno",async (req, res) => {
+  let data = [req.params.column,req.params.pno];
   let result = await mysql.query("admin","photoList",data)
   res.send(result);
   console.log('실행'+result)
@@ -794,7 +793,7 @@ app.get('/review/:status/:sno/:lno', async (req, res) => {
   let result = await mysql.query("admin", "reasonReportList", datas);
   res.send(result);
 });
-
+//관리자-환불관련
 app.get('/refund', async (req, res) => {
   let result = await mysql.query("admin", "AllrefundOrderList");
   res.send(result);
@@ -817,7 +816,7 @@ app.put('/refund/:state/:ono', async (req, res) => {
   let result = await mysql.query("admin", "updateRefund", datas);
   res.send(result);
 });
-
+//관리자-배송관련
 app.get('/delivery', async (req, res) => {
   let result = await mysql.query("admin", "Alldelivery");
   res.send(result);
@@ -840,9 +839,39 @@ app.get('/delivery/:sday/:eday/:startNo/:lastNo', async (req, res) => {
   let result = await mysql.query("admin", "DatedeliveryList", datas);
   res.send(result);
 });
-
+//관리자-문의사항
 app.get('/inquire', async (req, res) => {
   let result = await mysql.query("admin", "AllinquireList");
+  res.send(result);
+});
+
+app.get('/inquire/:ino', async (req, res) => {
+  let data = req.params.ino;
+  let result = await mysql.query("admin", "inquireInfo",data);
+  res.send(result);
+});
+
+app.put('/inquire/:ino', async (req, res) => {
+  let data = req.params.ino;
+  let result = await mysql.query("admin", "updateInquire",data);
+  res.send(result);
+});
+
+app.post('/reply', async (req, res) => {
+  let data = req.body.param;
+  let result = await mysql.query("admin", "insertReply",data);
+  res.send(result);
+});
+
+app.get('/reply/:ino', async (req, res) => {
+  let data = Number(req.params.ino);
+  let result = await mysql.query("admin", "replyInfo",data);
+  res.send(result);
+});
+
+app.put('/inquire/:ino', async (req, res) => {
+  let data = req.params.ino;
+  let result = await mysql.query("admin", "updateInquire",data);
   res.send(result);
 });
 
@@ -857,7 +886,7 @@ app.get('/inquire/:where1/:where2/:where3/:where4/:startNo/:lastNo', async (req,
   let result = await mysql.query("admin", "StateinquireList", datas);
   res.send(result);
 });
-
+//관리자-주문관련
 app.get('/orders/:sday/:eday/:startNo/:lastNo', async (req, res) => {
   let datas = [req.params.sday, req.params.eday, Number(req.params.startNo), Number(req.params.lastNo)];
   let result = await mysql.query("admin", "orderDate", datas);

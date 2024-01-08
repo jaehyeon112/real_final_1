@@ -37,7 +37,7 @@
             <td v-else-if="order.cancel_status=='o2'">취소/환불 처리중</td>
             <td v-else-if="order.cancel_status=='o3'">완료</td>
             <td v-if="order.cancel_status=='o1'"><v-btn type="button" @click="changeStatus(order.order_no)">취소/환불처리</v-btn></td>
-            <td v-else><v-btn type="button" @click="modalCheck=true">상세보기</v-btn></td>
+            <td v-else><v-btn type="button" @click="modalCheck=true">상세보기</v-btn></td>  <!--상세영수증보기-->
         </tr>
         </tbody>
         <tbody v-if="orderList.length==0" style="text-align: center;">
@@ -67,7 +67,7 @@
                 startNum : 0,
                 totalList: "",
                 totals :'',
-                orderNo : ''
+                orderNo : '',
             }
         },
         components : {
@@ -76,6 +76,8 @@
         },
         created(){
             this.total();
+            this.getAccessToken();
+
         },
         methods : {
             async total() {
@@ -102,11 +104,39 @@
                 this.getOrderList();
                 this.orders = ''
             },
+            getAccessToken() {
+            axios.get('/api/saveAccessToken') // app.js 에 토큰값 가져오기!
+                .then(response => {
+                this.accessToken = response.data; // 토큰 값을 변수에 저장
+                console.log(this.accessToken,'토큰값')
+
+                })
+                .catch(error => {
+                console.error(error);
+                });
+            },
+            async cancelPayment(ono) { // 눌렀을때 주문취소
+                let result = await axios.get(`/api/order/${ono}`).catch(err=>console.log(err));
+                console.log(result.data[0].real_payment)
+                let cancel = await axios.post(`/api/cancel`, {
+                            merchant_uid: ono,
+                            reason: '단순 취소',
+                            cancel_request_amount: result.data[0].real_payment,
+                            access_token: this.accessToken
+                        });
+                if(cancel.data.affectedRows==1){
+                    alert('포트성공')
+                }else{
+                    alert('포트실패')
+                }
+
+            },
             async changeStatus(ono){
                 if(confirm('취소/환불을 진행할까요?')){
                     let result = await axios.put(`/api/refund/o2/${ono}`).catch(err=>console.log(err));
                     if(result.data.affectedRows==1){
                         alert(' 취소/환불이 진행 중입니다~ ');
+                        this.cancelPayment();
                         this.getOrderList();
                     }else{
                         alert('오류가 남');

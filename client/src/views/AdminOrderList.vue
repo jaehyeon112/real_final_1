@@ -40,7 +40,7 @@
           <td v-else-if="order.order_status=='c2'">상품준비중</td>
           <td v-else-if="order.order_status=='c3'">출고완료</td>
           <td v-else-if="order.order_status=='c4'" style="color: red;">취소된 주문</td>
-          <td v-if="order.order_status=='c1'"><v-btn type="button" @click="this.orderStatus='c2',this.orderGetOne(order.order_no),modalCheck2=true">주문상세보기</v-btn>   <v-btn type="button" @click="modalCheck=true,this.orderNo=order.order_no">주문취소 신청</v-btn></td>
+          <td v-if="order.order_status=='c1'"><v-btn type="button" @click="this.orderStatus='c2',this.orderGetOne(order.order_no),modalCheck2=true">주문상세보기</v-btn>   <v-btn type="button" @click="modalCheck=true,this.orderNo=order.order_no,this.phoneNo=order.phone">주문취소 신청</v-btn></td>
           <td v-else-if="order.order_status=='c2'"><v-btn type="button" @click="delNo=true">상품 출고하기</v-btn><p v-show="delNo">운송장번호 : <input type="number" v-model="deliveryNum"><v-btn @click="this.orderStatus='c3',changeStatus(order.order_no)">배송출발</v-btn></p></td>
           <td v-else-if="order.order_status=='c3'"><v-btn type="button">배송 조회</v-btn></td>
           <td v-else-if="order.order_status=='c4'"><v-btn @click="goto">취소목록 가기</v-btn></td>
@@ -176,7 +176,8 @@
                 orderOne : [],
                 modalCheck2 : false,
                 delNo : false,
-                deliveryNum : ''
+                deliveryNum : '',
+                phoneNo : ''
             }
         },
         components : {
@@ -205,11 +206,12 @@
                         let result = await axios.put(`/api/refund/${this.orderNo}`).catch(err=>console.log(err));
                         let result2 = await axios.post(`/api/refund/${this.orderNo}`).catch(err=>console.log(err));
                         if(result.data.affectedRows==1&&result2.data.affectedRows==1){
-                            alert('회원님에게 알림을 보냈습니다'+this.reason);
-                            if(this.reason='기타'){
-                                this.$socket.emit('report', `${this.reasons}으로 인한 주문취소!`)
+                          alert('회원님에게 알림을 보냈습니다'+this.reason);
+                          this.sendVerificationPhone();
+                          if(this.reason='기타'){
+                              this.$socket.emit('report', `${this.reasons}으로 인한 주문취소!`)
                             }else{
-                                this.$socket.emit('report', `${this.reason}으로 인한 주문취소!`)
+                              this.$socket.emit('report', `${this.reason}으로 인한 주문취소!`)
                             }
                             this.getOrderList();
                             this.modalCheck = false;
@@ -225,6 +227,28 @@
                     }
                 }
             },
+            //휴대폰인증
+            async sendVerificationPhone(){
+            let data = {
+                "param" : {
+                    to :  "01047443288",
+                    from : "01047443288",
+                    text : `주문하신 상품이 취소되었습니다. 자세한 내역은 마이페이지에서 확인해주세요.`
+                }
+              }
+
+                let result = await axios.post(`/api/phonecheck`, data);
+                  console.log(result);
+                  if(result.data.status == "2000" ){
+                    alert('휴대폰 인증번호 보내기 성공');
+                    this.isTextSent =true;
+                    return;
+                }else{
+                    alert('휴대폰 인증번호 보내기 ');
+                    this.isTextSent =true;
+                    return;
+                  }
+              },
             async total() {
                 let total = await axios.get(`/api/order`).catch((err) => {
                     console.log(err);
