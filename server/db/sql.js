@@ -51,13 +51,15 @@ let test = {
   left join review r  on r.detail_order_no = d.order_detail_no left join (select file_name,prod_no from file where orders='s0') f on(p.prod_no = f.prod_no) where registration >= DATE_SUB(CURDATE(), INTERVAL 7 DAY) group by d.prod_no limit ?,6;`,
 
   //베스트 상품
-  bestListPage: `SELECT 
+  bestListPage: `SELECT  file_name,
   p.*,
   COUNT(*) AS hotItem,
   ROUND(AVG(r.review_grade), 1) AS avg_grade
 FROM order_detail o 
 LEFT JOIN product p ON o.prod_no = p.prod_no
 LEFT JOIN review r ON r.detail_order_no = o.order_detail_no
+
+
 GROUP BY p.prod_no
 HAVING hotItem > 1 and avg_grade > 4
 ORDER BY hotItem DESC;`,
@@ -128,17 +130,17 @@ limit ?, 6;
   // 포인트를 사용했을때 유저테이블에 포인트를 업데이트
   pointUpdate: `update user set ? where user_id = ?`,
   // 주문 취소했을때 주문상태 업데이트
-  orderUpdate : `update orders set order_status = 'c4' where order_no = ?`,
+  orderUpdate: `update orders set order_status = 'c4' where order_no = ?`,
   // 취소 된 상품 재고살리기
-  StockReturn : `update product set stock = stock + ? where prod_no = ?`,
+  StockReturn: `update product set stock = stock + ? where prod_no = ?`,
   // 사용한 쿠폰 리스트 조회
-  couponUseList : `select * from coupon c, order_detail o where c.order_no = o.order_no AND c.order_no = ?`,
+  couponUseList: `select * from coupon c, order_detail o where c.order_no = o.order_no AND c.order_no = ?`,
   // 결제 취소되었을때 환불/취소 테이블에 등록
   refundInsert: `insert into refund_cancel set ?`,
   // 취소 되었을때 쿠폰 다시 돌려주기
-  couponReturn : `update coupon set coupon_able = 0 where order_no = ?`,
+  couponReturn: `update coupon set coupon_able = 0 where order_no = ?`,
   // 취소 되었을때 포인트 다시 돌려주기
-  pointReturn : `update user set point = point + ? where user_id = ?`
+  pointReturn: `update user set point = point + ? where user_id = ?`
 };
 
 let user = {
@@ -155,29 +157,29 @@ let user = {
   forLogin: `select * from user where user_id = ? and user_password = ?`,
 
   //로그인- 카카오아이디 있는지 체크
-  checkKakao : `select user_id from user where user_id like '%3244970366%'`,
+  checkKakao: `select user_id from user where user_id like '%3244970366%'`,
 
   //회원수정 - id > 마이페이지> 회원가입때 입력한 값 그대로 출력 > 수정
-   // 수정하기전에 비번입력해야함
-   putPass : `select user_password from user where user_id = ?`,
+  // 수정하기전에 비번입력해야함
+  putPass: `select user_password from user where user_id = ?`,
 
-    //id 별 조회
-    selectId :  `select user_id, user_name, user_password, user_email, user_tel, birth, address, detail_address, postcode 
+  //id 별 조회
+  selectId: `select user_id, user_name, user_password, user_email, user_tel, birth, address, detail_address, postcode 
                 from user where user_id = ?`,
 
   updateUser: `update user set ? where user_id=?`,
 
   //ID찾기
-    findId : `select user_id from user where user_name=? and user_email=? `,
+  findId: `select user_id from user where user_name=? and user_email=? `,
 
   //비번찾기
-    findPass : `select user_password from user where user_name=? and user_email=? and user_id=?`,
+  findPass: `select user_password from user where user_name=? and user_email=? and user_id=?`,
 
   //비밀번호변경 
-    changePass: `update user set user_password=? where user_id =?`,
+  changePass: `update user set user_password=? where user_id =?`,
 
   //회원탈퇴 - 탈퇴하기누르면 아이디 남기고 null 되고 withdrawal table에 insert
-  updateOutUser : `UPDATE user
+  updateOutUser: `UPDATE user
   SET
     user_name = null,
     user_password = null,
