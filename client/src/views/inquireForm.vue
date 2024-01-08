@@ -97,26 +97,23 @@ export default {
                                     console.log( '수정페이지 값 가져와라'+result.data)
 
                                     console.log( '리절트' +this.inquireInfo)
-                                    this.inquireInfo.create_date = this.$dateFormat(this.inquireInfo.create_date,'yyyy년MM월dd일')
+                                   
                                     console.log( '가져왔니'+this.inquireInfo)
                                     console.log(this.inquireInfo.create_date )  
                                     console.log('카테고리 뭐로 가져와' +this.inquireInfo.inquire_category )  
                                     this.inquireInfo.inquire_category = this.inquireInfo.inquire_category.category
                                     console.log(result.data[0].inquire_category)
                                     if(result.data[0].inquire_category == 'j1'){
-                                        result.data[0].inquire_category=this.items[0].category 
-                                    }else if( result.data[0].inquire_category  == 'j2'){
-                                        result.data[0].inquire_category=this.items[1].category
-                                    }else if( result.data[0].inquire_category  == 'j3'){
-                                        this.items[2].category = '환불문의'
+                                        result.data[0].category = '상품문의'
+                                    }else if( result.data[0].category  == 'j2'){
+                                        result.data[0].category = '배송문의'
+                                    }else if( result.data[0].category  == 'j3'){
+                                        result.data[0].category = '환불문의'
                                     }else{
-                                        this.items[3].category = '기타문의'
+                                        result.data[0].category = '기타문의'
                                     }
                                     this.inquireInfo=result.data[0]
-                                    console.log(result.data[0].inquire_category)
-                                    console.log(this.inquireInfo.inquire_category)
-                                    this.inquireInfo.inquire_category = this.items[0].category
-                                    
+                                    this.inquireInfo.create_date = this.$dateFormat(this.inquireInfo.create_date,'yyyy년MM월dd일')
         },
         getToday(){
             return this.$dateFormat('','yyyy년MM월dd일');
