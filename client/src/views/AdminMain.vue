@@ -305,6 +305,7 @@ import icon from '../components/admin/icon.vue';
         let month = ('0'+(date.getMonth()+1)).slice(-2);
         return month;
        },
+       
        async getSum(){
         let result = await axios.get(`/api/sum`).catch(err=>console.log(err));
         for(let i=0;i<result.data.length;i++){
