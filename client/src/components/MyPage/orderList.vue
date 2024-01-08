@@ -16,8 +16,8 @@
               <dl>실 결제 가격: {{ order.real_payment }}</dl>
               <dl>배송비: {{ order.delivery_charge }}</dl>
               <dl>결제방법: {{ order.payment_no }}</dl>
+              <dl><v-btn v-model="order.order_status" color="primary" class="custom-button" @click="showMenu(order.order_no)" :disabled="order.order_status != 'c1'">주문취소</v-btn></dl>
               {{ order.order_quantity }} 수량
-              <v-btn v-model="order.order_status" color="primary" class="custom-button" @click="showMenu(order.order_no)" :disabled="order.order_status != 'c1'">주문취소</v-btn>
               <dl v-if="order.delivery == null">
                 <dl v-if="order.order_status =='c1'">진행상태: 주문완료</dl>
                 <dl v-else-if="order.order_status =='c2'">진행상태: 상품준비중</dl>
@@ -150,8 +150,13 @@ export default {
         this.day = date
     },
     async refundInsert(orderno){ // 주문취소되었을때 환불/취소되었을때 테이블등록
-        this.point = this.orderList[0].point_use;
 
+      for(let i=0;i<this.orderList.length;i++){  // 
+        this.point = this.orderList[i].point_use;
+      }
+      console.log(orderno,'확인')
+      console.log(this.point,'확인')
+      debugger;
 
         await axios.get(`/api/couponUseList/${orderno}`, {
             })
@@ -168,8 +173,8 @@ export default {
                     order_no: orderno,
                     user_id: this.$store.state.user.user_id,
                     return_point : this.point,
-                    coupon_no : this.couponList[0].coupon_no,
-                    cancel_status : 'o2',
+                    coupon_no : this.couponList.length > 0 ? this.couponList[0].coupon_no : 0,  // coupon 리스트 길이가 0보다 크면  coupon_no 를 불러오고 아니면 0 
+                    cancel_status : 'o1',
                     cancel_request : this.day
                     }
                 }   
