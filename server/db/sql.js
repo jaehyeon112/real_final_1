@@ -198,6 +198,9 @@ let user = {
 let admin = {
   //기타-통계
   weekIncome: `select sum(total_payment) as sum from orders where order_date BETWEEN DATE_ADD(NOW(), INTERVAL -?-1 week ) AND DATE_ADD(NOW(), INTERVAL -? week);`,
+  outUserReason : `select withdrawal_reason reason,count(withdrawal_reason) as nums from withdrawal_user 
+  where withdrawal_date BETWEEN DATE_ADD(NOW(), INTERVAL -?-1 month ) AND DATE_ADD(NOW(), INTERVAL -? month)
+  group by withdrawal_reason`,
   //최근 3개월 주문내역 매출액
   monthsIncome: `select year(order_date) as year,month(order_date) as month,sum(total_payment) as sum from orders where order_date > now() - INTERVAL 3 MONTH group by month order by year, month`,
   withUser : `select count(*) as ours,(select count(*) from withdrawal_user where withdrawal_date = curdate()-?) as yours from user where join_date = curdate()-?;`,

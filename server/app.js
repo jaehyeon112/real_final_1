@@ -607,12 +607,10 @@ app.post("/join/joinIn", async (req, res) => {
 app.post("/dologin", async (req, res) => {
   let data = [req.body.param.user_id, req.body.param.user_password];
   let list = await mysql.query("user", "forLogin", data);
-  console.log(list[0].user_grade)
   if (list.length != 0) {
     req.session.user_id = req.body.param.user_id;
     req.session.user_grade = list[0].user_grade;
     grade = list[0].user_grade;
-    // req.session.grade = 
 
     console.log('아이디 세션 값 : ' + req.session.user_id);
     console.log('회원 등급 : ' + grade);
@@ -776,6 +774,12 @@ app.get("/weeksum/:agoweek/:week", async (req, res) => {
 
 app.get("/counting", async (req, res) => {
   let result = await mysql.query("admin", "counting");
+  res.send(result);
+});
+
+app.get("/outUser/:agoweek/:week", async (req, res) => {
+  let datas = [Number(req.params.agoweek), Number(req.params.week)];
+  let result = await mysql.query("admin", "outUserReason",datas);
   res.send(result);
 });
 

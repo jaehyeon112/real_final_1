@@ -3,11 +3,20 @@
     <div class="row">
         <side/>
         <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+            <br><br>
             <h1>매출통계</h1>
-            <div class="col-sm-4" style="width: 500px;">
-                <Barchart style="width: 40%;height: 40%;float: left;"/>
-                <LineChart style="width: 40%;height: 40%;float: right;"/>
+            <v-card class="chars">
+            <div class="chart" style="width: 550px;float: left;">
+                <h3>월간 매출액</h3>
+                <Barchart style="width: 100%;height: 350px;"/>
             </div>
+
+            <div class="chart" style="width: 550px;float: right;">
+                <h3>주간 매출액</h3>
+                <LineChart style="width: 100%;height: 350px;"/>
+            </div>
+            </v-card>
+            
         </main>
     </div>
     </div>
@@ -21,6 +30,19 @@ export default{
         LineChart,
         Barchart,
         side
-    }
+    },
 }
 </script>
+<style scoped>
+.chart{
+  position: relative;
+  margin: auto;
+  text-align: center;
+}
+.chars{
+  top: 50px;
+  margin: auto;
+  width: 1200px;
+  height: 400px;
+}
+</style>

@@ -4,14 +4,17 @@
             <div class="datatable-input" style="width: 30%;float: right;">
                 날짜별 주문내역<br>
                 <input v-model="startNo" type="date"> ~ <input v-model="lastNo" type="date"><br><br>
-                <v-select
-                label="주문상태"
-                :items="['주문완료','상품준비중','출고완료','취소된 주문']"
-                v-model = orders
-                variant="underlined"
-                return-object
-                ></v-select>
                 <div  style="width: 50%;float: right;"><v-btn @click="orderDate">검색하기</v-btn><v-btn @click="refresh" style="float: right;">초기화</v-btn></div></div>
+        </template>
+        <template #filterSearch>
+          <v-select
+            label="주문상태"
+            :items="['주문완료','상품준비중','출고완료','취소된 주문']"
+            v-model = orders
+            variant="underlined"
+            return-object
+            style="width: 200px;"
+          ></v-select>
         </template>
         <template #dataList>
         <thead>
@@ -40,7 +43,7 @@
           <td v-else-if="order.order_status=='c2'">상품준비중</td>
           <td v-else-if="order.order_status=='c3'">출고완료</td>
           <td v-else-if="order.order_status=='c4'" style="color: red;">취소된 주문</td>
-          <td v-if="order.order_status=='c1'"><v-btn type="button" @click="this.orderStatus='c2',this.orderGetOne(order.order_no),modalCheck2=true">주문상세보기</v-btn>   <v-btn type="button" @click="modalCheck=true,this.orderNo=order.order_no,this.phoneNo=order.phone">주문취소 신청</v-btn></td>
+          <td v-if="order.order_status=='c1'"><v-btn type="button" @click="this.orderStatus='c2',this.orderGetOne(order.order_no),modalCheck2=true">주문상세보기</v-btn>   <v-btn type="button" @click="modalCheck=true,cancelPayment(order.order_no),this.orderNo=order.order_no,this.phoneNo=order.phone">주문취소 신청</v-btn></td>
           <td v-else-if="order.order_status=='c2'"><v-btn type="button" @click="delNo=true">상품 출고하기</v-btn><p v-show="delNo">운송장번호 : <input type="number" v-model="deliveryNum"><v-btn @click="this.orderStatus='c3',changeStatus(order.order_no)">배송출발</v-btn></p></td>
           <td v-else-if="order.order_status=='c3'"><v-btn type="button">배송 조회</v-btn></td>
           <td v-else-if="order.order_status=='c4'"><v-btn @click="goto">취소목록 가기</v-btn></td>
@@ -177,7 +180,9 @@
                 modalCheck2 : false,
                 delNo : false,
                 deliveryNum : '',
-                phoneNo : ''
+                phoneNo : '',
+                accessToken : '',
+
             }
         },
         components : {
@@ -187,6 +192,7 @@
         created(){
             //this.prodList();
             this.total();
+            this.getAccessToken();
             //this.getOrderList();
         },
         methods : {
@@ -255,6 +261,34 @@
                 });
                 this.totalList = total.data;
             },
+            getAccessToken() {
+            axios.get('/api/saveAccessToken') // app.js 에 토큰값 가져오기!
+                .then(response => {
+                this.accessToken = response.data; // 토큰 값을 변수에 저장
+                console.log(this.accessToken,'토큰값')
+
+                })
+                .catch(error => {
+                console.error(error);
+                });
+            },
+            async cancelPayment(ono) { // 눌렀을때 주문취소
+                let result = await axios.get(`/api/order/${ono}`).catch(err=>console.log(err));
+                console.log(result.data[0],result.data)
+                let cancel = await axios.post(`/api/cancel`, {
+                            merchant_uid: ono,
+                            reason: '단순 취소',
+                            cancel_request_amount: result.data[0].real_payment,
+                            access_token: this.accessToken
+                        });
+                    console.log(cancel.data)
+                if(cancel.data.affectedRows==1){
+                    alert('포트성공')
+                }else{
+                    alert('포트실패')
+                }
+
+            },
             async getOrderList(){
                 let result = await axios.get(`/api/order/${this.startNum}/${this.nums}`).catch(err=>console.log(err));
                 this.orderList = result.data;
@@ -286,10 +320,11 @@
                 this.totalList = result;
             },
             async orderDate(){
+              this.orders = '';
                 if(this.startNo>this.lastNo){
                     alert('날짜를 다시 확인해주세요');
-                    this.startNo = '';
-                    this.lastNo = '';
+                    this.startNo = '2000-01-01';
+                    this.lastNo = this.dateFormat('','yyyy-MM-dd');
                 }else if(this.startNo==''||this.lastNo==''){
                     alert('날짜가 비어있습니다.')
                 }else{
@@ -365,7 +400,12 @@
                 this.searchList(this.content);
             },
             orders(){
-                this.orderState(this.orders);
+              if(this.orders==''){
+                return;
+              }
+              this.startNo = '2000-01-01',
+              this.lastNo = this.dateFormat('','yyyy-MM-dd'),
+              this.orderState(this.orders);
             }
     }
         

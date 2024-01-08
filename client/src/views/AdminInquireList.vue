@@ -51,7 +51,7 @@
         </tr>
       </tbody>
       <tbody v-if="inquireList.length==0" style="text-align: center;">
-            <tr><td></td><td></td><td><h3>존재하는 데이터가 없습니다</h3></td></tr>
+            <tr><td></td><td></td><td><h3>존재하는 문의사항이 없습니다</h3></td></tr>
         </tbody>
         <v-container>
           <page @changePage="changePage" :list="totalList" :totals="this.nums"></page>

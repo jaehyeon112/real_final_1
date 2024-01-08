@@ -4,10 +4,11 @@
     <div class="row">
         <side/>
         <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-            <table class="table">
+            <br><br>
+            <v-table class="table">
                 <thead>
                     <tr>
-                        <th>현황</th>
+                        <th @click="goto">현황</th>
                         <th>가입회원수</th>
                         <th>탈퇴회원수</th>
                     </tr>
@@ -24,7 +25,13 @@
                         <td>{{yesterday.yours}}명</td>
                     </tr>
                 </tbody>
-            </table>
+            </v-table>
+            <v-card class="chars">
+                <h1>탈퇴사유</h1>
+            <div class="chart" style="width: 550px;float: left;">
+                <Doughnutchart style="width: 100%;height: 500px;"/>
+            </div>
+            </v-card>
         </main>
     </div>
     </div>
@@ -32,6 +39,7 @@
 <script>
 import axios from 'axios';
 import side from '../components/admin/SideBar.vue';
+import Doughnutchart from './Doughnutchart.vue'
 export default{
     data(){
         return{
@@ -40,7 +48,8 @@ export default{
         }
     },
     components : {
-        side
+        side,
+        Doughnutchart
     },
     created(){
         this.userSum();
@@ -51,6 +60,9 @@ export default{
             this.today = result.data[0];
             let result1 = await axios.get("/api/withMe/1/1").catch(err=>console.log(err));
             this.yesterday = result1.data[0];
+        },
+        goto(){
+            this.$router.push({path : "Doughnutchart"})
         }
     }
 }
@@ -60,5 +72,16 @@ export default{
     width: 300px;
     border: 1px solid;
     text-align: center;
+}
+.chart{
+  position: relative;
+  margin: auto;
+  text-align: center;
+}
+.chars{
+  top: 50px;
+  margin: auto;
+  width: 500px;
+  height: 600px;
 }
 </style>

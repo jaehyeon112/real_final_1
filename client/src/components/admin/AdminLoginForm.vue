@@ -21,12 +21,30 @@
             :rules="[required]"
             clearable
             label="Password"
+            type="password"
             placeholder="Enter your password"
           ></v-text-field>
           <br>
-  
+          <div class="text-center">
+            <v-otp-input
+              v-model="otp"
+              focus-all
+              length="6"
+              type="password"
+              variant="underlined"
+            ></v-otp-input>
+
+            <v-btn
+              :disabled="otp.length < 6"
+              class="my-5"
+              color="surface-variant"
+              text="관리자번호 입력"
+              variant="tonal"
+              @click="onClick"
+            ></v-btn>
+          </div>
           <v-btn
-            :disabled="!form"
+            :disabled="!form||!check"
             :loading="loading"
             block
             color="success"
@@ -48,9 +66,21 @@
       user_id: null,
       password: null,
       loading: false,
+      otp: '',
+      check : false
     }),
 
     methods: {
+        onClick () {
+          if(this.otp=='980924'){
+            alert('인증되었습니다');
+            this.check = true;
+          }else{
+            alert('인증번호가 틀립니다.');
+            return;
+            this.opt = "";
+          }
+        },
         async onSubmit () {
         if (!this.form) return
             
@@ -62,11 +92,14 @@
         } 
     
         let ipList = await axios.post(`/api/dologin/`,obj).catch(err => console.log(err));
-        console.log(ipList.data)
-                    
+        console.log(ipList)
         let users = ipList.data;
         if(users == ''){
-            alert(`ID나 Password 확인하기!`);
+            alert(`아아디/비밀번호가 일치하지 않습니다.`);
+            this.user_id = '';
+            this.password = '';
+            this.otp = "";
+            this.check = false;
         }else{
             this.$store.commit('login',users[0]) // (함수명, 전달인자)
             this.loading = true

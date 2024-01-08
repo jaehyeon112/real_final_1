@@ -36,7 +36,7 @@
         </tr>
       </tbody>
       <tbody v-if="reportList.length==0" style="text-align: center;">
-            <tr><td></td><td></td><td><h3>존재하는 데이터가 없습니다</h3></td></tr>
+            <tr><td></td><td></td><td></td><td><h3>존재하는 신고 리뷰건이 없습니다</h3></td></tr>
         </tbody>
       <div class="modal-wrap" v-show="modalCheck" @click="modalOpen">
       <div class="modal-container" @click.stop="">

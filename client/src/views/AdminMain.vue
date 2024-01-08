@@ -4,28 +4,69 @@
     <div class="row">
       <side/>
       <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-        <table class="table">
-                    <tr>
-                      <th>주문완료</th>
-                      <RouterLink to="/admin/orderList">{{counting.orderNo}}건</RouterLink>
-                    </tr>
-                    <tr>
-                      <th>배송 준비중</th>
-                      <RouterLink to="/admin/orderList">{{counting.delNo}}건</RouterLink>
-                    </tr>
-                    <tr>
-                      <th>주문 취소건</th>
-                      <RouterLink to="/admin/refundList">{{counting.refundNo}}건</RouterLink>
-                    </tr>
-                    <tr>
-                      <th>리뷰신고건</th>
-                      <RouterLink to="/admin/reviewReport">{{counting.reportNo}}건</RouterLink>
-                    </tr>
-                    <tr>
-                      <th>문의진행건</th>
-                      <RouterLink to="/admin/inquireList">{{counting.inquireNo}}건</RouterLink>
-                    </tr>
-            </table>
+        <v-row class="toDo">
+        <v-dialog
+          v-model="dialog"
+          persistent
+          width="auto"
+        >
+          <template v-slot:activator="{ props }">
+            <v-btn
+              color="black"
+              v-bind="props"
+            >
+              오늘 해야 할 일
+            </v-btn>
+          </template>
+          <v-card>
+            <v-card-title class="text-h5">
+              새로 들어온 내역
+            </v-card-title>
+            <v-card-text>
+              <table class="table">
+                <tr>
+                  <th>주문완료</th>
+                  <RouterLink to="/admin/orderList">{{counting.orderNo}}건</RouterLink>
+                </tr>
+                <tr>
+                  <th>배송 준비중</th>
+                  <RouterLink to="/admin/orderList">{{counting.delNo}}건</RouterLink>
+                </tr>
+                <tr>
+                  <th>주문 취소건</th>
+                  <RouterLink to="/admin/refundList">{{counting.refundNo}}건</RouterLink>
+                </tr>
+                <tr>
+                  <th>리뷰신고건</th>
+                  <RouterLink to="/admin/reviewReport">{{counting.reportNo}}건</RouterLink>
+                </tr>
+                <tr>
+                  <th>문의진행건</th>
+                  <RouterLink to="/admin/inquireList">{{counting.inquireNo}}건</RouterLink>
+                </tr>
+              </table>
+            </v-card-text>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn
+                color="green-darken-1"
+                variant="text"
+                @click="dialog = false"
+              >
+                확인
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+      </v-row>
+        <v-card class="chars">
+          <div class="chart" style="width: 550px;float: left;">
+              <Bar style="width: 100%;height: 350px;"/>
+          </div>
+          <div class="chart" style="width: 550px;float: right;">
+            <Line style="width: 100%;height: 350px;"/>
+          </div>
+        </v-card>
       <v-card title="최근 주문내역">
       <v-table class="vTable1">
       <thead>
@@ -246,15 +287,6 @@
         </tr>
       </tbody>
     </v-table>
-    <div>
-      <div class="col-sm-4" style="width: 1000px;">
-          <Bar style="width: 40%;height: 40%;"/>
-      </div>
-      <div class="col-sm-4" style="width: 1000px;">
-        <Line style="width: 40%;height: 40%;"/>
-      </div>
-
-    </div>
     </main>
   </div>
 </div>
@@ -283,6 +315,7 @@ import icon from '../components/admin/icon.vue';
         inquireList : [],
         orderOne : [],
         counting : '',
+        dialog : false
       }
     },
     components : {
@@ -337,12 +370,12 @@ import icon from '../components/admin/icon.vue';
         }
        },
        showNotification(message) {
-  // 사용자가 알림을 허용했는지 확인
-  if (Notification.permission == 'granted') {
-    // 알림 생성 및 표시
-    const notification = new Notification('새 알람', {
-      body: message, // 메시지 본문
-    })}}
+      // 사용자가 알림을 허용했는지 확인
+      if (Notification.permission == 'granted') {
+        // 알림 생성 및 표시
+        const notification = new Notification('새 알람', {
+          body: message, // 메시지 본문
+        })}}
        ,
        async orderGetOne(ono){
         let result = await axios.get(`/api/order/${ono}`).catch(err=>console.log(err));
@@ -350,20 +383,34 @@ import icon from '../components/admin/icon.vue';
       },
       async getReviewList(){
         let result = await axios.get('/api/report').catch(err=>console.log(err));
-        this.reviewList = result.data;
+        //this.reviewList = result.data;
         for(let i=0;i<result.data.length;i++){
           if(result.data[i].report_status=='p1'){
             this.count3 = this.count3+1;
           }
         }
+        if(result.data.length>4){
+          for(let i=0;i<4;i++){
+            this.reviewList.push(result.data[i]);
+          }
+        }else{
+          this.reviewList = result.data;
+        }
       },
       async getInquireList(){
         let result = await axios.get('/api/inquire').catch(err=>console.log(err));
-        this.inquireList = result.data;
+        //this.inquireList = result.data;
         for(let i=0;i<result.data.length;i++){
           if(result.data[i].answer_state=='0'){
             this.count2 = this.count2+1;
           }
+        }
+        if(result.data.length>4){
+          for(let i=0;i<4;i++){
+            this.inquireList.push(result.data[i]);
+          }
+        }else{
+          this.inquireList = result.data;
         }
       },
       replyInsert(ino){
@@ -451,13 +498,33 @@ import icon from '../components/admin/icon.vue';
     padding : 5px;
   }
 .table{
-    width: 250px;
-    border: 1px solid;
-    text-align: center;
-    background-color: rgb(255, 255, 255);
-    position: fixed;
+  width: 250px;
+  text-align: center;
+  font-size: 18px;
+    /* border: 1px solid;
+    background-color: rgb(255, 255, 255); */
+    /* position: fixed;
     z-index: 10;
     bottom: 0;
-    right: 0;
+    right: 0; */
+}
+.toDo{
+  float: right;
+  background-color: black;
+  position: fixed;
+  top: 30px;
+  right: 20px;
+  text-align: center;
+  z-index: 10;
+}
+.chart{
+  position: relative;
+  margin: auto;
+}
+.chars{
+  top: 50px;
+  margin: auto;
+  width: 1200px;
+  height: 400px;
 }
 </style>
