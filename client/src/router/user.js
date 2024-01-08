@@ -161,11 +161,6 @@ export default {
           component: delivery
         },
         {
-          path: "addDeli",
-          name: "addDeli",
-          component: addDeli
-        },
-        {
           path: "point",
           name: "point",
           component: point

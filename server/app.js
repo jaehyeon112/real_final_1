@@ -1219,8 +1219,8 @@ app.post("/inquire", async(req,res)=>{
   let data = req.body.param
   res.send(await mysql.query("inquire", "inquireInsert", data))
 })
-app.put("/inquire/:id/:ino", async ( req, res)=>{
-  let datas = [req.session.user_id, req.params.ino]
+app.put("/inquireUpdate/:ino", async ( req, res)=>{
+  let datas = [req.body.param,req.session.user_id, req.params.ino]
   res.send(await mysql.query("inquire", "inquireUpdate", datas))
 })
   //답변
@@ -1229,6 +1229,10 @@ app.put("/inquire/:id/:ino", async ( req, res)=>{
     res.send(await mysql.query("inquire", "inquireAnswer", ino))
   })
 
+  app.get("/photoInq/:ino", async(req,res)=>{
+    let ino = req.params.ino
+    res.send(await mysql.query("inquire", "photoListInq", ino))
+  })
 
 
 

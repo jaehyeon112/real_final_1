@@ -347,8 +347,9 @@ let inquire={
   inquireList:`select * from inquire where user_id=?`,
   inquireInfo:`select * from inquire where inquire_no=?`,
   inquireInsert:`insert into inquire set?`,
-  inquireUpdate:`Update inquire set? where user_id=? and inquire_no=?`,
-  inquireAnswer:`select * from reply where inquire_no=?`
+  inquireUpdate:`update inquire set? where user_id=? and inquire_no=?`,
+  inquireAnswer:`select * from reply where inquire_no=?`,
+  photoListInq : `select file_name from file where inquire_no = ?`,
 }
 let member = {
   memberInfo: `select t1.*, count(case when coupon_able=0 then 1 end) as couponCnt from user t1 join coupon t2  on t1.user_id = t2.user_id where t1.user_id= ?`

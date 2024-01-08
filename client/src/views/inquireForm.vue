@@ -21,8 +21,9 @@
                 <div class="col-12">
                   <label for="stock" class="form-label">첨부파일</label>
                   <div :key="i" v-for="i in nums" style="width: 500px;">
-                    <upload :numbers=this.nums @info="info" @text="text"/>
-                    <v-btn v-show="this.nums==i" @click="this.nums=this.nums+1">+</v-btn><v-btn v-show="this.nums==i&&this.nums!=1" @click="this.nums=this.nums-1">-</v-btn>
+                    <uploads :numbers=this.nums @info="info" @text="text"/>
+                    <v-btn v-show="this.nums==i" @click="this.nums=this.nums+1">+</v-btn>
+                    <v-btn v-show="this.nums==i&&this.nums!=1" @click="this.nums=this.nums-1">-</v-btn>
                   </div>
                   <div :key= idx v-for="idx in file">첨부파일 : {{ idx }}<p @click="delMultiple(idx)">삭제</p></div>
                   <div :key=idx v-show="open==true" v-for="idx in photo"><img id="ima" :src="getPath(idx)" style="position: relative;height=300"><p @click="delPhoto(idx)">삭제</p></div>
@@ -30,7 +31,7 @@
                 </div>
             </div>
             <button type="button" class="btn btn-xs btn-info" @click="isUpdated? inquireUpdate() :inquireInsert()" >문의하기</button>
-
+            {{ this.inquireNo }}
         </form>
     </div>
 </template>
@@ -87,10 +88,13 @@ export default {
     created() {
         this.inquireNo = this.$route.query.inquireNo; //마이페이지 문의조회시 눌러서 가져오는 값
         this.detailNo = this.$route.query.detailNo;//주문상세에서 문의시 가져올 주문번호
+       
         if(this.inquireNo > 0){
             //수정
             this.isUpdated = true;
             this.getInquireInfo(); //날짜포맷 중요함 출력할때 뒤에 시간도 같이 나와서 화면에 안나올거임
+            this.photoList(this.inquireNo);
+        this.open = true;
             
         }else{
             //등록
@@ -105,6 +109,17 @@ export default {
           subtitle: item.explanation,
         }
         },
+        async photoList(no){
+            this.photo = [];
+            console.log(no)
+            let list = await axios.get(`/api/photoInq/${this.inquireNo}`)
+                                    .catch(err=>{console.log(err)})
+            for(let i=0;i<list.data.length;i++){
+              this.photo.push(list.data[i].file_name);
+              console.log('사진 리스트 ' +list.data[i])
+            }
+          },
+                              
         async getInquireInfo() {
            let result = await axios.get(`/api/inquire/${this.inquireNo}`) //sql.js 단건조회 경로 그대로 가져오기 api붙여주는 이유 proxy와 관련
                                     .catch(err=>{console.log(err)})
@@ -147,7 +162,7 @@ export default {
             let obj ={
                 param: {
                    
-                    user_id:this.$store.state.user.user_id,
+               
                     inquire_title:this.inquireInfo.inquire_title,
                     inquire_content:this.inquireInfo.inquire_content,
                     inquire_category:this.inquireInfo.inquire_category,
@@ -159,43 +174,32 @@ export default {
             } 
             let result = await axios.post('/api/inquire', obj) 
                                      .catch(err=>console.log('문의등록오류'+err))
-                if(result.affectedRows==1){
-                alert('공지사항이 등록되었습니다 현재 파일',this.file.length,'현재사진',this.photo.length);
-                for(let i=0;i<this.file.length;i++){
-                  this.ods = 's'+i
-                  let photos = {
-                    param : {
-                      "file_category" : 'r4',
-                      "file_name" : this.file[i],
-                      "orders" : this.ods,
-                      "notice_no" : result.insertId,
-                      "path" : 'uploads\\'+this.file[i]
-                    }
-                  }
-                  let result1 = axios.post("/api/photo",photos).catch(err=>console.log(err));
-                  console.log(result1)
-                  alert('테이블ㅇㅔ 추가');
-                }
+                                     console.log('???'+result)
+                if(result.data.affectedRows==1){
+                alert('문의사항이 등록됨 현재 파일',this.file.length,'현재사진',this.photo.length);
+ 
                 for(let i=0;i<this.photo.length;i++){
                   this.ods = 's'+i
                   let ph = {
                     param : {
-                      "file_category" : 'r4',
-                      "file_name" : this.photo[i],
-                      "orders" : this.ods,
-                      "notice_no" : result.insertId,
-                      "path" : 'uploads\\'+this.photo[i]
+                      file_category : 'r2',
+                      file_name : this.photo[i],
+                      orders : this.ods,
+                      inquire_no : result.data.insertId,
+                      path : 'uploads\\'+this.photo[i],
+                      types : 'photo'
                     }
                   }
                   let result1 = axios.post("/api/photo",ph).catch(err=>console.log(err));
                   console.log(result1)
-                  alert('테이블ㅇㅔ 추가');
+                  alert('테이블에 추가');
                 }                        
             // if(result.data.insertId>0){ //글번호는 자동으로 부여되니까 obj에서 주는게 아니라 따로 빼서 
             //     alert('등록완료');
+                
+            }              
                 this.inquireInfo.no = result.data.insertId; //여기에 data가 있고 없고 차이는..?
-                this.$router.push({path:'myPage/myInquire'})
-            }                         
+                this.$router.push({path:'myPage/myInquire'})           
         },
         info(data){
             for(let i=0;i<data.length;i++){
@@ -233,32 +237,48 @@ export default {
                 }
             }
         },
-        async inquireUpdate(){
-                if(inquireInfo.answer_state ==1){
-
-                }else{
-                    let obj ={
-                        param: {
+        // async inquireUpdate(){
+        //         if(this.inquireInfo.answer_state ==0){
+        //             let obj ={
+        //                 param: {
                             
-                            user_id:this.$store.state.user.user_id,
-                            inquire_title:this.inquireInfo.review_title,
-                            inquire_content:this.inquireInfo.inquire_content,
-                            inquire_category:this.inquireInfo.inquire_category,
-                            create_date:this.inquireInfo.create_date,
-                            order_detail_no: this.detailNo,
+        //                     user_id:this.inquireInfo.user_id,
+        //                     inquire_title:this.inquireInfo.review_title,
+        //                     inquire_content:this.inquireInfo.inquire_content,
+        //                     inquire_category:this.inquireInfo.inquire_category,
+        //                     create_date:this.inquireInfo.create_date,
+        //                     order_detail_no: this.detailNo,
                 
-                        }
-                    }
-                    let result = await axios.put(`/api/inquire/${this.inquireNo}`, obj) 
-                                            .catch((err=>console.log(err))) 
-                    if(result.data.affectedRows > 0){
-                        alert('수정완료');
-                        this.$router.push({path:'myPage/myInquire'})
-                        }                        
+        //                 }
+        //             }
+        //             let result = await axios.put(`/api/inquireUpdate/${this.inquireNo}`, obj) 
+        //                                     .catch((err=>console.log(err))) 
+        //                                     console.log(result)
+        //             if(result.data.affectedRows > 0){
+        //                 alert('수정성공!');
+        //                 for(let i=0;i<this.photo.length;i++){
+        //                 this.ods = 's'+i
+        //                 let photos = {
+        //                     param : {
+        //                     "file_category" : 'r2',
+        //                     "file_name" : this.photo[i],
+        //                     "orders" : this.ods,
+        //                     "prod_no" : this.prodNo,
+        //                     "path" : 'uploads\\'+this.photo[i]
+        //                     }
+        //                 }
+        //                 let result1 = axios.post("/api/photo",photos).catch(err=>console.log(err));
+        //                 alert('테이블ㅇㅔ 추가');
+        //                 }
+        //                 this.$router.push({path:'myPage/myInquire'})
+        //                 }else{
+        //                      alert('수정 실패')
+        //                 }
+                        
+                        
+        //                 }                        
                 
-                }
-
-        }
+        // }
     }
 }
 </script>

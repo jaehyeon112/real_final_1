@@ -11,8 +11,8 @@
                         <td  scope="col" class="text-center " v-else>기타문의</td>
                         <th scope="col" class="text-center table-warning">작성일</th>
                         <td scope="col" class="text-center">{{ $dateFormat(inquireInfo.create_date,'yyyy년 MM월 dd일')}}</td> <!--$DateFormat-->
-                        <th scope="col" class="text-center table-warning">이름</th>
-                        <td scope="col" class="text-center">{{ inquireInfo.inquire_user_id }}</td>
+                        <th scope="col" class="text-center table-warning">주문상세번호</th>
+                        <td scope="col" class="text-center">{{ inquireInfo.order_detail_no }}</td>
                     </tr>
 
                     <tr>
@@ -25,6 +25,12 @@
                         <td colspan="6" class="text-left" valign="top" height="200">
                             <pre
                                 style="white-space: pre-wrap;border:none;background-color: white;">{{ inquireInfo.inquire_content }}</pre>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="6" class="text-left" valign="top" height="200">
+                            <pre
+                                style="white-space: pre-wrap;border:none;background-color: white;"></pre>
                         </td>
                     </tr>
                     <tr>
