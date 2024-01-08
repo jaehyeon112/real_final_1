@@ -14,6 +14,7 @@ import noticeList from '../views/AdminNoticeList.vue';
 import fna from '../views/FNA.vue';
 import out from '../views/AdminOutList.vue'
 import insertNotice from '../views/insertNotice.vue'
+import reply from '../views/reply.vue'
 
 import Barchart from '../views/Barchart.vue';
 import Linechart from '../views/LineChart.vue';
@@ -90,6 +91,11 @@ export default{
           path : "out",
           name : "out",
           component : out
+        },
+        {
+          path : "reply",
+          name : "reply",
+          component : reply
         },
         {
           path : "insertNotice",
