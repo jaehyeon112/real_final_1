@@ -120,7 +120,7 @@ export default {
   },
   methods: {
     async fetchCartCheckList() {
-      await axios.get(`/api/cartCheckList/${this.$store.state.user.user_id}`, {
+      await axios.get(`/api/cartCheckList`, {
       })
       .then(response => {
         this.cartList = response.data;
@@ -130,7 +130,7 @@ export default {
       });
     },
     fetchCouponList() {
-      axios.get(`/api/coupon/${this.$store.state.user.user_id}`, {
+      axios.get(`/api/couponList`, {
       })
       .then(response => {
         this.couponList = response.data;
@@ -140,7 +140,7 @@ export default {
       });
     },
     fetchPointList() {
-      axios.get(`/api/point/${this.$store.state.user.user_id}`, {
+      axios.get(`/api/pointList`, {
       })
       .then(response => {
         this.pointList = response.data; 
@@ -345,6 +345,7 @@ async orderInsert(){ // orders 테이블 등록
           if(this.cartList[i].cart_checkbox == 1){
 
             await axios.delete(`/api/CheckboxDelete/${this.cartList[i].cart_no}`);
+            this.$store.commit('loginCart')
             
           }
         }
@@ -372,7 +373,7 @@ async orderInsert(){ // orders 테이블 등록
           }
         }
         
-        axios.put(`/api/pointUpdate/${this.$store.state.user.user_id}`, obj)
+        axios.put(`/api/pointUpdate`, obj)
              .catch(err => console.log(err));
         
 

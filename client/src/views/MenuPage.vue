@@ -110,6 +110,11 @@ export default {
       }else if(this.category == 'frozen'){
         let total = await axios.get(`/api/frozen/X/X/X/X/X`).catch((err) => {console.log(err);});
         this.totalList = total.data;
+      }else if(this.category == `best`){
+        this.totalList = (await axios.get('/api/best')).data;
+      
+      }else if(this.category == `sale`){
+        this.totalList = (await axios.get('/api/sale')).data;
       }
 
     },
@@ -133,8 +138,38 @@ export default {
           this.total();
           return;
         }
-
         this.$refs.pagination1.currentPage1()
+        if(this.category == 'best'){
+          let queryString = '?'
+        if(this.first != ''){
+          queryString += `&first=${first}&last=${last}`
+        }
+        if(this.price != ''){
+          queryString += `&A=${this.betweenA}&B=${this.betweenB}`
+        }
+        
+        let total = (await axios.get(`/api/best${queryString}`)).data
+        this.totalList = total
+        queryString += `&no=${this.pageNo}`
+        this.list = (await axios.get(`/api/best${queryString}`)).data //페이지
+        return;
+        }
+        if(this.category == 'sale'){
+          let queryString = '?'
+        if(this.first != ''){
+          queryString += `&first=${first}&last=${last}`
+        }
+        if(this.price != ''){
+          queryString += `&A=${this.betweenA}&B=${this.betweenB}`
+        }
+        
+        let total = (await axios.get(`/api/sale${queryString}`)).data
+        this.totalList = total
+        queryString += `&no=${this.pageNo}`
+        this.list = (await axios.get(`/api/sale${queryString}`)).data //페이지
+        return;
+        }
+
         if(price == '' && first != '' && this.category == null){ // 글자만 필터
           this.$showLoading();
         let pageResult = await axios.get(`/api/wordFilter/${first}/${last}`).catch((err) => {console.log(err)});
@@ -251,7 +286,6 @@ export default {
   this.loading = false;
       }else if(this.category == 'main' || this.category == 'sub'){
         let proList = await axios.get(`/api/show/${this.mainCategory}/${this.type}/${this.pageNo}`)
-        console.log('일단뜸?')
         this.list = proList.data;
       }else if(this.category == 'new'){
         let proList = await axios.get(`/api/new/${this.pageNo}`)
@@ -259,11 +293,16 @@ export default {
       }else if(this.category == 'frozen'){
         let proList = await axios.get(`/api/frozen/X/X/X/X/${this.pageNo}`)
         this.list = proList.data;
+      }else if(this.category == 'best'){
+        this.list = (await axios.get(`/api/best?no=${this.pageNo}`)).data
+      }else if(this.category == 'sale'){
+        this.list = (await axios.get(`/api/sale?no=${this.pageNo}`)).data
       }
     },
-
-
+    
+    
     async changePage(no) { //페이지 눌렀을때 이동
+
       if(this.category == null){
         if(this.first == '' && this.price == ''){ //필터 없을 때
           let page = await axios.get("/api/show/" + no).catch (err=>{console.log(err)})
@@ -283,6 +322,7 @@ export default {
         if(this.first != '' && this.price != ''){ // 필터 둘다 적용
           let listResult = await axios.get(`/api/bothFilter/${this.first}/${this.last}/${this.betweenA}/${this.betweenB}/${no}`).catch((err) => {console.log(err)});
           this.list = listResult.data;
+          return
         }
       }else if(this.category=='main' || this.category == 'sub'){
         if(this.first == '' && this.price == ''){ // 필터 없이 전체
@@ -305,7 +345,7 @@ export default {
           this.list = listResult.data;
           return;
         }
-      }else if(this.mainCategory='신상품'){
+      }else if(this.category=='new'){
         if(this.first == '' && this.price == ''){ // 필터 없이 전체
           let listResult = await axios.get(`/api/new2/X/X/X/X/${no}`).catch((err) => {console.log(err)})
           this.list = listResult.data
@@ -326,33 +366,31 @@ export default {
           this.list = listResult.data
           return;
         }
-      }else if(this.mainCategory='특가'){
-        if(this.first == '' && this.price == ''){ // 필터 없이 전체
-          return;
+        // queryString으로 처리하자...
+      }else if(this.category=='sale'){
+        let queryString = '?'
+        if(this.first != ''){
+          queryString += `&first=${this.first}&last=${this.last}`
         }
-        if(this.first != '' && this.price == '' ){ // 글자 필터 적용
-          return;
+        if(this.price != ''){
+          queryString += `&A=${this.betweenA}&B=${this.betweenB}`
         }
-        if(this.first == '' && this.price != ''){ //가격 필터 적용
-          return;
+        queryString += `&no=${no}`
+        this.list = (await axios.get(`/api/sale${queryString}`)).data
+        return
+      }else if(this.category=='best'){
+
+        let queryString = '?'
+        if(this.first != ''){
+          queryString += `&first=${this.first}&last=${this.last}`
         }
-        if(this.first != '' && this.price != ''){ //필터 둘다 적용
-          return;
+        if(this.price != ''){
+          queryString += `&A=${this.betweenA}&B=${this.betweenB}`
         }
-      }else if(this.mainCategory='베스트'){
-        if(this.first == '' && this.price == ''){ // 필터 없이 전체
-          return;
-        }
-        if(this.first != '' && this.price == '' ){ // 글자 필터 적용
-          return;
-        }
-        if(this.first == '' && this.price != ''){ //가격 필터 적용
-          return;
-        }
-        if(this.first != '' && this.price != ''){ //필터 둘다 적용
-          return;
-        }
-      }else if(this.category='frozen'){
+        queryString += `&no=${no}`
+        this.list = (await axios.get(`/api/best${queryString}`)).data
+        return
+      }else if(this.category=='frozen'){
         if(this.first == '' && this.price == ''){ // 필터 없이 전체
           let listResult = await axios.get(`/api/frozen/X/X/X/X/${no}`).catch((err) => {console.log(err)})
           this.list = listResult.data
