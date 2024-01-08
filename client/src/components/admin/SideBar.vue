@@ -220,7 +220,7 @@ export default {
     },
     logout(){
       this.$store.commit('logout');
-      this.$router.push({name : 'login'})
+      this.$router.push({name : 'Adminlogin'})
     }
   }
 }

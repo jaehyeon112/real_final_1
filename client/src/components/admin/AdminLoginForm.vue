@@ -66,7 +66,7 @@
                     
         let users = ipList.data;
         if(users == ''){
-            alert(`ID나 Password 확인하기!`)
+            alert(`ID나 Password 확인하기!`);
         }else{
             this.$store.commit('login',users[0]) // (함수명, 전달인자)
             this.loading = true

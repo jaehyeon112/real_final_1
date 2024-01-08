@@ -15,7 +15,7 @@ export default {
   },
   created() {
     if(this.$store.state.user.user_id == null){
-      this.$router.push({path : "/admin/login"})
+      this.$router.push({path : "/admin/Adminlogin"})
     }else{
       this.$router.push({path : "/admin/Main"})
     }

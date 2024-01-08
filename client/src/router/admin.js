@@ -1,5 +1,5 @@
 import admin from '@/views/AdminHome.vue';
-import login from '../components/admin/AdminLoginForm.vue';
+import Adminlogin from '../components/admin/AdminLoginForm.vue';
 import adminMain from "@/views/AdminMain.vue";
 import userList from "@/views/UserList.vue";
 import prodList from "@/views/ProductList.vue";
@@ -28,9 +28,9 @@ export default {
   component : admin,
   children : [
       {
-        path : "login",
-        name : "login",
-        component : login
+        path : "Adminlogin",
+        name : "Adminlogin",
+        component : Adminlogin
       },
       {
         path : "Main",
