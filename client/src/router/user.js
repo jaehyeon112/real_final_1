@@ -27,6 +27,7 @@ import reviewForm from "../views/ReviewForm.vue";
 import search from '@/components/menu/search.vue';
 
 
+
 export default {
   path: "/",
   name: "main",

@@ -33,6 +33,8 @@ app.use(session({
 }));
 
 
+
+
 app.use(express.json());
 require('dotenv').config();
 const {
@@ -85,6 +87,8 @@ async function sendEmail(to, subject, body) {
   const result = await transporter.sendMail(mailOptions);
   return result;
 }
+
+
 
 
 server.listen(3000, () => {

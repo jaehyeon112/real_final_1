@@ -26,6 +26,9 @@
   
           <div class="hr"></div>
           
+        
+
+
           <div class="foot-lnk">
           <b-button variant="link" a href="finding">ID/PASSWORD 찾기</b-button>
             <router-link to="/join"> <v-btn squared variant="success" a href="join">회원가입</v-btn></router-link>
@@ -69,6 +72,11 @@
 </template>
   
   <script>
+  import Vue from 'vue'
+  import VueRecaptcha from 'vue-recaptcha'
+  
+  Vue.component('vue-recaptcha', VueRecaptcha)
+
   
     var onloadCallback = function() {
       alert("grecaptcha is ready!");

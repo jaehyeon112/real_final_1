@@ -1,3 +1,4 @@
+
 import {
   createStore
 } from "vuex";
@@ -33,12 +34,12 @@ const store = createStore({
           return;
         }
       }
-
+ 
       item.cart_checkbox = 0
       state.cart.push(item);
       state.cartCount = state.cart.length
     },
-    login(state, userInfo) {
+    async login(state, userInfo) {
       state.user = userInfo;
       state.loginCartCount = (await axios.get('/api/cartList')).data.length;
     },

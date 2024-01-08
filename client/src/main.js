@@ -4,6 +4,7 @@ import {
 import App from "./App.vue";
 import router from "./router";
 import vuetify from './plugins/vuetify'
+import { VueRecaptchaPlugin } from 'vue-recaptcha' 
 import {
   loadFonts
 } from './plugins/webfontloader'
@@ -30,3 +31,9 @@ app
   .use(overlay)
   .mixin(mixin)
   .mount('#app')
+
+  //리캡챠
+app.use(VueRecaptchaPlugin, {
+  v2SiteKey: '6LeemEkpAAAAACmzeMW6xkgqnSjDGmkpX--9CWWZ',
+  //v3SiteKey: 'YOUR_V3_SITEKEY_HERE',
+})
