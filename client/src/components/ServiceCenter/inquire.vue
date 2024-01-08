@@ -15,11 +15,16 @@
             <tbody>
                 <tr  :key="i" v-for="(inquire, i) in inquireList" @click="goToDetail(inquire.inquire_no)">
                     <td>{{ inquire.inquire_no }}</td>
-                    <td>{{inquire.inquire_category}}</td>
+                    <td v-if="inquire.inquire_category=='j1'">상품문의</td>
+                    <td v-else-if="inquire.inquire_category=='j2'">배송문의</td>
+                    <td v-else-if="inquire.inquire_category=='j3'">환불문의</td>
+                    <td v-else>기타문의</td>
+
                     <td>{{ inquire.inquire_title }}</td>
                     <td>{{ getDateFormat(inquire.create_date) }}</td>
                     <td>{{ inquire.inquire_content }}</td>
-                    <td>{{ inquire.answer_state }}</td>
+                    <td v-if="inquire.answer_state==1">답변완료</td>
+                    <td v-else>답변 대기</td>
                 </tr>
             </tbody>
         </table>
@@ -40,14 +45,14 @@ export default {
     },
     methods : {
         async getInquireList(){
-            this.boardList = (await axios.get('/api/inquire')
+            this.inquireList = (await axios.get('/api/inquire')
                                    .catch(err => console.log(err))).data;
         },
-        goToDetail(inquireNo){// 여기 변수는..? value(필드명)
-            this.$router.push({path : '/inquireInfo', query : {inquireNo : inquireNo}});//{키:필드명}
+        goToDetail(inquireNo){
+            this.$router.push({path :'myInquireInfo', query : {inquireNo : inquireNo}});
         },
         getDateFormat(date){
-            return this.$dateFormat(date);
+            return this.$dateFormat(date,'yyyy년MM월dd일');
         }
     }
 }

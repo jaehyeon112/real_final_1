@@ -831,8 +831,10 @@ app.get("/new", async (req, res) => {
   let result = await mysql.query("test", "newListPage");
   res.send(result);
 })
+
+
 //예빈
-//멤버조회정보
+//멤버정보
 
 // app.get("/member", async (req,res)=>{
 //   let id = req.session.user_id;
@@ -856,6 +858,7 @@ app.get("/member/:id", async (req,res)=>{
 //   let id = req.params.id;
 //   res.send(await mysql.query("point", "showNextMonth", id))[0]
 // });
+
 //상세페이지 정보
 app.get("/detailPro/:pno", async (req, res) => {
   let pno = req.params.pno;
@@ -879,6 +882,10 @@ app.get("/comparisonCart/:id", async (req, res) => {
   let result = await mysql.query('orders', 'comparisonCart', id);
   res.send(result)
 })
+
+
+
+
 //주문내역 관련
 app.get("/myOrders/:id", async (req, res) => {
   let id = req.params.id
@@ -917,9 +924,12 @@ app.delete('/orders/:ono/:id', async (req, res) => {
   let result = await mysql.query('orders', 'orderCancle', datas)
   res.send(result)
 })
+
+
+
 //추가 배송지 관련
-app.get('/addDelivery/:id', async (req, res) => {
-  let id = req.params.id;
+app.get('/addDelivery/:id/:id/:id/:id', async (req, res) => {
+  let id = [req.params.id,req.params.id,req.params.id,req.params.id]
   const list = await mysql.query('delivery', 'deliveryList', id);
   res.send(list);
 })
@@ -934,8 +944,8 @@ app.put("/updateDelivery/:dno/:id", async (req, res) => {
   let result = await mysql.query('delivery', 'updateDelivery', datas);
   res.send(result)
 })
-//정보삽입
 
+//정보삽입
 app.post("/addDelivery", async (req, res) => {
   let datas = req.body.param
   let result = await mysql.query('delivery', 'addDelivery', datas)
@@ -963,6 +973,9 @@ app.get("/user", async (req, res) => {
   let list = await mysql.query("admin", "userList");
   res.send(list);
 });
+
+
+
 //포인트
 //기간 만료시 포인트 소멸인거처럼 업데이트 
 //둘다 된다 await를 거는게 더 좋은걸까..?
@@ -1007,6 +1020,10 @@ app.post("/reviewPoint/:id", async (req, res) => {
   res.send(await mysql.query("reviews", "reviewPoint", datas));
 
 });
+
+
+
+
 
 //리뷰관련
 //상세페이지에서 리뷰목록
@@ -1060,8 +1077,11 @@ app.get("/orderNoReview/:id", async (req, res) => {
   res.send(await mysql.query("reviews", "orderNoReview", id))
 });
 
-//찜하기
 
+
+
+
+//찜하기
 app.delete("/prodDisike/:id/:pno", async (req, res) => {
   console.log('????');
   let datas = [req.params.id, req.params.pno]
@@ -1082,23 +1102,53 @@ app.post("/prodLike", async (req, res) => {
   res.send(await mysql.query("like", "likeInsert", data))
 });
 
+
+
+
 //문의하기
-app.get("/inquire/:id", async(req,res)=>{
-  let id = req.params.id;
+app.get("/inquire", async(req,res)=>{
+  let id = req.session.user_id;
   res.send(await mysql.query("inquire", "inquireList", id))
 })
-app.get("/inquireInfo/:id/:ino", async (req,res)=>{
-  let id = req.params.id
-  res.send(await mysql.query("inquire", "inquireInfo", id))[0]
+app.get("/inquire/:ino", async (req,res)=>{
+  let ino =  Number(req.params.ino)
+  res.send(await mysql.query("inquire", "inquireInfo", ino))
 })
 app.post("/inquire", async(req,res)=>{
   let data = req.body.param
   res.send(await mysql.query("inquire", "inquireInsert", data))
 })
 app.put("/inquire/:id/:ino", async ( req, res)=>{
-  let datas = [req.params.id, req.params.ino]
+  let datas = [req.session.user_id, req.params.ino]
   res.send(await mysql.query("inquire", "inquireUpdate", datas))
 })
+  //답변
+  app.get("/inquireAnswer/:ino", async(req,res)=>{
+    let ino = Number(req.params.ino);
+    res.send(await mysql.query("inquire", "inquireAnswer", ino))
+  })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 // sql injection의 위험이 있음 처리해야함;;

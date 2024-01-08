@@ -221,7 +221,7 @@ WHERE t3.prod_no = ?`, //상세페이지에서 그 상품에대한 리뷰 리스
   insertReview: `insert into review set?`, //주문상세내역->리뷰등록
   updateReview: `update review set ? where user_id= ? and review_no= ?`,
   insertReviewImage: `insert into image set?`,
-  deleteReview:`delete review where review_no=?`,
+  deleteReview:`delete from review where review_no=?`,
   selectReviewLike:`select * from review_like where user_id=? and review_no=?`,
   insertReviewLike:`insert into review_like set ?`,
   deleteReviewLike:`delete from review_like where review_no=? and user_id=?`
@@ -266,10 +266,11 @@ let orders = {
 }
 let delivery = {
   addDelivery: `insert into add_delivery set?`,
-  deliveryList: `select * from add_delivery where user_id=?`,
+  //deliveryList: `select * from add_delivery where user_id=?`,
   deliveryInfo: `select * from add_delivery where user_id=? and delivery_no=?`,
   updateDelivery: `update add_delivery set? where delivery_no=? and user_id=?`,
-  deleteDelivery: `delete from add_delivery where delivery_no=?`
+  deleteDelivery: `delete from add_delivery where delivery_no=?`,
+  deliveryList: `select *, (select address from user where user_id=?) as joinaddress, (select detail_address from user where user_id=?) as joinDetail, (select postcode from user where user_id=?) as joinPost from add_delivery where user_id=?`
 }
 //찜테이블
 let like = {
@@ -280,9 +281,10 @@ let like = {
 }
 let inquire={
   inquireList:`select * from inquire where user_id=?`,
-  inquireInfo:`select * from inquire where user_id=? and inquire_no=?`,
+  inquireInfo:`select * from inquire where inquire_no=?`,
   inquireInsert:`insert into inquire set?`,
-  inquireUpdate:`Update inquire set? where user_id=? and inquire_no=?`
+  inquireUpdate:`Update inquire set? where user_id=? and inquire_no=?`,
+  inquireAnswer:`select * from reply where inquire_no=?`
 }
 let member = {
   memberInfo: `select t1.*, count(case when coupon_able=0 then 1 end) as couponCnt from user t1 join coupon t2  on t1.user_id = t2.user_id where t1.user_id= ?`

@@ -61,7 +61,7 @@ export default {
         },
         {
           category: '기타문의',
-          explanation: '그 외의 사항에 대하여...',
+          explanation: '그 외의 사항에 대하여  문의할게 있나용...?',
         }
       ],
 
@@ -92,15 +92,31 @@ export default {
         }
         },
         async getInquireInfo() {
-           let result = (await axios.get(`/api/inquireInfo/${this.$store.state.user.user_id}/${this.inquireNo}`) //sql.js 단건조회 경로 그대로 가져오기 api붙여주는 이유 proxy와 관련
-                                    .catch(err=>{console.log(err)}))
+           let result = await axios.get(`/api/inquire/${this.inquireNo}`) //sql.js 단건조회 경로 그대로 가져오기 api붙여주는 이유 proxy와 관련
+                                    .catch(err=>{console.log(err)})
+                                    console.log( '수정페이지 값 가져와라'+result.data)
+
+                                    console.log( '리절트' +this.inquireInfo)
+                                    this.inquireInfo.create_date = this.$dateFormat(this.inquireInfo.create_date,'yyyy년MM월dd일')
+                                    console.log( '가져왔니'+this.inquireInfo)
+                                    console.log(this.inquireInfo.create_date )  
+                                    console.log('카테고리 뭐로 가져와' +this.inquireInfo.inquire_category )  
+                                    this.inquireInfo.inquire_category = this.inquireInfo.inquire_category.category
+                                    console.log(result.data[0].inquire_category)
+                                    if(result.data[0].inquire_category == 'j1'){
+                                        result.data[0].inquire_category=this.items[0].category 
+                                    }else if( result.data[0].inquire_category  == 'j2'){
+                                        result.data[0].inquire_category=this.items[1].category
+                                    }else if( result.data[0].inquire_category  == 'j3'){
+                                        this.items[2].category = '환불문의'
+                                    }else{
+                                        this.items[3].category = '기타문의'
+                                    }
+                                    this.inquireInfo=result.data[0]
+                                    console.log(result.data[0].inquire_category)
+                                    console.log(this.inquireInfo.inquire_category)
+                                    this.inquireInfo.inquire_category = this.items[0].category
                                     
-            
-            this.inquireInfo=result.data
-            this.inquireInfo.create_date = this.$dateFormat(this.inquireInfo.create_date,'yyyy년MM월dd일')
-            console.log(this.inquireInfo)
-            console.log(this.inquireInfo.create_date )  
-                          
         },
         getToday(){
             return this.$dateFormat('','yyyy년MM월dd일');
@@ -155,7 +171,7 @@ export default {
                 
                         }
                     }
-                    let result = await axios.put(`/api/inquireUpdate/${this.$store.state.user.user_id}/${this.inquireNo}`, obj) 
+                    let result = await axios.put(`/api/inquire/${this.inquireNo}`, obj) 
                                             .catch((err=>console.log(err))) 
                     if(result.data.affectedRows > 0){
                         alert('수정완료');
