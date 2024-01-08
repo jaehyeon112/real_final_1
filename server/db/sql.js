@@ -318,8 +318,9 @@ let point = {
   myPoint: `select point from user where user_id=?`, //마이페이지 보유 포인트
   myPointSaveHistory: `select * from point where user_id= ? and point_save > 0 order by end_point_date `,
   myPointUseHistory: `select * from point where user_id=? and point_use > 0 order by end_point_date `,
-  reviewPoint: `insert into point set point_no = ?, order_no=?, user_id=?, point_history='리뷰등록',
+  reviewPoint: `insert into point set point_no = ?, order_detail_no=?, user_id=?, point_history='p2',
               point_save = 500, point_use=0, point_date =current_date(), end_point_date = date_add(current_date(), interval 1 Year);`, //리뷰등록시 포인트 지급
+  reviewPointUp:`update user set point=point+500 where user_id=?`,
   pointExpire: `update user as t1,(select sum( point_save) as points, user_id from point where end_point_date = current_date() group by user_id) as t2
               set t1.point = t1.point- t2.points where t1.user_id=t2.user_id;`, //기간소멸
   //그리고 point table에 소멸사유로 인서트 해주는것도 같이..?
@@ -340,7 +341,7 @@ let orders = {
 
 
   //detailOrderLists:`select * from order_detail o1 left join orders o2 on o1.order_no = o2.order_no where o1.order_no =? and user_id = ?`,//주문창에서 상세주문내역으로 이동시 불러올 값
-  orderList: `select ord.order_date, dord.order_detail_no, ord.delivery_charge, ord.total_payment, ord.real_payment, ord.payment_no, ord.order_no, pro.prod_name, ord.order_status, ord.point_use , dord.order_quantity, dord.prod_no
+  orderList: `select ord.order_date, dord.order_detail_no, ord.delivery_charge, ord.total_payment, ord.real_payment, ord.payment_no, ord.order_no, group_concat(prod_name) prod_name_list, ord.order_status, ord.point_use , dord.order_quantity, dord.prod_no
               from orders ord  join order_detail dord on ord.order_no = dord.order_no
 
                                join product pro on pro.prod_no = dord.prod_no

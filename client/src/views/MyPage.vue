@@ -1,7 +1,5 @@
 <template>
 <div>
-    
-  
         <main class="d-flex flex-nowrap">
         <sidebar class="sidebar"/>
         <div >
@@ -66,8 +64,6 @@
 </template>
 
 <script>
-
-//import coupon from '../components/MyPage/couponList.vue'
 import sidebar from'../components/MyPage/sidebar.vue'
 import axios from 'axios'
 
@@ -76,12 +72,12 @@ export default{
         return {
             member:{},
             couponList:[],
-            //NextMonthPoint:{},
+            
             dialog:false
         } 
     },
     components : {
-        //coupon,
+     
         sidebar
     },
     created(){
@@ -95,7 +91,7 @@ export default{
         //일단 멤버 정보를 셀렉트 해오는걸로 시험 중 나중에 로그인 세션그걸로 바꿔야 함
         async getMember(){
             
-            this.member = (await axios.get(`/api/member/${this.$store.state.user.user_id}`)
+            this.member = (await axios.get(`/api/member`)
                                       .catch(err=>{console.log(err)})).data
                                       console.log( '포인트소멸'+this.member.showNextMonth.sump)                          
         },
