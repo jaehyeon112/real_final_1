@@ -31,8 +31,8 @@ let test = {
 
 
   cartList: `select distinct * 
-              from cart c, product p, user u
-              where c.user_id = u.user_id AND p.prod_no = c.prod_no AND c.user_id = ?`,
+             from cart c, product p, user u, (select file_name, prod_no from file where orders='s0') f
+             where c.user_id = u.user_id AND p.prod_no = c.prod_no AND c.user_id = ? AND c.prod_no = f.prod_no`,
   //로그인 후 비회원 장바구니가 로그인 장바구니로 이동
   cartAfterLogin: `insert into cart set ?`,
   //로그인 전 비회원 장바구니와 로그인 장바구니를 똑같은거 있으믄 비교해서 수량 업데이트
@@ -50,10 +50,10 @@ let test = {
   CheckAllUpdate: `UPDATE cart set cart_checkbox = ? WHERE user_id = ?`,
   Cartquantity: `update cart set quantity = ? WHERE cart_no = ?`,
   // 장바구니 상품 수량 증가
-  CartPlusquantity: `UPDATE cart
-                 SET quantity = quantity + 1
-                 WHERE prod_no = ?  
-                 AND user_id = ?`,
+  CartPlusquantity: `update cart
+                    set quantity = quantity + 1
+                    where prod_no = ?  
+                    and user_id = ?`,
   // 장바구니 상품 수량 감소
   CartMinusquantity: `UPDATE cart
                  SET quantity = quantity - 1
@@ -71,7 +71,7 @@ let test = {
   orderList: `  select distinct * 
                 from orders a, order_detail b , product c 
                 where a.order_no = b.order_no AND b.prod_no = c.prod_no AND b.order_no = ?`,
-  orderInsert: `insert into orders set?`,
+  orderInsert: `insert into orders set ?`,
   orderdetailInsert: `insert into order_detail set?`,
   // 주문서에서 쿠폰사용해서 결제완료했을경우 쿠폰업데이트
   couponUpdate: `update coupon set ? where coupon_no = ?`,
@@ -82,16 +82,22 @@ let test = {
   // 포인트를 사용했을때 유저테이블에 포인트를 업데이트
   pointUpdate: `update user set ? where user_id = ?`,
   // 주문 취소했을때 주문상태 업데이트
-  orderUpdate : `update orders set order_status = 'c4' where order_no = ?`
+  orderUpdate : `update orders set order_status = 'c4' where order_no = ?`,
   // 취소 된 상품 재고살리기
-
+  StockReturn : `update product set stock = stock + ? where prod_no = ?`,
+  // 사용한 쿠폰 리스트 조회
+  couponUseList : `select * from coupon c, order_detail o where c.order_no = o.order_no AND c.order_no = ?`,
   // 결제 취소되었을때 환불/취소 테이블에 등록
-
+  refundInsert: `insert into refund_cancel set ?`,
+  // 취소 되었을때 쿠폰 다시 돌려주기
+  couponReturn : `update coupon set coupon_able = 0 where order_no = ?`,
+  // 취소 되었을때 포인트 다시 돌려주기
+  pointReturn : `update user set point = point + ? where user_id = ?`
 };
 
 let user = {
   //아이디 중복 체크할 때
-  duplicateId: `select user_id from user where user_id=?`,
+  duplicateId: `select user_id from user where user_id= ?`,
 
   //회원가입
   joinIn: `INSERT INTO user SET ?`,
@@ -230,8 +236,8 @@ let orders = {
   comparisonCart: `select * from cart where user_id=?`,
   detailInfo: `select * from product where prod_no=?`,
   //detailOrderLists:`select * from order_detail o1 left join orders o2 on o1.order_no = o2.order_no where o1.order_no =? and user_id = ?`,//주문창에서 상세주문내역으로 이동시 불러올 값
-  orderList: `select  ord.order_date, dord.order_detail_no, ord.delivery_charge, ord.total_payment, ord.real_payment, ord.payment_no, ord.order_no, pro.prod_name, ord.order_status
-              from orders ord  join order_detail dord on ord.order_no = ord.order_no
+  orderList: `select ord.order_date, dord.order_detail_no, ord.delivery_charge, ord.total_payment, ord.real_payment, ord.payment_no, ord.order_no, pro.prod_name, ord.order_status, ord.point_use , dord.order_quantity, dord.prod_no
+              from orders ord  join order_detail dord on ord.order_no = dord.order_no
                                join product pro on pro.prod_no = dord.prod_no
                                where ord.user_id=?
                                group by ord.order_no

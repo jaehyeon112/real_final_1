@@ -91,6 +91,20 @@ server.listen(3000, () => {
   console.log('app대신 socket.io서버 on~~');
 });
 
+
+app.get("/test/:fileName", async (req, res) => {
+  // 여기서 imagePath를 db에 저장하고 불러와야할듯...
+  let fileName = req.params.fileName
+  if (fileName == 'null') {
+    fileName = 'noImg.jpg';
+    console.log(fileName)
+  }
+  const imagePath = "uploads\\" + fileName;
+  const absolutePath = path.join(__dirname, imagePath);
+  console.log('경로1' + absolutePath)
+  res.sendFile(absolutePath);
+});
+
 // 이메일 인증하기 버튼을 눌렀을때 이걸 axios실행시킨다.
 // 그 밑에 인풋ㅎ태그가 보이면서 시간초 5분 준다. ==> 
 
@@ -287,8 +301,6 @@ app.get('/saveAccessToken', async (req, res) => {
 
     req.session.accessToken = accessToken; // 세션에 토큰 값을 저장
 
-    console.log('아임포트 액세스 토큰이 성공적으로 저장되었습니다.');
-
     res.send(accessToken);
 
   } catch (error) {
@@ -332,6 +344,13 @@ app.get("/couponList", async (req, res) => { // 쿠폰 리스트
   let list = await mysql.query("test", "couponList", req.session.user_id);
   res.send(list);
 });
+
+app.get("/couponUseList/:no", async (req, res) => { // 쿠폰 리스트
+  let data = req.params.no
+  let list = await mysql.query("test", "couponUseList", data);
+  res.send(list);
+});
+
 app.get("/pointList", async (req, res) => { // 포인트 리스트 
   let list = await mysql.query("test", "pointList", req.session.user_id);
   res.send(list);
@@ -397,6 +416,24 @@ app.put("/CartMinusquantity/:pno", async (req, res) => { // 장바구니 수량 
   res.send(list);
 });
 
+app.put("/couponReturn/:no", async (req, res) => { // 취소했을때 쿠폰사용한 경우 다시 쿠폰을 돌려준다.
+  let data = req.params.no;
+  let list = await mysql.query("test", "couponReturn", data);
+  res.send(list);
+});
+
+app.put("/pointReturn/:point", async (req, res) => { // 취소했을때 쿠폰사용한 경우 다시 쿠폰을 돌려준다.
+  let data = [req.params.point, req.session.user_id];
+  let list = await mysql.query("test", "pointReturn", data);
+  res.send(list);
+});
+
+app.put("/StockReturn/:stock/:no", async (req, res) => { // 취소되면 다시 재고 수정
+  let data = [req.params.stock, req.params.no];
+  let list = await mysql.query("test", "StockReturn", data);
+  res.send(list);
+});
+
 app.delete("/CheckboxDelete/:no", async (req, res) => { // 체크된 장바구니 삭제
   let data = req.params.no;
   let result = await mysql.query("test", 'CheckboxDelete', data);
@@ -448,6 +485,12 @@ app.put("/pointUpdate", async (req, res) => { // 사용한 포인트 user테이�
 app.put("/orderUpdate/:no", async (req, res) => { // 취소되었을때 orders 주문상태 업데이트
   let data = req.params.no;
   res.send((await mysql.query("test", "orderUpdate", data)));
+});
+
+
+app.post("/refundInsert", async (request, res) => { // orders 등록
+  let data = request.body.param;
+  res.send((await mysql.query("test", "refundInsert", data)));
 });
 
 app.get("/user/:order", async (req, res) => {
