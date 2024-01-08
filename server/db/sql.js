@@ -175,8 +175,15 @@ let user = {
 
 let admin = {
   //기타-통계
-  weekIncome: `select sum(total_payment) from orders where order_date BETWEEN DATE_ADD(NOW(), INTERVAL -1 week ) AND NOW()`,
-  monthsIncome: `select month(order_date) as month,sum(total_payment) as sum from orders group by month order by month;`,
+  weekIncome: `select sum(total_payment) as sum from orders where order_date BETWEEN DATE_ADD(NOW(), INTERVAL -?-1 week ) AND DATE_ADD(NOW(), INTERVAL -? week);`,
+  //최근 3개월 주문내역 매출액
+  monthsIncome: `select month(order_date) as month,sum(total_payment) as sum from orders where order_date > now() - INTERVAL 3 MONTH group by month order by month desc`,
+  withUser : `select count(*) as ours,(select count(*) from withdrawal_user where withdrawal_date = curdate()-?) as yours from user where join_date = curdate()-?;`,
+  counting : `select count(*) as orderNo,(select count(*) from orders where order_status = 'c2') as delNo,
+  (select count(*) from refund_cancel where cancel_status='o1') as refundNo,
+  (select count(*) from review_report where report_status = 'p1') as reportNo,
+  (select count(*) from inquire where answer_state = 0) as inquireNo
+  from orders where order_status = 'c1';`,
   //회원관리
   AlluserList: `select user_id,user_name,user_email,user_tel,join_date,user_grade from user where not user_grade in('i4','i5')`,
   userList: `select user_id,user_name,user_email,user_tel,join_date,user_grade from user where not user_grade in('i4','i5') order by ?? desc limit ?,10`,
@@ -194,8 +201,17 @@ let admin = {
   prodInfo: `select prod_no,prod_name,price,discount_price,discount_rate,stock,cooking_time,allergy,main_category,sub_category,refrigeration from product where prod_no = ?`,
   productMod: `update product set ? where prod_no = ?`,
   searchProd: `select prod_no,prod_name,price,discount_price,discount_rate,stock,main_category from product where prod_name like concat(concat('%',?),'%') or main_category = ? order by ?? limit ?,?`,
+  photoList : `select file_name from file where prod_no = ?`,
+  delPhoto : `DELETE file 
+  FROM file 
+  JOIN (
+    SELECT file_no 
+    FROM file 
+    WHERE file_name = ?
+  ) AS subquery 
+  ON file.file_no = subquery.file_no`,
   //주문관리
-  AllOrderList: `select * from orders order by order_date desc`,
+  AllOrderList: `select * from orders order by order_status`,
   orderList: `select * from orders order by order_date desc limit ?,?`,
   orderDate: `select * from orders where order_date between ? and ? order by order_date desc limit ?,?`,
   updateOrder: `update orders set order_status = ? where order_no= ?`,
@@ -227,10 +243,12 @@ let admin = {
   AllnoticeList: `select * from notice order by notice_no`,
   noticeList: `select * from notice order by ? limit ?,?`,
   StateNoticeList: `select * from notice where importance in(?,?) order by ?? desc limit ?,?`,
+  insertNotice: `insert into notice set ?`,
   FNQList: `select * from fnq where ?? = ?`,
   insertFNQ: `insert into fnq set ?`,
   updateFNQ: `update fnq set ? where qno = ?`,
   delFNQ: `delete from fnq where qno = ?`,
+  insertFile : `insert into file set ?`,
 }
 
 

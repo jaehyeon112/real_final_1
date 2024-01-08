@@ -53,8 +53,8 @@
             return{
                 deliveryList : [],
                 nums : 0,
-                startDate : '',
-                lastDate : '',
+                startDate : '2000-01-01',
+                lastDate : this.dateFormat('','yyyy-MM-dd'),
                 startNum : 0,
                 totalList: "",
                 totals :'',
@@ -87,6 +87,14 @@
                 let result = list.data;
                 this.deliveryList = result;
             },
+            dateFormat(value,format){
+            let date = value == '' ? new Date() : new Date(value);
+            let year = date.getFullYear();
+            let month = ('0'+(date.getMonth()+1)).slice(-2);
+            let day = ('0'+date.getDate()).slice(-2);
+            let result = format.replace('yyyy',year).replace('MM',month).replace('dd',day);
+            return result;
+            },
             changeChildData(childData){
                 console.log('받음'+childData);
                 this.nums = childData;
@@ -109,8 +117,8 @@
             },
             refresh(){
                 this.delList(this.nums);
-                this.startDate ='';
-                this.lastDate = '';
+                this.startDate = '2000-01-01';
+                this.lastDate = this.dateFormat('','yyyy-MM-dd');
                 this.orders = '';
             }
         },

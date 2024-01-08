@@ -32,7 +32,7 @@
                     <slot name="searchData"></slot>
                     </div>
                 <div class="card-body">                 
-                <table id="datatablesSimple" class="table">
+                <table id="datatablesSimple" class="table table-hover">
                     <slot name="dataList"></slot>
                 </table>
                 </div>
