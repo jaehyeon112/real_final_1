@@ -11,7 +11,7 @@
                 variant="underlined"
                 return-object
                 ></v-select>
-                <div  style="width: 45%;float: right;"><v-btn @click="orderDate">검색하기</v-btn><v-btn @click="refresh" style="float: right;">초기화</v-btn></div></div>
+                <div  style="width: 50%;float: right;"><v-btn @click="orderDate">검색하기</v-btn><v-btn @click="refresh" style="float: right;">초기화</v-btn></div></div>
         </template>
         <template #dataList>
         <thead>
@@ -39,10 +39,11 @@
           <td v-if="order.order_status=='c1'">{{this.alarm='주문완료'}}</td>
           <td v-else-if="order.order_status=='c2'">상품준비중</td>
           <td v-else-if="order.order_status=='c3'">출고완료</td>
-          <td v-else-if="order.order_status=='c4'">취소된 주문</td>
+          <td v-else-if="order.order_status=='c4'" style="color: red;">취소된 주문</td>
           <td v-if="order.order_status=='c1'"><v-btn type="button" @click="this.orderStatus='c2',this.orderGetOne(order.order_no),modalCheck2=true">주문상세보기</v-btn>   <v-btn type="button" @click="modalCheck=true,this.orderNo=order.order_no">주문취소 신청</v-btn></td>
           <td v-else-if="order.order_status=='c2'"><v-btn type="button" @click="delNo=true">상품 출고하기</v-btn><p v-show="delNo">운송장번호 : <input type="number" v-model="deliveryNum"><v-btn @click="this.orderStatus='c3',changeStatus(order.order_no)">배송출발</v-btn></p></td>
-          <td v-else><v-btn type="button">배송 조회</v-btn></td>
+          <td v-else-if="order.order_status=='c3'"><v-btn type="button">배송 조회</v-btn></td>
+          <td v-else-if="order.order_status=='c4'"><v-btn @click="goto">취소목록 가기</v-btn></td>
         </tr>
       </tbody>
       <tbody v-if="orderList.length==0" style="text-align: center;">
@@ -163,8 +164,8 @@
                 modalCheck: false,
                 orders : '',
                 orderStatus : '',
-                startNo : '',
-                lastNo : '',
+                startNo : '2000-01-01',
+                lastNo : this.dateFormat('','yyyy-MM-dd'),
                 orderList : [],
                 nums : 0,
                 startNum : 0,
@@ -188,6 +189,14 @@
             //this.getOrderList();
         },
         methods : {
+          dateFormat(value,format){
+            let date = value == '' ? new Date() : new Date(value);
+            let year = date.getFullYear();
+            let month = ('0'+(date.getMonth()+1)).slice(-2);
+            let day = ('0'+date.getDate()).slice(-2);
+            let result = format.replace('yyyy',year).replace('MM',month).replace('dd',day);
+            return result;
+        },
             async sendMessage(){
                 if(this.reason=='기타'&&this.reasons==''){
                     alert('기타 사유를 적어주세요')
@@ -196,7 +205,7 @@
                         let result = await axios.put(`/api/refund/${this.orderNo}`).catch(err=>console.log(err));
                         let result2 = await axios.post(`/api/refund/${this.orderNo}`).catch(err=>console.log(err));
                         if(result.data.affectedRows==1&&result2.data.affectedRows==1){
-                            alert('회원님에게 알림을 보냈습니다');
+                            alert('회원님에게 알림을 보냈습니다'+this.reason);
                             if(this.reason='기타'){
                                 this.$socket.emit('report', `${this.reasons}으로 인한 주문취소!`)
                             }else{
@@ -272,8 +281,8 @@
             refresh(){
                 this.getOrderList();
                 this.total();
-                this.startNo ='';
-                this.lastNo = '';
+                this.startNo = '2000-01-01',
+                this.lastNo = this.dateFormat('','yyyy-MM-dd'),
                 this.orders = ''
             },
             async changeStatus(ono){
@@ -319,6 +328,9 @@
                 let result = await axios.get(`/api/order/${od}/${this.startNum}/${this.nums}`).catch(err=>console.log(err));
                 console.log(result)
                 this.orderList = result.data;
+            },
+            goto(){
+              this.$router.push({path : "refundList"})
             }
         },
         watch : {

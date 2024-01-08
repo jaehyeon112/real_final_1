@@ -8,10 +8,11 @@
             variant="underlined"
             return-object
             ></v-select>
-            <v-btn @click="refresh">초기화</v-btn></div>
+            <v-btn @click="refresh">초기화</v-btn><v-btn @click="insertNotice">공지사항 등록</v-btn></div>
         </template>
         <template #filterSearch>
             <div><a @click="this.order='notice_no'">기본순 | </a><a @click="this.order='notice_views'">조회수 많은 순</a></div>
+            
         </template>
         <template #dataList>
         <thead>
@@ -108,6 +109,9 @@
                 let list = await axios.get(`/api/notice/${this.order}/${no}/${this.nums}`).catch(err=>console.log(err));
                 let result = list.data;
                 this.noticeList = result;
+            },
+            insertNotice(){
+                this.$router.push({path : "insertNotice"})
             },
             refresh(){
                 this.getInquireList();

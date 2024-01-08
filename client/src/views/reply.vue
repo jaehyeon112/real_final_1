@@ -4,47 +4,50 @@
       <side/>
     <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
         <div class="container">
-            <h4 class="mb-3" style="text-align: center;">상품 페이지</h4>
+            <h4 class="mb-3" style="text-align: center;">고객 문의 답변</h4>
               <div class="row g-3">
     
-                <div class="col-12">
-                  <label for="prod_name" class="form-label">상품명 <icon v-if="showIcon">필수</icon></label>
-                  <div class="input-group has-validation" v-if="this.prodNo==null">
-                    <input type="text" v-model="prod.prod_name" class="form-control" id="prod_name" required>
+                <div class="col-sm-6">
+                  <label for="inquire_no" class="form-label">문의번호</label>
+                  <div class="input-group has-validation">
+                    <input type="text" v-model="inquire_no" class="form-control" id="inquire_no" required>
                   </div>
-                  <div class="input-group has-validation" v-else>
-                    <input type="text" v-model="prod.prod_name" class="form-control" id="prod_name" required readonly>
+                </div>
+                <div class="col-sm-6"></div>
+                <div class="col-sm-6">
+                  <label for="inquire_no" class="form-label">작성자</label>
+                  <div class="input-group has-validation">
+                    <input type="text" v-model="inquire_no" class="form-control" id="inquire_no" required>
                   </div>
                 </div>
                 <div class="col-sm-6">
-                <label for="price" class="form-label">원가 <icon v-if="showIcon">필수</icon></label>
+                  <label for="inquire_no" class="form-label">작성날짜</label>
+                  <div class="input-group has-validation">
+                    <input type="text" v-model="inquire_no" class="form-control" id="inquire_no" required>
+                  </div>
+                </div>
+                <div class="col-sm-6">
+                  <label for="inquire_no" class="form-label">카테고리</label>
+                  <div class="input-group has-validation">
+                    <input type="text" v-model="inquire_no" class="form-control" id="inquire_no" required>
+                  </div>
+                </div>
+                <div class="col-sm-6">
+                  <label for="inquire_no" class="form-label">주문상세번호</label>
+                  <div class="input-group has-validation">
+                    <input type="text" v-model="inquire_no" class="form-control" id="inquire_no" required>
+                  </div>
+                </div>
+                <div class="col-12">
+                <label for="price" class="form-label">제목 <icon v-if="showIcon">필수</icon></label>
                 <input v-if="this.prodNo==null" type="number" v-model.number="prod.price" class="form-control" id="prod_name" required>
-                <input v-else type="number" v-model.number="prod.price" class="form-control" id="prod_name" required readonly>
+                <input v-else type="text" v-model="prod.price" class="form-control" id="prod_name" required readonly>
               </div>
   
-              <div class="col-sm-6">
-                <label for="discount_price" class="form-label" v-if="prod.price==''">판매가</label>
-                <label for="discount_price" class="form-label" v-else>판매가{{'(할인율 : '+Math.ceil((1-((prod.discount_price)/(prod.price)))*100)+'%)' }}</label>
-                <input type="number" v-model.number="prod.discount_price" class="form-control" id="price">
+              <div class="col-12">
+                <label for="discount_price" class="form-label">내용</label>
+                <textarea type="text" v-model="prod.discount_price" class="form-control" id="price"></textarea>
               </div>
-                <div class="col-sm-6">
-                  <label for="stock" class="form-label">재고 <icon v-if="showIcon">필수</icon></label>
-                  <input v-if="this.prodNo==null" type="number" v-model.number="prod.stock" class="form-control" id="stock" placeholder="" value="" required>
-                  <input v-else type="number" v-model.number="prod.stock" class="form-control" id="stock" placeholder="" value="" required readonly>
-                </div>
-    
-                <div class="col-sm-6">
-                  <label for="cooking_time" class="form-label">조리 시간</label>
-                  <input type="number" v-model.number="prod.cooking_time" class="form-control" id="cooking_time" placeholder="" value="">
-                </div>
-    
-                <div class="col-12">
-                  <label for="allergy" class="form-label">알레르기 성분</label>
-                  <div class="input-group has-validation">
-                    <input type="text" v-model="prod.allergy" class="form-control" id="allergy" placeholder="">
-                  </div>
-                </div>
-    
                 <div class="col-12">
                   <label for="stock" class="form-label">상품 이미지 등록</label>
                   <div :key="i" v-for="i in nums" style="width: 500px;">
@@ -55,39 +58,10 @@
                   <div v-show="open==true" v-for="idx in photo"><img id="ima" :src="getPath(idx)" style="position: relative;height=300"><p @click="delPhoto(idx)">삭제</p></div>
                   <v-btn @click="showing" v-show="photo.length>0">사진보기</v-btn> <!-- <v-btn @click="uploadPhoto">저장완료</v-btn> -->
                 </div>
-                
-                <div class="col-md-5">
-                  <label for="main_category" class="form-label">메인 카테고리 <icon v-if="showIcon">필수</icon></label>
-                  <select v-model="prod.main_category" class="form-select" id="main_category" required>
-                    <option value="">선택하세요</option>
-                    <option value="e1">한식</option>
-                    <option value="e2">중식</option>
-                    <option value="e3">양식</option>
-                    <option value="e4">일식</option>
-                    <option value="e5">분식</option>
-                  </select>
-                </div>
-    
-                <div class="col-md-4">
-                  <label for="sub_category" class="form-label">서브 카테고리</label>
-                  <select v-model="prod.sub_category" class="form-select" id="sub_category" required>
-                    <option value="">기본맛</option>
-                    <option value="f1">바삭한 맛</option>
-                    <option value="f2">매콤한 맛</option>
-                    <option value="f3">국물</option>
-                    <option value="f4">비건</option>
-                  </select>
-                </div>
+                <div class="col-12">
+                <label for="discount_price" class="form-label">답변하기</label>
+                <textarea type="text" v-model="prod.discount_price" class="form-control" id="price"></textarea>
               </div>
-              <div v-if="this.prodNo==null" class="my-3">
-                <div class="form-check">
-                  <input v-model="prod.refrigeration" value="g1" name="paymentMethod" type="radio" class="form-check-input" required>
-                  <label class="form-check-label" for="credit">냉동</label>
-                </div>
-                <div class="form-check">
-                  <input v-model="prod.refrigeration" value="g2" name="paymentMethod" type="radio" class="form-check-input" required>
-                  <label class="form-check-label" for="debit">냉장</label>
-                </div>
               </div>
               <div id="buttonBox">
                 <v-btn @click="refresh">초기화</v-btn>
@@ -101,8 +75,8 @@
     </template>
 <script>
 import axios from 'axios';
-import side from '../admin/SideBar.vue';
-import icon from '../admin/icon.vue';
+import side from '../components/admin/SideBar.vue';
+import icon from '../components/admin/icon.vue';
 import upload from "@/components/menu/upload.vue";
 export default {
   data(){
