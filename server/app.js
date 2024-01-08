@@ -1,7 +1,8 @@
 require("dotenv").config({
   path: "./db/db.env"
 });
-
+const jwt = require('jsonwebtoken');
+const SECRET_KEY = 'your_secret_key';
 const mysql = require("./db.js");
 const bodyParser = require('body-parser');
 //const { createTransport } = require('nodemailer');
@@ -22,6 +23,17 @@ const io = require('socket.io')(server, {
 });
 
 let grade = ''
+
+// JWT 토큰 생성
+function generateToken(userId, userRole) {
+  return jwt.sign({
+    id: userId,
+    role: userRole // 여기에 사용자 역할을 추가
+  }, SECRET_KEY, {
+    expiresIn: '1h' // 1시간 동안 유효한 토큰
+  });
+}
+
 
 const expressSession = session({
   secret: 'what',
@@ -175,33 +187,56 @@ app.post('/phonecheck', async (req, res) => {
 //소켓
 io.on('connect', (socket) => {
   console.log('소켓연결 on!')
-  console.log('연결된 사용자의 세션 아이디: ' + socket.handshake.session.user_id);
-  console.log('연결된 사용자의 등급: ' + socket.handshake.session.user_grade);
-  if (socket.handshake.session.user_grade == 'i4') {
-    console.log('당신은 관리자로 로그인 하였습니다.');
-    socket.join('admin')
-  }
+  socket.on('joinRoom', (roomName) => {
+    // 클라이언트를 해당 방에 조인시킵니다.
+    socket.join(roomName);
+    if (roomName == 'ADMIN') {
+      console.log(`클라이언트가 ADMIN 방에 성공적으로 조인했습니다. 소켓 ID: ${socket.id}`);
+    } else {
+      console.log('뭔데? ㅡㅡ')
+    }
+  })
+
   socket.on('message', (message) => {
     console.log(message);
   });
 
+  socket.on('authenticate', (token) => {
+
+    jwt.verify(token, SECRET_KEY, (err, decoded) => {
+      if (err) {
+        console.error('JWT verification failed:', err);
+        io.close();
+        return;
+      }
+
+      // 사용자 정보를 웹소켓 객체에 추가
+      io.user = decoded;
+
+      console.log(`WebSocket connected for user: ${decoded.id}`);
+      console.log(`User role: ${decoded.role}`);
 
 
-  socket.on('send', (one, two, three) => {
-    console.log(one, two, three)
+    })
+
+
+    socket.emit('connect2', '되나?')
+
+    socket.on('send', (one, two, three) => {
+      console.log(one, two, three)
+    })
+
+    socket.on('report', (message) => {
+      console.log(message);
+    })
+
+    socket.on('disconnect', () => {
+      console.log('user disconnected');
+    });
+
   })
 
-  socket.on('report', (message) => {
-    console.log(message);
-  })
-
-  socket.on('disconnect', () => {
-    console.log('user disconnected');
-  });
-
-})
-
-
+});
 const cron = require("node-cron");
 
 
@@ -507,9 +542,9 @@ app.get("/orderList/:no", async (req, res) => { // 주문완료 리스트
 app.post("/orderInsert", async (request, res) => { // orders 등록
   let data = request.body.param;
   res.send((await mysql.query("test", "orderInsert", data)));
-  io.to('admin').emit('order', '새로운 결제가 있습니다.')
+  io.to('ADMIN').emit('order', '새로운 결제가 있습니다.')
+  io.emit('test', '이건 테스트인데 이거 가나 보자;')
   console.log('당신은~~~ x맨이~~')
-  console.log(grade)
 });
 
 app.post("/orderdetailInsert", async (request, res) => { // order_detail 등록
@@ -628,18 +663,26 @@ app.post("/join/joinIn", async (req, res) => {
 app.post("/dologin", async (req, res) => {
   let data = [req.body.param.user_id, req.body.param.user_password];
   let list = await mysql.query("user", "forLogin", data);
-  console.log(list[0].user_grade)
   if (list.length != 0) {
     req.session.user_id = req.body.param.user_id;
     req.session.user_grade = list[0].user_grade;
-    grade = list[0].user_grade;
+
+    // userGrade에 따라 role 설정
+    const role = (req.session.user_grade == 'i4') ? 'admin' : 'user';
     // req.session.grade = 
-
-    console.log('아이디 세션 값 : ' + req.session.user_id);
-    console.log('회원 등급 : ' + grade);
+    const token = generateToken(req.body.param.user_id, role);
+    res.send({
+      auth: true,
+      token: token,
+      user: list
+    });
+  } else {
+    // 로그인 실패 응답 전송
+    res.status(401).send({
+      auth: false,
+      message: 'Invalid username or password'
+    });
   }
-
-  res.send(list);
 })
 
 //카카오로그인 - 카카오아이디있는지 체크
@@ -1081,7 +1124,8 @@ app.get("/show/:col/:category/:no", async (req, res) => {
 app.get("/show/:col/:category/", async (req, res) => {
   let data = [req.params.col];
   if (req.params.category == 'all') {
-    let test = "select * from product"
+    let test = `elect file_name, p.*, format(avg(review_grade),1) AS 'star' from product p left join order_detail d on p.prod_no = d.prod_no
+    left join review r  on r.detail_order_no = d.order_detail_no left join (select file_name,prod_no from file where orders='s0') f on(p.prod_no = f.prod_no) group by d.prod_no`
     let result = await mysql.query2(test, data);
     res.send(result)
 
@@ -1143,7 +1187,7 @@ app.post("/savingCart", async (req, res) => {
   let data = req.body.param;
   let result = await mysql.query('orders', 'savingCart', data);
   res.send(result);
-})
+});
 app.put("/updateCart/:pno/:id", async (req, res) => {
   let datas = [req.body.param, req.params.pno, req.params.id];
   let result = await mysql.query('orders', 'updateCart', datas);
@@ -1380,7 +1424,11 @@ app.get("/searchHeader/:word/:no", async (req, res) => {
   let word = [req.params.word, Number(req.params.no)];
   let list = await mysql.query('test', 'searchHeader', word)
   res.send(list);
-  io.emit('alert', req.params.word);
+  io.to('ADMIN').emit('alert', 'eksdj~');
+})
+
+app.get('/sockettest', async (req, res) => {
+  io.emit('test', '알람테스트3')
 })
 
 app.get("/searchHeader/:word", async (req, res) => {
@@ -1405,4 +1453,107 @@ app.get(`/cartSelect/:no/:id`, async (req, res) => {
   let data = [Number(req.params.no), req.params.id];
   let list = await mysql.query('test', 'cartSelect', data)
   res.send(list)
+})
+
+
+app.get('/cart', async (req, res) => {
+  res.send(await mysql.query('test', 'cartList', req.session.user_id))
+})
+
+
+app.get(`/best`, async (req, res) => {
+  const {
+    no,
+    first,
+    last,
+    A,
+    B,
+  } = req.query;
+
+
+  let base = `SELECT file_name, p.*, COUNT(*) AS hotItem, FORMAT(AVG(r.review_grade), 1) AS avg_grade
+  FROM order_detail o 
+  LEFT JOIN product p ON o.prod_no = p.prod_no
+  LEFT JOIN review r ON r.detail_order_no = o.order_detail_no
+  left join (select file_name,prod_no from file where orders='s0') f on(p.prod_no = f.prod_no) 
+  WHERE 1=1  `
+
+  if (first && last) {
+    base += ` and prod_name >= '${first}' and prod_name < '${last}'`
+  }
+
+  if (A && B) {
+    base += ` and discount_price between ${A} and ${B} `
+  }
+
+  base += ` GROUP BY p.prod_no HAVING hotItem > 1 and avg_grade > 4 ORDER BY hotItem DESC`
+
+  if (no) {
+    base += ' limit ' + no * 6 + ' , 6';
+  }
+  let result = await mysql.query2(base);
+  res.send(result);
+});
+app.get(`/sale`, async (req, res) => {
+  const {
+    no,
+    first,
+    last,
+    A,
+    B,
+  } = req.query;
+
+
+  let base = `select file_name, p.*, COUNT(*) AS hotItem, FORMAT(AVG(r.review_grade), 1) AS avg_grade
+  FROM order_detail o 
+  LEFT JOIN product p ON o.prod_no = p.prod_no
+  LEFT JOIN review r ON r.detail_order_no = o.order_detail_no
+  left join (select file_name,prod_no from file where orders='s0') f on(p.prod_no = f.prod_no)  
+  where discount_rate > 40`
+
+  if (first && last) {
+    base += ` and prod_name >= '${first}' and prod_name < '${last}'`
+  }
+
+  if (A && B) {
+    base += ` and discount_price between ${A} and ${B} `
+  }
+
+  if (no) {
+    base += ' limit ' + no * 6 + ' , 6';
+  }
+  let result = await mysql.query2(base);
+  res.send(result);
+})
+
+
+// sql injection의 위험이 있음 처리해야함;;
+app.get("/new2/:first/:last/:A/:B/:no", async (req, res) => {
+  let base = `select file_name, p.*, format(avg(review_grade),1) AS 'star' from product p left join order_detail d on p.prod_no = d.prod_no
+left join review r  on r.detail_order_no = d.order_detail_no left join (select file_name,prod_no from file where orders='s0') f on(p.prod_no = f.prod_no)  WHERE p.registration >= CURRENT_DATE() - INTERVAL 7 DAY `;
+  let no = req.params.no;
+  let first = req.params.first;
+  let last = req.params.last;
+  let A = req.params.A;
+  let B = req.params.B;
+  if (first != 'X' && last != 'X') {
+    base += ` and  prod_name >= '${first}' and prod_name < '${last}'`;
+  }
+  if (A != 'X' && B != 'X') {
+    base += ` and discount_price between ${A} and ${B} `
+  }
+  base += ` group by d.prod_no`
+
+  if (no != 'X') { // 2번째가 X라면 전체페이지, 아니면 6페이지씩
+    base += ' limit ' + no * 6 + ', 6';
+  }
+  let result = await mysql.query2(base);
+  res.send(result);
+})
+
+app.get('/sessiontest', (req, res) => {
+  res.send(grade)
+  console.log('=!=')
+  console.log(grade)
+  console.log('=!=')
 })
