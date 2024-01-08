@@ -8,13 +8,11 @@
       <div class="sign-up-htm">
 
         <!-- 회원 수정 시 id랑 이름은 readonly로 수정못하게 해야함 -->
-        <div class="group">
+        <div class="group" v-if="!$store.state.kakaoId">
           <label for="user" class="label"> ID </label>
           <p>{{ $store.state.kakaoId != '' ? '카카오로로그인함' : '걍로그인함' }}</p>
-          <div v-if="$store.state.kakaoId != ''" ><input  id="user" type="text" class="input" v-model="userInfo.kakaoid" :readonly="mode =='edit' || $store.state.kakaoId != ''" autofocus >
-            카카오 input
-          </div>
-          <div v-else>
+      
+          <div>
           <input  id="user" type="text" class="input" v-model="userInfo.user_id" :readonly="mode =='edit'" autofocus placeholder="영문+숫자 조합 6자이상 11자 이하" 
            ></div>
           <div>
@@ -27,7 +25,7 @@
 
         </div>
 
-        <div class="group">
+        <div class="group" v-if="!$store.state.kakaoId">
           <!-- type 두개 password로 바꾸기 -->
           <label for="pass" class="label">Password</label>
           <input id="pass" type="text" class="input" data-type="text" maxlength=16 v-model="userInfo.user_password" @blur="passwordValid" v-bind:="isUpdated">
@@ -37,7 +35,7 @@
              <div v-if="!userInfo.user_password && !isFieldValid.user_password" class="error-message"  :style="{ color: 'red' }">{{ fieldErrorMessages.user_password }}</div>
         </div>
 
-        <div class="group">
+        <div class="group" v-if="!$store.state.kakaoId">
           <label for="pass" class="label"> Password CHECK</label>
           <input id="pass" type="text" class="input" data-type="text" maxlength=16 v-model="userInfo.userChPass" @blur="passwordCheckValid">
           
@@ -220,6 +218,8 @@ export default {
 
   data() {
     return {
+
+
       mode: 'sign-up', //모드에 따라서 가입창, 수정창 바뀜
       isUpdated : false, // 수정?등록? => 수정일때 true
       oneUserId : '', //수정용 - 개인 아이디찾으려고
@@ -232,11 +232,15 @@ export default {
       today : '', //생년월일 오늘날짜까지만 선택하게 하려고
       isAgeValid : true,
 
+      isAnyFieldEmpty : false,
+
       //인증번호 제한시간 주기! 아아앙맘ㅇㄴ랑라;너ㅓ;ㅏ인ㄹㄹ
       emailVerifTimer : null,
       textVerifTimer : null,
       emailVerifTimerRemain : 30, // 이메일 인증 남은시간 30초
       textVerifTimerRemain : 30,
+
+
 
       //회원가입 v-model
       userInfo : {
@@ -337,10 +341,14 @@ export default {
       this.isUpdated = true;
       
     }
+
+   // 카카오 사용자 ID가 있을 때만 ID 입력란을 자동으로 채움
+  if (this.$store.state.kakaoId) {
+    this.userInfo.user_id = this.$store.state.kakaoId;
+  }
    
   }, //created
 computed: {
-
 
    userEmailFull: function() {
       if (this.userInfo.email_domain === '직접입력') {
@@ -348,7 +356,8 @@ computed: {
       } else {
         return `${this.userInfo.user_emailid}@${this.userInfo.email_domain}`;
       }
-    }
+    },
+
 
   
  
@@ -385,15 +394,9 @@ computed: {
 
 
   methods: {
-    //  getToday(){
-    //   return this.$dateFormat('', 'yyyy-MM-dd');
-    // },
+
     updateCheck(){
       console.log("updateCheck function is called");
-
-      // this.userInfo.allCh = this.userInfo.ch1 && this.userInfo.ch2;
-      
-
        // ch1과 ch2가 모두 체크되면 allCh도 체크
       if (this.userInfo.ch1 && this.userInfo.ch2) {
         this.userInfo.allCh = true;
@@ -414,23 +417,24 @@ computed: {
       }
     },
 
+
+
+
     //아이디 중복체크: db에 아이디 있으면 중복되는 아이디 있다고 메세지 띄우기! 
     async checkId(id){
-      
+    let list;
 
      if(!this.userInfo.user_id.trim()){
       console.log(id);
       alert(`아이디를 입력해주세요`);
        this.validId = false;
      } else{
-
-
       let result = await axios.get(`/api/join-id/${id}`)
                   .catch(err => console.log(err));
              
       //let list = result.data.length;
       console.log(result.data);
-      let list = result.data;
+      list = result.data;
       console.log(list);
      }
 
@@ -461,18 +465,18 @@ computed: {
   //비밀번호
   checkPwd(pwd){
 
-  // 영어(대소문자)와 숫자만 정규표현식
-  var onlyEngNum = /^[a-zA-Z0-9]*$/;
+// *, !, ^, $, @, ? 특수문자만 포함하여 영어(대소문자)와 숫자만 정규표현식
+var allowedSpecialChars = /^[a-zA-Z0-9*!^$@?]*$/;
 
-  // 비밀번호 유효성 검사
-  if(!this.validationPwd(pwd)){
-    alert("비밀번호는 영어 대문자 혹은 소문자, 숫자, 특수문자를 반드시 포함하는 8자 이상이어야 합니다."); 
-  } else if(!onlyEngNum.test(pwd)){
-    alert("비밀번호에는 영어와 숫자 외의 문자가 포함될 수 없습니다."); 
-  } else {
-    alert("비밀번호가 유효합니다."); 
-  }
-},
+// 비밀번호 유효성 검사
+if (!this.validationPwd(pwd)) {
+  alert("비밀번호는 영어 대문자 혹은 소문자, 숫자, *, !, ^, $, @, ? 특수문자를 반드시 포함하는 8자 이상이어야 합니다.");
+} else if (!allowedSpecialChars.test(pwd)) {
+  alert("비밀번호에는 영어와 숫자, *, !, ^, $, @, ? 특수문자 외의 문자가 포함될 수 없습니다.");
+} else {
+  alert("비밀번호가 유효합니다.");
+}
+  },
 
 //비번
 passwordValid() {
@@ -480,6 +484,9 @@ passwordValid() {
     this.passwordValidFlag = true;
   } else {
     this.passwordValidFlag = this.validationPwd(this.userInfo.user_password);
+    if(this.passwordValidFlag) {
+      this.checkPwd(this.userInfo.user_password);
+    }
   }
   },
 
@@ -706,9 +713,27 @@ checkAge(){
       }
      }
 
+     // user_password와 userChPass 추가
+if (!this.$store.state.kakaoId) {
+  // 카카오로 로그인하지 않은 경우에만 비밀번호와 비밀번호 확인 필드 체크
+  if (!this.userInfo.user_password || !this.userInfo.userChPass) {
+    this.isFieldValid.user_password = false;
+    this.isFieldValid.userChPass = false;
+    this.isFieldValid.verificationCode = false;
+     this.isFieldValid.verificationText = false;
+    this.isAnyFieldEmpty = true;
+    this.errorMessage = this.fieldErrorMessages.user_password; // 또는 userChPass에 맞는 에러 메세지로 설정
+  }
+}
+
  
 //필드가 모두 채워져 있는지 확인 - 일단! 나중ㅇ에 바꿔야함
-  if (
+  if (this.$store.state.kakaoId) {
+    // 카카오로 로그인한 경우, 필요한 필드 초기화
+    this.userInfo.user_password = '';
+    this.userInfo.userChPass = '';
+  } else {
+    if(
     !this.userInfo.user_id ||
     !this.userInfo.user_password ||
     !this.userInfo.userChPass ||
@@ -726,9 +751,10 @@ checkAge(){
     !this.userInfo.allCh ||
     !this.userInfo.ch1 ||
     !this.userInfo.ch2
-  ) {
+    ){
     alert('모든 필드를 입력해주세요.');
     return;
+  }
   }
 
 
@@ -746,8 +772,8 @@ checkAge(){
         "user_id" : this.userInfo.user_id,
         "user_name" : this.userInfo.user_name,
         "user_password" : this.userInfo.user_password,
-        "user_emailid" : this.userInfo.user_emailid,
-        "email_domain" : this.userInfo.email_domain,
+        //"user_emailid" : this.userInfo.user_emailid,
+       // "email_domain" : this.userInfo.email_domain,
         "user_email" : this.userInfo.user_email,
         "user_tel" : this.userInfo.user_tel,
         "birth" : this.userInfo.birth,
@@ -769,6 +795,7 @@ checkAge(){
       return;
   }
   },
+  
 
 
 

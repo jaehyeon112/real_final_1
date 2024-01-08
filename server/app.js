@@ -108,8 +108,8 @@ app.post('/send-email', async (req, res) => {
     console.log(to + subject + body + '이메일콘솔');
     const result = await sendEmail(to, subject, body);
     res.status(200).send(result);
-  } catch (error) {
-    console.error(error);
+  } catch (err) {
+    console.log(err);
     res.status(500).send('Internal Server Error');
   }
 }); //이메일
@@ -492,9 +492,9 @@ app.post("/join/joinIn", async (req, res) => {
     let result = await mysql.query("user", "joinIn", data);
     res.send(result);
   } catch {
-    console.error(error);
+    console.log(err);
     res.status(500).send({
-      error: 'Database query failed'
+      err: 'Database query failed'
     });
   }
 
@@ -536,14 +536,6 @@ app.get("/login/kakao", async(req, res)=> {
   })
 
 
-  // app.post("/find/findid", async(req, res)=> {
-  //  let  {user_name, user_email} = req.body;
-
-  //   console.log(user_name)
-  //   console.log(user_email)
-     
-  //   res.send(`${user_password}`);
-  // })
 
   //비번찾기
   app.get("/find/findpass/:name/:email/:id", async(req, res) => {

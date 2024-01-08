@@ -18,25 +18,20 @@
           <div class="group">
               <b-button variant="link" a href="finding">ID/PASSWORD 찾기</b-button>
             <input type="submit" class="button" @click="doLogin()" value="로그인버튼">
+            <!-- 추가: 남은 차단 시간 표시 -->
+          <div v-if="isBlocked">남은 차단 시간: {{ remainingBlockTime }}초</div>
             
    
           </div>
   
-  
-  
           <div class="hr"></div>
-          
-        
-
 
           <div class="foot-lnk">
           <b-button variant="link" a href="finding">ID/PASSWORD 찾기</b-button>
             <router-link to="/join"> <v-btn squared variant="success" a href="join">회원가입</v-btn></router-link>
   
           </div>
-  
-      
-  
+
           <div class="foot-lnk" >
   
         <a id="custom-login-btn" @click="kakaoLogin()">
@@ -48,8 +43,6 @@
         <div><v-btn @click="kakaoLogout()">카카오 로그아웃</v-btn></div>
   
       
-  
-              
           </div>
   
         <div>
@@ -71,16 +64,9 @@
   
 </template>
   
-  <script>
-  import Vue from 'vue'
-  import VueRecaptcha from 'vue-recaptcha'
-  
-  Vue.component('vue-recaptcha', VueRecaptcha)
-
-  
-    var onloadCallback = function() {
-      alert("grecaptcha is ready!");
-    };
+ 
+ <script>
+import { mapActions } from 'vuex';
   import axios from 'axios';
   
   export default {
@@ -88,7 +74,10 @@
     data(){
       return{
           user_id : "",
-          user_password : ""
+          user_password : "",
+          failedAttempts: 0,
+          isBlocked: false,
+          remainingBlockTime: 0, // 추가: 남은 차단 시간 변수
       }
     },
   
@@ -97,59 +86,74 @@
     methods: {
   
   //Login 버튼
-  
-  
-  
+
   async doLogin(){
-    if(this.user_id == "" || this.user_password==""){
-      alert(`아이디와 비밀번호 모두 입력해`)
-      return;
-    }
-  
-  
-    let obj ={
-      param : {
-        user_id : this.user_id,
-        user_password : this.user_password,
+      if (this.isBlocked) {
+        alert(`로그인이 ${this.remainingBlockTime}초 동안 차단되었습니다. 잠시 후 다시 시도해주세요.`);
+        return;
       }
-    } 
-  
-  let ipList = await axios.post(`/api/dologin/`,obj)  
-                  .catch(err => console.log(err));
-                  console.log(ipList.data)
-                  
-       let users = ipList.data;
-         
-      
-     
-      if(users == ''){
-        this.failedAttemps++;
-        alert(`ID나 Password 확인하기!`)
-        return
+
+      if (this.user_id === "" || this.user_password === "") {
+        alert("아이디와 비밀번호를 모두 입력해주세요.");
+        return;
       }
+
+      let obj = {
+        param: {
+          user_id: this.user_id,
+          user_password: this.user_password,
+        }
+      };
   
-  
-      //로그인 5회이상 실패시 보안프로그램 실행! 
-      if(this.failedAttempts >= 5){
-      alert(`보안프로그램 실행하기`)
-    }
-    // else{
-    //   alert(users[0].user_name +'님 환영합니다');
-    // }
-    
+    try {
+        let ipList = await axios.post(`/api/dologin/`, obj);
+        let users = ipList.data;
+
+        if (users.length === 0) {
+          this.failedAttempts++;
+
+          if (this.failedAttempts >=  5) {
+            this.isBlocked = true;
+            this.remainingBlockTime = 20; // 차단 시간(초) 설정
+            const timer = setInterval(() => {
+              if (this.remainingBlockTime > 0) {
+                this.remainingBlockTime--;
+              } else {
+                this.isBlocked = false;
+                this.failedAttempts = 0;
+                clearInterval(timer);
+              }
+            }, 1000); // 1초 간격으로 타이머 업데이트
+            alert(`로그인이 5회 실패하여 ${this.remainingBlockTime}초 동안 차단되었습니다.`);
+          } else {
+            alert("ID나 Password 확인하기!");
+          }
+
+          return;
+        }
+
+// 로그인 성공 로직 추가...
+if (users.length > 0) {
+  alert(`${users[0].user_name}님 환영합니다.`);
+
+  // user_grade가 정의되어 있는지 확인 후 로직 수행
+  // if (users[0].user_grade === 'i4') {
+  //   this.$router.push('/admin/Main');
+  //   return;
+  // }
          
   
-  
+  /*
          if(users == ''){
           alert('아디 비번 확인;')
           return;
          }else{
            alert(users[0].user_name +'님 환영합니다');
-          if(users[0].user_grade == 'i4'){
-            this.$router.push('/admin/Main')
-            return;
-          }
-          
+          // if(users[0].user_grade == 'i4'){
+          //   this.$router.push('/admin/Main')
+          //   return;
+          // }
+   */       
            //만약 비로그인시 장바구니에 안 담았다면, 그냥 넘어가게
           let cartList =  (await axios.get(`/api/cartList`).catch(err=>console.log(err))).data
           let vuexCart = this.$store.state.cart;
@@ -205,8 +209,12 @@
   this.$store.commit('login',users[0]) // (함수명, 전달인자)
   this.$store.commit('cartEmpty')
   
-   this.$router.push({name : 'realmain'}); // 메인화면으로
+  this.$router.push({name : 'realmain'}); // 메인화면으로
   
+  }catch (error) {
+        console.error("로그인 시 에러 발생:", error);
+        alert("로그인 중 에러가 발생했습니다.");
+      }
   }, //doLogin
   
   
@@ -244,25 +252,13 @@
           console.log("카카오 악시오스 데이터 result ")
           console.log(result); 
 
-          // console.log("result.data")
            console.log(result.data);
 
-          // console.log("[0]");
-          // console.log(result.data[0]);
-
-          //console.log(result.data[0].user_id);   
   
 
           let myKakao = res.id; // 3244970366
           console.log("myKakao");
           console.log(myKakao);
-
-     
-
-      //let checkKakao = result.data[0].user_id;
-      // console.log("checkKakao")
-      // console.log(checkKakao.indexOf('3244970366'));
-      //checkKakao.indexOf('3244970366') == -1 || 
 
 
           if(result.data.length == 0){
@@ -282,11 +278,29 @@
       });
     }, //end getKakaoAccount
 
+ async handleKakaoLogin() {
+    try {
+      const response = await this.kakaoLogin(); // 카카오 로그인 API 호출
+      const kakaoId = response.id;
+
+      // Vuex 스토어에 카카오 사용자 ID 업데이트
+      this.$store.commit('kakaoLogin', kakaoId);
+
+      // 다른 로직들...
+    } catch (error) {
+      console.error('카카오 로그인 중 에러:', error);
+    }
+  },
+
     kakaoLogout() {
       window.Kakao.Auth.logout((res) => {
         console.log(res);
+        alert(`카카오로그아웃`)
+        this.$store.commit('kakaoLogout');
+
       });
     },
+
 
   
     } //methods
