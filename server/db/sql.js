@@ -154,18 +154,30 @@ let user = {
   //로그인(일단)
   forLogin: `select * from user where user_id = ? and user_password = ?`,
 
+  //로그인- 카카오아이디 있는지 체크
+  checkKakao : `select user_id from user where user_id like '%3244970366%'`,
+
   //회원수정 - id > 마이페이지> 회원가입때 입력한 값 그대로 출력 > 수정
-  //id 별 조회
-  selectId: `select * from user where user_id = ?`,
+   // 수정하기전에 비번입력해야함
+   putPass : `select user_password from user where user_id = ?`,
+
+    //id 별 조회
+    selectId :  `select user_id, user_name, user_password, user_email, user_tel, birth, address, detail_address, postcode 
+                from user where user_id = ?`,
 
   updateUser: `update user set ? where user_id=?`,
 
   //ID찾기
-  findId: `select `,
+    findId : `select user_id from user where user_name=? and user_email=? `,
 
+  //비번찾기
+    findPass : `select user_password from user where user_name=? and user_email=? and user_id=?`,
 
-  //회원탈퇴 - 탈퇴하기누르면 아이디 남기고 null 되고 withdrawal table에 insert되는거임! how...?
-  updateOutUser: `UPDATE user
+  //비밀번호변경 
+    changePass: `update user set user_password=? where user_id =?`,
+
+  //회원탈퇴 - 탈퇴하기누르면 아이디 남기고 null 되고 withdrawal table에 insert
+  updateOutUser : `UPDATE user
   SET
     user_name = null,
     user_password = null,

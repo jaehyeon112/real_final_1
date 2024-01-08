@@ -17,7 +17,7 @@
     "material-design-icons-iconfont": "^6.7.0",
     "roboto-fontface": "*",
     "socket.io-client": "^4.7.2",
-    "vue": "^3.2.13",
+    "vue": "^3.4.4",
     "vue-chartjs": "^5.3.0",
     "vue-router": "^4.0.3",
     "vue-session": "^1.0.0",

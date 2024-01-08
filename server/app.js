@@ -154,14 +154,14 @@ app.post('/phonecheck', async (req, res) => {
     console.log('핸드폰 인증 결과=', result);
 
 
-    if (result.statusCode == '2000') {
-      checkresult = true; //"인증번호 발송 성공";
-    }
-    console.log('checkresult=', checkresult);
-    res.send(checkresult);
-    res.send(true);
-  }
-  printTokenResult(data.phone, data.token);
+		if(result.statusCode == '2000'){
+			checkresult = true; //"인증번호 발송 성공";
+		}
+		console.log('checkresult=', checkresult);
+		res.send(checkresult);
+	res.send(true);
+	}
+	printTokenResult(data.phone,data.token);
 }) //end 핸드폰인증 
 
 
@@ -568,6 +568,8 @@ app.get("/orderCount", async (req, res) => {
   res.send(list);
 });
 
+//여기 박현아
+
 // 회원가입 - 아이디 중복체크용
 app.get("/join-id/:id", async (req, res) => {
   let uid = req.params.id;
@@ -576,18 +578,14 @@ app.get("/join-id/:id", async (req, res) => {
 })
 
 
-
-
-
 //회원가입 - 이메일 중복체크용
 app.get("/join-email/:email", async (req, res) => {
   let uemail = req.params.email;
+    console.log(uemail);
   let list = await mysql.query("user", "duplicateEmail", uemail);
   res.send(list);
+  console.log(list);
 })
-
-
-
 
 
 //회원가입용(insert) 
@@ -622,30 +620,57 @@ app.post("/dologin", async (req, res) => {
   }
 
   res.send(list);
-});
+})
 
-
-
-// //로그인 세션
-// app.post("/insertLogin", async(req, res)=> {
-//   let data = req.body.param;
-//   let result = await mysql.query("user","insertLogin", data);
-//   res.send(result);
-// })
-
-//회원수정
-//일단 단건 데이터 불러오기
-app.get("/selectid/:id", async (req, res) => {
-  let uid = req.params.id;
-  let list = await mysql.query("user", "selectId", uid);
+//카카오로그인 - 카카오아이디있는지 체크
+app.get("/login/kakao", async(req, res)=> {
+  let list = await mysql.query("user", "checkKakao");
+  console.log(list);
   res.send(list);
 })
-//회원정보수정하기
-app.put('/join/:id', async (req, res) => {
-  let data = [req.body.param, req.params.id];
-  let result = await mysql.query('user', 'updateUser', data);
-  res.send(result);
-});
+
+
+//아이디비번찾기
+  //아이디찾기
+  app.get("/find/findid/:name/:email", async(req, res) => {
+    let data = [req.params.name, req.params.email]
+    let list = await mysql.query("user", "findId", data);
+    res.send(list);
+  })
+
+
+  // app.post("/find/findid", async(req, res)=> {
+  //  let  {user_name, user_email} = req.body;
+
+  //   console.log(user_name)
+  //   console.log(user_email)
+     
+  //   res.send(`${user_password}`);
+  // })
+
+  //비번찾기
+  app.get("/find/findpass/:name/:email/:id", async(req, res) => {
+    let data = [req.params.name, req.params.email, req.params.id]
+    let list = await mysql.query("user", "findPass", data);
+    console.log(list);
+    res.send(list);
+  })
+
+
+//회원수정
+  //일단 단건 데이터 불러오기
+app.get("/selectid/:id", async(req, res) => {
+  let uid = req.params.id;
+  let list = await mysql.query("user", "selectId", uid);
+  console.log(list)
+  res.send(list);
+})
+  //회원정보수정하기
+  app.put('/join/:id', async(req, res)=>{
+    let data = [req.body.param, req.params.id];
+    let result = await mysql.query('user','updateUser', data);
+    res.send(result);
+  });
 
 
 //회원탈퇴하면 user id 뺴고 null로 수정해야됨
@@ -1360,99 +1385,4 @@ app.get(`/cartSelect/:no/:id`, async (req, res) => {
   let data = [Number(req.params.no), req.params.id];
   let list = await mysql.query('test', 'cartSelect', data)
   res.send(list)
-})
-
-app.get('/cart', async (req, res) => {
-  res.send(await mysql.query('test', 'cartList', req.session.user_id))
-})
-
-
-app.get(`/best`, async (req, res) => {
-  const {
-    no,
-    first,
-    last,
-    A,
-    B,
-  } = req.query;
-
-
-  let base = `SELECT file_name, p.*, COUNT(*) AS hotItem, FORMAT(AVG(r.review_grade), 1) AS avg_grade
-  FROM order_detail o 
-  LEFT JOIN product p ON o.prod_no = p.prod_no
-  LEFT JOIN review r ON r.detail_order_no = o.order_detail_no
-  left join (select file_name,prod_no from file where orders='s0') f on(p.prod_no = f.prod_no) 
-  WHERE 1=1  `
-
-  if (first && last) {
-    base += ` and prod_name >= '${first}' and prod_name < '${last}'`
-  }
-
-  if (A && B) {
-    base += ` and discount_price between ${A} and ${B} `
-  }
-
-  base += ` GROUP BY p.prod_no HAVING hotItem > 1 and avg_grade > 4 ORDER BY hotItem DESC`
-
-  if (no) {
-    base += ' limit ' + no * 6 + ' , 6';
-  }
-  let result = await mysql.query2(base);
-  res.send(result);
-});
-app.get(`/sale`, async (req, res) => {
-  const {
-    no,
-    first,
-    last,
-    A,
-    B,
-  } = req.query;
-
-
-  let base = `select file_name, p.*, COUNT(*) AS hotItem, FORMAT(AVG(r.review_grade), 1) AS avg_grade
-  FROM order_detail o 
-  LEFT JOIN product p ON o.prod_no = p.prod_no
-  LEFT JOIN review r ON r.detail_order_no = o.order_detail_no
-  left join (select file_name,prod_no from file where orders='s0') f on(p.prod_no = f.prod_no)  
-  where discount_rate > 40`
-
-  if (first && last) {
-    base += ` and prod_name >= '${first}' and prod_name < '${last}'`
-  }
-
-  if (A && B) {
-    base += ` and discount_price between ${A} and ${B} `
-  }
-
-  if (no) {
-    base += ' limit ' + no * 6 + ' , 6';
-  }
-  let result = await mysql.query2(base);
-  res.send(result);
-})
-
-
-// sql injection의 위험이 있음 처리해야함;;
-app.get("/new2/:first/:last/:A/:B/:no", async (req, res) => {
-  let base = `select file_name, p.*, format(avg(review_grade),1) AS 'star' from product p left join order_detail d on p.prod_no = d.prod_no
-left join review r  on r.detail_order_no = d.order_detail_no left join (select file_name,prod_no from file where orders='s0') f on(p.prod_no = f.prod_no)  WHERE p.registration >= CURRENT_DATE() - INTERVAL 7 DAY `;
-  let no = req.params.no;
-  let first = req.params.first;
-  let last = req.params.last;
-  let A = req.params.A;
-  let B = req.params.B;
-  if (first != 'X' && last != 'X') {
-    base += ` and  prod_name >= '${first}' and prod_name < '${last}'`;
-  }
-  if (A != 'X' && B != 'X') {
-    base += ` and discount_price between ${A} and ${B} `
-  }
-  base += ` group by d.prod_no`
-
-  if (no != 'X') { // 2번째가 X라면 전체페이지, 아니면 6페이지씩
-    base += ' limit ' + no * 6 + ', 6';
-  }
-  let result = await mysql.query2(base);
-  res.send(result);
 })
