@@ -165,151 +165,140 @@ export default {
   //   }
   // },
   methods : {
-    async fetchCartList() {
-          
-          await axios.get(`/api/cartList`, {
-          })
-          .then(response => {
-            this.cartList = response.data;
-          })
-          .catch(error => {
-            console.error(error);
-          });
-          
-    },
-    async quantityPlus(list) { // 수량 플러스
-      if(list.stock > list.quantity ){
-        list.quantity++;
-            await axios.put(`/api/CartPlusquantity/${list.prod_no}`)
-            .catch(err => console.log(err));
-          this.getBill();
-          }else{
-          alert('현재 남은 수량이 없습니다.');
-        }
-      },
-      async quantityMinus(list) { // 수량 마이너스
-        if(list.quantity > 1 ){
-          list.quantity--;
-            await axios.put(`/api/CartMinusquantity/${list.prod_no}`)
-            .catch(err => console.log(err));
-          }
-          this.getBill();
+          quantityPlus(list) { // 수량 플러스
+              if(list.stock > list.quantity ){
+                list.quantity++;
+                if( this.$store.state.user.user_id !=null){
+                axios.put(`/api/CartPlusquantity/${list.prod_no}`)
+                .catch(err => console.log(err));
+                }
+              }else{
+                alert('현재 남은 수량이 없습니다.');
+              }
+              
+
         },
-        async updateCheckbox(list) {  // 체크박스 개별 DB에 등록부분
-          let result = ''
-          if(this.$store.state.user.user_id !=null){
-            if(list.cart_checkbox == 1) {
-              result = await axios.put(`/api/CheckboxUpdate/0/${list.cart_no}`, );
-              console.log(result.data,'0으로 바꾸기');
-              if(result.data.affectedRows> 0){
+          // 로그인 안되어있으면 로그인 하라고 로그인 폼으로 이동 시킨다.
+          goTologinForm(){
+            alert('로그인 화면으로 이동합니다.')
+            this.$router.push('login')
+          },
+        
+        quantityMinus(list) { // 수량 마이너스
+            if(list.quantity > 1 ){
+              list.quantity--;
+              if( this.$store.state.user.user_id !=null){
+                    axios.put(`/api/CartMinusquantity/${list.prod_no}`)
+                                      .catch(err => console.log(err));
+              }
+            }
+        },
+        async fetchCartList() {
+            if(this.$store.state.user.user_id !=null){
+
+              await axios.get(`/api/cartList`, {
+              })
+            .then(response => {
+              this.cartList = response.data;
+            })
+            .catch(error => {
+              console.error(error);
+            });
+            this.$store.commit('loginCart')
+          }else{
+              this.cartList = await this.$store.state.cart
+              console.log('비회원 장바구니')
+            console.log(this.cartList)
+            console.log('비회원 장바구니')
+            }
+          },
+          async updateCheckbox(list) {  // 체크박스 개별 DB에 등록부분
+            let result = ''
+            if(this.$store.state.user.user_id !=null){
+              if(list.cart_checkbox == 1) {
+                  result = await axios.put(`/api/CheckboxUpdate/0/${list.cart_no}`, );
+                console.log(result.data,'0으로 바꾸기');
+                if(result.data.affectedRows> 0){
+                }
+              }else {
+                  result =  await axios.put(`/api/CheckboxUpdate/1/${list.cart_no}`, );
+                console.log(result,'1으로 바꾸기');
+                if(result.data.affectedRows > 0){
+                }
               }
             }else {
-              result =  await axios.put(`/api/CheckboxUpdate/1/${list.cart_no}`, );
-              console.log(result,'1으로 바꾸기');
-              if(result.data.affectedRows > 0){
-              }
-            }
-          }else {
-            if(list.cart_checkbox == 1){
-              list.cart_checkbox = 0;
-              this.$store.commit('selectCheck',list.prod_no )
-            }else{
-              list.cart_checkbox = 1;
-              this.$store.commit('selectCheck',list.prod_no )
-            }
-          }
-          this.delivery = 0;
-          this.final = 0;
-          this.getBill();
-        },
-        selectAll() {
-          let allChecked = true;
-          
-          for (let i = 0; i < this.cartList.length; i++) {
-            if (this.cartList[i].cart_checkbox != "1") {
-              allChecked = false;
-            }
-          }
-          
-          if (allChecked) { // 전체 선택 해제
-            for (let i = 0; i < this.cartList.length; i++) {
-              if (this.cartList[i].cart_checkbox == "1") {
-                this.cartList[i].cart_checkbox = "0";
-                
-              }
-            }
-            if(this.$store.state.user.user_id != null){
-              axios.put(`/api/CheckAllUpdate/0`);
-              console.log('전체선택')
-            }else{
-              this.$store.commit('allCheck',"0")
-            }
-            console.log('전체해제')
-            this.getBill();
-          } else { // 전체 선택
-            for (let i = 0; i < this.cartList.length; i++) {
-              if (this.cartList[i].cart_checkbox == "0") {
-                this.cartList[i].cart_checkbox = "1";                
-              }
-            }
-            
-            if(this.$store.state.user.user_id != null){
-              axios.put(`/api/CheckAllUpdate/1`);
-              console.log('전체선택')
-              this.getBill();
-            }else{
-              this.$store.commit('allCheck',"1")
-            }
-            console.log('전체선택')
-          }
-          // axios.put(`/api/CheckAllUpdate/${this.$store.state.user.user_id}`,this.cartList);
-          
-        },
-        deleteSelected() { 
-          console.log(this.cartList)
-          for(let i = this.cartList.length - 1; i >= 0; i--) { // 역순으로 해야함;
-            console.log('=== 구분선 === ')
-            console.log('해당 상품번호 : ' + this.cartList[i].prod_no )
-            console.log('해당 체크유무 : ' + this.cartList[i].cart_checkbox )
-            console.log('=== 구분선 === ')
-            if(this.cartList[i].cart_checkbox == "1"){
-              if(this.$store.state.user.user_id != null){
-                axios.delete(`/api/CheckboxDelete/${this.cartList[i].cart_no}`);
-                console.log('회원!')
-                this.$store.commit('loginCart')
+              if(list.cart_checkbox == 1){
+                list.cart_checkbox = 0;
+                this.$store.commit('selectCheck',list.prod_no )
               }else{
-                this.$store.commit('cartDelete',this.cartList[i].prod_no)
-                console.log('비회원')
+                list.cart_checkbox = 1;
+                this.$store.commit('selectCheck',list.prod_no )
               }
-              this.cartList.splice(i, 1); // 리스트에서 삭제 이거때문에 오류 걸리는듯
             }
-          }
-          this.getBill();
-        },
-        async moveOrderForm(){
-          this.prodStock = 0;
-          this.cartQuantity = 0;
-          this.cartNo = 0;
-          for(let i=0; i<this.cartList.length; i++) {
-            this.prodStock = this.cartList[i].stock
-            this.cartQuantity = this.cartList[i].quantity
-            this.cartNo = this.cartList[i].cart_no
-          }
-          if(this.prodStock < this.cartQuantity) {
-            console.log(this.prodStock,'상품재고')
-            alert('재고가 부족한 상품이 있어 상품 수량이 변경됩니다.')
-            console.log(this.cartNo,'상품번호')
-            
-            await axios.put(`/api/Cartquantity/${this.prodStock}/${this.cartNo}`,)
-            .catch(err => console.log(err));
-            
-            console.log('수량변경완료')
-          }else{
-            this.$router.push('/orderForm');
-          }
-        },
-        getBill(){
+            },
+            selectAll() {
+              let allChecked = true;
+              
+                
+                for (let i = 0; i < this.cartList.length; i++) {
+                  if (this.cartList[i].cart_checkbox != "1") {
+                    allChecked = false;
+                  }
+                }
+                
+                if (allChecked) { // 전체 선택 해제
+                  for (let i = 0; i < this.cartList.length; i++) {
+                    if (this.cartList[i].cart_checkbox == "1") {
+                      this.cartList[i].cart_checkbox = "0";
+                      
+                    }
+                  }
+                  if(this.$store.state.user.user_id != null){
+                    axios.put(`/api/CheckAllUpdate/0`);
+                  }else{
+                    this.$store.commit('allCheck',"0")
+                  }
+                  console.log('전체해제')
+                } else { // 전체 선택
+                  for (let i = 0; i < this.cartList.length; i++) {
+                    if (this.cartList[i].cart_checkbox == "0") {
+                      this.cartList[i].cart_checkbox = "1";                
+                    }
+              }
+              
+              if(this.$store.state.user.user_id != null){
+                axios.put(`/api/CheckAllUpdate/1`);
+              }else{
+                this.$store.commit('allCheck',"1")
+              }
+              console.log('전체선택')
+            }
+            // axios.put(`/api/CheckAllUpdate/${this.$store.state.user.user_id}`,this.cartList);
 
+          },
+          async deleteSelected() {
+      for (let i = this.cartList.length - 1; i >= 0; i--) {
+        // cart_checkbox가 "1"인지 확인
+        if (this.cartList[i].cart_checkbox == "1") {
+          // 로그인 상태인 경우
+
+          if (this.$store.state.user.user_id != null) {
+            try {
+              await axios.delete(`/api/CheckboxDelete/${this.cartList[i].cart_no}`);
+              this.$store.commit('loginCartCheck', 1);
+            } catch (error) {
+              console.error("삭제 중 오류 발생: ", error);
+            }
+            this.cartList.splice(i, 1);
+          } else {
+            // 로그인되지 않은 상태인 경우
+            this.$store.commit('cartDelete', this.cartList[i].prod_no);
+          }
+          // 배열에서 항목 삭제
+        }
+      }
+      },
+        getBill(){    
           this.totalPrice();
           this.discountPrice();
           this.deliveryPrice();

@@ -179,7 +179,7 @@ export default {
         refresh(){
             this.word ='';
             this.grade = '';
-            this.days = '';
+            this.days = this.dateFormat('','yyyy-MM-dd');
             this.uList();
             //this.searchList(this.word);
             this.filterList = [];

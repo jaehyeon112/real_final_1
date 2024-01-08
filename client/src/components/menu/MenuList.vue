@@ -17,21 +17,21 @@
           <v-img
             class="align-end text-white"
             height="300"
-            src="/api/test"
-            @load="imageLoaded"
+            
+            :src="`/api/test/`+ prodList.file_name"
             
           >
           <v-dialog transition="dialog-top-transition" width="auto">
           <template  v-slot:activator="{ props }">
             <!--여기를 장바구니 버튼으로~-->
-            <div style="position:absolute; top:100px; left:200px"><v-btn @click="quantity=1"  icon="mdi mdi-cart" variant="tonal"  @click.prevent="getUserCartInfo" v-bind="props"> </v-btn></div>
+            <div style="position:absolute; top:100px; left:200px"><v-btn @click="quantity=1" style="background-color: gray;" icon="mdi mdi-cart" variant="tonal"  @click.prevent="getUserCartInfo" v-bind="props"> </v-btn></div>
           </template>
           <template v-slot:default="{ isActive }">
             <v-card height="300" width="450">
               <v-card-text>
                 <v-row >
                   <v-col>
-                    <v-img width="50" height="50" src="/api/test"></v-img>
+                    <v-img width="50" height="50" :src="`api/test/`+ prodList.file_name"></v-img>
                   </v-col>
                   <v-col cols="auto">
                     <span>{{prodList.prod_name}}</span>
@@ -87,7 +87,7 @@
     <div id="type-time">
       <span>냉동 | {{prodList.cooking_time}}분</span>
     </div>
-    <v-row justify="end"><span>별점</span> <slot></slot></v-row>
+    <v-row justify="end"><span style="color :coral " >★ </span><span style="color : gray; font-size:12px;">{{prodList.star > 0.0 ? prodList.star: "0.0"}}</span></v-row>
   </v-card-text>
 </v-card>
 </v-hover>
@@ -102,7 +102,7 @@ export default {
       isSoldOut: false,
       isStock: false,
       quantity : 1,
-      cartList : {}
+      cartList : []
     };
   },
   props: ["prodList"],
@@ -114,8 +114,8 @@ export default {
 
   methods: {
     async getUserCartInfo(){
+      if(this.$store.state.user_user_id != null)
       this.cartList =  (await axios.get(`/api/cartSelect/${this.prodList.prod_no}/${this.$store.state.user.user_id}`).catch(err=>console.log(err))).data // 유저의 장바구니 카트
-      console.log(this.cartList)
     }
     ,
     soldout() {
@@ -183,6 +183,8 @@ export default {
       alert('보유 재고를 초과하여 장바구니에 넣을 수 없습니다.')
     }
   }else{ // 회원으로 로그인 이후
+    this.cartList =  (await axios.get(`/api/cartSelect/${this.prodList.prod_no}/${this.$store.state.user.user_id}`).catch(err=>console.log(err))).data 
+
     if(this.cartList.length != 0){ //해당 아이디의 장바구니가 비어있지 않고
       for(let i = 0 ; i < this.cartList.length; i++){
         if(no == this.cartList[i].prod_no){
@@ -197,7 +199,7 @@ export default {
               }
             }
             await axios.put(`/api/cartAfterLogin/${this.prodList.prod_no}`, obj)
-            alert('장바구니에 추가적으로 등록되었습니다. 회원')
+            alert('장바구니에 추가적으로 등록되었습니다.')
             this.$store.commit('loginCart')
             return
           }else{
@@ -212,7 +214,7 @@ export default {
                   quantity : this.quantity
                 }
               }
-    if(this.prodList.stock >= this.quantity+cartQuantity) {
+    if(this.prodList.stock >= this.quantity) {
           await axios.post('/api/cartAfterLogin/',obj).catch(err=>console.log('로그인 이후 카트에 담길때 에러' + err))
           alert("장바구니에 등록되었습니다. 회원" )
           this.$store.commit('loginCart')

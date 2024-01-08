@@ -102,7 +102,7 @@
     let obj ={
       param : {
         user_id : this.user_id,
-        user_password : this.user_password
+        user_password : this.user_password,
       }
     } 
   
@@ -137,7 +137,10 @@
           return;
          }else{
            alert(users[0].user_name +'님 환영합니다');
-          
+          if(users[0].user_grade == 'i4'){
+            this.$router.push('/admin/Main')
+            return;
+          }
           
            //만약 비로그인시 장바구니에 안 담았다면, 그냥 넘어가게
           let cartList =  (await axios.get(`/api/cartList`).catch(err=>console.log(err))).data
