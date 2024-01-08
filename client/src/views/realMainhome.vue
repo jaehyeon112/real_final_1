@@ -11,7 +11,6 @@
       <h1>생생한 리뷰</h1>
       <review />
       <upload />
-      <button @click="clickEvent">로딩 오버레이 테스트 버튼</button>
     </v-container>
   </div>
 </template>
@@ -29,11 +28,6 @@ export default {
     upload,
   },
   methods: {
-    async clickEvent() {
-      this.$showLoading();
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      this.$hideLoading();
-    },
   },
 };
 </script>

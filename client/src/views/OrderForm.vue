@@ -51,7 +51,7 @@ import CartUserInfo from '../components/cart/CartUserInfo.vue';
 import CartAddrInfo from '../components/cart/CartAddrInfo.vue';
 import CartPointInfo from '../components/cart/CartPointInfo.vue';
 import CartPayment from '../components/cart/CartPayment.vue';
-import CartPrice from '../components/cart/CartPrice.vue';
+import CartPrice from '../components/cart/cartPrice.vue';
 
 
 export default {
@@ -130,7 +130,7 @@ export default {
       });
     },
     fetchCouponList() {
-      axios.get(`/api/coupon`, {
+      axios.get(`/api/couponList`, {
       })
       .then(response => {
         this.couponList = response.data;
@@ -140,7 +140,7 @@ export default {
       });
     },
     fetchPointList() {
-      axios.get(`/api/point`, {
+      axios.get(`/api/pointList`, {
       })
       .then(response => {
         this.pointList = response.data; 
@@ -345,6 +345,7 @@ async orderInsert(){ // orders 테이블 등록
           if(this.cartList[i].cart_checkbox == 1){
 
             await axios.delete(`/api/CheckboxDelete/${this.cartList[i].cart_no}`);
+            this.$store.commit('loginCart')
             
           }
         }

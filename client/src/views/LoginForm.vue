@@ -6,8 +6,8 @@
       <div class="login-form">
         <div class="sign-in-htm">
           <div class="group">
-            <label for="user" class="label">ID</label>
-            <input id="user" type="text" class="input" v-model="user_id">
+            <label for="user" class="label" >ID</label>
+            <input id="user" type="text"  autocomplete="off" class="input" v-model="user_id">
           </div>
           <div class="group">
             <label for="pass" class="label">PASSWORD</label>
@@ -106,26 +106,24 @@
       }
     } 
   
-  let ipList = await axios.post(`/api/dologin`,obj)  
+  let ipList = await axios.post(`/api/dologin/`,obj)  
                   .catch(err => console.log(err));
                   console.log(ipList.data)
                   
        let users = ipList.data;
-        console.log('users는?', users);
          
       
      
       if(users == ''){
         this.failedAttemps++;
         alert(`ID나 Password 확인하기!`)
+        return
       }
   
   
       //로그인 5회이상 실패시 보안프로그램 실행! 
       if(this.failedAttempts >= 5){
-  
       alert(`보안프로그램 실행하기`)
-      
     }
     // else{
     //   alert(users[0].user_name +'님 환영합니다');
@@ -139,49 +137,65 @@
           return;
          }else{
            alert(users[0].user_name +'님 환영합니다');
-          
+          if(users[0].user_grade == 'i4'){
+            this.$router.push('/admin/Main')
+            return;
+          }
           
            //만약 비로그인시 장바구니에 안 담았다면, 그냥 넘어가게
           let cartList =  (await axios.get(`/api/cartList`).catch(err=>console.log(err))).data
-  
-          console.log('먼디?')
-          console.log(cartList)
-          console.log(this.$store.state.cart)
-          console.log('먼디?')
-  
-          if(cartList != null){
-            for(let i = 0; i > cartList.length; i++){
-            for(let j = 0; j > this.$store.state.cart.length; j++){
-              if(cartList[i].prod_no == this.$store.state.cart[j].prod_no){
+          let vuexCart = this.$store.state.cart;
+          console.log(cartList.length + ' 로그인 장바구니 갯수')
+          console.log(this.$store.state.cart.length+ '비회원 장바구니 갯수') 
+          if(cartList.length != 0 && this.$store.state.cart.length != 0){ // 로그인한 아이디의 장바구니가 비어있지 않고, 비회원 장바구니도 비어있지 않을때
+            let processedProdNos = new Set();
+            for(let i = 0; i < cartList.length; i++){
+            for(let j = 0; j < this.$store.state.cart.length; j++){
+              if(cartList[i].prod_no == this.$store.state.cart[j].prod_no){ // 만약 로그인 장바구니 안에 있는 내용과 겹칠경우, 수량 변경.
+                let sumQuantity = vuexCart[j].quantity + cartList[i].quantity >= vuexCart[j].stock ? vuexCart[j].stock : vuexCart[j].quantity + cartList[i].quantity
+
                 let obj = {
                   param : {
-                    quantity : this.$store.state.cart[j].quantity + cartList[i].quantity,
+                    quantity : sumQuantity,
                   }
                 }
-                await axios.put(`/api/cartAfterLogin/${cartList[i].prod_no}`,obj).catch(err=>console.log(err));
+                 axios.put(`/api/cartAfterLogin/${cartList[i].prod_no}`,obj).catch(err=>console.log(err));
+                processedProdNos.add(cartList[i].prod_no); // 그 장바구니의 번호를 기억하는 set 메서드
               } 
             }
           }
-          }
-  
-  
-          for(let i = 0 ; i < this.$store.state.cart.length; i++){
-            let obj = {
-              param: {
-                  prod_no : this.$store.state.cart[i].prod_no,
-                  quantity : this.$store.state.cart[i].quantity,
-                  user_id : users[0].user_id
-              }
-          }
-          await axios.post(`/api/cartAfterLogin`, obj).catch(err=>{console.log(err)})
-          }
-          this.$store.state.cart = [];
+            //새로운 상품만 추가
+            for (let i = 0; i < this.$store.state.cart.length; i++) {
+      if (!processedProdNos.has( this.$store.state.cart[i].prod_no)) { // 아직 처리되지 않은 상품인 경우
+        let obj = {
+          param: {
+            prod_no:  this.$store.state.cart[i].prod_no,
+            quantity:  this.$store.state.cart[i].quantity,
+            user_id:  users[0].user_id
+                  }
+        }
+         axios.post('/api/cartAfterLogin', obj).catch(err => console.log(err)); // 새 상품을 장바구니에 추가하는 API 호출
+        
+      }
+    }
+          }else if(this.$store.state.cart.length != 0){ // 로그인 장바구니는 비어있고, 
+            for(let i = 0 ; i < this.$store.state.cart.length; i++){
+             let obj = {
+               param: {
+                   prod_no : this.$store.state.cart[i].prod_no,
+                   quantity : this.$store.state.cart[i].quantity,
+                   user_id : users[0].user_id
+               }
+            }
+           axios.post(`/api/cartAfterLogin`, obj).catch(err=>{console.log(err)})
+           }
           
+          }
       }
    
   
   this.$store.commit('login',users[0]) // (함수명, 전달인자)
-  
+  this.$store.commit('cartEmpty')
   
    this.$router.push({name : 'realmain'}); // 메인화면으로
   

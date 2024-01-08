@@ -84,6 +84,7 @@ async function sendEmail(to, subject, body) {
   return result;
 }
 
+
 server.listen(3000, () => {
   console.log('app대신 socket.io서버 on~~');
 });
@@ -172,8 +173,6 @@ io.on('connect', (socket) => {
 })
 
 
-
-
 const cron = require("node-cron");
 
 
@@ -196,16 +195,56 @@ const upload = multer({
   storage: storage
 });
 
-
-
-
-
-
-app.post("/photos", upload.array("photos", 12), (req, res) => {
-  for (let file of req.files) {
-    console.log(file);
+app.post("/photos", upload.array("photos", 10), (req, res) => {
+  let imgArray = new Array();
+  for (let i = 0; i < req.files.length; i++) {
+    imgArray.push(`${req.files[i].filename}`)
+    console.log('현재 넘어온 사진 ' + req.files[i])
   }
+  //let jsonImg = JSON.stringify(imgArray);
+  res.send(imgArray);
 });
+
+app.post("/text", upload.array("text", 10), (req, res) => {
+  let textArray = new Array();
+  for (let i=0;i<req.files.length;i++) {
+    textArray.push(`${req.files[i].originalname}`)
+    console.log('현재 넘어온 파일 ' + req.files[i])
+  }
+  res.send(textArray);
+});
+
+app.post("/photo",async (req, res) => {
+  let data = req.body.param;
+  let result = await mysql.query("admin","insertFile",data)
+  res.send(result);
+});
+
+app.get("/photo/:pno",async (req, res) => {
+  let data = req.params.pno;
+  let result = await mysql.query("admin","photoList",data)
+  res.send(result);
+  console.log('실행'+result)
+});
+
+app.delete("/photo/:name",async (req, res) => {
+  let data = req.params.name;
+  let result = await mysql.query("admin","delPhoto",data);
+  console.log('삭제중'+result)
+  res.send(result);
+});
+
+// app.delete("/photos", async (req, res) => {
+//   console.log('삭제실행??')
+//     try {
+//       fs.unlinkSync(req.files);
+//       console.log("image delete");
+//     } catch (error) {
+//       console.log(req.files)
+//       console.log(error);
+//     }
+// }); //이미지 삭제 end
+
 
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -220,12 +259,25 @@ app.listen(3000, () => {
  */
 
 
+//정적파일
+app.use('/fileCall', express.static('uploads'));
+
+
 app.get("/test", async (req, res) => {
   // 여기서 imagePath를 db에 저장하고 불러와야할듯...
   const imagePath = "uploads\\1703574590403스페인식_감바스_상세페이지3.jpg";
   const absolutePath = path.join(__dirname, imagePath);
+  console.log('경로1' + absolutePath)
   res.sendFile(absolutePath);
 });
+
+// app.get("/test/uploads/:imagePath", async (req, res) => {
+//   let data = req.params.imagePath;
+//   console.log('여기까지 넘ㄴ어옴',data)
+//   const absolutePath = path.join(__dirname,data);
+//   console.log('경로2' + absolutePath)
+//   res.sendFile(absolutePath);
+// });
 
 app.get("/show", async (req, res) => {
   let data = await mysql.query("test", "list");
@@ -240,29 +292,39 @@ app.get("/show/:no", async (req, res) => {
 
 
 app.get("/couponList", async (req, res) => { // 쿠폰 리스트
-  let id = req.session.user_id;
-  let list = await mysql.query("test", "couponList", id);
+  let list = await mysql.query("test", "couponList", req.session.user_id);
   res.send(list);
 });
 app.get("/pointList", async (req, res) => { // 포인트 리스트 
-  let id = req.session.user_id;
-  let list = await mysql.query("test", "pointList", id);
+  let list = await mysql.query("test", "pointList", req.session.user_id);
   res.send(list);
 });
 
 app.get("/cartList", async (req, res) => { //장바구니 리스트
-  let list = await mysql.query("test", "cartList", req.session.user_id);
-  res.send(list);
-});
+  let userId = req.session.user_id;
+  if (!userId) { // user_id가 없을때
+    return res.status(400).send('400에러~')
+  }
 
-app.put("/CheckboxUpdate/:check/:no", async (request, res) => { // 장바구니 체크박스 선택시 업데이트
-  let data = [request.params.check, request.params.no];
+  try {
+    let list = await mysql.query("test", "cartList", userId);
+    res.send(list);
+  } catch (err) { // db에서 뭐 오류뜨면~
+    console.log(err);
+    res.status(500).send({
+      err: '서버에서 오류난듯?'
+    })
+  }
+})
+
+app.put("/CheckboxUpdate/:check/:no", async (req, res) => { // 장바구니 체크박스 선택시 업데이트
+  let data = [req.params.check, req.params.no];
   let list = await mysql.query("test", "CheckboxUpdate", data);
   res.send(list);
 });
 
 app.put("/CheckAllUpdate/:check", async (req, res) => { // 체크박스 전체선택 업데이트
-  let data = [request.params.check, req.session.user_id];
+  let data = [req.params.check, req.session.user_id];
   let list = await mysql.query("test", "CheckAllUpdate", data);
   res.send(list);
 });
@@ -309,8 +371,9 @@ app.get("/cartCheckList", async (req, res) => { //주문서의 장바구니체�
   res.send(list);
 });
 
-app.get("/orderList", async (req, res) => { // 주문완료 리스트
-  let list = await mysql.query("test", "orderList", req.session.user_id);
+app.get("/orderList:/:no", async (req, res) => { // 주문완료 리스트
+  let data = req.params.no;
+  let list = await mysql.query("test", "orderList", data);
   res.send(list);
 });
 
@@ -329,18 +392,18 @@ app.post("/pointInsert", async (request, res) => { // 포인트 사용내역 등
   res.send((await mysql.query("test", "pointInsert", data)));
 });
 
-app.put("/couponUpdate/no", async (req, res) => { // 쿠폰 사용시 업데이트
+app.put("/couponUpdate/:no", async (req, res) => { // 쿠폰 사용시 업데이트
   let data = [req.body.param, req.params.no];
   res.send((await mysql.query("test", "couponUpdate", data)));
 });
 
-app.put("/StockUpdate/:id", async (request, res) => { // 상품 재고변경
-  let data = [request.body.param, request.params.id];
+app.put("/StockUpdate/:no", async (req, res) => { // 상품 재고변경
+  let data = [req.body.param, req.params.no];
   res.send((await mysql.query("test", "StockUpdate", data)));
 });
 
-app.put("/pointUpdate/:id", async (request, res) => { // 사용한 포인트 user테이블 업데이트
-  let data = [request.body.param, request.params.id];
+app.put("/pointUpdate", async (req, res) => { // 사용한 포인트 user테이블 업데이트
+  let data = [req.body.param, req.session.user_id];
   res.send((await mysql.query("test", "pointUpdate", data)));
 });
 
@@ -354,10 +417,16 @@ app.get("/user", async (req, res) => {
   res.send(data);
 });
 
-app.get("/user/:order/:startNo/:no", async (req, res) => {
-  let data = [req.params.order, Number(req.params.startNo) * Number(req.params.no), Number(req.params.no)];
+app.get("/outUser", async (req, res) => {
+  let data = await mysql.query("admin", "outList");
+  res.send(data);
+});
+
+app.get("/user/:order/:startNo", async (req, res) => {
+  let data = [req.params.order, Number(req.params.startNo) * 10];
   let list = await mysql.query("admin", "userList", data);
   res.send(list);
+  console.log('실행 : ', list)
 });
 
 app.put("/order/:status/:ono", async (req, res) => {
@@ -477,23 +546,31 @@ app.get("/user", async (req, res) => {
   res.send(list);
 });
 
-app.get("/user/:id/:name/:order/:startNo/:no", async (req, res) => {
-  let list = [req.params.id, req.params.name, req.params.order, Number(req.params.startNo) * Number(req.params.no), Number(req.params.no)];
+app.get("/user/:id/:name/:order/:startNo", async (req, res) => {
+  let list = [req.params.id, req.params.name, req.params.order, Number(req.params.startNo) * 10];
   let data = await mysql.query("admin", "searchUser", list);
   res.send(data);
 });
 
-app.get("/user/:join/:order/:startNo/:no", async (req, res) => {
-  let list = [req.params.join, req.params.order, Number(req.params.startNo) * Number(req.params.no), Number(req.params.no)];
+app.get("/user/:join/:order/:startNo", async (req, res) => {
+  let list = [req.params.join, req.params.order, Number(req.params.startNo) * 10];
   let data = await mysql.query("admin", "filterUser", list);
   res.send(data);
 });
 
 app.get("/prod/:name/:cate/:order/:startNo/:no", async (req, res) => {
-  let list = [req.params.name, req.params.cate, req.params.order, Number(req.params.startNo) * Number(req.params.no), Number(req.params.no)];
-  let data = await mysql.query("admin", "searchProd", list);
-  res.send(data);
+  if (Number(req.params.startNo) == null || Number(req.params.no) == null) {
+    let test = "select prod_no,prod_name,price,discount_price,discount_rate,stock,main_category from product where prod_name like concat(concat('%',?),'%') or main_category = ? order by ??"
+    let list2 = [req.params.name, req.params.cate, req.params.order];
+    let data2 = await mysql.query("admin", "searchProd", list2);
+    res.send(data2);
+  } else {
+    let list = [req.params.name, req.params.cate, req.params.order, Number(req.params.startNo) * Number(req.params.no), Number(req.params.no)];
+    let data = await mysql.query("admin", "searchProd", list);
+    res.send(data);
+  }
 });
+
 
 app.get("/prod", async (req, res) => {
   let data = await mysql.query("admin", "AllprodList");
@@ -536,9 +613,26 @@ app.patch("/prod/:pno", async (req, res) => {
   let result = await mysql.query("admin", "prodDelete", data);
   res.send(result);
 });
-
+//통계
 app.get("/sum", async (req, res) => {
   let result = await mysql.query("admin", "monthsIncome");
+  res.send(result);
+});
+
+app.get("/weeksum/:agoweek/:week", async (req, res) => {
+  let datas = [Number(req.params.agoweek),Number(req.params.week)]
+  let result = await mysql.query("admin", "weekIncome",datas);
+  res.send(result);
+});
+
+app.get("/counting", async (req, res) => {
+  let result = await mysql.query("admin", "counting");
+  res.send(result);
+});
+
+app.get("/withMe/:outday/:joinday", async (req, res) => {
+  let datas = [Number(req.params.outday),Number(req.params.joinday)]
+  let result = await mysql.query("admin", "withUser",datas);
   res.send(result);
 });
 
@@ -550,6 +644,12 @@ app.put("/user/:grade/:uid", async (req, res) => {
 
 app.get("/notice", async (req, res) => {
   let result = await mysql.query("admin", "AllnoticeList");
+  res.send(result);
+});
+
+app.post("/notice", async (req, res) => {
+  let datas = req.body.param;
+  let result = await mysql.query("admin", "insertNotice",datas);
   res.send(result);
 });
 
@@ -661,8 +761,8 @@ app.get('/review/:order', async (req, res) => {
   res.send(result);
 });
 
-app.post('/order/:tracking/:ono/:ono/:ono', async (req, res) => {
-  let data = [req.params.tracking, req.params.ono, req.params.ono, req.params.ono];
+app.post('/order/:ono/:tracking/:ono/:ono', async (req, res) => {
+  let data = [req.params.ono, req.params.tracking, req.params.ono, req.params.ono];
   let result = await mysql.query("admin", "insertDelivery", data);
   res.send(result);
 });
@@ -827,6 +927,7 @@ app.get("/new/:no", async (req, res) => {
   let result = await mysql.query("test", "newList", data);
   res.send(result);
 })
+
 app.get("/new", async (req, res) => {
   let result = await mysql.query("test", "newListPage");
   res.send(result);
@@ -1151,30 +1252,10 @@ app.put("/inquire/:id/:ino", async ( req, res)=>{
 
 
 
-// sql injection의 위험이 있음 처리해야함;;
-app.get("/new2/:first/:last/:A/:B/:no", async (req, res) => {
-  let base = 'SELECT * FROM product WHERE registration >= CURRENT_DATE() - INTERVAL 7 DAY ';
-  let no = req.params.no;
-  let first = req.params.first;
-  let last = req.params.last;
-  let A = req.params.A;
-  let B = req.params.B;
-  if (first != 'X' && last != 'X') {
-    base += ` and  prod_name >= '${first}' and prod_name < '${last}'`;
-  }
-  if (A != 'X' && B != 'X') {
-    base += ` and discount_price between ${A} and ${B} `
-  }
-  if (no != 'X') { // 2번째가 X라면 전체페이지, 아니면 6페이지씩
-    base += ' limit ' + no * 6 + ', 6';
-  }
-  let result = await mysql.query2(base);
-  res.send(result);
-})
-
 
 app.get("/frozen/:first/:last/:A/:B/:no", async (req, res) => {
-  let base = `select * from product  where refrigeration = 'g1' `
+  let base = `select p.*, FORMAT(avg(review_grade),1) AS 'star' from product p left join order_detail d on p.prod_no = d.prod_no
+  left join review r  on r.detail_order_no = d.order_detail_no where refrigeration = 'g1' `
 
   let params = [];
 
@@ -1194,6 +1275,9 @@ app.get("/frozen/:first/:last/:A/:B/:no", async (req, res) => {
     base += ` AND discount_price BETWEEN ? AND ?`;
     params.push(Number(A), Number(B));
   }
+
+  base += ` group by d.prod_no `
+
   if (no !== 'X') {
     base += ` LIMIT ?, 6`;
     params.push(Number(no) * 6);
@@ -1218,7 +1302,7 @@ app.get("/searchHeader/:word", async (req, res) => {
 })
 
 app.post("/cartAfterLogin", async (req, res) => {
-  let data = [req.body.param];
+  let data = req.body.param;
   let list = await mysql.query('test', 'cartAfterLogin', data)
   res.send(list);
 })
@@ -1238,4 +1322,89 @@ app.get(`/cartSelect/:no/:id`, async (req, res) => {
 app.get('/cart', async (req, res) => {
   
   res.send(await mysql.query('test', 'cartList', req.session.user_id))
+})
+
+
+app.get(`/best`, async (req, res) => {
+  const {
+    no,
+    first,
+    last,
+    A,
+    B,
+  } = req.query;
+
+
+  let base = `SELECT p.*, COUNT(*) AS hotItem, FORMAT(AVG(r.review_grade), 1) AS avg_grade
+  FROM order_detail o 
+  LEFT JOIN product p ON o.prod_no = p.prod_no
+  LEFT JOIN review r ON r.detail_order_no = o.order_detail_no
+  WHERE 1=1  `
+
+  if (first && last) {
+    base += ` and prod_name >= '${first}' and prod_name < '${last}'`
+  }
+
+  if (A && B) {
+    base += ` and discount_price between ${A} and ${B} `
+  }
+
+  base += ` GROUP BY p.prod_no HAVING hotItem > 1 and avg_grade > 4 ORDER BY hotItem DESC`
+
+  if (no) {
+    base += ' limit ' + no * 6 + ' , 6';
+  }
+  let result = await mysql.query2(base);
+  res.send(result);
+})
+app.get(`/sale`, async (req, res) => {
+  const {
+    no,
+    first,
+    last,
+    A,
+    B,
+  } = req.query;
+
+
+  let base = `select * from product where discount_rate > 40  `
+
+  if (first && last) {
+    base += ` and prod_name >= '${first}' and prod_name < '${last}'`
+  }
+
+  if (A && B) {
+    base += ` and discount_price between ${A} and ${B} `
+  }
+
+  if (no) {
+    base += ' limit ' + no * 6 + ' , 6';
+  }
+  let result = await mysql.query2(base);
+  res.send(result);
+})
+
+
+// sql injection의 위험이 있음 처리해야함;;
+app.get("/new2/:first/:last/:A/:B/:no", async (req, res) => {
+  let base = `SELECT p.*, FORMAT(avg(review_grade),1) AS 'star' from product p left join order_detail d on p.prod_no = d.prod_no
+  left join review r  on r.detail_order_no = d.order_detail_no WHERE registration >= CURRENT_DATE() - INTERVAL 7 DAY `;
+  let no = req.params.no;
+  let first = req.params.first;
+  let last = req.params.last;
+  let A = req.params.A;
+  let B = req.params.B;
+  if (first != 'X' && last != 'X') {
+    base += ` and  prod_name >= '${first}' and prod_name < '${last}'`;
+  }
+  if (A != 'X' && B != 'X') {
+    base += ` and discount_price between ${A} and ${B} `
+  }
+  base += ` group by d.prod_no`
+
+  if (no != 'X') { // 2번째가 X라면 전체페이지, 아니면 6페이지씩
+    base += ' limit ' + no * 6 + ', 6';
+  }
+  let result = await mysql.query2(base);
+  res.send(result);
 })
