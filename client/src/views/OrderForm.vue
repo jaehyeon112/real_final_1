@@ -130,7 +130,7 @@ export default {
       });
     },
     fetchCouponList() {
-      axios.get(`/api/coupon`, {
+      axios.get(`/api/couponList`, {
       })
       .then(response => {
         this.couponList = response.data;
@@ -140,7 +140,7 @@ export default {
       });
     },
     fetchPointList() {
-      axios.get(`/api/point`, {
+      axios.get(`/api/pointList`, {
       })
       .then(response => {
         this.pointList = response.data; 

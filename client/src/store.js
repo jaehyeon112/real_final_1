@@ -58,7 +58,7 @@ const store = createStore({
   },
   plugins: [
     createPersistedState({
-      paths: ['user', 'cart', 'orderNo']
+      paths: ['user', 'cart', 'cartCount', 'loginCartCount', 'orderNo']
     })
   ]
 

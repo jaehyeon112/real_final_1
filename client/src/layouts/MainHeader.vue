@@ -83,6 +83,7 @@
         <div class="col-1" style="padding-top: 15px">
           <span @click="moveCartList">
             <!-- 장바구니 갯수 조절해야함 -->
+            {{ "비회원 장바구니 갯수 : " +   $store.state.cartCount }}
             <v-badge color="error" :content='$store.state.user.user_id == null ? $store.state.cartCount : $store.state.loginCartCount'>
               <span class="mdi mdi-cart-minus" style="font-size: 30px"></span>
             </v-badge>
