@@ -5,7 +5,6 @@
       <table class="rwd-table" :key="idx" v-for="(list, idx) in cartList">
         <tr>
           <td>
-            {{ list.cart_checkbox }}
             <v-checkbox v-model="list.cart_checkbox" true-value="1" false-value="0" @click="updateCheckbox(list)"></v-checkbox>
           </td>
           <td>이미지</td>
@@ -242,8 +241,8 @@ export default {
           this.$store.commit('loginCartCheck', 1);
         } catch (error) {
           console.error("삭제 중 오류 발생: ", error);
-          this.cartList.splice(i, 1);
         }
+        this.cartList.splice(i, 1);
       } else {
         // 로그인되지 않은 상태인 경우
         this.$store.commit('cartDelete', this.cartList[i].prod_no);
