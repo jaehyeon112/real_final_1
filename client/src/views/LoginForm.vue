@@ -102,7 +102,7 @@
     let obj ={
       param : {
         user_id : this.user_id,
-        user_password : this.user_password
+        user_password : this.user_password,
       }
     } 
   

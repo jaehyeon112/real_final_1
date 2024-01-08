@@ -5,6 +5,7 @@
       <table class="rwd-table" :key="idx" v-for="(list, idx) in cartList">
         <tr>
           <td>
+            {{ list.cart_checkbox }}
             <v-checkbox v-model="list.cart_checkbox" true-value="1" false-value="0" @click="updateCheckbox(list)"></v-checkbox>
           </td>
           <td>이미지</td>
@@ -74,7 +75,7 @@
               </td>
           </tr>
         </table>
-          <v-btn v-model="check" @click="moveOrderForm" :disabled="box === 0">주문하기</v-btn>
+          <v-btn v-model="check" @click="moveOrderForm" :disabled="box == 0">주문하기</v-btn>
     </v-main>
     <v-main v-else>
           <h1>장바구니</h1>
@@ -157,6 +158,7 @@ export default {
         .catch(error => {
           console.error(error);
         });
+        this.$store.commit('loginCart')
       }else{
           this.cartList = await this.$store.state.cart
           console.log('비회원 장바구니')
@@ -228,26 +230,28 @@ export default {
         // axios.put(`/api/CheckAllUpdate/${this.$store.state.user.user_id}`,this.cartList);
  
       },
-      deleteSelected() { 
-        console.log(this.cartList)
-        for(let i = this.cartList.length - 1; i >= 0; i--) { // 역순으로 해야함;
-          console.log('=== 구분선 === ')
-          console.log('해당 상품번호 : ' + this.cartList[i].prod_no )
-          console.log('해당 체크유무 : ' + this.cartList[i].cart_checkbox )
-          console.log('=== 구분선 === ')
-          if(this.cartList[i].cart_checkbox == "1"){
-            if(this.$store.state.user.user_id != null){
-              axios.delete(`/api/CheckboxDelete/${this.cartList[i].cart_no}`);
-              console.log('회원!')
-              this.$store.commit('loginCart')
-            }else{
-              this.$store.commit('cartDelete',this.cartList[i].prod_no)
-              console.log('비회원')
-            }
-            this.cartList.splice(i, 1); // 리스트에서 삭제 이거때문에 오류 걸리는듯
-          }
+      async deleteSelected() {
+  for (let i = this.cartList.length - 1; i >= 0; i--) {
+    // cart_checkbox가 "1"인지 확인
+    if (this.cartList[i].cart_checkbox == "1") {
+      // 로그인 상태인 경우
+
+      if (this.$store.state.user.user_id != null) {
+        try {
+          await axios.delete(`/api/CheckboxDelete/${this.cartList[i].cart_no}`);
+          this.$store.commit('loginCartCheck', 1);
+        } catch (error) {
+          console.error("삭제 중 오류 발생: ", error);
+          this.cartList.splice(i, 1);
         }
-      },
+      } else {
+        // 로그인되지 않은 상태인 경우
+        this.$store.commit('cartDelete', this.cartList[i].prod_no);
+      }
+      // 배열에서 항목 삭제
+    }
+  }
+},
     moveOrderForm(){
       this.prodStock = 0;
       this.cartQuantity = 0;
