@@ -117,13 +117,14 @@
             },
             async cancelPayment(ono) { // 눌렀을때 주문취소
                 let result = await axios.get(`/api/order/${ono}`).catch(err=>console.log(err));
-                console.log(result.data[0].real_payment)
+                console.log(result.data[0],result.data)
                 let cancel = await axios.post(`/api/cancel`, {
                             merchant_uid: ono,
                             reason: '단순 취소',
                             cancel_request_amount: result.data[0].real_payment,
                             access_token: this.accessToken
                         });
+                    console.log(cancel.data)
                 if(cancel.data.affectedRows==1){
                     alert('포트성공')
                 }else{
@@ -136,7 +137,7 @@
                     let result = await axios.put(`/api/refund/o2/${ono}`).catch(err=>console.log(err));
                     if(result.data.affectedRows==1){
                         alert(' 취소/환불이 진행 중입니다~ ');
-                        this.cancelPayment();
+                        this.cancelPayment(ono);
                         this.getOrderList();
                     }else{
                         alert('오류가 남');
