@@ -175,7 +175,7 @@ export default {
               }else{
                 alert('현재 남은 수량이 없습니다.');
               }
-              
+              this.getBill();
 
         },
           // 로그인 안되어있으면 로그인 하라고 로그인 폼으로 이동 시킨다.
@@ -192,6 +192,7 @@ export default {
                                       .catch(err => console.log(err));
               }
             }
+            this.getBill();
         },
         async fetchCartList() {
             if(this.$store.state.user.user_id !=null){
@@ -211,6 +212,7 @@ export default {
             console.log(this.cartList)
             console.log('비회원 장바구니')
             }
+            this.getBill();
           },
           async updateCheckbox(list) {  // 체크박스 개별 DB에 등록부분
             let result = ''
@@ -235,6 +237,9 @@ export default {
                 this.$store.commit('selectCheck',list.prod_no )
               }
             }
+            this.delivery = 0;
+            this.final = 0;
+            this.getBill();
             },
             selectAll() {
               let allChecked = true;
@@ -273,6 +278,9 @@ export default {
               }
               console.log('전체선택')
             }
+            this.delivery = 0;
+            this.final = 0;
+            this.getBill();
             // axios.put(`/api/CheckAllUpdate/${this.$store.state.user.user_id}`,this.cartList);
 
           },
@@ -297,6 +305,9 @@ export default {
           // 배열에서 항목 삭제
         }
       }
+        this.delivery = 0;
+        this.final = 0;
+        this.getBill();
       },
         getBill(){    
           this.totalPrice();
