@@ -30,7 +30,7 @@
             size="128"
           ></v-icon>
 
-          <div class="text-h4 font-weight-bold">회원가입이 완료되었습니다.</div>
+          <div class="text-h4 font-weight-bold">{{ $route.params.message}}</div>
         </div>
 
         <v-divider></v-divider>
@@ -69,12 +69,18 @@
 
 <script setup>
   import { ref } from 'vue'
+  import { useRoute } from 'vue-router'
 
+   const route = useRoute()
   const dialog = ref(true)
+
+      const message = route.params.message
+      console.log(message);
+      console.log('message 에서 : ',  JSON.stringify(message));
+
 </script>
 
 
 <style scoped>
 
 </style>
-

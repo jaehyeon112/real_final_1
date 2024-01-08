@@ -298,6 +298,12 @@ import icon from '../components/admin/icon.vue';
       this.getReviewList();
       this.getInquireList();
       this.getCounting();
+      this.$socket.on('order', (m)=>{
+      this.showNotification(m)
+      })
+      if (Notification.permission !== 'granted') {
+      Notification.requestPermission();
+    }
     },
     methods : {
         dateFormat(){
@@ -329,8 +335,16 @@ import icon from '../components/admin/icon.vue';
         }else{
           this.orderList = result.data;
         }
-      },
-      async orderGetOne(ono){
+       },
+       showNotification(message) {
+  // 사용자가 알림을 허용했는지 확인
+  if (Notification.permission == 'granted') {
+    // 알림 생성 및 표시
+    const notification = new Notification('새 알람', {
+      body: message, // 메시지 본문
+    })}}
+       ,
+       async orderGetOne(ono){
         let result = await axios.get(`/api/order/${ono}`).catch(err=>console.log(err));
         this.orderOne = result.data[0];
       },
