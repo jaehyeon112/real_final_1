@@ -87,7 +87,7 @@
     <div id="type-time">
       <span>냉동 | {{prodList.cooking_time}}분</span>
     </div>
-    <v-row justify="end"><span>별점</span> <slot></slot></v-row>
+    <v-row justify="end"><span style="color :coral " >★ </span><span style="color : gray; font-size:12px;">{{prodList.star > 0.0 ? prodList.star: "0.0"}}</span></v-row>
   </v-card-text>
 </v-card>
 </v-hover>
@@ -109,13 +109,14 @@ export default {
   created(){
     this.soldout();
     this.getUserCartInfo()
+    
   }
   ,
 
   methods: {
     async getUserCartInfo(){
+      if(this.$store.state.user_user_id != null)
       this.cartList =  (await axios.get(`/api/cartSelect/${this.prodList.prod_no}/${this.$store.state.user.user_id}`).catch(err=>console.log(err))).data // 유저의 장바구니 카트
-      console.log(this.cartList)
     }
     ,
     soldout() {

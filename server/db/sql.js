@@ -1,33 +1,79 @@
 let test = {
   //전체 메뉴 리스트 불러오기
-  list: `select * from  product`,
-  list2: `select * from product limit ? , 6`,
+  list: `select p.*, format(avg(review_grade),1) AS 'star' from product p left join order_detail d on p.prod_no = d.prod_no
+  left join review r  on r.detail_order_no = d.order_detail_no group by d.prod_no`,
+  list2: `select p.*, format(avg(review_grade),1) AS 'star' from product p left join order_detail d on p.prod_no = d.prod_no
+  left join review r  on r.detail_order_no = d.order_detail_no group by d.prod_no limit ? , 6`,
   // 헤더의 카테고리에서 카테고리 선택된것들 불러오기
-  categoryList: `select * from product where ?? = ? limit ? , 6`,
-  categoryListPage: `select * from product where ?? = ? `,
+  categoryList: `select p.*, format(avg(review_grade),1) AS 'star' from product p left join order_detail d on p.prod_no = d.prod_no
+  left join review r  on r.detail_order_no = d.order_detail_no where ?? = ? group by d.prod_no limit ? , 6`,
+  categoryListPage: `select p.*, format(avg(review_grade),1) AS 'star' from product p left join order_detail d on p.prod_no = d.prod_no
+  left join review r  on r.detail_order_no = d.order_detail_no where ?? = ? group by d.prod_no `,
   //글자 필터시 검색 후 메뉴 불러오기
-  wordFilter: `select * from product where  prod_name >= ? and prod_name < ? limit ? , 6`,
-  wordFilterPage: `select * from product where  prod_name >= ? and prod_name < ?`,
-  categoryWordFilter: `select * from product where  prod_name >= ? and prod_name < ? and ?? = ? limit ? , 6`,
-  categoryWordFilterPage: `select * from product where  prod_name >= ? and prod_name < ? and ?? = ?`,
+  //일단 
+  wordFilter: `select  p.*, format(avg(review_grade),1) AS 'star' from product p left join order_detail d on p.prod_no = d.prod_no
+  left join review r  on r.detail_order_no = d.order_detail_no where  prod_name >= ? and prod_name < ? group by d.prod_no limit ? , 6`,
+  wordFilterPage: `select  p.*, format(avg(review_grade),1) AS 'star' from product p left join order_detail d on p.prod_no = d.prod_no
+  left join review r  on r.detail_order_no = d.order_detail_no where  prod_name >= ? and prod_name < ? group by d.prod_no `,
+  categoryWordFilter: `select p.*, format(avg(review_grade),1) AS 'star' from product p left join order_detail d on p.prod_no = d.prod_no
+  left join review r  on r.detail_order_no = d.order_detail_no where  prod_name >= ? and prod_name < ? and ?? = ? group by d.prod_no limit ? , 6`,
+  categoryWordFilterPage: `select p.*, format(avg(review_grade),1) AS 'star' from product p left join order_detail d on p.prod_no = d.prod_no
+  left join review r  on r.detail_order_no = d.order_detail_no where  prod_name >= ? and prod_name < ? and ?? = ? group by d.prod_no `,
 
   //가격 필터시 검색 후 메뉴 불러오기
-  priceFilter: `select * from product where discount_price between ? and ? limit ? , 6`,
-  priceFilterPage: `select * from product where discount_price between ? and ?`,
-  categoryPriceFilter: `select * from product where discount_price between ? and ? and ?? = ? limit ? , 6`,
-  categoryPriceFilterPage: `select * from product where discount_price between ? and ? and ?? = ?`,
+  priceFilter: `select p.*, format(avg(review_grade),1) AS 'star' from product p left join order_detail d on p.prod_no = d.prod_no
+  left join review r  on r.detail_order_no = d.order_detail_no where discount_price between ? and ? group by d.prod_no limit ? , 6`,
+  priceFilterPage: `select p.*, format(avg(review_grade),1) AS 'star' from product p left join order_detail d on p.prod_no = d.prod_no
+  left join review r  on r.detail_order_no = d.order_detail_no where discount_price between ? and ? group by d.prod_no `,
+  categoryPriceFilter: `select p.*, format(avg(review_grade),1) AS 'star' from product p left join order_detail d on p.prod_no = d.prod_no
+  left join review r  on r.detail_order_no = d.order_detail_no where discount_price between ? and ? and ?? = ? group by d.prod_no limit ? , 6`,
+  categoryPriceFilterPage: `select p.*, format(avg(review_grade),1) AS 'star' from product p left join order_detail d on p.prod_no = d.prod_no
+  left join review r  on r.detail_order_no = d.order_detail_no where discount_price between ? and ? and ?? = ? group by d.prod_no`,
   //둘다 필터 해서 불러오기.
-  bothFilter: `select * from product where prod_name >= ? and prod_name < ? and discount_price between ? and ? limit ? , 6`,
-  bothFilterPage: `select * from product where prod_name >= ? and prod_name < ? and discount_price between ? and ?`,
-  categoryBothFilter: `select * from product where prod_name >= ? and prod_name < ? and discount_price between ? and ? and ?? = ? limit ? , 6`,
-  categoryBothFilterPage: `select * from product where prod_name >= ? and prod_name < ? and discount_price between ? and ? and ?? = ?`,
+  bothFilter: `select p.*, format(avg(review_grade),1) AS 'star' from product p left join order_detail d on p.prod_no = d.prod_no
+  left join review r  on r.detail_order_no = d.order_detail_no where prod_name >= ? and prod_name < ? and discount_price between ? and ? group by d.prod_no limit ? , 6`,
+  bothFilterPage: `select p.*, format(avg(review_grade),1) AS 'star' from product p left join order_detail d on p.prod_no = d.prod_no
+  left join review r  on r.detail_order_no = d.order_detail_no where prod_name >= ? and prod_name < ? and discount_price between ? and ? group by d.prod_no`,
+  categoryBothFilter: `select p.*, format(avg(review_grade),1) AS 'star' from product p left join order_detail d on p.prod_no = d.prod_no
+  left join review r  on r.detail_order_no = d.order_detail_no where prod_name >= ? and prod_name < ? and discount_price between ? and ? and ?? = ? group by d.prod_no limit ? , 6`,
+  categoryBothFilterPage: `select p.*, format(avg(review_grade),1) AS 'star' from product p left join order_detail d on p.prod_no = d.prod_no
+  left join review r  on r.detail_order_no = d.order_detail_no where prod_name >= ? and prod_name < ? and discount_price between ? and ? and ?? = ? group by d.prod_no `,
   // 헤더 검색
-  searchHeader: `select * from product where prod_name like concat(concat('%',?),'%') limit ?,6`,
-  searchHeaderPage: `select * from product where prod_name like concat(concat('%',?),'%')`,
+  searchHeader: `select p.*, format(avg(review_grade),1) AS 'star' from product p left join order_detail d on p.prod_no = d.prod_no
+  left join review r  on r.detail_order_no = d.order_detail_no where prod_name like concat(concat('%',?),'%') group by d.prod_no limit ?,6`,
+  searchHeaderPage: `select p.*, format(avg(review_grade),1) AS 'star' from product p left join order_detail d on p.prod_no = d.prod_no
+  left join review r  on r.detail_order_no = d.order_detail_no where prod_name like concat(concat('%',?),'%') group by d.prod_no`,
 
   //신상품
-  newListPage: `select * from product where registration >= DATE_SUB(CURDATE(), INTERVAL 7 DAY);`,
-  newList: `select * from product where registration >= DATE_SUB(CURDATE(), INTERVAL 7 DAY) limit ?,6;`,
+  newListPage: `select p.*, format(avg(review_grade),1) AS 'star' from product p left join order_detail d on p.prod_no = d.prod_no
+  left join review r  on r.detail_order_no = d.order_detail_no where registration >= DATE_SUB(CURDATE(), INTERVAL 7 DAY) group by d.prod_no ;`,
+  newList: `select p.*, format(avg(review_grade),1) AS 'star' from product p left join order_detail d on p.prod_no = d.prod_no
+  left join review r  on r.detail_order_no = d.order_detail_no where registration >= DATE_SUB(CURDATE(), INTERVAL 7 DAY) group by d.prod_no limit ?,6;`,
+
+  //베스트 상품
+  bestListPage: `SELECT 
+  p.*,
+  COUNT(*) AS hotItem,
+  ROUND(AVG(r.review_grade), 1) AS avg_grade
+FROM order_detail o 
+LEFT JOIN product p ON o.prod_no = p.prod_no
+LEFT JOIN review r ON r.detail_order_no = o.order_detail_no
+GROUP BY p.prod_no
+HAVING hotItem > 1 and avg_grade > 4
+ORDER BY hotItem DESC;`,
+  bestList: `
+SELECT 
+  p.*,
+  COUNT(*) AS hotItem,
+  ROUND(AVG(r.review_grade), 1) AS avg_grade
+FROM order_detail o 
+LEFT JOIN product p ON o.prod_no = p.prod_no
+LEFT JOIN review r ON r.detail_order_no = o.order_detail_no
+GROUP BY p.prod_no
+HAVING hotItem > 1 and avg_grade > 4
+ORDER BY hotItem DESC
+limit ?, 6;
+`,
 
 
   cartList: `select distinct * 
@@ -137,8 +183,8 @@ let admin = {
   stopUser: `update user set user_grade = ? where user_id = ?`,
   searchUser: `select user_id,user_name,user_email,user_tel,join_date,user_grade from user
   where user_id like concat(concat('%',?),'%') or user_name like concat(concat('%',?),'%') order by ?? limit ?,10`,
-  filterUser : `select user_id,user_name,user_email,user_tel,join_date,user_grade from user where join_date like concat(concat('%',?),'%') order by ?? limit ?,10`,
-  outList : `select * from withdrawal_user where user_id != ''`,
+  filterUser: `select user_id,user_name,user_email,user_tel,join_date,user_grade from user where join_date like concat(concat('%',?),'%') order by ?? limit ?,10`,
+  outList: `select * from withdrawal_user where user_id != ''`,
   //상품관리
   AllprodList: `select prod_no,prod_name,price,discount_price,discount_rate,stock,main_category from product`,
   prodList: `select prod_no,prod_name,price,discount_price,discount_rate,stock,main_category,registration from product order by ?? limit ?,?`,
