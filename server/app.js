@@ -14,6 +14,7 @@ const multer = require("multer");
 const path = require("path");
 const server = require('http').createServer(app);
 const session = require('express-session');
+const sharedsession = require("express-socket.io-session");
 const io = require('socket.io')(server, {
   cors: {
     origin: "http://localhost:8080",
@@ -22,15 +23,19 @@ const io = require('socket.io')(server, {
 
 let grade = ''
 
-app.use(session({
-  secret: 'what', // 암호화하는 데 쓰일 키
-  resave: false, // 세션을 언제나 저장할지 설정함
-  saveUninitialized: true, // 세션에 저장할 내역이 없더라도 처음부터 세션을 생성할지 설정
-  cookie: { //세션 쿠키 설정 (세션 관리 시 클라이언트에 보내는 쿠키)
-    httpOnly: true, // 자바스크립트를 통해 세션 쿠키를 사용할 수 없도록 함
-    Secure: true,
-  },
-  name: 'session-cookie' // 세션 쿠키명 디폴트값은 connect.sid이지만 다른 이름을 줄수도 있다.
+const expressSession = session({
+  secret: 'what',
+  resave: false,
+  saveUninitialized: true,
+  cookie: {
+    secure: false
+  } // HTTPS가 아닌 경우 false로 설정
+});
+
+app.use(expressSession);
+
+io.use(sharedsession(expressSession, {
+  autoSave: true
 }));
 
 
@@ -170,7 +175,9 @@ app.post('/phonecheck', async (req, res) => {
 //소켓
 io.on('connect', (socket) => {
   console.log('소켓연결 on!')
-  if (grade == 'i4') {
+  console.log('연결된 사용자의 세션 아이디: ' + socket.handshake.session.user_id);
+  console.log('연결된 사용자의 등급: ' + socket.handshake.session.user_grade);
+  if (socket.handshake.session.user_grade == 'i4') {
     console.log('당신은 관리자로 로그인 하였습니다.');
     socket.join('admin')
   }
@@ -324,7 +331,9 @@ app.get('/saveAccessToken', async (req, res) => {
     const getToken = await axios({
       url: 'https://api.iamport.kr/users/getToken',
       method: 'post',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json'
+      },
       data: {
         imp_key: '1300467618678700', // REST API 키
         imp_secret: 'xQbiqzngwzGJ7JaeaSMfZ99DHYKOBFTKf5jn7aEU8dlyzvE2rxBb5jvwxG5eUAZcc8jGhpU4AZMNhhbk' // REST API Secret
@@ -345,33 +354,42 @@ app.get('/saveAccessToken', async (req, res) => {
 
 app.post("/cancel", async (req, res, next) => {
   try {
-      /* 결제정보 조회 */
-      const { body } = req;
+    /* 결제정보 조회 */
+    const {
+      body
+    } = req;
 
-      console.log(body)
-      // 클라이언트로부터 전달받은 주문번호, 환불사유, 환불금액
-      const { merchant_uid, reason, cancel_request_amount, access_token } = body;
-      
-      console.log(merchant_uid, reason, cancel_request_amount,access_token,'hi');
-        /* 포트원 REST API로 결제환불 요청 */
-        const getCancelData = await axios({
-          url: "https://api.iamport.kr/payments/cancel",
-          method: "post",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": access_token // 포트원 서버로부터 발급받은 엑세스 토큰
-          },
-          data: {
-            merchant_uid : merchant_uid, // merchant_uid를 환불 `unique key`로 입력
-            reason: reason, // 가맹점 클라이언트로부터 받은 환불사유
-            amount: cancel_request_amount, // 가맹점 클라이언트로부터 받은 환불금액
-          }
-        });
-        const { response } = getCancelData.data; // 환불 결과
-        /* 환불 결과 동기화 */
-    } catch (error) {
-      res.status(400).send(error);
-    }
+    console.log(body)
+    // 클라이언트로부터 전달받은 주문번호, 환불사유, 환불금액
+    const {
+      merchant_uid,
+      reason,
+      cancel_request_amount,
+      access_token
+    } = body;
+
+    console.log(merchant_uid, reason, cancel_request_amount, access_token, 'hi');
+    /* 포트원 REST API로 결제환불 요청 */
+    const getCancelData = await axios({
+      url: "https://api.iamport.kr/payments/cancel",
+      method: "post",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": access_token // 포트원 서버로부터 발급받은 엑세스 토큰
+      },
+      data: {
+        merchant_uid: merchant_uid, // merchant_uid를 환불 `unique key`로 입력
+        reason: reason, // 가맹점 클라이언트로부터 받은 환불사유
+        amount: cancel_request_amount, // 가맹점 클라이언트로부터 받은 환불금액
+      }
+    });
+    const {
+      response
+    } = getCancelData.data; // 환불 결과
+    /* 환불 결과 동기화 */
+  } catch (error) {
+    res.status(400).send(error);
+  }
 })
 
 app.get("/couponList", async (req, res) => { // 쿠폰 리스트
@@ -433,7 +451,7 @@ app.put("/CheckAllUpdate/:check", async (req, res) => { // 체크박스 전체�
 // });
 
 app.put("/Cartquantity/:no/:cno", async (req, res) => { // 장바구니에 담긴 상품의 재고가 빠져서 장바구니재고수정이필요한경우
-  let data = [req.params.no,req.params.cno];
+  let data = [req.params.no, req.params.cno];
   let list = await mysql.query("test", "Cartquantity", data);
   res.send(list);
 });
@@ -489,7 +507,9 @@ app.get("/orderList/:no", async (req, res) => { // 주문완료 리스트
 app.post("/orderInsert", async (request, res) => { // orders 등록
   let data = request.body.param;
   res.send((await mysql.query("test", "orderInsert", data)));
-  io.to('amdin').emit('order', '새로운 결제가 있습니다.')
+  io.to('admin').emit('order', '새로운 결제가 있습니다.')
+  console.log('당신은~~~ x맨이~~')
+  console.log(grade)
 });
 
 app.post("/orderdetailInsert", async (request, res) => { // order_detail 등록
@@ -1455,4 +1475,11 @@ left join review r  on r.detail_order_no = d.order_detail_no left join (select f
   }
   let result = await mysql.query2(base);
   res.send(result);
+})
+
+app.get('/sessiontest', (req, res) => {
+  res.send(grade)
+  console.log('=!=')
+  console.log(grade)
+  console.log('=!=')
 })

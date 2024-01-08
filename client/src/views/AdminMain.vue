@@ -1,7 +1,9 @@
 <template>
 
   <div class="container-fluid">
+    <v-btn @click="tt" >asdf</v-btn>
     <div class="row">
+      {{ $store.state.user }}asdfasdf
       <side/>
       <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
         <table class="table">
@@ -337,6 +339,10 @@ import icon from '../components/admin/icon.vue';
           this.orderList = result.data;
         }
        },
+       async tt(){
+        await axios.get('/api/sessiontest')
+       }
+       ,
        showNotification(message) {
   // 사용자가 알림을 허용했는지 확인
   if (Notification.permission == 'granted') {

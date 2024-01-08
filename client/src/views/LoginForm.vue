@@ -138,6 +138,9 @@
          }else{
            alert(users[0].user_name +'님 환영합니다');
           if(users[0].user_grade == 'i4'){
+              
+  this.$store.commit('login',users[0]) // (함수명, 전달인자)
+  this.$store.commit('cartEmpty')
             this.$router.push('/admin/Main')
             return;
           }
