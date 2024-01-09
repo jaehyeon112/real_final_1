@@ -1447,6 +1447,21 @@ app.get("/myReview/:rno", async (req, res) => {
   let datas = [req.session.user_id, req.params.rno]
   res.send(await mysql.query("reviews", "reviewInfo", datas))
 });
+//상품 리뷰 받아옥(서여으히)
+app.get("/reviewList/:pno", async (req, res) => {
+  let datas = req.params.pno;
+  res.send(await mysql.query("reviews", "reviewList", datas));
+});
+
+app.put("/likeUp/:rno", async (req, res) => {
+  let datas = req.params.rno;
+  res.send(await mysql.query("reviews", "likeUp", datas));
+});
+app.put("/likeDown/:rno", async (req, res) => {
+  let datas = req.params.rno;
+  res.send(await mysql.query("reviews", "likeDown", datas));
+});
+
 //리뷰수정
 app.put("/reviewUpdate/:rno", async (req, res) => {
   let datas = [req.body.param, req.session.user_id, Number(req.params.rno)]
@@ -1457,16 +1472,20 @@ app.delete("/deleteReview/:rno", async (req, res) => {
     let result = await mysql.query('reviews', 'deleteReview', rno)
     res.send(result);
   }),
-  app.get("/rLikeCnt/:rno", async (req, res) => {
-    let datas = [req.params.rno, req.session.user_id]
-    res.send(await mysql.query("reviews", "selectReviewLike", datas))
+  app.get("/rLikeCnt/:user/:rno", async (req, res) => {
+    let datas = [req.params.user,req.params.rno]
+    let result = await mysql.query("reviews", "selectReviewLike", datas)
+    res.send(result);
+    console.log(result)
   })
-app.post("/reviewLike", async (req, res) => {
-  let data = req.body.param
+
+app.post("/reviewLike/:rno/:uid", async (req, res) => {
+  let data = [req.params.rno,req.params.uid]
   res.send(await mysql.query("reviews", "insertReviewLike", data))
-})
-app.delete("/reviewLike/:rno", async (req, res) => {
-  let datas = [req.params.rno, req.session.user_id]
+});
+
+app.delete("/reviewLike/:rno/:uid", async (req, res) => {
+  let datas = [req.params.rno, req.params.uid]
   res.send(await mysql.query("reviews", "deleteReviewLike", datas))
 })
 //상세페이지 버튼 disable용

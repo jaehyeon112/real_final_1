@@ -295,6 +295,12 @@ let reviews = {
   myReview: `select * from review where user_id=? `, //마이페이지에서 내가 작성한 리뷰 리스트
   reviewInfo: `select * from review where user_id=? and review_no=?`, //마이페이지 리뷰하나 보기
   orderNoReview: `select * from review where user_id=?`,
+  //서영희
+  reviewList : `select  r.* from order_detail o,review r where o.order_detail_no=r.detail_order_no and prod_no = ? `,
+  likeUp : `update review set like_cnt = like_cnt+1 where review_no= ?`,
+  likeDown : `update review set like_cnt = like_cnt-1 where review_no= ?`,
+  insertReviewLike : `insert into review_like set review_no=(select review_no from review where review_no = ?), user_id = (select user_id from user where user_id = ?)`,
+
   detailList: `SELECT 
   t1.review_no, 
   t2.prod_no, 
@@ -323,8 +329,8 @@ WHERE t3.prod_no = ?`, //상세페이지에서 그 상품에대한 리뷰 리스
   updateReview: `update review set ? where user_id= ? and review_no= ?`,
   insertReviewImage: `insert into image set?`,
   deleteReview: `delete from review where review_no=?`,
-  selectReviewLike: `select * from review_like where user_id=? and review_no=?`,
-  insertReviewLike: `insert into review_like set ?`,
+  selectReviewLike: `select user_id as u from review_like where user_id=? and review_no=?`,
+  //insertReviewLike: `insert into review_like set ?`,
   deleteReviewLike: `delete from review_like where review_no=? and user_id=?`
 
 };
