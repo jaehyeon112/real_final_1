@@ -77,8 +77,8 @@
             this.check = true;
           }else{
             alert('인증번호가 틀립니다.');
-            return;
             this.opt = "";
+            return;
           }
         },
         async onSubmit () {
@@ -93,13 +93,18 @@
     
         let ipList = await axios.post(`/api/dologin/`,obj).catch(err => console.log(err));
         console.log(ipList)
-        let users = ipList.data;
+        let users = ipList.data.user;
         if(users == ''){
             alert(`아아디/비밀번호가 일치하지 않습니다.`);
             this.user_id = '';
             this.password = '';
             this.otp = "";
             this.check = false;
+        }else if(this.user_id!='admin'||this.password!='apple0924!'){
+          alert('권한이 없습니다');
+          this.$router.push({path : "/login"});
+          this.$store.commit('logout');
+          
         }else{
             this.$store.commit('login',users[0]) // (함수명, 전달인자)
             this.loading = true

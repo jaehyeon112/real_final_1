@@ -352,7 +352,8 @@ let orders = {
   savingCart: `insert into cart set ?`,
   updateCart: `update cart set quantity=quantity+? where prod_no =? and user_id=?;`,
   comparisonCart: `select * from cart where user_id=?`,
-  detailInfo: `select * from product where prod_no=?`,
+  detailInfo: `  select distinct file_name, p.* from product p left join order_detail d on p.prod_no = d.prod_no
+  left join review r  on r.detail_order_no = d.order_detail_no left join file f on(p.prod_no = f.prod_no) where p.prod_no = ? order by f.orders`,
 
 
   //detailOrderLists:`select * from order_detail o1 left join orders o2 on o1.order_no = o2.order_no where o1.order_no =? and user_id = ?`,//주문창에서 상세주문내역으로 이동시 불러올 값
