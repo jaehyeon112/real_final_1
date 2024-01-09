@@ -108,7 +108,7 @@
   
   let ipList = await axios.post(`/api/dologin/`,obj)  
                   .catch(err => console.log(err));
-                  console.log(ipList.data)
+                  // console.log(ipList.data)
                   
        let users = ipList.data;
          
@@ -136,7 +136,7 @@
           alert('아디 비번 확인;')
           return;
          }else{
-           alert(users[0].user_name +'님 환영합니다');
+          //  alert(users[0].user_name +'님 환영합니다');
           if(users[0].user_grade == 'i4'){
             this.$router.push('/admin/Main')
             return;

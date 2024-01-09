@@ -126,7 +126,7 @@ export default {
             }
              let result = await axios.post('/api/reviewInsert', obj) //sql에서 두번째로 넘어오는 데이터(body.param)를 obj에 넣는다 
                                      .catch(err=>console.log('리뷰등록오류'+err))
-             let point = await axios.post(`/api/reviewPoint/`,obj2)
+             let point = await axios.post(`/api/reviewPoint`,obj2)
                                     .catch(err=>console.log('포인트오류 '+err))
              let points = await axios.put(`/api/reviewPointUp`)
                                      .catch(err=>console.log("업데오류"+err))                                                                
