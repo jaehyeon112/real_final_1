@@ -85,41 +85,16 @@ async changePass(){
                             .catch(err => console.log(err))
     //console.log('result: ', result);
     //console.log(result.data);
+    if(this.oldPass == this.newPass){
+      alert(`비밀번호 변경 성공`);
+      this.$router.push({name : 'login'});
+    }else{
+      alert(`변경 실패. 일치하는 비번 입력해주세요!`)
+    }
 
 
 
 
-
-//   // 영어(대소문자)와 숫자만 정규표현식
-//   var onlyEngNum = /^[a-zA-Z0-9]*$/;
-
-//   // 비밀번호 유효성 검사
-//   if(!this.validationPwd(pwd)){
-//     alert("비밀번호는 영어 대문자 혹은 소문자, 숫자, 특수문자를 반드시 포함하는 8자 이상이어야 합니다."); 
-//   } else if(!onlyEngNum.test(pwd)){
-//     alert("비밀번호에는 영어와 숫자 외의 문자가 포함될 수 없습니다."); 
-//   } else {
-//     alert("비밀번호가 유효합니다."); 
-//   }
-// },
-
-// //비번
-// passwordValid() {
-//    if (this.oldPass === '') {
-//     this.passwordValidFlag = true;
-//   } else {
-//     this.passwordValidFlag = this.validationPwd(this.oldPass);
-//   }
-//   },
-
-//   //비번일치
-//   passwordCheckValid() {
-//     this.passwordCheckFlag = (this.oldPass === this.newPass);
-//   },
-  
-//   validationPwd(pwd){
-//     var pwdCh = /^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[^a-zA-Z0-9]).{8,}$/;  //영어대소문자, 숫자, 특수문자 all 포함 최소 8자 이상. 
-//     return pwdCh.test(pwd);
      },
   
 

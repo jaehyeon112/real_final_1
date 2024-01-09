@@ -632,6 +632,24 @@ app.get("/login/kakao", async(req, res)=> {
   res.send(list);
 })
 
+//putPass
+app.get("/putpass/:id", async(req, res)=> {
+  let uid = req.params.id;
+  let pass = await mysql.query("user", "putPass", uid);
+  console.log(pass);
+
+  res.send(pass);
+})
+
+//changePass
+app.put("/changepass/:password/:id", async(req, res)=> {
+  let data = [req.params.password, req.params.id]
+  let result = await mysql.query('user','changePass', data);
+  res.send(result);
+  console.log(result);
+
+})
+
 
 //아이디비번찾기
   //아이디찾기

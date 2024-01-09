@@ -260,8 +260,8 @@ if (users.length > 0) {
           console.log(myKakao);
 
 
-          if(res.length == 1){
-            alert(this.$store.state.kakaoId+'로그인실패야너')
+          if(result.data.length == 0){
+            alert(this.$store.state.kakaoId+'db에 카카오 아이디 회원 없는상태')
           this.$router.push({ name: 'join' });
           } else {
             this.$store.commit('kakaoLogin', res.id)
@@ -269,8 +269,6 @@ if (users.length > 0) {
            this.$router.push({name : 'realmain'})
           }
 
-
-        
         },
         fail: (error) => {
           console.log(error);
@@ -286,7 +284,7 @@ if (users.length > 0) {
       // Vuex 스토어에 카카오 사용자 ID 업데이트
       this.$store.commit('kakaoLogin', kakaoId);
 
-      // 다른 로직들...
+      
     } catch (error) {
       console.error('카카오 로그인 중 에러:', error);
     }
