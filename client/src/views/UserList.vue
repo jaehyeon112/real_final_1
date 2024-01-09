@@ -93,6 +93,7 @@ export default {
         }
     },
     created(){
+        window.scrollTo(0, 0);
         this.total();
         this.uList();
     },
