@@ -93,7 +93,7 @@
     
         let ipList = await axios.post(`/api/dologin/`,obj).catch(err => console.log(err));
         console.log(ipList)
-        let users = ipList.data;
+        let users = ipList.data.user;
         if(users == ''){
             alert(`아아디/비밀번호가 일치하지 않습니다.`);
             this.user_id = '';
