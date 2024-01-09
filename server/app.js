@@ -5,8 +5,9 @@ const jwt = require('jsonwebtoken');
 const SECRET_KEY = 'your_secret_key';
 const mysql = require("./db.js");
 const bodyParser = require('body-parser');
-//const { createTransport } = require('nodemailer');
-//const config = require('./config'); // config 파일에 Gmail API 정보
+// 비번암호화
+const bcrypt = require('bcrypt');//암호화
+const saltRounds = 10; // 솔팅 라운드 수
 const express = require("express");
 const app = express();
 const axios = require("axios");
@@ -21,6 +22,31 @@ const io = require('socket.io')(server, {
     origin: "http://localhost:8080",
   }
 });
+
+
+
+app.post('/register', (req, res) => {
+  const userPassword = req.body.password;
+
+  bcrypt.hash(userPassword, saltRounds, (err, hash) => {
+      if (err) {
+          console.error(err);
+          res.status(500).json({ message: '비밀번호 해싱 오류' });
+      } else {
+          // 해시된 비밀번호를 데이터베이스에 저장
+          User.create({ username: req.body.username, password: hash })
+              .then(user => {
+                  res.status(200).json({ message: '회원가입이 완료되었습니다.' });
+              })
+              .catch(err => {
+                  console.error(err);
+                  res.status(500).json({ message: '서버 오류' });
+              });
+      }
+  });
+});
+
+
 
 let grade = ''
 

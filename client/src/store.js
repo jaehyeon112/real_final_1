@@ -40,14 +40,21 @@ const store = createStore({
     },
 
     async kakaoLogin(state, id) {
-        let a = await axios.get('') // app.js에 카카오아이디를 조건으로해서 select * from user where user_id = 카카오 아이디;
+      // app.js에 카카오아이디를 조건으로해서 select * from user where user_id = 카카오 아이디;
         // a는 유저객체를 담고 있음. 그럼 그 유저객체를
       // state.user = a
-      state.user = a;
-      state.user.user_name = state.user.user_id
+
+        let a = await axios.get('/api/login/kakao')
+                          .catch(err => console.log(err)) 
+        console.log('카카오 axios')                 
+        console.log(a);
+        console.log(a.data[0].user_id)
+      state.user = {user_id : a.data[0].user_id };
+      
+      state.user.user_name = a.data[0].user_id;
       // state.kakaoId = a;
       // console.log(id + '/')
-      //state.kakaoId = id;
+      state.kakaoId = id;
       // state.user.user_name = state.kakaoId
     },
 

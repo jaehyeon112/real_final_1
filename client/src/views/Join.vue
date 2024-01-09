@@ -2,15 +2,17 @@
 <template>
 <div class="login-wrap">
   <div class="login-html">
-    <h2>{{ mode === 'edit' ? '회원 정보 수정' : '회원 가입' }}</h2>
-    <input id="tab-2" type="radio" name="tab" class="sign-up"><label for="tab-2" class="tab">Sign Up</label>
+    <h2 class="font-weight-bold">{{ mode === 'edit' ? '회원 정보 수정' : '회원 가입' }}</h2>
+     <v-divider class="mt-4"></v-divider>
+    <input id="tab-2" type="radio" name="tab" class="sign-up">
+    <!-- <label for="tab-2" class="tab" >Sign Up</label> -->
     <div class="login-form">
       <div class="sign-up-htm">
 
         <!-- 회원 수정 시 id랑 이름은 readonly로 수정못하게 해야함 -->
         <div class="group" v-if="!$store.state.kakaoId">
           <label for="user" class="label"> ID </label>
-          <p>{{ $store.state.kakaoId != '' ? '카카오로로그인함' : '걍로그인함' }}</p>
+          <!-- <p>{{ $store.state.kakaoId != '' ? '카카오로로그인함' : '걍로그인함' }}</p> -->
       
           <div>
           <input  id="user" type="text" class="input" v-model="userInfo.user_id" :readonly="mode =='edit'" autofocus placeholder="영문+숫자 조합 6자이상 11자 이하" 
@@ -25,17 +27,15 @@
 
         </div>
 
-        <div class="group" v-if="!$store.state.kakaoId">
+        <div class="group">
           <!-- type 두개 password로 바꾸기 -->
           <label for="pass" class="label">Password</label>
-          <input id="pass" type="text" class="input" data-type="text" maxlength=16 v-model="userInfo.user_password" @input="passwordValid" v-bind:="isUpdated">
-          <div v-if="!userInfo.user_password && !passwordValidFlag"  style="color: red;">
+          <input id="pass" type="text" class="input" data-type="text" maxlength=16 v-model="userInfo.user_password" @blur="passwordValid" v-bind:="isUpdated">
+          <div v-if="!passwordValidFlag"  style="color: red;">
             유효하지 않은 비밀번호 입니다.
           </div>
-             <div v-if="!userInfo.user_password && !isFieldValid.user_password" class="error-message"  :style="{ color: 'red' }">{{ fieldErrorMessages.user_password }}</div>
         </div>
-
-        <div class="group" v-if="!$store.state.kakaoId">
+        <div class="group">
           <label for="pass" class="label"> Password CHECK</label>
           <input id="pass" type="text" class="input" data-type="text" maxlength=16 v-model="userInfo.userChPass" @blur="passwordCheckValid">
           
@@ -56,7 +56,7 @@
 
     <div class="group">
       <label for="email" class="label">Email Address</label>
-      {{userInfo}}
+      
       <input id="email" type="text" class="input" v-model="userInfo.user_emailid" placeholder="이메일아이디 입력" v-bind:="isUpdated"> 
               <div v-if="!userInfo.user_emailid && !isFieldValid.user_emailid" class="error-message"  :style="{ color: 'red' }">{{ fieldErrorMessages.user_emailid }}</div>
     <span>@</span>
@@ -79,13 +79,7 @@
           <label for="email" class="label">인증번호입력하기</label>
           <input id="email" type="text" class="input" v-model="userInfo.verificationCode" placeholder="인증 코드를 입력하세요">
           <v-btn type="button" v-if="!validEmailNum" @click="verifyEmailNum()" >확인</v-btn>
-          <p v-if="validEmailNum" style="color: green;">인증이 완료되었습니다.</p>
-          <!-- 남은 시간 표시 -->
-        <p v-if="emailVerifTimerRemain > 0">
-          남은 시간: {{ this.emailVerifTimerRemain }}초
-        </p>
-        <p v-else style="color: red;">인증 시간이 초과되었습니다. 다시 시도해주세요.</p>
-      
+          <p v-if="validEmailNum" style="color: green;">인증이 완료되었습니다.</p>git 
         </div>
 
          <div class="group">
@@ -102,12 +96,6 @@
           <input id="tel" type="text" class="input" v-model="userInfo.verificationText" placeholder="인증 번호를 입력하세요">
           <v-btn type="button" v-if="!validTextNum" @click="verifyTextNum()" >확인</v-btn>
           <p v-if="validTextNum" style="color: green;">인증이 완료되었습니다.</p>
-
-             <p v-if="textVerifTimerRemain > 0">
-          남은 시간: {{ this.textVerifTimerRemain }}초
-        </p>
-        <p v-else style="color: red;">인증 시간이 초과되었습니다. 다시 시도해주세요.</p>
-
         </div>                    
 
 
@@ -141,8 +129,8 @@
     </div>
         <div v-if="!userInfo.birth&& !isFieldValid.birth" class="error-message"  :style="{ color: 'red' }">{{ fieldErrorMessages.birth }}</div>
 
-
-
+<br>
+ <v-divider class="mt-4"></v-divider>
         <div class="group">
           <input id="check" type="checkbox" class="check"  v-model="userInfo.allCh" @change="updateAll">
           <label for="check"><span class="icon"></span> 전체 동의합니다.</label>
@@ -214,6 +202,7 @@
               <template v-slot:default="{ isActive }">
               <v-card title="Dialog">
                 <v-card-text> 
+                <pre>
                   개인정보처리방침
 
 [차례]
@@ -260,7 +249,7 @@
 본 사이트는 회원가입, 상담, 서비스 신청 등을 위해 아래와 같은 개인정보를 수집하고 있습니다. 
 1) 개인정보 수집방법 : 홈페이지(회원가입)
 2) 수집항목 : 이름 , 생년월일 , 성별 , 로그인ID , 비밀번호 , 전화번호 , 주소 , 휴대전화번호 , 이메일 , 주민등록번호 , 접속 로그 , 접속 IP 정보 , 결제기록
-
+</pre>
                   </v-card-text>
 
                 <v-card-actions>
@@ -272,8 +261,9 @@
           </v-dialog>
           </label>
         </div>
-
-
+<br>
+ <v-divider class="mt-4"></v-divider>
+ <br>
         <div class="group">
           <input type="submit" class="button" 
           :class="{ 'disabled-button': isAnyFieldEmpty || !isAgeValid }"
@@ -289,7 +279,8 @@
 
 <script>
 import axios from 'axios';
-
+//const bcrypt = require('bcrypt');
+//const saltRounds = 10;
 
 export default {
   
@@ -312,15 +303,6 @@ export default {
       isAgeValid : true,
 
       isAnyFieldEmpty : false,
-
-      //인증번호 제한시간 주기! 아아앙맘ㅇㄴ랑라;너ㅓ;ㅏ인ㄹㄹ
-      emailVerifTimer : null,
-      textVerifTimer : null,
-      emailVerifTimerRemain : 10, // 이메일 인증 남은시간 10초
-      textVerifTimerRemain : 10,
-
-
-
 
 
       //회원가입 v-model
@@ -410,10 +392,6 @@ export default {
   },
 
 
-
-
-
-
   created() {
     // $route.params.id로 전달된 파라미터에 접근
     this.oneUserId = this.$route.query.user_id;
@@ -448,8 +426,6 @@ computed: {
     },
 
 
-  
- 
 },
 
 
@@ -551,35 +527,27 @@ computed: {
   },
 
 
-  //비밀번호
+//비밀번호
   checkPwd(pwd){
-
-// *, !, ^, $, @, ? 특수문자만 포함하여 영어(대소문자)와 숫자만 정규표현식
-var allowedSpecialChars = /^[a-zA-Z0-9*!^$@?]*$/;
-
-// 비밀번호 유효성 검사
-if (!this.validationPwd(pwd)) {
-  alert("비밀번호는 영어 대문자 혹은 소문자, 숫자, *, !, ^, $, @, ? 특수문자를 반드시 포함하는 8자 이상이어야 합니다.");
-} else if (!allowedSpecialChars.test(pwd)) {
-  alert("비밀번호에는 영어와 숫자, *, !, ^, $, @, ? 특수문자 외의 문자가 포함될 수 없습니다.");
-} else {
-  alert("비밀번호가 유효합니다.");
-}
-  },
-
+  // 영어(대소문자)와 숫자만 정규표현식
+  var onlyEngNum = /^[a-zA-Z0-9]*$/;
+  // 비밀번호 유효성 검사
+  if(!this.validationPwd(pwd)){
+    alert("비밀번호는 영어 대문자 혹은 소문자, 숫자, 특수문자를 반드시 포함하는 8자 이상이어야 합니다."); 
+  } else if(!onlyEngNum.test(pwd)){
+    alert("비밀번호에는 영어와 숫자 외의 문자가 포함될 수 없습니다."); 
+  } else {
+    alert("비밀번호가 유효합니다."); 
+  }
+},
 //비번
 passwordValid() {
-  
-   if (this.userInfo.user_password.trim() === '') {
+   if (this.userInfo.user_password === '') {
     this.passwordValidFlag = true;
   } else {
     this.passwordValidFlag = this.validationPwd(this.userInfo.user_password);
-    if(this.passwordValidFlag) {
-      this.checkPwd(this.userInfo.user_password);
-    }
   }
   },
-
   //비번일치
   passwordCheckValid() {
     this.passwordCheckFlag = (this.userInfo.user_password === this.userInfo.userChPass);
@@ -600,44 +568,15 @@ passwordValid() {
       if (this.userInfo.email_domain === '직접입력') {
      
         this.userInfo.user_email = `${this.userInfo.user_emailid}@${this.userInfo.direct_input_domain}`;
-         // console.log(this.userInfo.user_email )
+
       } else {
-           //console.log('여기보세요1')
-        //console.log(`${this.userInfo.user_emailid}@${this.userInfo.direct_input_domain}`)
-       // console.log('여기보세요')
+
         this.userInfo.user_email = `${this.userInfo.user_emailid}@${this.userInfo.email_domain}`;
-        //console.log(this.userInfo.user_email )
+
       }
 },
-  // 이메일 인증 시간제한 걸기! 
-    goEmailVerifTimer(){
-      this.emailVerifTimer = setInterval(() => {
-        //시간 초과 -> 타이머 초기화하고 인증번호 재전송하기
-        this.emailVerifTimerRemain -= 1; 
-        if(this.emailVerifTimer == 0) {
-          clearInterval(this.emailVerifTimer);
-          this.isEmailSent = false;
-         alert(`이메일 인증시간 초과. 인증번호 재발급 하세요.`)
-        }
-      }, 10000) // 30초 ! / 3분(180,000 milliseconds), 1분(60000)
-    },
 
-      // 휴대폰 문자 인증 시간제한 걸기! 
-    goTextVerifTimer(){
-      this.textVerifTimer = setInterval(() => {
-        //시간 초과 -> 타이머 초기화하고 인증번호 재전송하기
-         this.textVerifTimerRemain -= 1;
-
-        if(this.textVerifTimer == 0) {
-          clearInterval(this.textVerifTimer);
-          this.isEmailSent = false;
-         alert(`휴대폰 인증시간 초과. 인증번호 재발급 하세요.`)
-        }
-
-      }, 30000) // 3초 3분(180,000 milliseconds)
-    },
-
-    async checkEmail(email){
+   async checkEmail(email){
 
       if(!this.userInfo.user_email.trim()){
         alert(`이메일을 입력해주세요`);
@@ -698,8 +637,6 @@ passwordValid() {
          if(result.data.status == "200" ){
           alert('이메일로 인증번호 보내기 성공');
           this.isEmailSent = true;
-          this.emailVerifTimerRemain = 10; //남은시간 초기화
-          this.goEmailVerifTimer(); //타이머 시작! 
           return;
        }else{
           alert('이메일 인증번호 보내기');
@@ -714,7 +651,7 @@ passwordValid() {
         console.log(this.no);
         alert(`인증성공`);
         this.validEmailNum = true;
-        clearInterval(this.emailVerifTimer); // 타이머 초기화
+       
       }
     },
   
@@ -744,7 +681,7 @@ passwordValid() {
          if(result.data.statusCode == "2000" ){
           alert('휴대폰 인증번호 보내기 성공');
           this.isTextSent =true;
-          this.goTextVerifTimer(); //타이머 시작! 
+          
           return;
        }else{
           alert('휴대폰 인증번호 보내기 ');
@@ -759,8 +696,7 @@ passwordValid() {
         console.log(this.phoneNo);
         alert(`인증성공`);
         this.validTextNum = true;
-        this.textVerifTimerRemain = 10; //남은시간 
-        clearInterval(this.textVerifTimer); //타이머초기화
+      
       }
     },
 
@@ -784,10 +720,6 @@ checkAge(){
     this.isAgeValid = true;
   }
 },
-
-
-
-
 
 
   async joinInsert(){
@@ -855,13 +787,17 @@ if (!this.$store.state.kakaoId) {
     return;
   }
 
+  // 비밀번호 암호화
+      const hashedPassword = await bcrypt.hash(this.userInfo.user_password, saltRounds);
+
     let info = this.userInfo;
     let data = {
 
       param : {
         "user_id" : this.userInfo.user_id,
         "user_name" : this.userInfo.user_name,
-        "user_password" : this.userInfo.user_password,
+        //"user_password" : this.userInfo.user_password,
+        "user_password" : hashedPassword, //비번암호화
         //"user_emailid" : this.userInfo.user_emailid,
        // "email_domain" : this.userInfo.email_domain,
         "user_email" : this.userInfo.user_email,
@@ -1057,8 +993,8 @@ a{color:inherit;text-decoration:none}
   position:absolute;
   padding:90px 70px 50px 70px;
   background:rgba(252, 252, 252, 0.9);
-  border-color : rgba(142, 4, 184, 0.9);
-  border : 2px solid;
+  /* border-color : rgba(0, 0, 0, 0.9); */
+  /* border : 1px solid; */
 }
 .login-html .sign-in-htm,
 .login-html .sign-up-htm{
@@ -1093,6 +1029,7 @@ a{color:inherit;text-decoration:none}
 .login-html .sign-up:checked + .tab{
   color:#0a0601;
   border-color:#0e0701;
+  
 }
 .login-form{
   min-height:345px;
@@ -1104,18 +1041,29 @@ a{color:inherit;text-decoration:none}
   margin-bottom:15px;
 }
 .login-form .group .label,
-.login-form .group .input,
-.login-form .group .button{
+.login-form .group .input
+{
   width:100%;
-  color:#130101;
+  color:#0e0000;
   display:block;
 }
+
+.login-form .group .button
+{
+    width:100%;
+  color:#faf7f7;
+  display:block;
+  font-weight : bold;
+  font-size : larger;
+
+}
+
 .login-form .group .input,
 .login-form .group .button{
   border:none;
   padding:15px 20px;
   border-radius:25px;
-  background:rgba(78, 48, 160, 0.1);
+  background:rgba(79, 77, 83, 0.1);
 }
 .login-form .group input[data-type="password"]{
   -text-security:circle;
@@ -1126,7 +1074,7 @@ a{color:inherit;text-decoration:none}
   font-size:12px;
 }
 .login-form .group .button{
-  background:#ca7dd9;
+  background:#e4780d;
 }
 .login-form .group label .icon{
   width:15px;
