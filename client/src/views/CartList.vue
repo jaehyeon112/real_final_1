@@ -113,7 +113,7 @@
           :discount="discount"
           :delivery="delivery"
           :final="final"/>
-          <v-btn v-model="check" @click="goTologinForm" :disabled="box == 1" class="css-fwelhw e4nu7ef3" style="color: white;" height="72">로그인</v-btn>
+          <v-btn v-model="check" @click="goTologinForm" class="css-fwelhw e4nu7ef3" style="color: white;" height="72">로그인</v-btn>
         </v-col>
       </v-row>
     </v-card> 
@@ -133,7 +133,8 @@
             :discount="discount"
             :delivery="delivery"
             :final="final"/>
-            <v-btn v-model="check" @click="showMenu" :disabled="box === 0" class="css-fwelhw e4nu7ef3" style="color: white;">주문하기</v-btn>
+            <v-btn v-if="this.$store.state.user.user_id != null" v-model="check" @click="showMenu" class="css-fwelhw e4nu7ef3" style="color: white;">주문하기</v-btn>
+            <v-btn v-else v-model="check" @click="goTologinForm" class="css-fwelhw e4nu7ef3" style="color: white;">로그인</v-btn>
           </v-col>
         </v-row>
       </v-card> 
@@ -165,15 +166,15 @@ export default {
     this.fetchCartList();
   },
   computed :{
-    check() { // 장바구니 체크안되면 주문하기버튼 활성화가 안되게 설정
-          let checkbox = 0;
-          for (let i = 0; i < this.cartList.length; i++) {
-            if (this.cartList[i].cart_checkbox == 1) {
-              checkbox = 1;
-            }
-          }
-              this.Checkbox = checkbox
-        }
+    // check() { // 장바구니 체크안되면 주문하기버튼 활성화가 안되게 설정
+    //       let checkbox = 0;
+    //       for (let i = 0; i < this.cartList.length; i++) {
+    //         if (this.cartList[i].cart_checkbox == 1) {
+    //           checkbox = 1;
+    //         }
+    //       }
+    //           this.box = checkbox
+    //     }
   },
   // watch : {
   //   cartList(){
@@ -389,16 +390,22 @@ export default {
         this.prodStock = this.cartList[i].stock
         this.cartQuantity = this.cartList[i].quantity
         this.cartNo = this.cartList[i].cart_no
+        this.Checkbox = this.cartList[i].cart_checkbox
       }
-        if(this.prodStock < this.cartQuantity) {
-          console.log(this.prodStock,'상품재고')
-          alert('재고가 부족한 상품이 있어 상품 수량이 변경됩니다.')
-          console.log(this.cartNo,'상품번호')
-                    await axios.put(`/api/Cartquantity/${this.prodStock}/${this.cartNo}`,)
-                                      .catch(err => console.log(err));
-          console.log('수량변경완료')
+        if(this.Checkbox == 1) {
+
+          if(this.prodStock < this.cartQuantity) {
+            console.log(this.prodStock,'상품재고')
+            alert('재고가 부족한 상품이 있어 상품 수량이 변경됩니다.')
+            console.log(this.cartNo,'상품번호')
+                      await axios.put(`/api/Cartquantity/${this.prodStock}/${this.cartNo}`,)
+                                        .catch(err => console.log(err));
+            console.log('수량변경완료')
+          }else{
+            this.$router.push('/orderForm');
+          }
         }else{
-          this.$router.push('/orderForm');
+          alert('선택된 상품이 없습니다.')
         }
       },
   }

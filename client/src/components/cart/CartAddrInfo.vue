@@ -17,36 +17,47 @@
           <v-text-field label="주소" v-model="addr1" hide-details="auto" ></v-text-field>
           <v-text-field label="상세주소" v-model="addr2" hide-details="auto" ></v-text-field>
           <v-text-field label="요청사항" v-model="deliveryrequest" hide-details="auto" ></v-text-field>
+          {{ deliveryStatus }}
         </form>
     </v-container>
   </template>
   
   <script>
+  import axios from 'axios'
+  
   export default {
     name: 'CartAddInfo',
     data() {
       return {
+        isolatedList : [],
         zip: '',
         addr1: '',
         addr2: '',
         deliveryrequest: '',
-        checkbox : false
+        checkbox : false,
+        isMountainousArea: '',
+        deliveryStatus : '' // 배송가능지역유무판별
       }
     },
-
+    created(){
+      this.getisolatedRegionList();
+    },
+    computed : {
+    },
+    
     methods: {
       CheckboxChange() {
-  if (this.checkbox == true ) {
-    this.zip = this.$store.state.user.postcode
-    this.addr1 = this.$store.state.user.address
-    this.addr2 = this.$store.state.user.detail_address
-    this.$emit('getAddress', this.zip, this.addr1, this.addr2);
-  } else {
-    this.zip = '';
-    this.addr1 = '';
-    this.addr2 = '';
-  }
-},
+        if (this.checkbox == true ) {
+          this.zip = this.$store.state.user.postcode
+          this.addr1 = this.$store.state.user.address
+          this.addr2 = this.$store.state.user.detail_address
+          this.$emit('getAddress', this.zip, this.addr1, this.addr2);
+        } else {
+          this.zip = '';
+          this.addr1 = '';
+          this.addr2 = '';
+        }
+      },
       showApi() {
         new window.daum.Postcode({
           oncomplete: (data) => {
@@ -76,7 +87,7 @@
               }
   
               // 우편번호와 주소 정보를 해당 필드에 넣는다.
-              this.zip = data.zonecode; //5자리 새우편번호 사용
+              this.zip = parseInt(data.zonecode); //5자리 새우편번호 사용
               this.addr1 = fullRoadAddr;
               // 이벤트 발생
               this.$emit('getAddress', this.zip, this.addr1, this.addr2);
@@ -88,7 +99,25 @@
       },
       getdelivery(){
         this.$emit('getdelivery', this.deliveryrequest);
+      },
+      async getisolatedRegionList(){
+          await axios.get(`/api/isolatedRegionList`)
+                      .then(response => {
+                            this.isolatedList = response.data;
+                      })
+                      .catch(err => console.log(err));
+      },
+      checkDeliveryStatus() {
+      if (this.zip && this.isolatedList.length > 0) {
+        this.isMountainousArea = this.isolatedList.some(list => {
+          return this.zip >= list.start_code && this.zip <= list.end_postcode;
+        });
+        this.deliveryStatus = this.isMountainousArea ? '배송불가지역' : '배송가능지역';
+      } else {
+        this.deliveryStatus = '';
       }
+    }
+
     }
   }
   </script>

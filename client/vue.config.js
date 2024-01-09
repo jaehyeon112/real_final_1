@@ -1,6 +1,4 @@
-const {
-  defineConfig
-} = require("@vue/cli-service");
+const { defineConfig } = require("@vue/cli-service");
 const target = "http://localhost:3000";
 module.exports = defineConfig({
   transpileDependencies: true,
@@ -14,16 +12,14 @@ module.exports = defineConfig({
         target,
         changeOrigin: true,
         ws: false,
-        pathRewrite: {
-          "^/api": "/"
-        },
+        pathRewrite: { "^/api": "/" },
       },
     },
   },
 
   pluginOptions: {
     vuetify: {
-      // https://github.com/vuetifyjs/vuetify-loader/tree/next/packages/vuetify-loader
-    },
+			// https://github.com/vuetifyjs/vuetify-loader/tree/next/packages/vuetify-loader
+		},
   },
 });
