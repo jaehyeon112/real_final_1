@@ -1,6 +1,7 @@
 <template>
 
   <div class="container-fluid">
+    <v-btn @click="tt" >asdf</v-btn>
     <div class="row">
       <side/>
       <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
@@ -315,7 +316,7 @@ import icon from '../components/admin/icon.vue';
         inquireList : [],
         orderOne : [],
         counting : '',
-        dialog : false
+        dialog : true
       }
     },
     components : {
@@ -331,9 +332,17 @@ import icon from '../components/admin/icon.vue';
       this.getReviewList();
       this.getInquireList();
       this.getCounting();
+      if(this.$store.state.user.user_grade=='i4'){
+        this.$socket.emit('joinRoom', 'ADMIN');
+      }
+      this.$socket.on('test', (m)=>{
+        this.showNotification(m);
+      })
+
       this.$socket.on('order', (m)=>{
       this.showNotification(m)
       })
+
       if (Notification.permission !== 'granted') {
       Notification.requestPermission();
     }
@@ -369,6 +378,14 @@ import icon from '../components/admin/icon.vue';
           this.orderList = result.data;
         }
        },
+
+       
+       async tt(){
+        await this.$socket.emit('joinRoom', 'ADMIN');
+          await axios.get('/api/sockettest')
+       
+       }
+       ,
        showNotification(message) {
       // 사용자가 알림을 허용했는지 확인
       if (Notification.permission == 'granted') {

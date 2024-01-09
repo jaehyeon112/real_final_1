@@ -23,7 +23,7 @@ export default {
     },
     methods:{
         async getLikeList(){
-            let result= await axios.get(`/api/prodLikes/${this.$store.state.user.user_id}`)
+            let result= await axios.get(`/api/prodLikes`)
                                    .catch(err=>console.log(err))
             this.likeList = result.data;                       
         }

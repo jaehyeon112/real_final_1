@@ -13,13 +13,13 @@
             </router-link>
           </li>
           <li>
-            <router-link to="/ServiceCenter/inquire" class="nav-link text-white">
+            <router-link to="/ServiceCenter/inquire" class="nav-link active text-white">
              
               1:1문의
             </router-link>
           </li>
           <li>
-            <router-link to="/ServiceCenter/notice" class="nav-link text-white">
+            <router-link to="/ServiceCenter/notice" class="nav-link active text-white">
              
               공지사항
             </router-link>

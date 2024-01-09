@@ -23,7 +23,7 @@
                         <td>{{ review.review_grade }}</td>
                         <td>{{ $dateFormat(review.review_writedate,'yyyy년MM월dd일') }}</td>
                         <td>{{ review.like_cnt}}</td>
-                        <td><v-btn  @click="goToUpdate(review.review_no)" >리뷰수정</v-btn></td>
+                        <td><v-btn  @click="deleteReview" >리뷰삭제</v-btn></td>
                     </tr>
                 </tbody>
             </table>
@@ -45,13 +45,11 @@ export default {
     },
     methods : {
         async getReviewList(){
-            let member_id = this.$store.state.user.user_id;
-            this.reviewList = (await axios.get(`/api/myReview/${member_id}`)
+            
+            this.reviewList = (await axios.get(`/api/myReview`)
                                    .catch(err => console.log(err))).data;
         },
-        goToUpdate(reviewNo){// 여기 변수는..? value(필드명)
-            this.$router.push({path : '/reviewForm', query : {reviewNo : reviewNo}});//{키:필드명}
-        },
+        
         async deleteReview(){
         let data = await axios.delete(`/api/delReview/${this.review_no}`)
                               .catch(err=>console.log(err));

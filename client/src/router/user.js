@@ -13,22 +13,26 @@ import putpass from "../views/PutPassword.vue";
 import message from "../views/Message.vue";
 import changePass from "../views/ChangePass.vue"
 import test from "../views/test.vue";
+
+
 import myPage from "@/views/MyPage.vue";
 import detailPage from "@/views/detailPage.vue";
 import MyorderList from "@/components/MyPage/orderList.vue";
 import detailOrder from "@/components/MyPage/orderDetail.vue";
 import like from "@/components/MyPage/likeBasket.vue";
 import delivery from "@/components/MyPage/delivery.vue";
-//import addDeli from "@/components/MyPage/addDelivery.vue";
-import myInquire from "@/components/ServiceCenter/inquire.vue";
-import myInquireInfo from "@/components/ServiceCenter/inquireInfo.vue";
 import coupon from "@/components/MyPage/couponList.vue";
 import point from "@/components/MyPage/point.vue";
+
 import myReview from "@/components/MyPage/myReview.vue";
+import myReviewInfo from "@/components/MyPage/myReviewInfo.vue";
+import myInquire from "@/components/ServiceCenter/inquire.vue";
+import myInquireInfo from "@/components/ServiceCenter/inquireInfo.vue";
 import reviewForm from "../views/ReviewForm.vue";
 import inquireForm from "../views/inquireForm.vue";
 import search from '@/components/menu/search.vue';
 import replyList from'@/components/common/replyList.vue'
+
 
 
 export default {
@@ -150,6 +154,11 @@ export default {
           path: "myReview",
           name: "myReview",
           component: myReview
+        },
+        {
+          path: "myReviewInfo",
+          name: "myReviewInfo",
+          component: myReviewInfo
         },
         {
           path: "like",

@@ -83,8 +83,8 @@ async changePass(){
 
     let result = await axios.put(`/api/changepass/${this.oldPass}/${this.userId}`)
                             .catch(err => console.log(err))
-    console.log('result: ', result);
-    console.log(result.data);
+    //console.log('result: ', result);
+    //console.log(result.data);
 
 
 
