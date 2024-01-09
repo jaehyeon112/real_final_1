@@ -336,6 +336,8 @@ this.$socket.emit('authenticate', token);
     .login-wrap{
       width:100%;
       margin:auto;
+       margin-top: 20px;
+   margin-bottom : 20px;
       max-width:525px;
       min-height:1000px;
       position:relative;
@@ -347,7 +349,7 @@ this.$socket.emit('authenticate', token);
       height:100%;
       position:absolute;
       padding:90px 70px 50px 70px;
-      background:rgba(239, 233, 183, 0.9);
+      background:rgba(245, 244, 239, 0.9);
     }
     .login-html .sign-in-htm,
     .login-html .sign-up-htm{
@@ -420,7 +422,7 @@ this.$socket.emit('authenticate', token);
       font-size:12px;
     }
     .login-form .group .button{
-      background:#c5b438;
+      background:#d1cca4;
     }
     .login-form .group label .icon{
       width:15px;

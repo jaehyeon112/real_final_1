@@ -981,8 +981,10 @@ a{color:inherit;text-decoration:none}
 .login-wrap{
   width:100%;
   margin:auto;
+   margin-top: 20px;
+   margin-bottom : 20px;
   max-width:700px;
-  min-height:1600px;
+  min-height:1700px;
   position:relative;
   
   box-shadow:0 12px 15px 0 rgba(0,0,0,.24),0 17px 50px 0 rgba(0,0,0,.19);

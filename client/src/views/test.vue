@@ -97,6 +97,8 @@
 
 
 <style scoped>
-
-
+.v-sheet{
+ margin-top: 20px;
+   margin-bottom : 20px;
+}
 </style>
