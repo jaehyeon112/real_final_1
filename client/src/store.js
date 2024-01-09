@@ -39,16 +39,16 @@ const store = createStore({
       state.cartCount = state.cart.length
     },
 
-    kakaoLogin(state, id) {
-
-       let a = id;
-      // state.user = {};
-      state.user.user_id = a;
+    async kakaoLogin(state, id) {
+        let a = await axios.get('') // app.js에 카카오아이디를 조건으로해서 select * from user where user_id = 카카오 아이디;
+        // a는 유저객체를 담고 있음. 그럼 그 유저객체를
+      // state.user = a
+      state.user = a;
       state.user.user_name = state.user.user_id
       // state.kakaoId = a;
       // console.log(id + '/')
       //state.kakaoId = id;
-      state.user.user_name = state.kakaoId
+      // state.user.user_name = state.kakaoId
     },
 
     kakaoLogout(state){
