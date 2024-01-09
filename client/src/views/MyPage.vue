@@ -30,7 +30,7 @@
                             </a>
                         </div>
             </div>
-                <div class="col-sm-3 " style="background-color: #FFAB40; margin:10px">
+                <div class="col-sm-3 " style="background-color: #FFE0B2; margin:10px">
                     <div class="col p-4 d-flex flex-column position-static">
                         <strong class="d-inline-block mb-2 text-success-emphasis">잔여포인트</strong>
                         <h3 class="mb-0">{{ member.point }} p</h3>
@@ -38,7 +38,7 @@
                     </div>
                 </div>
            
-                <div class="col-sm-3"  style="background-color: #FFAB40; margin:10px">
+                <div class="col-sm-3"  style="background-color:#FFE0B2; margin:10px">
                     <div class="col p-4 d-flex flex-column position-static">
                         <strong class="d-inline-block mb-2 text-success-emphasis">잔여쿠폰</strong>
                         
@@ -90,7 +90,10 @@ export default{
     methods: {
         //일단 멤버 정보를 셀렉트 해오는걸로 시험 중 나중에 로그인 세션그걸로 바꿔야 함
         async getMember(){
-            
+            if(this.$store.state.user.user_id==null){
+                this.$router.push({path : '/login'});
+                return
+            }
           
             this.member = (await axios.get(`/api/member/${this.$store.state.user.user_id}`)
                                       .catch(err=>console.log(err))).data

@@ -7,8 +7,11 @@
       <li class="nav-item">
         <span class="nav-link login" @click="logoutOrJoin" >{{ $store.state.user.user_id != null ? '로그아웃' : "회원가입"}}</span>
       </li>
-         <li class="nav-item">
+      <li class="nav-item">
         <span class="nav-link login" @click="withdrawal" >{{ $store.state.user.user_id != null ? '회원탈퇴' : "회원가입"}}</span>
+      </li>
+      <li class="nav-item">
+        <span class="nav-link login" @click="serviceCenter" >고객센터</span>
       </li>
 
     </ul>
@@ -209,7 +212,9 @@ withdrawal(){
       }
 },
 
-
+serviceCenter(){
+  this.$router.push("/serviceCenter")
+},
   what(){
     const cartItems = this.$store.state.cart;
     let total = [];

@@ -1561,7 +1561,21 @@ app.get("/photoInq/:ino", async (req, res) => {
 })
 
 
-
+//공지사항, fnq
+app.get("/notice", async (req, res) => {
+  res.send(await mysql.query("notice", "noticeList"))
+})
+app.get("/notice/:nno", async (req, res) => {
+  let nno = req.params.nno
+  res.send(await mysql.query("notice", "noticeInfo",nno))
+})
+app.get("/fnq", async (req, res) => {
+  res.send(await mysql.query("fnq", "fnqList"))
+})
+app.get("/fnq/:fno", async (req, res) => {
+  let fno = req.params.fno
+  res.send(await mysql.query("fnq", "fnqInfo"))
+})
 
 
 

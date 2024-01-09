@@ -394,7 +394,7 @@ let like = {
   likeInfo: `select* from likes where user_id=? and prod_no=?`,
   likeInsert: `insert into likes set?`,
   likeDel: `delete from likes where user_id=? and prod_no =?`,
-  likeList: `select * from select * from product p right join likes l on p.prod_no = l.prod_no where user_id=?`
+  likeList: `select * from product p right join likes l on p.prod_no = l.prod_no where user_id=?`
 }
 let inquire={
   inquireList:`select * from inquire where user_id=?`,
@@ -408,6 +408,14 @@ let inquire={
 let member = {
   memberInfo: `select t1.*, count(case when coupon_able=0 then 1 end) as couponCnt from user t1 join coupon t2  on t1.user_id = t2.user_id where t1.user_id= ?`
 }
+let notice = {
+noticeList:`select * from notice order by importance`,
+noticeInfo:`select * from notice where notcie_no=?;`
+}
+let fnq = {
+  fnqList:`select * from fnq `,
+  fnqInfo:`select * from fnq where qno=?;`
+}
 
 module.exports = {
   user,
@@ -420,5 +428,7 @@ module.exports = {
   like,
   member,
   admin,
-  inquire
+  inquire,
+  notice,
+  fnq
 };
