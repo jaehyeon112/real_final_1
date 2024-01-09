@@ -64,7 +64,7 @@
             <tr><td></td><td></td><td><h3>존재하는 회원이 없습니다.</h3></td><td></td><td></td></tr>
         </tbody>
     <v-container>
-        <page v-show="showGrade" @changePage="changePage" :list="totalList" :totals="this.nums"></page>
+        <page @changePage="changePage" :list="totalList" :totals="this.nums"></page>
     </v-container>
 </template>
 </list>

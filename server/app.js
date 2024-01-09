@@ -391,9 +391,9 @@ app.get("/pointList", async (req, res) => { // 포인트 리스트
 
 app.get("/cartList", async (req, res) => { //장바구니 리스트
   let userId = req.session.user_id;
-  if (!userId) { // user_id가 없을때
-    return res.status(400).send('400에러~')
-  }
+  // if (!userId) { // user_id가 없을때
+  //   return res.status(400).send('400에러~')
+  // }
 
   try {
     let list = await mysql.query("test", "cartList", userId);
