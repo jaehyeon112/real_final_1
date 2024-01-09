@@ -67,7 +67,7 @@
  
  <script>
   import axios from 'axios';
-  
+  import { io } from 'socket.io-client';
   export default {
   
     data(){
@@ -92,7 +92,7 @@
         return;
       }
 
-      if (this.user_id === "" || this.user_password === "") {
+      if (this.user_id == "" || this.user_password == "") {
         alert("아이디와 비밀번호를 모두 입력해주세요.");
         return;
       }
@@ -102,12 +102,18 @@
           user_id: this.user_id,
           user_password: this.user_password,
         }
+        
       };
   
     try {
         let ipList = await axios.post(`/api/dologin/`, obj);
-        let users = ipList.data;
-
+        
+        let users = ipList.data.user;
+      if(ipList.data.auth){
+      localStorage.setItem('token', ipList.data.token);
+      console.log(localStorage.getItem('token')+' 이게 토큰 값')
+      }   
+        alert(users[0].user_id)
         if (users.length === 0) {
           this.failedAttempts++;
 
@@ -135,24 +141,10 @@
 if (users.length > 0) {
   alert(`${users[0].user_name}님 환영합니다.`);
 
-  //user_grade가 정의되어 있는지 확인 후 로직 수행
-  if (users[0].user_grade === 'i4') {
-    this.$router.push('/admin/Main');
-    return;
-  }
+ 
          
   
-  /*
-         if(users == ''){
-          alert('아디 비번 확인;')
-          return;
-         }else{
-           alert(users[0].user_name +'님 환영합니다');
-          // if(users[0].user_grade == 'i4'){
-          //   this.$router.push('/admin/Main')
-          //   return;
-          // }
-   */       
+     
            //만약 비로그인시 장바구니에 안 담았다면, 그냥 넘어가게
           let cartList =  (await axios.get(`/api/cartList`).catch(err=>console.log(err))).data
           let vuexCart = this.$store.state.cart;
@@ -204,9 +196,28 @@ if (users.length > 0) {
           }
       }
    
-  
+      this.$socket.disconnect();
+      const token = localStorage.getItem('token'); // localStorage에서 토큰 가져오기
+      alert(localStorage.getItem('token'))
+        const serverUrl = 'http://localhost:3000'; // 여러분의 실제 소켓 서버 주소로 변경해주세요.
+// 새 토큰으로 소켓 재연결
+this.$socket = io(serverUrl, {
+  query: { token }
+});
+this.$socket.on('connect', () => {
+  console.log('새 토큰으로 소켓 연결 성공');
+});
+this.$socket.emit('authenticate', token);
   this.$store.commit('login',users[0]) // (함수명, 전달인자)
   this.$store.commit('cartEmpty')
+ 
+  if(users[0].user_grade == 'i4'){
+
+              this.$store.commit('login',users[0]) // (함수명, 전달인자)
+              this.$store.commit('cartEmpty')
+                        this.$router.push('/admin/Main')
+                        return;
+                      }
   
   this.$router.push({name : 'realmain'}); // 메인화면으로
   
@@ -298,6 +309,7 @@ if (users.length > 0) {
 
       });
     },
+    
 
 
   

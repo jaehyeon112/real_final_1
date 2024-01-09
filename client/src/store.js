@@ -1,4 +1,3 @@
-
 import {
   createStore
 } from "vuex";
@@ -34,13 +33,13 @@ const store = createStore({
           return;
         }
       }
- 
+
       item.cart_checkbox = 0
       state.cart.push(item);
       state.cartCount = state.cart.length
     },
 
-    kakaoLogin(state, id){
+    kakaoLogin(state, id) {
 
        let a = id;
       // state.user = {};
@@ -55,10 +54,13 @@ const store = createStore({
     kakaoLogout(state){
       state.kakaoId = ''
     },
+    // kakaoLogout(state) {
+    //   state.user.user_name = ''
+    // },
 
     async login(state, userInfo) {
       state.user = userInfo;
-        state.loginCartCount = (await axios.get('/api/cartList')).data.length;
+      state.loginCartCount = (await axios.get('/api/cartList')).data.length;
     },
     loginCartCheck(state, count) {
       state.loginCartCount -= count;
@@ -66,9 +68,11 @@ const store = createStore({
     async loginCart(state) {
       state.loginCartCount = (await axios.get('/api/cartList')).data.length;
     },
-    logout(state) {
-      state.user = '';
+    async logout(state) {
+      state.user = {};
       state.cartCount = state.cart.length
+
+      await axios.get('/api/logout')
     },
     cartEmpty(state) {
       state.cart = []
@@ -108,7 +112,7 @@ const store = createStore({
   },
 
   actions: {
-       
+
   },
 
   plugins: [
