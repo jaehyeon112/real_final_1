@@ -232,6 +232,7 @@ import side from '../components/admin/SideBar.vue';
             }
         },
         created(){
+            window.scrollTo(0, 0);
             this.getdelList();
             this.getordList();
             this.getrefList();
