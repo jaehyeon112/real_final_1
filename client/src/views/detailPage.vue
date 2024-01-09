@@ -298,8 +298,9 @@ export default {
                   this.getRivewList();
                }
             }else{
+               let list2 = await axios.put(`/api/likeDown/${rno}`).catch(err=>console.log(err));
                let result3 = await axios.delete(`/api/reviewLike/${rno}/${this.user}`).catch(err=>console.log(err))
-               if(result3.data.affectedRows>0){
+               if(list2.data.affectedRows>0&&result3.data.affectedRows>0){
                   alert('좋아요 취소~~');
                   this.getRivewList();
                }      

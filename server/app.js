@@ -1457,6 +1457,10 @@ app.put("/likeUp/:rno", async (req, res) => {
   let datas = req.params.rno;
   res.send(await mysql.query("reviews", "likeUp", datas));
 });
+app.put("/likeDown/:rno", async (req, res) => {
+  let datas = req.params.rno;
+  res.send(await mysql.query("reviews", "likeDown", datas));
+});
 
 //리뷰수정
 app.put("/reviewUpdate/:rno", async (req, res) => {
