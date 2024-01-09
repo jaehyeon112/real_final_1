@@ -605,6 +605,7 @@ app.post("/join/joinIn", async (req, res) => {
 //로그인 - 아이디비번 일치해야 로그인 (5회 오류시 보안프로그램실행)
 app.post("/dologin", async (req, res) => {
   let data = [req.body.param.user_id, req.body.param.user_password];
+  console.log(data)
   let list = await mysql.query("user", "forLogin", data);
   if (list.length != 0) {
     req.session.user_id = req.body.param.user_id;
@@ -1208,7 +1209,7 @@ app.delete('/orders/:ono', async (req, res) => {
 
 //추가 배송지 관련
 app.get('/addDelivery', async (req, res) => {
-  let id = req.session.user_id
+  let id = [req.session.user_id,req.session.user_id,req.session.user_id,req.session.user_id]
   const list = await mysql.query('delivery', 'deliveryList', id);
   res.send(list);
 })
@@ -1292,17 +1293,26 @@ app.get("/myPointUse", async (req, res) => {
   let list = await mysql.query("point", "myPointUseHistory", id);
   res.send(list);
 })
-//리뷰등록시 포인트 지급
+//리뷰등록,삭제시 포인트 관련
 app.post("/reviewPoint", async (req, res) => {
   //let datas = [request.body.param,Number(req.params.ono),req.params.id]
-  let datas = [req.body.param.point_no, req.body.param.order_detail_no, req.session.param.user_id]
-  res.send(await mysql.query("reviews", "reviewPoint", datas));;
+  let datas = [req.body.param.point_no, req.body.param.order_detail_no, req.session.user_id]
+  res.send(await mysql.query("point", "reviewPoint", datas));;
 
 });
 app.put("reviewPointUp", async (req, res)=>{
   let id = req.session.user_id
-  res.send(await mysql.query("reviews", "reviewPointUp", id))
+  res.send(await mysql.query("point", "reviewPointUp", id))
 })
+// app.post("/deleteRPoint", async ( req,res)=>{
+//   let data = req.body.param
+//   res.send(await mysql.query("point", "reviewPointD",data))
+
+// })
+
+// app.put("reviewPointDown", async (req,res)=>{
+//   let 
+// })
 
 
 
@@ -1330,7 +1340,7 @@ app.post("/reviewInsert", async (req, res) => {
 //리뷰 단건 조회
 app.get("/myReview/:rno", async (req, res) => {
   let datas = [req.session.user_id, req.params.rno]
-  res.send(await mysql.query("reviews", "reviewInfo", datas))[0]
+  res.send(await mysql.query("reviews", "reviewInfo", datas))
 });
 //리뷰수정
 app.put("/reviewUpdate/:rno", async (req, res) => {
@@ -1404,6 +1414,11 @@ app.post("/inquire", async(req,res)=>{
 app.put("/inquireUpdate/:ino", async ( req, res)=>{
   let datas = [req.body.param,req.session.user_id, req.params.ino]
   res.send(await mysql.query("inquire", "inquireUpdate", datas))
+})
+app.delete('/deleteInquire/:ino', async (req,res)=>{
+  let ino = req.params.ino;
+  let result = await mysql.query("inquire", "deleteInquire",ino)
+  res.send(result)
 })
   //답변
   app.get("/inquireAnswer/:ino", async(req,res)=>{

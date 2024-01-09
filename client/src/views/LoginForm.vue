@@ -108,7 +108,7 @@
   
   let ipList = await axios.post(`/api/dologin/`,obj)  
                   .catch(err => console.log(err));
-                  // console.log(ipList.data)
+                  console.log(ipList.data)
                   
        let users = ipList.data;
          

@@ -90,17 +90,18 @@ export default{
     methods: {
         //일단 멤버 정보를 셀렉트 해오는걸로 시험 중 나중에 로그인 세션그걸로 바꿔야 함
         async getMember(){
-            
-            this.member = (await axios.get(`/api/member`)
-                                      .catch(err=>{console.log(err)})).data
-                                      console.log( '포인트소멸'+this.member.showNextMonth.sump)                          
+            if(req.session.user_id==null){
+                this.$router.push({path : '/login'});
+            }
+            try{
+            this.member = (await axios.get(`/api/member`)).data}
+                                    //   .catch(err=>{console.log(err)})).data}
+            catch(err){
+               
+            }
+                                                          
         },
-        // async getNextMontPoint(){
-        //     let member_id = this.$store.state.user.user_id;
-        //     this.NextMonthPoint = (await axios.get(`/api/nextMonthPoint/${member_id}`)
-        //                               .catch(err=>{console.log(err)})).data
-        //                               console.log(this.NextMonthPoint.sump)
-        // }
+        
     }
 }
 </script>
