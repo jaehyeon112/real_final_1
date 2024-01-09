@@ -173,8 +173,8 @@ export default {
                     order_no: orderno,
                     user_id: this.$store.state.user.user_id,
                     return_point : this.point,
-                    coupon_no : this.couponList.length > 0 ? this.couponList[0].coupon_no : 0,  // coupon 리스트 길이가 0보다 크면  coupon_no 를 불러오고 아니면 0 
-                    cancel_status : 'o1',
+                    coupon_no : this.couponList.length > 0 ? this.couponList[0].coupon_no : null,  // coupon 리스트 길이가 0보다 크면  coupon_no 를 불러오고 아니면 null 을 넣는다
+                    cancel_status : 'o2',
                     cancel_request : this.day
                     }
                 }   

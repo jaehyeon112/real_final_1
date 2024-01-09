@@ -1,10 +1,8 @@
 <template>
   <div>
-
-    <Header/>
+    <Header v-if="this.$store.state.user.user_id!=null"/>
     <router-view/>
-    <Footer/>
-    
+    <Footer v-if="this.$store.state.user.user_id!=null"/>
   </div>
 </template>
 <script>
@@ -16,7 +14,11 @@ export default {
     Footer
   },
   created() {
-    this.$router.push({path : "/admin/Main"})
+    if(this.$store.state.user.user_id == null){
+      this.$router.push({path : "/admin/Adminlogin"})
+    }else{
+      this.$router.push({path : "/admin/Main"})
+    }
   }
 }
 </script>

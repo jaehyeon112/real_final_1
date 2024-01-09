@@ -37,12 +37,39 @@
             <td v-else-if="order.cancel_status=='o2'">취소/환불 처리중</td>
             <td v-else-if="order.cancel_status=='o3'">완료</td>
             <td v-if="order.cancel_status=='o1'"><v-btn type="button" @click="changeStatus(order.order_no)">취소/환불처리</v-btn></td>
-            <td v-else><v-btn type="button" @click="modalCheck=true">상세보기</v-btn></td>
+            <td v-else><v-btn type="button" @click="modalCheck=true,oneOrder(order.order_no)">상세보기</v-btn></td>  <!--상세영수증보기-->
         </tr>
         </tbody>
         <tbody v-if="orderList.length==0" style="text-align: center;">
             <tr><td></td><td></td><td><h3>존재하는 데이터가 없습니다</h3></td></tr>
         </tbody>
+        <div class="modal-wrap" v-show="modalCheck">
+      <div class="modal-container">
+        <h3>취소영수증</h3><hr>
+        <div class="modalPop">
+            <v-icon color="success" icon="mdi-check-circle"></v-icon>
+            <br>
+            <h3>취소/환불</h3>
+            <p>환불 예정일은 영업일 기준 2~5일 이내입니다</p>
+            <br><br>
+            <h4>환불 정보를 확인해주세요</h4>
+            <hr><br>
+            <div class="leftLine">
+                <h5>총 환불금액  {{ oneList.real_payment }}원</h5><br>
+                <h5>배송비  {{ oneList.delivery_charge }}원</h5><br>
+                <h6>상품금액     {{ oneList.total_payment }}원</h6><br>
+                <h6>쿠폰할인     {{ oneList.real_payment*oneList.coupon_discount_rate }}원</h6><br>
+                <h6>포인트할인     {{ oneList.point_use }}원</h6><br><hr>
+                <h5>환불 수단</h5>  {{ oneList.payment_method }}
+            </div>
+        </div>
+        <div class="modal-btn">
+            <v-btn style="border-radius: 10px;" @click="modalCheck = false">닫기</v-btn>
+        </div>
+      </div>
+    </div>
+
+
         <v-container>
           <page @changePage="changePage" :list="totalList" :totals="this.nums"></page>
         </v-container>
@@ -67,7 +94,10 @@
                 startNum : 0,
                 totalList: "",
                 totals :'',
-                orderNo : ''
+                orderNo : '',
+                oneList : '',
+                accessToken : '',
+
             }
         },
         components : {
@@ -76,6 +106,8 @@
         },
         created(){
             this.total();
+            this.getAccessToken();
+
         },
         methods : {
             async total() {
@@ -87,6 +119,17 @@
             async getOrderList(){
                 let result = await axios.get(`/api/refund/${this.startNum}/${this.nums}`).catch(err=>console.log(err));
                 this.orderList = result.data;
+            },
+            async oneOrder(ono){
+                let result = await axios.get(`/api/order/${ono}`).catch(err=>console.log(err));
+                if(result.data[0].payment_method=='h1'){
+                    result.data[0].payment_method = '신용카드(이니시스)'
+                }else if(result.data[0].payment_method=='h2'){
+                    result.data[0].payment_method = '카카오페이'
+                }else{
+                    result.data[0].payment_method = '토스페이'
+                }
+                this.oneList = result.data[0];
             },
             async changePage(no) {
                 let list = await axios.get(`/api/refund/${no}/${this.nums}`).catch(err=>console.log(err));
@@ -102,11 +145,40 @@
                 this.getOrderList();
                 this.orders = ''
             },
+            getAccessToken() {
+            axios.get('/api/saveAccessToken') // app.js 에 토큰값 가져오기!
+                .then(response => {
+                this.accessToken = response.data; // 토큰 값을 변수에 저장
+                console.log(this.accessToken,'토큰값')
+
+                })
+                .catch(error => {
+                console.error(error);
+                });
+            },
+            async cancelPayment(ono) { // 눌렀을때 주문취소
+                let result = await axios.get(`/api/order/${ono}`).catch(err=>console.log(err));
+                console.log(result.data[0],result.data)
+                let cancel = await axios.post(`/api/cancel`, {
+                            merchant_uid: ono,
+                            reason: '단순 취소',
+                            cancel_request_amount: result.data[0].real_payment,
+                            access_token: this.accessToken
+                        });
+                    console.log(cancel.data)
+                if(cancel.data.affectedRows==1){
+                    alert('포트성공')
+                }else{
+                    alert('포트실패')
+                }
+
+            },
             async changeStatus(ono){
                 if(confirm('취소/환불을 진행할까요?')){
                     let result = await axios.put(`/api/refund/o2/${ono}`).catch(err=>console.log(err));
                     if(result.data.affectedRows==1){
                         alert(' 취소/환불이 진행 중입니다~ ');
+                        this.cancelPayment(ono);
                         this.getOrderList();
                     }else{
                         alert('오류가 남');
@@ -141,4 +213,39 @@
     }
         
     }
-    </script>
+</script>
+<style scoped>
+.modal-wrap {
+    z-index: 100;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+  }
+  .modal-container {
+    z-index: 1000;
+    position :relative;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 600px;
+    height: 900px;
+    background: #fff;
+    border-radius: 10px;
+    padding: 10px;
+    box-sizing: border-box;
+  }
+  .modalPop{
+    z-index: 1000;
+    border: 1px solid;
+    text-align: center;
+  }
+  .modal-btn button{
+    z-index: 1000;
+    left: 43%;
+  }
+  .leftLine{
+    text-align: left;
+    margin-left: 20px;
+  }
+</style>
