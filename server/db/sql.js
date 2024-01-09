@@ -140,7 +140,9 @@ limit ?, 6;
   // 취소 되었을때 쿠폰 다시 돌려주기
   couponReturn: `update coupon set coupon_able = 0 where order_no = ?`,
   // 취소 되었을때 포인트 다시 돌려주기
-  pointReturn: `update user set point = point + ? where user_id = ?`
+  pointReturn: `update user set point = point + ? where user_id = ?`,
+  // 배송불가지역리스트
+  isolatedRegionList : `select * from isolated_region`,
 };
 
 let user = {
