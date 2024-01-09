@@ -212,14 +212,10 @@ io.on('connect', (socket) => {
         io.close();
         return;
       }
-
       // 사용자 정보를 웹소켓 객체에 추가
       io.user = decoded;
-
       console.log(`WebSocket connected for user: ${decoded.id}`);
       console.log(`User role: ${decoded.role}`);
-
-
     })
 
 

@@ -200,13 +200,13 @@ let user = {
 let admin = {
   //기타-통계
   weekIncome: `select sum(total_payment) as sum from orders where order_date BETWEEN DATE_ADD(NOW(), INTERVAL -?-1 week ) AND DATE_ADD(NOW(), INTERVAL -? week);`,
-  outUserReason : `select withdrawal_reason reason,count(withdrawal_reason) as nums from withdrawal_user 
+  outUserReason: `select withdrawal_reason reason,count(withdrawal_reason) as nums from withdrawal_user 
   where withdrawal_date BETWEEN DATE_ADD(NOW(), INTERVAL -?-1 month ) AND DATE_ADD(NOW(), INTERVAL -? month)
   group by withdrawal_reason`,
   //최근 3개월 주문내역 매출액
   monthsIncome: `select year(order_date) as year,month(order_date) as month,sum(total_payment) as sum from orders where order_date > now() - INTERVAL 3 MONTH group by month order by year, month`,
-  withUser : `select count(*) as ours,(select count(*) from withdrawal_user where withdrawal_date = curdate()-?) as yours from user where join_date = curdate()-?;`,
-  counting : `select count(*) as orderNo,(select count(*) from orders where order_status = 'c2') as delNo,
+  withUser: `select count(*) as ours,(select count(*) from withdrawal_user where withdrawal_date = curdate()-?) as yours from user where join_date = curdate()-?;`,
+  counting: `select count(*) as orderNo,(select count(*) from orders where order_status = 'c2') as delNo,
   (select count(*) from refund_cancel where cancel_status='o1') as refundNo,
   (select count(*) from review_report where report_status = 'p1') as reportNo,
   (select count(*) from inquire where answer_state = 0) as inquireNo
@@ -262,9 +262,9 @@ let admin = {
   insertFNQ: `insert into fnq set ?`,
   updateFNQ: `update fnq set ? where qno = ?`,
   delFNQ: `delete from fnq where qno = ?`,
-  insertReply : `insert into reply set ?`,
-  replyInfo : `select * from reply where inquire_no = ?`,
-  updateInquire : `update inquire set answer_state = 1 where inquire_no = ?`,
+  insertReply: `insert into reply set ?`,
+  replyInfo: `select * from reply where inquire_no = ?`,
+  updateInquire: `update inquire set answer_state = 1 where inquire_no = ?`,
   //주문취소
   refundOrder: `update orders set order_status = 'c4' where order_no = ?`,
   adminRefund: `insert into refund_cancel set order_no=?,user_id=(select user_id from orders where order_no=refund_cancel.order_no),
@@ -274,9 +274,9 @@ let admin = {
   updateRefund: `update refund_cancel set cancel_status = ? where order_no= ?`,
   refundState: `select * from refund_cancel where cancel_status = ? order by cancel_request desc limit ?,?`,
   //첨부파일
-  insertFile : `insert into file set ?`,
-  photoList : `select file_name,types from file where ?? = ?`,
-  delPhoto : `DELETE file 
+  insertFile: `insert into file set ?`,
+  photoList: `select file_name,types from file where ?? = ?`,
+  delPhoto: `DELETE file 
   FROM file 
   JOIN (
     SELECT file_no 
@@ -320,10 +320,10 @@ WHERE t3.prod_no = ?`, //상세페이지에서 그 상품에대한 리뷰 리스
   insertReview: `insert into review set?`, //주문상세내역->리뷰등록
   updateReview: `update review set ? where user_id= ? and review_no= ?`,
   insertReviewImage: `insert into image set?`,
-  deleteReview:`delete from review where review_no=?`,
-  selectReviewLike:`select * from review_like where user_id=? and review_no=?`,
-  insertReviewLike:`insert into review_like set ?`,
-  deleteReviewLike:`delete from review_like where review_no=? and user_id=?`
+  deleteReview: `delete from review where review_no=?`,
+  selectReviewLike: `select * from review_like where user_id=? and review_no=?`,
+  insertReviewLike: `insert into review_like set ?`,
+  deleteReviewLike: `delete from review_like where review_no=? and user_id=?`
 
 };
 
@@ -333,7 +333,7 @@ let point = {
   myPointUseHistory: `select * from point where user_id=? and point_use > 0 order by end_point_date `,
   reviewPoint: `insert into point set point_no = ?, order_detail_no=?, user_id=?, point_history='p2',
               point_save = 500, point_use=0, point_date =current_date(), end_point_date = date_add(current_date(), interval 1 Year);`, //리뷰등록시 포인트 지급
-  reviewPointUp:`update user set point=point+500 where user_id=?`,
+  reviewPointUp: `update user set point=point+500 where user_id=?`,
   pointExpire: `update user as t1,(select sum( point_save) as points, user_id from point where end_point_date = current_date() group by user_id) as t2
               set t1.point = t1.point- t2.points where t1.user_id=t2.user_id;`, //기간소멸
   //그리고 point table에 소멸사유로 인서트 해주는것도 같이..?
@@ -381,15 +381,15 @@ let like = {
   likeInfo: `select* from likes where user_id=? and prod_no=?`,
   likeInsert: `insert into likes set?`,
   likeDel: `delete from likes where user_id=? and prod_no =?`,
-  likeList:`select * from likes where user_id=?`
+  likeList: `select * from likes where user_id=?`
 }
-let inquire={
-  inquireList:`select * from inquire where user_id=?`,
-  inquireInfo:`select * from inquire where inquire_no=?`,
-  inquireInsert:`insert into inquire set?`,
-  inquireUpdate:`update inquire set? where user_id=? and inquire_no=?`,
-  inquireAnswer:`select * from reply where inquire_no=?`,
-  photoListInq : `select file_name from file where inquire_no = ?`,
+let inquire = {
+  inquireList: `select * from inquire where user_id=?`,
+  inquireInfo: `select * from inquire where inquire_no=?`,
+  inquireInsert: `insert into inquire set?`,
+  inquireUpdate: `update inquire set? where user_id=? and inquire_no=?`,
+  inquireAnswer: `select * from reply where inquire_no=?`,
+  photoListInq: `select file_name from file where inquire_no = ?`,
 }
 let member = {
   memberInfo: `select t1.*, count(case when coupon_able=0 then 1 end) as couponCnt from user t1 join coupon t2  on t1.user_id = t2.user_id where t1.user_id= ?`

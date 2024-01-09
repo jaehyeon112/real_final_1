@@ -92,7 +92,7 @@
         return;
       }
 
-      if (this.user_id === "" || this.user_password === "") {
+      if (this.user_id == "" || this.user_password == "") {
         alert("아이디와 비밀번호를 모두 입력해주세요.");
         return;
       }
@@ -107,8 +107,13 @@
   
     try {
         let ipList = await axios.post(`/api/dologin/`, obj);
-        let users = ipList.data;
-
+        
+        let users = ipList.data.user;
+      if(ipList.data.auth){
+      localStorage.setItem('token', ipList.data.token);
+      console.log(localStorage.getItem('token')+' 이게 토큰 값')
+      }   
+        alert(users[0].user_id)
         if (users.length === 0) {
           this.failedAttempts++;
 
@@ -136,11 +141,7 @@
 if (users.length > 0) {
   alert(`${users[0].user_name}님 환영합니다.`);
 
-  //user_grade가 정의되어 있는지 확인 후 로직 수행
-  if (users[0].user_grade === 'i4') {
-    this.$router.push('/admin/Main');
-    return;
-  }
+ 
          
   
      
