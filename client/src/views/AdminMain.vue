@@ -68,7 +68,7 @@
             <Line style="width: 100%;height: 350px;"/>
           </div>
         </v-card>
-      <v-card title="최근 주문내역">
+      <v-card title="주문관리-주문내역(최근 주문내역)">
       <v-table class="vTable1">
       <thead>
         <tr>
@@ -198,7 +198,7 @@
       </div>
     </div>
     <br>
-    <v-card flat title="최근 리뷰 신고내역"></v-card>
+    <v-card flat title="리뷰관리(최근 리뷰 신고내역)"></v-card>
     <v-table fixed-header height="250px" class="vTable2">
       <thead>
         <tr>
@@ -238,7 +238,7 @@
       </tbody>
     </v-table>
     <br>
-    <v-card flat title="최근 문의내역"></v-card>
+    <v-card flat title="문의사항 관리(최근 문의내역)"></v-card>
     <v-table fixed-header height="250px" class="vTable3">
       <thead>
         <tr>
@@ -278,7 +278,7 @@
           <td>{{ inquire.inquire_title }}</td>
           <td v-if="inquire.inquire_category=='j1'">상품문의</td>
           <td v-else-if="inquire.inquire_category=='j2'">배송문의</td>
-          <td v-else-if="inquire.inquire_category=='j1'">환불문의</td>
+          <td v-else-if="inquire.inquire_category=='j3'">환불문의</td>
           <td v-else>기타문의</td>
           <td>{{ $dateFormat(inquire.create_date,'yyyy년 MM월 dd일') }}</td>
           <td v-if="inquire.answer_state==0">{{this.inquires='답변 대기 중'}}</td>
@@ -327,11 +327,12 @@ import icon from '../components/admin/icon.vue';
       Line
     },
     created(){
+      window.scrollTo(0, 0);
       //this.getSum();
       if(this.$store.state.user.user_id != 'admin'){
         alert('권한이 없습니다');
-        this.$router.push({path : "/login"});
         this.$store.commit('logout');
+        this.$router.push({path : "/login"});
       }
       this.getOrderList();
       this.getReviewList();
@@ -380,6 +381,7 @@ import icon from '../components/admin/icon.vue';
           }
         }
         if(result.data.length>4){
+          this.orderList = [];
           for(let i=0;i<4;i++){
             this.orderList.push(result.data[i]);
           }
@@ -416,6 +418,7 @@ import icon from '../components/admin/icon.vue';
           }
         }
         if(result.data.length>4){
+          this.reviewList = [];
           for(let i=0;i<4;i++){
             this.reviewList.push(result.data[i]);
           }
@@ -432,6 +435,7 @@ import icon from '../components/admin/icon.vue';
           }
         }
         if(result.data.length>4){
+          this.inquireList = [];
           for(let i=0;i<4;i++){
             this.inquireList.push(result.data[i]);
           }
@@ -448,6 +452,7 @@ import icon from '../components/admin/icon.vue';
                         let result = await axios.put(`/api/order/${this.orderStatus}/${ono}`).catch(err=>console.log(err));
                         if(result.data.affectedRows==1){
                             alert('상품준비중으로 변경되었습니다! ');
+                            this.modalCheck = false;
                             this.getOrderList();
                         }else{
                             alert('오류가 남');
@@ -460,6 +465,7 @@ import icon from '../components/admin/icon.vue';
                         let result = await axios.put(`/api/order/${this.orderStatus}/${ono}`).catch(err=>console.log(err));
                         if(result.data.affectedRows==1){
                             alert('출고완료로 변경되었습니다! ');
+                            this.modalCheck = false;
                             this.getOrderList();
                         }else{
                             alert('오류가 남');

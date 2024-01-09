@@ -160,7 +160,10 @@ export default {
         side,
         icon,
         upload
-        },
+    },
+    created(){
+      window.scrollTo(0, 0);
+    }
 }
     </script>
 <style scoped>

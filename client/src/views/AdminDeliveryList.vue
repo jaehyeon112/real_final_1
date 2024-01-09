@@ -70,6 +70,7 @@
         page
         },
         created(){
+            window.scrollTo(0, 0);
             //this.prodList();
             this.total();
         },

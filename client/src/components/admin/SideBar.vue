@@ -46,8 +46,8 @@
               회원관리
           </button>
           <ul class="centers" v-if="isUser">
-            <li @click="userList">회원 목록</li>
-            <li @click="outList">탈퇴 회원</li>
+            <li class="curs" @click="userList">회원 목록</li>
+            <li class="curs" @click="outList">탈퇴 회원</li>
           </ul>
         </li>
         <li class="nav-item">
@@ -56,8 +56,8 @@
             상품관리
           </button>
           <ul class="centers" v-if="isOk">
-            <li @click="prodList">상품 목록</li>
-            <li @click="prodReg">상품 등록</li>
+            <li class="curs" @click="prodList">상품 목록</li>
+            <li class="curs" @click="prodReg">상품 등록</li>
           </ul>
         </li>
         <li class="nav-item">
@@ -66,9 +66,9 @@
             주문관리
           </button>
           <ul v-if="isorder">
-            <li @click="orderList">주문 목록</li>
-            <li @click="delList">배송 목록</li>
-            <li @click="refundList">취소된 주문 목록</li>
+            <li class="curs" @click="orderList">주문 목록</li>
+            <li class="curs" @click="delList">배송 목록</li>
+            <li class="curs" @click="refundList">취소된 주문 목록</li>
           </ul>
         </li>
         <li class="nav-item">
@@ -77,9 +77,9 @@
             리뷰/문의사항
           </button>
           <ul v-if="isreview">
-            <li @click="reviewList">리뷰 목록</li>
-            <li @click="reviewReport">신고된 리뷰</li>
-            <li @click="inquireList">문의사항</li>
+            <li class="curs" @click="reviewList">리뷰 목록</li>
+            <li class="curs" @click="reviewReport">신고된 리뷰</li>
+            <li class="curs" @click="inquireList">문의사항</li>
           </ul>
         </li>
         <li class="nav-item">
@@ -88,8 +88,8 @@
             공지사항/자주하는 질문
           </a>
           <ul v-if="isnotice">
-            <li @click="noticeList">공지사항</li>
-            <li @click="fnaList">자주하는 질문</li>
+            <li class="curs" @click="noticeList">공지사항</li>
+            <li class="curs" @click="fnaList">자주하는 질문</li>
           </ul>
         </li>
         <li class="nav-item">
@@ -98,8 +98,8 @@
             통계
           </button>
           <ul v-if="isChart">
-            <li @click="sumChart">매출통계</li>
-            <li @click="userChart">회원통계</li>
+            <li class="curs" @click="sumChart">매출통계</li>
+            <li class="curs" @click="userChart">회원통계</li>
           </ul>
         </li>
       </ul>
@@ -262,7 +262,9 @@ export default {
       .centers{
         text-align: left;
       }
-
+      .curs {
+        cursor: pointer;
+      }
       li{
         list-style: none;
         font-size: 20px;

@@ -138,9 +138,11 @@ export default {
                                      .catch(err=>console.log("업데오류"+err))                                                                
             if(result.data.insertId>0){ //글번호는 자동으로 부여되니까 obj에서 주는게 아니라 따로 빼서 
                 alert('등록완료' + '=>리뷰 500포인트 적립');
+
                 console
                 this.reviewInfo.review_no = result.data.insertId;
                 console.log('등록번호' +result.data.insertId) //여기에 data가 있고 없고 차이는..?
+
                 this.point_no = point.data.insertId;
                 this.$router.push({path:'myPage/myReview'})
             }
@@ -159,7 +161,9 @@ export default {
                   console.log(result1)
                   alert('테이블ㅇㅔ 추가');
                 }
+
                 this.$router.push({path : "myPage/myReview"})
+
             },
             info(data){
             for(let i=0;i<data.length;i++){

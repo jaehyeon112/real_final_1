@@ -19,6 +19,7 @@ export default {
     }else{
       this.$router.push({path : "/admin/Adminlogin"})
     }
+    
   }
 }
 </script>
