@@ -14,10 +14,10 @@ export default {
     Footer
   },
   created() {
-    if(this.$store.state.user.user_id == null){
-      this.$router.push({path : "/admin/Adminlogin"})
-    }else{
+    if(this.$store.state.user.user_id == 'admin'){
       this.$router.push({path : "/admin/Main"})
+    }else{
+      this.$router.push({path : "/admin/Adminlogin"})
     }
   }
 }
