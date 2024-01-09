@@ -1,63 +1,65 @@
 let test = {
   //전체 메뉴 리스트 불러오기
   list: `select file_name, p.*, format(avg(review_grade),1) AS 'star' from product p left join order_detail d on p.prod_no = d.prod_no
-  left join review r  on r.detail_order_no = d.order_detail_no left join (select file_name,prod_no from file where orders='s0') f on(p.prod_no = f.prod_no) group by d.prod_no`,
+  left join review r  on r.detail_order_no = d.order_detail_no left join (select file_name,prod_no from file where orders='s0') f on(p.prod_no = f.prod_no) group by p.prod_no`,
   list2: `select file_name, p.*, format(avg(review_grade),1) AS 'star' from product p left join order_detail d on p.prod_no = d.prod_no
-  left join review r  on r.detail_order_no = d.order_detail_no left join (select file_name,prod_no from file where orders='s0') f on(p.prod_no = f.prod_no) group by d.prod_no limit ? , 6`,
+  left join review r  on r.detail_order_no = d.order_detail_no left join (select file_name,prod_no from file where orders='s0') f on(p.prod_no = f.prod_no) group by p.prod_no limit ? , 6`,
   // 헤더의 카테고리에서 카테고리 선택된것들 불러오기
   categoryList: `select  file_name, p.*, format(avg(review_grade),1) AS 'star' from product p left join order_detail d on p.prod_no = d.prod_no
-  left join review r  on r.detail_order_no = d.order_detail_no  left join (select file_name,prod_no from file where orders='s0') f on(p.prod_no = f.prod_no)  where ?? = ? group by d.prod_no limit ? , 6`,
+  left join review r  on r.detail_order_no = d.order_detail_no  left join (select file_name,prod_no from file where orders='s0') f on(p.prod_no = f.prod_no)  where ?? = ? group by p.prod_no limit ? , 6`,
   categoryListPage: `select file_name, p.*, format(avg(review_grade),1) AS 'star' from product p left join order_detail d on p.prod_no = d.prod_no
-  left join review r  on r.detail_order_no = d.order_detail_no  left join (select file_name,prod_no from file where orders='s0') f on(p.prod_no = f.prod_no)   where ?? = ? group by d.prod_no `,
+  left join review r  on r.detail_order_no = d.order_detail_no  left join (select file_name,prod_no from file where orders='s0') f on(p.prod_no = f.prod_no)   where ?? = ? group by p.prod_no `,
   //글자 필터시 검색 후 메뉴 불러오기
   //일단 
   wordFilter: `select file_name, p.*, format(avg(review_grade),1) AS 'star' from product p left join order_detail d on p.prod_no = d.prod_no
-  left join review r  on r.detail_order_no = d.order_detail_no  left join (select file_name,prod_no from file where orders='s0') f on(p.prod_no = f.prod_no)   where  prod_name >= ? and prod_name < ? group by d.prod_no limit ? , 6`,
+  left join review r  on r.detail_order_no = d.order_detail_no  left join (select file_name,prod_no from file where orders='s0') f on(p.prod_no = f.prod_no)   where  prod_name >= ? and prod_name < ? group by p.prod_no limit ? , 6`,
   wordFilterPage: `select file_name,  p.*, format(avg(review_grade),1) AS 'star' from product p left join order_detail d on p.prod_no = d.prod_no
-  left join review r  on r.detail_order_no = d.order_detail_no  left join (select file_name,prod_no from file where orders='s0') f on(p.prod_no = f.prod_no)   where  prod_name >= ? and prod_name < ? group by d.prod_no `,
+  left join review r  on r.detail_order_no = d.order_detail_no  left join (select file_name,prod_no from file where orders='s0') f on(p.prod_no = f.prod_no)   where  prod_name >= ? and prod_name < ? group by p.prod_no `,
   categoryWordFilter: `select  file_name, p.*, format(avg(review_grade),1) AS 'star' from product p left join order_detail d on p.prod_no = d.prod_no
-  left join review r  on r.detail_order_no = d.order_detail_no   left join (select file_name,prod_no from file where orders='s0') f on(p.prod_no = f.prod_no)  where  prod_name >= ? and prod_name < ? and ?? = ? group by d.prod_no limit ? , 6`,
+  left join review r  on r.detail_order_no = d.order_detail_no   left join (select file_name,prod_no from file where orders='s0') f on(p.prod_no = f.prod_no)  where  prod_name >= ? and prod_name < ? and ?? = ? group by p.prod_no limit ? , 6`,
   categoryWordFilterPage: `select file_name, p.*, format(avg(review_grade),1) AS 'star' from product p left join order_detail d on p.prod_no = d.prod_no
-  left join review r  on r.detail_order_no = d.order_detail_no  left join (select file_name,prod_no from file where orders='s0') f on(p.prod_no = f.prod_no)  where  prod_name >= ? and prod_name < ? and ?? = ? group by d.prod_no `,
+  left join review r  on r.detail_order_no = d.order_detail_no  left join (select file_name,prod_no from file where orders='s0') f on(p.prod_no = f.prod_no)  where  prod_name >= ? and prod_name < ? and ?? = ? group by p.prod_no `,
 
   //가격 필터시 검색 후 메뉴 불러오기
   priceFilter: `select file_name, p.*, format(avg(review_grade),1) AS 'star' from product p left join order_detail d on p.prod_no = d.prod_no
-  left join review r  on r.detail_order_no = d.order_detail_no left join (select file_name,prod_no from file where orders='s0') f on(p.prod_no = f.prod_no) where discount_price between ? and ? group by d.prod_no limit ? , 6`,
+  left join review r  on r.detail_order_no = d.order_detail_no left join (select file_name,prod_no from file where orders='s0') f on(p.prod_no = f.prod_no) where discount_price between ? and ? group by p.prod_no limit ? , 6`,
   priceFilterPage: `select file_name, p.*, format(avg(review_grade),1) AS 'star' from product p left join order_detail d on p.prod_no = d.prod_no
-  left join review r  on r.detail_order_no = d.order_detail_no left join (select file_name,prod_no from file where orders='s0') f on(p.prod_no = f.prod_no) where discount_price between ? and ? group by d.prod_no `,
+  left join review r  on r.detail_order_no = d.order_detail_no left join (select file_name,prod_no from file where orders='s0') f on(p.prod_no = f.prod_no) where discount_price between ? and ? group by p.prod_no `,
   categoryPriceFilter: `select file_name, p.*, format(avg(review_grade),1) AS 'star' from product p left join order_detail d on p.prod_no = d.prod_no
-  left join review r  on r.detail_order_no = d.order_detail_no left join (select file_name,prod_no from file where orders='s0') f on(p.prod_no = f.prod_no) where discount_price between ? and ? and ?? = ? group by d.prod_no limit ? , 6`,
+  left join review r  on r.detail_order_no = d.order_detail_no left join (select file_name,prod_no from file where orders='s0') f on(p.prod_no = f.prod_no) where discount_price between ? and ? and ?? = ? group by p.prod_no limit ? , 6`,
   categoryPriceFilterPage: `select file_name,  p.*, format(avg(review_grade),1) AS 'star' from product p left join order_detail d on p.prod_no = d.prod_no
-  left join review r  on r.detail_order_no = d.order_detail_no left join (select file_name,prod_no from file where orders='s0') f on(p.prod_no = f.prod_no) where discount_price between ? and ? and ?? = ? group by d.prod_no`,
+  left join review r  on r.detail_order_no = d.order_detail_no left join (select file_name,prod_no from file where orders='s0') f on(p.prod_no = f.prod_no) where discount_price between ? and ? and ?? = ? group by p.prod_no`,
   //둘다 필터 해서 불러오기.
   bothFilter: `select file_name, p.*, format(avg(review_grade),1) AS 'star' from product p left join order_detail d on p.prod_no = d.prod_no
-  left join review r  on r.detail_order_no = d.order_detail_no left join (select file_name,prod_no from file where orders='s0') f on(p.prod_no = f.prod_no) where prod_name >= ? and prod_name < ? and discount_price between ? and ? group by d.prod_no limit ? , 6`,
+  left join review r  on r.detail_order_no = d.order_detail_no left join (select file_name,prod_no from file where orders='s0') f on(p.prod_no = f.prod_no) where prod_name >= ? and prod_name < ? and discount_price between ? and ? group by p.prod_no limit ? , 6`,
   bothFilterPage: `select file_name, p.*, format(avg(review_grade),1) AS 'star' from product p left join order_detail d on p.prod_no = d.prod_no
-  left join review r  on r.detail_order_no = d.order_detail_no left join (select file_name,prod_no from file where orders='s0') f on(p.prod_no = f.prod_no) where prod_name >= ? and prod_name < ? and discount_price between ? and ? group by d.prod_no`,
+  left join review r  on r.detail_order_no = d.order_detail_no left join (select file_name,prod_no from file where orders='s0') f on(p.prod_no = f.prod_no) where prod_name >= ? and prod_name < ? and discount_price between ? and ? group by p.prod_no`,
   categoryBothFilter: `select file_name, p.*, format(avg(review_grade),1) AS 'star' from product p left join order_detail d on p.prod_no = d.prod_no
-  left join review r  on r.detail_order_no = d.order_detail_no left join (select file_name,prod_no from file where orders='s0') f on(p.prod_no = f.prod_no) where prod_name >= ? and prod_name < ? and discount_price between ? and ? and ?? = ? group by d.prod_no limit ? , 6`,
+  left join review r  on r.detail_order_no = d.order_detail_no left join (select file_name,prod_no from file where orders='s0') f on(p.prod_no = f.prod_no) where prod_name >= ? and prod_name < ? and discount_price between ? and ? and ?? = ? group by p.prod_no limit ? , 6`,
   categoryBothFilterPage: `select file_name, p.*, format(avg(review_grade),1) AS 'star' from product p left join order_detail d on p.prod_no = d.prod_no
-  left join review r  on r.detail_order_no = d.order_detail_no left join (select file_name,prod_no from file where orders='s0') f on(p.prod_no = f.prod_no) where prod_name >= ? and prod_name < ? and discount_price between ? and ? and ?? = ? group by d.prod_no `,
+  left join review r  on r.detail_order_no = d.order_detail_no left join (select file_name,prod_no from file where orders='s0') f on(p.prod_no = f.prod_no) where prod_name >= ? and prod_name < ? and discount_price between ? and ? and ?? = ? group by p.prod_no `,
   // 헤더 검색
   searchHeader: `select file_name, p.*, format(avg(review_grade),1) AS 'star' from product p left join order_detail d on p.prod_no = d.prod_no
-  left join review r  on r.detail_order_no = d.order_detail_no left join (select file_name,prod_no from file where orders='s0') f on(p.prod_no = f.prod_no) where prod_name like concat(concat('%',?),'%') group by d.prod_no limit ?,6`,
+  left join review r  on r.detail_order_no = d.order_detail_no left join (select file_name,prod_no from file where orders='s0') f on(p.prod_no = f.prod_no) where prod_name like concat(concat('%',?),'%') group by p.prod_no limit ?,6`,
   searchHeaderPage: `select file_name, p.*, format(avg(review_grade),1) AS 'star' from product p left join order_detail d on p.prod_no = d.prod_no
-  left join review r  on r.detail_order_no = d.order_detail_no left join (select file_name,prod_no from file where orders='s0') f on(p.prod_no = f.prod_no) where prod_name like concat(concat('%',?),'%') group by d.prod_no`,
+  left join review r  on r.detail_order_no = d.order_detail_no left join (select file_name,prod_no from file where orders='s0') f on(p.prod_no = f.prod_no) where prod_name like concat(concat('%',?),'%') group by p.prod_no`,
 
   //신상품
   newListPage: `select file_name, p.*, format(avg(review_grade),1) AS 'star' from product p left join order_detail d on p.prod_no = d.prod_no
-  left join review r  on r.detail_order_no = d.order_detail_no left join (select file_name,prod_no from file where orders='s0') f on(p.prod_no = f.prod_no) where registration >= DATE_SUB(CURDATE(), INTERVAL 7 DAY) group by d.prod_no ;`,
+  left join review r  on r.detail_order_no = d.order_detail_no left join (select file_name,prod_no from file where orders='s0') f on(p.prod_no = f.prod_no) where registration >= DATE_SUB(CURDATE(), INTERVAL 7 DAY) group by p.prod_no ;`,
   newList: `select file_name, p.*, format(avg(review_grade),1) AS 'star' from product p left join order_detail d on p.prod_no = d.prod_no
-  left join review r  on r.detail_order_no = d.order_detail_no left join (select file_name,prod_no from file where orders='s0') f on(p.prod_no = f.prod_no) where registration >= DATE_SUB(CURDATE(), INTERVAL 7 DAY) group by d.prod_no limit ?,6;`,
+  left join review r  on r.detail_order_no = d.order_detail_no left join (select file_name,prod_no from file where orders='s0') f on(p.prod_no = f.prod_no) where registration >= DATE_SUB(CURDATE(), INTERVAL 7 DAY) group by p.prod_no limit ?,6;`,
 
   //베스트 상품
-  bestListPage: `SELECT 
+  bestListPage: `SELECT  file_name,
   p.*,
   COUNT(*) AS hotItem,
   ROUND(AVG(r.review_grade), 1) AS avg_grade
 FROM order_detail o 
 LEFT JOIN product p ON o.prod_no = p.prod_no
 LEFT JOIN review r ON r.detail_order_no = o.order_detail_no
+
+
 GROUP BY p.prod_no
 HAVING hotItem > 1 and avg_grade > 4
 ORDER BY hotItem DESC;`,
@@ -128,17 +130,17 @@ limit ?, 6;
   // 포인트를 사용했을때 유저테이블에 포인트를 업데이트
   pointUpdate: `update user set ? where user_id = ?`,
   // 주문 취소했을때 주문상태 업데이트
-  orderUpdate : `update orders set order_status = 'c4' where order_no = ?`,
+  orderUpdate: `update orders set order_status = 'c4' where order_no = ?`,
   // 취소 된 상품 재고살리기
-  StockReturn : `update product set stock = stock + ? where prod_no = ?`,
+  StockReturn: `update product set stock = stock + ? where prod_no = ?`,
   // 사용한 쿠폰 리스트 조회
-  couponUseList : `select * from coupon c, order_detail o where c.order_no = o.order_no AND c.order_no = ?`,
+  couponUseList: `select * from coupon c, order_detail o where c.order_no = o.order_no AND c.order_no = ?`,
   // 결제 취소되었을때 환불/취소 테이블에 등록
   refundInsert: `insert into refund_cancel set ?`,
   // 취소 되었을때 쿠폰 다시 돌려주기
-  couponReturn : `update coupon set coupon_able = 0 where order_no = ?`,
+  couponReturn: `update coupon set coupon_able = 0 where order_no = ?`,
   // 취소 되었을때 포인트 다시 돌려주기
-  pointReturn : `update user set point = point + ? where user_id = ?`
+  pointReturn: `update user set point = point + ? where user_id = ?`
 };
 
 let user = {
@@ -155,29 +157,29 @@ let user = {
   forLogin: `select * from user where user_id = ? and user_password = ?`,
 
   //로그인- 카카오아이디 있는지 체크
-  checkKakao : `select user_id from user where user_id like '%3244970366%'`,
+  checkKakao: `select user_id from user where user_id like '%3244970366%'`,
 
   //회원수정 - id > 마이페이지> 회원가입때 입력한 값 그대로 출력 > 수정
-   // 수정하기전에 비번입력해야함
-   putPass : `select user_password from user where user_id = ?`,
+  // 수정하기전에 비번입력해야함
+  putPass: `select user_password from user where user_id = ?`,
 
-    //id 별 조회
-    selectId :  `select user_id, user_name, user_password, user_email, user_tel, birth, address, detail_address, postcode 
+  //id 별 조회
+  selectId: `select user_id, user_name, user_password, user_email, user_tel, birth, address, detail_address, postcode 
                 from user where user_id = ?`,
 
   updateUser: `update user set ? where user_id=?`,
 
   //ID찾기
-    findId : `select user_id from user where user_name=? and user_email=? `,
+  findId: `select user_id from user where user_name=? and user_email=? `,
 
   //비번찾기
-    findPass : `select user_password from user where user_name=? and user_email=? and user_id=?`,
+  findPass: `select user_password from user where user_name=? and user_email=? and user_id=?`,
 
   //비밀번호변경 
-    changePass: `update user set user_password=? where user_id =?`,
+  changePass: `update user set user_password=? where user_id =?`,
 
   //회원탈퇴 - 탈퇴하기누르면 아이디 남기고 null 되고 withdrawal table에 insert
-  updateOutUser : `UPDATE user
+  updateOutUser: `UPDATE user
   SET
     user_name = null,
     user_password = null,
@@ -198,13 +200,13 @@ let user = {
 let admin = {
   //기타-통계
   weekIncome: `select sum(total_payment) as sum from orders where order_date BETWEEN DATE_ADD(NOW(), INTERVAL -?-1 week ) AND DATE_ADD(NOW(), INTERVAL -? week);`,
-  outUserReason : `select withdrawal_reason reason,count(withdrawal_reason) as nums from withdrawal_user 
+  outUserReason: `select withdrawal_reason reason,count(withdrawal_reason) as nums from withdrawal_user 
   where withdrawal_date BETWEEN DATE_ADD(NOW(), INTERVAL -?-1 month ) AND DATE_ADD(NOW(), INTERVAL -? month)
   group by withdrawal_reason`,
   //최근 3개월 주문내역 매출액
   monthsIncome: `select year(order_date) as year,month(order_date) as month,sum(total_payment) as sum from orders where order_date > now() - INTERVAL 3 MONTH group by month order by year, month`,
-  withUser : `select count(*) as ours,(select count(*) from withdrawal_user where withdrawal_date = curdate()-?) as yours from user where join_date = curdate()-?;`,
-  counting : `select count(*) as orderNo,(select count(*) from orders where order_status = 'c2') as delNo,
+  withUser: `select count(*) as ours,(select count(*) from withdrawal_user where withdrawal_date = curdate()-?) as yours from user where join_date = curdate()-?;`,
+  counting: `select count(*) as orderNo,(select count(*) from orders where order_status = 'c2') as delNo,
   (select count(*) from refund_cancel where cancel_status='o1') as refundNo,
   (select count(*) from review_report where report_status = 'p1') as reportNo,
   (select count(*) from inquire where answer_state = 0) as inquireNo
@@ -260,9 +262,9 @@ let admin = {
   insertFNQ: `insert into fnq set ?`,
   updateFNQ: `update fnq set ? where qno = ?`,
   delFNQ: `delete from fnq where qno = ?`,
-  insertReply : `insert into reply set ?`,
-  replyInfo : `select * from reply where inquire_no = ?`,
-  updateInquire : `update inquire set answer_state = 1 where inquire_no = ?`,
+  insertReply: `insert into reply set ?`,
+  replyInfo: `select * from reply where inquire_no = ?`,
+  updateInquire: `update inquire set answer_state = 1 where inquire_no = ?`,
   //주문취소
   refundOrder: `update orders set order_status = 'c4' where order_no = ?`,
   adminRefund: `insert into refund_cancel set order_no=?,user_id=(select user_id from orders where order_no=refund_cancel.order_no),
@@ -272,9 +274,9 @@ let admin = {
   updateRefund: `update refund_cancel set cancel_status = ? where order_no= ?`,
   refundState: `select * from refund_cancel where cancel_status = ? order by cancel_request desc limit ?,?`,
   //첨부파일
-  insertFile : `insert into file set ?`,
-  photoList : `select file_name,types from file where ?? = ?`,
-  delPhoto : `DELETE file 
+  insertFile: `insert into file set ?`,
+  photoList: `select file_name,types from file where ?? = ?`,
+  delPhoto: `DELETE file 
   FROM file 
   JOIN (
     SELECT file_no 
@@ -318,10 +320,10 @@ WHERE t3.prod_no = ?`, //상세페이지에서 그 상품에대한 리뷰 리스
   insertReview: `insert into review set?`, //주문상세내역->리뷰등록
   updateReview: `update review set ? where user_id= ? and review_no= ?`,
   insertReviewImage: `insert into image set?`,
-  deleteReview:`delete from review where review_no=?`,
-  selectReviewLike:`select * from review_like where user_id=? and review_no=?`,
-  insertReviewLike:`insert into review_like set ?`,
-  deleteReviewLike:`delete from review_like where review_no=? and user_id=?`
+  deleteReview: `delete from review where review_no=?`,
+  selectReviewLike: `select * from review_like where user_id=? and review_no=?`,
+  insertReviewLike: `insert into review_like set ?`,
+  deleteReviewLike: `delete from review_like where review_no=? and user_id=?`
 
 };
 
@@ -350,7 +352,8 @@ let orders = {
   savingCart: `insert into cart set ?`,
   updateCart: `update cart set quantity=quantity+? where prod_no =? and user_id=?;`,
   comparisonCart: `select * from cart where user_id=?`,
-  detailInfo: `select * from product where prod_no=?`,
+  detailInfo: `  select distinct file_name, p.* from product p left join order_detail d on p.prod_no = d.prod_no
+  left join review r  on r.detail_order_no = d.order_detail_no left join file f on(p.prod_no = f.prod_no) where p.prod_no = ? order by f.orders`,
 
 
   //detailOrderLists:`select * from order_detail o1 left join orders o2 on o1.order_no = o2.order_no where o1.order_no =? and user_id = ?`,//주문창에서 상세주문내역으로 이동시 불러올 값
@@ -381,7 +384,7 @@ let like = {
   likeInfo: `select* from likes where user_id=? and prod_no=?`,
   likeInsert: `insert into likes set?`,
   likeDel: `delete from likes where user_id=? and prod_no =?`,
-  likeList:`select * from likes where user_id=?`
+  likeList: `select * from likes where user_id=?`
 }
 let inquire={
   inquireList:`select * from inquire where user_id=?`,

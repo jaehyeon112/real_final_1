@@ -70,11 +70,13 @@ export default{
     methods:{
     
 
-        goToUpdate() {
+    goupdate() {
       if (this.$store.state.user.user_id) {
         // 로그인된 아이디가 있으면 회원 정보 수정 페이지로 이동
-        this.$router.push({ name: 'join', params: { id: this.$store.state.user.user_id } });
-      } else {
+        this.$router.push({ name: 'putpass', params: { id: this.$store.state.user.user_id } });
+      } else if(this.$store.state.kakaoId.id){
+        this.$router.push({ name: 'join', params: { id: this.$store.state.kakaoId.id } });
+      }else {
         // 로그인된 아이디가 없으면 회원 가입 페이지로 이동
         this.$router.push('/join');
       }

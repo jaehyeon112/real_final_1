@@ -34,6 +34,7 @@ import search from '@/components/menu/search.vue';
 import replyList from'@/components/common/replyList.vue'
 
 
+
 export default {
   path: "/",
   name: "main",

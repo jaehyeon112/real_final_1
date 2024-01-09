@@ -24,7 +24,7 @@
           <v-dialog transition="dialog-top-transition" width="auto">
           <template  v-slot:activator="{ props }">
             <!--여기를 장바구니 버튼으로~-->
-            <div style="position:absolute; top:100px; left:200px"><v-btn @click="quantity=1" style="background-color: gray;" icon="mdi mdi-cart" variant="tonal"  @click.prevent="getUserCartInfo" v-bind="props"> </v-btn></div>
+            <div style="position:absolute; top:100px; right:20px"><v-btn @click="quantity=1" style="background-color: gray;" icon="mdi mdi-cart" variant="tonal"  @click.prevent="getUserCartInfo" v-bind="props"> </v-btn></div>
           </template>
           <template v-slot:default="{ isActive }">
             <v-card height="300" width="450">
