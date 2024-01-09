@@ -24,7 +24,7 @@
                     <td>{{ $dateFormat(coupon.start_coupon,"yyyy년MM월dd일") }}</td>
                     <td>{{ $dateFormat(coupon.end_coupon,"yyyy년MM월dd일") }}</td>
                     <td v-if=" coupon.coupon_able==0">사용 가능</td>
-                    <td v-else ><del v-if="coupon.end_coupon < today ">사용 불가</del></td>
+                    <td v-else >사용 완료</td>
                         
                 </tr>
             </tbody>

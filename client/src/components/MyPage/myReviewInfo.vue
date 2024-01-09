@@ -5,11 +5,11 @@
                 <thead>
                     <tr>
                         <th scope="col" class="text-center table-primary">주문번호</th>
-                        <td scope="col" class="text-center">{{ reviewInfo.order_detail_no }}</td>
+                        <td scope="col" class="text-center">{{ reviewInfo.detail_order_no }}</td>
                         <th scope="col" class="text-center table-primary">작성일</th>
                         <td scope="col" class="text-center">{{ $dateFormat(reviewInfo.review_no,'yyyy년MM월dd일')}}</td> <!--$DateFormat-->
                         <th scope="col" class="text-center table-primary">평점</th>
-                        <td scope="col" class="text-center">{{ boardInfo.review_grade }}</td>
+                        <td scope="col" class="text-center">{{ reviewInfo.review_grade }}</td>
                     </tr>
 
                     <tr>
@@ -26,12 +26,11 @@
                     </tr>
                     <tr>
                         <td colspan="6" class="text-center">
-                            <button class="btn btn-xs btn-info" @click="goToUpdateForm(reviewInfo.no)">수정</button><!-- 클릭 이벤트는 이벤트객체가 넘어온다~ 근데 그게 필요없다그래서 뭘 받아올지 명시하는게 필요하다-->
+                            <button class="btn btn-xs btn-info" @click="goToUpdateForm(reviewInfo.review_no)">수정</button><!-- 클릭 이벤트는 이벤트객체가 넘어온다~ 근데 그게 필요없다그래서 뭘 받아올지 명시하는게 필요하다-->
                         </td>
                     </tr>
                 </tbody>
             </table>
-            <td><v-btn  @click="goToUpdate(review.review_no)" >리뷰수정</v-btn></td>
         </div>
     </div>
 </template>
@@ -51,13 +50,13 @@ export default {
     },
     methods: {
         async getReviewInfo() {
-           let result = await axios.get(`api/myReview/${this.searchNo}`) //sql.js 단건조회 경로 그대로 가져오기 api붙여주는 이유 proxy와 관련
+           let result = await axios.get(`/api/myReview/${this.searchNo}`) //sql.js 단건조회 경로 그대로 가져오기 api붙여주는 이유 proxy와 관련
                                     .catch(err=>{
-                                        consoel.log(err)
+                                        console.log(err)
                                     })      
-            this.reviewInfoInfo =result.data                          
+            this.reviewInfo =result.data[0]                          
         },
-        goToUpdate(reviewNo){// 여기 변수는..? value(필드명)
+        goToUpdateForm(reviewNo){// 여기 변수는..? value(필드명)
             this.$router.push({path : '/reviewForm', query : {reviewNo : reviewNo}});//{키:필드명}
         },
     }

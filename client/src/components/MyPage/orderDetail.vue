@@ -20,6 +20,23 @@
             </label>
             <div>
                 <p>결제정보</p>
+                <small class="d-block text-body-secondary">금액:{{ detail.total_payment }}</small>
+                <small class="d-block text-body-secondary">할인금액:{{ detail.total_payment- detail.real_payment }}</small>
+                <small class="d-block text-body-secondary">결제금액:{{ detail.real_payment }}</small>
+                
+                <small class="d-block text-body-secondary">배송비:{{ detail.delivery_charge }}</small>
+                <small class="d-block text-body-secondary">쿠폰할인:{{ detail.coupon_discount_rate }}</small>
+                <small class="d-block text-body-secondary">포인트사용:{{ detail.point_use }}</small>
+                <small class="d-block text-body-secondary">포인트적립률:{{ detail.point_save_rate }}</small>
+                
+                <small class="d-block text-body-secondary">결제방법:{{ detail.payment_method }}</small>
+                <small class="d-block text-body-secondary">결제일시:{{ detail.order_date }}</small>
+                <p>배송정보</p>
+                <small class="d-block text-body-secondary">보내는분:{{ detail.user_id }}</small>
+                <small class="d-block text-body-secondary">받는분:{{ detail.recipient }}</small>
+                <small class="d-block text-body-secondary">받는주소:{{ detail.recipient_address }}</small>
+                <small class="d-block text-body-secondary">받는상세주소:{{ detail.recipient_detail_address }}</small>
+                <small class="d-block text-body-secondary">배송 요청사항:{{ detail.deliveyry_request }}</small>
             </div>
         </div>   
     </div>
@@ -46,11 +63,11 @@ export default {
         
         async getDetailList(){
         this.orderNo = this.$route.query.orderNo;
-        let member_id = this.$store.state.user.user_id;
-        let a = (await axios.get(`/api/myDetailOrders/${this.orderNo}/${member_id}`)
+        
+        let a = (await axios.get(`/api/myDetailOrders/${this.orderNo}`)
                                         .catch(err=>console.log(err))).data // 상세의 데이터
                                         
-        let b = (await axios.get(`/api/orderNoReview/${member_id}`)
+        let b = (await axios.get(`/api/orderNoReview`)
                                    .catch(err => console.log(err))).data;  // 리뷰의 데이터 
          console.log('a의 값')
          console.log(a)                           

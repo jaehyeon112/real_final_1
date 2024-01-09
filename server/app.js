@@ -108,8 +108,6 @@ async function sendEmail(to, subject, body) {
 }
 
 
-
-
 server.listen(3000, () => {
   console.log('app대신 socket.io서버 on~~');
 });
@@ -218,6 +216,20 @@ io.on('connect', (socket) => {
       console.log(`User role: ${decoded.role}`);
     })
 
+    jwt.verify(token, SECRET_KEY, (err, decoded) => {
+      if (err) {
+        console.error('JWT verification failed:', err);
+        io.close();
+        return;
+      }
+      // 사용자 정보를 웹소켓 객체에 추가
+      io.user = decoded;
+      console.log(`WebSocket connected for user: ${decoded.id}`);
+      console.log(`User role: ${decoded.role}`);
+    })
+
+
+    socket.emit('connect2', '되나?')
 
     socket.emit('connect2', '되나?')
 
@@ -235,7 +247,17 @@ io.on('connect', (socket) => {
 
   })
 
-});
+  socket.on('report', (message) => {
+    console.log(message);
+  })
+
+  socket.on('disconnect', () => {
+    console.log('user disconnected');
+  });
+
+})
+
+
 const cron = require("node-cron");
 
 
@@ -425,6 +447,10 @@ app.post("/cancel", async (req, res, next) => {
     res.status(400).send(error);
   }
 })
+app.get("/isolatedRegionList", async (req, res) => { // 배송불가 지역리스트
+  let list = await mysql.query("test", "isolatedRegionList");
+  res.send(list);
+});
 
 app.get("/couponList", async (req, res) => { // 쿠폰 리스트
   let list = await mysql.query("test", "couponList", req.session.user_id);
@@ -664,11 +690,11 @@ app.get('/logout', async (req, res) => {
 //로그인 - 아이디비번 일치해야 로그인 (5회 오류시 보안프로그램실행)
 app.post("/dologin", async (req, res) => {
   let data = [req.body.param.user_id, req.body.param.user_password];
+  console.log(data)
   let list = await mysql.query("user", "forLogin", data);
   if (list.length != 0) {
     req.session.user_id = req.body.param.user_id;
     req.session.user_grade = list[0].user_grade;
-
     // userGrade에 따라 role 설정
     const role = (req.session.user_grade == 'i4') ? 'admin' : 'user';
     // req.session.grade = 
@@ -1288,7 +1314,7 @@ app.delete('/orders/:ono', async (req, res) => {
 
 //추가 배송지 관련
 app.get('/addDelivery', async (req, res) => {
-  let id = req.session.user_id
+  let id = [req.session.user_id,req.session.user_id,req.session.user_id,req.session.user_id]
   const list = await mysql.query('delivery', 'deliveryList', id);
   res.send(list);
 })
@@ -1372,17 +1398,27 @@ app.get("/myPointUse", async (req, res) => {
   let list = await mysql.query("point", "myPointUseHistory", id);
   res.send(list);
 })
-//리뷰등록시 포인트 지급
+//리뷰등록,삭제시 포인트 관련
 app.post("/reviewPoint", async (req, res) => {
   //let datas = [request.body.param,Number(req.params.ono),req.params.id]
-  let datas = [req.body.param.point_no, req.body.param.order_detail_no, req.session.param.user_id]
-  res.send(await mysql.query("reviews", "reviewPoint", datas));;
+  let datas = [req.body.param.point_no, req.body.param.order_detail_no, req.session.user_id]
+  res.send(await mysql.query("point", "reviewPoint", datas));;
 
 });
 app.put("reviewPointUp", async (req, res) => {
   let id = req.session.user_id
-  res.send(await mysql.query("reviews", "reviewPointUp", id))
+  res.send(await mysql.query("point", "reviewPointUp", id))
 })
+// app.post("/deleteRPoint", async ( req,res)=>{
+//   let data = req.body.param
+//   res.send(await mysql.query("point", "reviewPointD",data))
+
+// })
+
+// app.put("reviewPointDown", async (req,res)=>{
+//   let id = req.session.user_id
+//   res.send(await mysql.query("point", "reviewPointDown", id))
+// })
 
 
 
@@ -1410,7 +1446,7 @@ app.post("/reviewInsert", async (req, res) => {
 //리뷰 단건 조회
 app.get("/myReview/:rno", async (req, res) => {
   let datas = [req.session.user_id, req.params.rno]
-  res.send(await mysql.query("reviews", "reviewInfo", datas))[0]
+  res.send(await mysql.query("reviews", "reviewInfo", datas))
 });
 //리뷰수정
 app.put("/reviewUpdate/:rno", async (req, res) => {
@@ -1485,11 +1521,16 @@ app.put("/inquireUpdate/:ino", async (req, res) => {
   let datas = [req.body.param, req.session.user_id, req.params.ino]
   res.send(await mysql.query("inquire", "inquireUpdate", datas))
 })
-//답변
-app.get("/inquireAnswer/:ino", async (req, res) => {
-  let ino = Number(req.params.ino);
-  res.send(await mysql.query("inquire", "inquireAnswer", ino))
+app.delete('/deleteInquire/:ino', async (req,res)=>{
+  let ino = req.params.ino;
+  let result = await mysql.query("inquire", "deleteInquire",ino)
+  res.send(result)
 })
+  //답변
+  app.get("/inquireAnswer/:ino", async(req,res)=>{
+    let ino = Number(req.params.ino);
+    res.send(await mysql.query("inquire", "inquireAnswer", ino))
+  })
 
 app.get("/photoInq/:ino", async (req, res) => {
   let ino = req.params.ino

@@ -321,6 +321,8 @@ export default {
 
 
 
+
+
       //회원가입 v-model
       userInfo : {
         //kakaoid : "kakao" + this.$store.state.kakaoId, 
