@@ -122,13 +122,14 @@
 </script>
 <style scoped>
 .pa-12{
+    top : 50%;
     width: 1000px;
     height: 700px;
     margin: auto;
-    padding-top: 1000px;
-    background-color: rgb(236, 132, 236,0.5);
+    background-color: rgba(238, 193, 125, 0.2);
 }
 .mx-auto{
-    margin-top: 10%;
+    margin-top: 5%;
+    border: 1px solid rgb(245, 138, 51);
 }
 </style>

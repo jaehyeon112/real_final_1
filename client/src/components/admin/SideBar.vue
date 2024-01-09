@@ -29,7 +29,7 @@
     </symbol>
   </svg>
   
-  <div class="sidebar border border-right col-md-3 col-lg-2 p-0 bg-body-tertiary">
+  <div class="sidebar border border-right col-md-3 col-lg-2 p-0 ">
     <div class="offcanvas-md offcanvas-end bg-body-tertiary" tabindex="-1" id="sidebarMenu" aria-labelledby="sidebarMenuLabel">
       
       <div class="offcanvas-body d-md-flex flex-column p-0 pt-lg-3 overflow-y-auto">
@@ -74,7 +74,7 @@
         <li class="nav-item">
           <button class="nav-link d-flex align-items-center gap-2 active" @click="review">
             <svg class="bi"><use xlink:href="#puzzle"/></svg>
-            리뷰/문의사항
+            리뷰/문의
           </button>
           <ul v-if="isreview">
             <li class="curs" @click="reviewList">리뷰 목록</li>
@@ -243,7 +243,11 @@ export default {
         fill: currentColor;
         width: 50px;
       }
-
+      .sidebar{
+        width: 230px;
+        height: 100%;
+        top : 0;
+      }
       .nav-scroller .nav {
         display: flex;
         flex-wrap: nowrap;

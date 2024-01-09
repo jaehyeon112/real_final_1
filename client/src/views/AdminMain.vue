@@ -1,10 +1,10 @@
 <template>
 
   <div class="container-fluid">
-    <v-btn @click="tt" >asdf</v-btn>
+    <!-- <v-btn @click="tt" >asdf</v-btn> -->
     <div class="row">
       <side/>
-      <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+      <main class="col-md-9 col-lg-10 px-md-4">
         <v-row class="toDo">
         <v-dialog
           v-model="dialog"
@@ -13,10 +13,11 @@
         >
           <template v-slot:activator="{ props }">
             <v-btn
-              color="black"
+              color="rgb(248, 173, 123)"
               v-bind="props"
             >
-              오늘 해야 할 일
+            <v-icon>fas fa-list</v-icon>  
+            오늘 해야 할 일
             </v-btn>
           </template>
           <v-card>
@@ -541,11 +542,9 @@ import icon from '../components/admin/icon.vue';
     right: 0; */
 }
 .toDo{
-  float: right;
-  background-color: black;
   position: fixed;
-  top: 30px;
-  right: 20px;
+  top: 50px;
+  right: 50px;
   text-align: center;
   z-index: 10;
 }
@@ -558,5 +557,9 @@ import icon from '../components/admin/icon.vue';
   margin: auto;
   width: 1200px;
   height: 400px;
+}
+.col-md-9 {
+  margin: auto;
+  padding: 10px;
 }
 </style>
