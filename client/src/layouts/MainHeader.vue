@@ -1,56 +1,53 @@
 <template>
-  <div>
-    <ul class="nav justify-content-end" id="nav">
-      <li class="nav-item">
-        <span class="nav-link login" @click="loginOrMypage"  >{{ $store.state.user.user_id != null ? $store.state.user.user_name + '님' : '로그인' }}</span>
-      </li>
-      <li class="nav-item">
-        <span class="nav-link login" @click="logoutOrJoin" >{{ $store.state.user.user_id != null ? '로그아웃' : "회원가입"}}</span>
-      </li>
-         <li class="nav-item">
-        <span class="nav-link login" @click="withdrawal" >{{ $store.state.user.user_id != null ? '회원탈퇴' : "회원가입"}}</span>
-      </li>
 
-    </ul>
-
-    <div class="container text-center" style="margin-bottom: 20px">
-      <div class="row">
-        <div class="col-2">
-          <router-link
+    <div>
+      <ul class="nav justify-content-end" id="nav">
+        <li class="nav-item">
+          <span class="nav-link login" @click="loginOrMypage"  >{{ $store.state.user.user_id != null ? $store.state.user.user_name + '님' : '로그인' }}</span>
+        </li>
+        <li class="nav-item">
+          <span class="nav-link login" @click="logoutOrJoin" >{{ $store.state.user.user_id != null ? '로그아웃' : "회원가입"}}</span>
+        </li>
+        <li class="nav-item">
+          <span class="nav-link login" @click="withdrawal" >{{ $store.state.user.user_id != null ? '회원탈퇴' : "회원가입"}}</span>
+        </li>
+        
+      </ul>
+      
+      <div class="container text-center" style="margin-bottom: 20px">
+        <div class="row">
+          <div class="col-2">
+            <router-link
             to="/main"
-            class="d-flex align-items-center mb-3 mb-lg-0 me-lg-auto link-body-emphasis text-decoration-none"
-          >
+            >
             <!--이미지 찾아서 넣자-->
-            <svg class="bi me-2" width="40" height="32">
-              <use xlink:href="#bootstrap"></use>
-            </svg>
-            <span class="fs-4">1조 짱</span>
+            <img src="/joymeal.jpg" style="width:100px"> 
           </router-link>
         </div>
         <div class="col-6">
             <input v-model='word'  @keyup.enter="search" type="search" placeholder="Search..." />
         </div>
         <div class="col-1" style="width: 45px; padding-top: 15px">
-            <!-- 알람 갯수 조절해야함 -->
-            <v-menu>
-      <template v-slot:activator="{ props }">
-        <span
-          v-bind="props"
-        >
-        <v-badge color="error" content='0'>
-              <span class="mdi mdi-bell-outline" style="font-size: 30px"></span>
-            </v-badge>
-        </span>
-      </template>
-      <v-list 
-      style="padding:20px"
-      width="450"
-      height="600">
-      <v-row justify="end" style="margin-right: 30px; height: 50px;">
-        <router-link to="/"><span class="text-style" style="margin-right: 20px;">알람페이지로</span></router-link>
-      </v-row>
-        <v-row>
-          <v-col cols="3" >
+          <!-- 알람 갯수 조절해야함 -->
+          <v-menu>
+            <template v-slot:activator="{ props }">
+              <span
+              v-bind="props"
+              >
+              <v-badge color="error" content='0'>
+                <span class="mdi mdi-bell-outline" style="font-size: 30px"></span>
+              </v-badge>
+            </span>
+          </template>
+          <v-list 
+          style="padding:20px"
+          width="450"
+          height="600">
+          <v-row justify="end" style="margin-right: 30px; height: 50px;">
+            <router-link to="/"><span class="text-style" style="margin-right: 20px;">알람페이지로</span></router-link>
+          </v-row>
+          <v-row>
+            <v-col cols="3" >
               <v-list-item-title style="font-size: 12px;">알람종류 </v-list-item-title>
             </v-col>
             <v-col cols="5">
@@ -61,14 +58,14 @@
             </v-col>
           </v-row>
         <v-list-item
-          v-for="(item, index) in items"
-          :key="index"
-          :value="index"
-          >
-          <v-row>
-            <v-col cols="3">
-              <v-list-item-title style="font-size: 12px;">{{ item.title }}</v-list-item-title>
-            </v-col>
+        v-for="(item, index) in items"
+        :key="index"
+        :value="index"
+        >
+        <v-row>
+          <v-col cols="3">
+            <v-list-item-title style="font-size: 12px;">{{ item.title }}</v-list-item-title>
+          </v-col>
             <v-col cols="5">
               <v-list-item-title style="font-size: 12px;">{{ item.title }}</v-list-item-title>
             </v-col >
@@ -79,11 +76,11 @@
         </v-list-item>
       </v-list>
     </v-menu>    
-          </div>
-        <div class="col-1" style="padding-top: 15px">
-          <span @click="moveCartList">
-            <!-- 장바구니 갯수 조절해야함 -->
-            <v-badge color="error" :content='$store.state.user.user_id == null ? $store.state.cartCount : $store.state.loginCartCount'>
+  </div>
+  <div class="col-1" style="padding-top: 15px">
+    <span @click="moveCartList">
+      <!-- 장바구니 갯수 조절해야함 -->
+      <v-badge color="error" :content='$store.state.user.user_id == null ? $store.state.cartCount : $store.state.loginCartCount'>
               <span class="mdi mdi-cart-minus" style="font-size: 30px"></span>
             </v-badge>
           </span>
@@ -91,39 +88,39 @@
       </div>
     </div>
     <div
-      class="text-center"
-      id="lnb"
-      :class="{ fixed: isLnbFixed }"
+    class="text-center"
+    id="lnb"
+    :class="{ fixed: isLnbFixed }"
       style="border: 1px solid #ccc; background-color: #fff"
       ref="lnb"
-    >
+      >
       <div
-        class="row"
-        style="
+      class="row"
+      style="
           font-size: 24px;
           font-weight: 700;
           margin-top: 20px;
           padding-bottom: 10px;
-        "
+          "
       >
-        <div class="col"></div>
-        <div class="col">
-          
-          <category id="ca"/>
+      <div class="col"></div>
+      <div class="col">
         
-        </div>
-        <div class="col">
-          <router-link class="nav-custom" to="/">소개</router-link>
-        </div>
-        <div class="col">
-          <router-link class="nav-custom" to="/menu/new">신제품</router-link>
-        </div>
-        <div class="col">
-          <router-link class="nav-custom" to="/menu/best">베스트</router-link>
-        </div>
-        <div class="col">
-          <router-link class="nav-custom" to="/menu/sale">특가</router-link>
-        </div>
+        <category id="ca"/>
+        
+      </div>
+      <div class="col">
+        <router-link class="nav-custom" to="/">소개</router-link>
+      </div>
+      <div class="col">
+        <router-link class="nav-custom" to="/menu/new">신제품</router-link>
+      </div>
+      <div class="col">
+        <router-link class="nav-custom" to="/menu/best">베스트</router-link>
+      </div>
+      <div class="col">
+        <router-link class="nav-custom" to="/menu/sale">특가</router-link>
+      </div>
         <div class="col">
           <router-link class="nav-custom" to="/menu/frozen">냉동밀키트</router-link>
         </div>

@@ -1679,11 +1679,11 @@ app.get(`/sale`, async (req, res) => {
   } = req.query;
 
 
-  let base = `select file_name, p.*, COUNT(*) AS hotItem, FORMAT(AVG(r.review_grade), 1) AS avg_grade
-  FROM order_detail o 
-  LEFT JOIN product p ON o.prod_no = p.prod_no
+  let base = `select file_name, p.*, FORMAT(AVG(r.review_grade), 1) AS avg_grade
+  FROM product p 
+  LEFT JOIN order_detail o ON o.prod_no = p.prod_no
   LEFT JOIN review r ON r.detail_order_no = o.order_detail_no
-  left join (select file_name,prod_no from file where orders='s0') f on(p.prod_no = f.prod_no)  
+  left join (select file_name,prod_no from file where orders='s0') f on(p.prod_no = f.prod_no)
   where discount_rate > 40`
 
   if (first && last) {
@@ -1694,6 +1694,7 @@ app.get(`/sale`, async (req, res) => {
     base += ` and discount_price between ${A} and ${B} `
   }
 
+  base += ` group by p.prod_no`
   if (no) {
     base += ' limit ' + no * 6 + ' , 6';
   }

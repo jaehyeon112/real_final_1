@@ -175,7 +175,7 @@ export default {
         }
    
         if(this.prodList.stock >= this.quantity+cartQuantity) {
-          alert("장바구니에 등록되었습니다. 비회원")
+          alert("장바구니에 등록되었습니다.")
       let items = this.prodList;
       items.quantity = this.quantity;
       this.$store.commit('addCart',items)
@@ -216,7 +216,7 @@ export default {
               }
     if(this.prodList.stock >= this.quantity) {
           await axios.post('/api/cartAfterLogin/',obj).catch(err=>console.log('로그인 이후 카트에 담길때 에러' + err))
-          alert("장바구니에 등록되었습니다. 회원" )
+          alert("장바구니에 등록되었습니다." )
           this.$store.commit('loginCart')
       //장바구니 추가
     }else{
