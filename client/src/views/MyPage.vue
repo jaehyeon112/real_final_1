@@ -90,8 +90,9 @@ export default{
     methods: {
         //일단 멤버 정보를 셀렉트 해오는걸로 시험 중 나중에 로그인 세션그걸로 바꿔야 함
         async getMember(){
-            if(req.session.user_id==null){
+            if(this.$store.state.user.user_id==null){
                 this.$router.push({path : '/login'});
+                return
             }
             try{
             this.member = (await axios.get(`/api/member`)).data}
