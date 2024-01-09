@@ -1,5 +1,9 @@
 <template>
+    <!-- <v-alert v-show="alarm2" class="alarm" closable text="삭제하시면 품절처리 됩니다. 정말 품절처리 하시겠습니까?" type="warning" variant="tonal">
+            <br><v-btn @click="this.yes=true">확인</v-btn><v-btn @click="this.alarm=false">취소</v-btn>
+            </v-alert> -->
     <list @changeemit="changeChildData" @search="search">
+        <template #title>상품 목록</template>
         <template #searchData>
             <div style="width: 25%;">
                 <br><v-select
@@ -14,7 +18,7 @@
         </template>
         <template #filterSearch>
             <div><a @click="this.order='prod_no'">기본순 | </a><a @click="this.order='registration'">최근 등록순 | </a><a @click="this.order='high'">높은 가격순(판매가 기준) | </a><a @click="this.order='discount_price'">낮은 가격순(판매가 기준)</a></div>
-            <br><input class="datatable-input" v-model="word" @keyup="searchData" style="border-bottom: 1px black solid;width: 300px;" placeholder="상품명을 검색하세요">
+            <br><input class="datatable-input" v-model="word" @keyup.enter="search(this.word),this.category=''" style="border-bottom: 1px black solid;width: 300px;" placeholder="상품명을 검색하세요">
         </template>
         <template #dataList>
         <thead>
@@ -45,7 +49,7 @@
         <tbody v-if="productList.length==0" style="text-align: center;">
             <tr><td></td><td><h3>존재하는 데이터가 없습니다</h3></td></tr>
         </tbody>
-        <v-container>
+        <v-container v-if="this.totalList.length!=0">
           <page @changePage="changePage" :list="totalList" :totals="this.nums"></page>
         </v-container>
         </template>
@@ -68,6 +72,8 @@
                 order : 'prod_no',
                 category : '',
                 content : '',
+                alarm2 : false,
+                yes : false
             }
         },
         components : {
@@ -96,6 +102,7 @@
                     let result = list.data;
                     this.productList = result;
                 }
+                this.total();
             },
             async changePage(no) {
                 if(this.order=='high'){
@@ -112,6 +119,7 @@
                 this.$router.push({name : 'product',query : {pno : pno}})
             },
             async delProd(pno){
+                this.alarm2=true;
                 if(confirm('삭제하시면 품절처리 됩니다\n정말 품절처리 하시겠습니까?')){
                     let result = await axios.patch(`/api/prod/${pno}`).catch(err=>console.log(err));
                     console.log(result.data)
@@ -154,6 +162,8 @@
                     return;
                 }
                 
+                let AllList = await axios.get(`/api/prod/${cont}/${cont}`).catch(err=>console.log(err));
+                this.totalList = AllList.data;
                 let list = await axios.get(`/api/prod/${cont}/${cont}/${this.order}/${this.startNum}/${this.nums}`).catch(err=>console.log(err));
                 let result = list.data;
                 console.log('리스트 : '+result)
@@ -173,17 +183,23 @@
             order(){
                 this.prodList(this.nums);
             },
-            word(){
-                if(this.word==''){
-                    return;
-                }
-                this.search(this.word);
-                this.category = '';
-            },
             content(){
                 this.searchList(this.content);
             },
         }
     }
 </script>
-
+<style scoped>
+  /* .alarm{
+    position: relative;
+  top: 30%;
+  left: 800px;
+  transform: translate(-50%, -50%);
+  width: 350px;
+  height: 150px;
+  border-radius: 10px;
+  padding: 20px;
+  box-sizing: border-box;
+  z-index: 50px;
+} */
+</style>

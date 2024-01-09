@@ -5,7 +5,7 @@
           <router-link
             to="/main"
             class="d-flex align-items-center mb-3 mb-lg-0 me-lg-auto link-body-emphasis text-decoration-none">
-            <img id="ima" :src="'/api/fileCall/1조 로고.jpg'" style="position: relative;left:50%; height=120px;width: 120px;">
+            <img id="ima" :src="'/api/fileCall/1조 로고.jpg'" title="조이밀 홈페이지로 이동" style="position: relative;left:50%; height=140px;width: 140px;">
           </router-link>
         </div>
       </div>
@@ -23,7 +23,6 @@
 }
 .col-4{
   margin: auto;
-  z-index: 10;
   top : 50%;
   font-size: 18px;
 }

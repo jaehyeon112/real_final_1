@@ -264,7 +264,8 @@ export default {
                       "file_name" : this.file[i],
                       "orders" : this.ods,
                       "prod_no" : this.prodNo,
-                      "path" : 'uploads\\'+this.file[i]
+                      "path" : 'uploads\\'+this.file[i],
+                      "types" : 'text'
                     }
                   }
                   let result1 = await axios.post("/api/photo",photos).catch(err=>console.log(err));
@@ -282,7 +283,8 @@ export default {
                   "file_name" : this.newPhoto[i],
                   "orders" : i,
                   "prod_no" : result.data.insertId,
-                  "path" : 'uploads\\'+this.newPhoto[i]
+                  "path" : 'uploads\\'+this.newPhoto[i],
+                  "types" : 'photo'
                 }
               }
               let result1 = await axios.post("/api/photo",photos).catch(err=>console.log(err));

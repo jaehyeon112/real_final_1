@@ -1,5 +1,6 @@
 <template>
     <list @changeemit="changeChildData" @search="search">
+      <template #title>고객 주문목록</template>
         <template #searchData>
             <div class="datatable-input" style="width: 30%;float: right;">
                 날짜별 주문내역<br>

@@ -607,13 +607,40 @@ app.post("/refundInsert", async (request, res) => { // orders 등록
   res.send((await mysql.query("test", "refundInsert", data)));
 });
 
-app.get("/user/:order", async (req, res) => {
-  let result = req.params.order;
-  let data = await mysql.query("admin", "AlluserList", result);
-  res.send(data);
-});
+//서영희-회원관리
 app.get("/user", async (req, res) => {
   let data = await mysql.query("admin", "AlluserList");
+  res.send(data);
+});
+
+app.get("/user/:order/:startNo/:lastNo", async (req, res) => {
+  let data = [req.params.order, Number(req.params.startNo) * Number(req.params.lastNo),Number(req.params.lastNo)];
+  let list = await mysql.query("admin", "userList", data);
+  res.send(list);
+  console.log('실행 : ', list)
+});
+
+app.get("/user/:id/:name/:order/:startNo/:lastNo", async (req, res) => {
+  let list = [req.params.id, req.params.name, req.params.order, Number(req.params.startNo) * Number(req.params.lastNo),Number(req.params.lastNo)];
+  let data = await mysql.query("admin", "searchUser", list);
+  res.send(data);
+});
+
+app.get("/user/:id/:name", async (req, res) => {
+  let list = [req.params.id, req.params.name];
+  let data = await mysql.query("admin", "AllsearchUser", list);
+  res.send(data);
+});
+
+app.get("/user/:join/:order/:startNo/:lastNo", async (req, res) => {
+  let list = [req.params.join, req.params.order, Number(req.params.startNo) * Number(req.params.lastNo),Number(req.params.lastNo)];
+  let data = await mysql.query("admin", "filterUser", list);
+  res.send(data);
+});
+
+app.get("/user/:join", async (req, res) => {
+  let list = req.params.join;
+  let data = await mysql.query("admin", "AllfilterUser", list);
   res.send(data);
 });
 
@@ -622,12 +649,12 @@ app.get("/outUser", async (req, res) => {
   res.send(data);
 });
 
-app.get("/user/:order/:startNo", async (req, res) => {
-  let data = [req.params.order, Number(req.params.startNo) * 10];
-  let list = await mysql.query("admin", "userList", data);
-  res.send(list);
-  console.log('실행 : ', list)
+app.put("/user/:grade/:uid", async (req, res) => {
+  let data = [req.params.grade, req.params.uid];
+  let result = await mysql.query("admin", "stopUser", data);
+  res.send(result);
 });
+//서영희-회원관리 여기까지
 
 app.put("/order/:status/:ono", async (req, res) => {
   let data = [req.params.status, req.params.ono];
@@ -799,29 +826,20 @@ app.get("/user", async (req, res) => {
   res.send(list);
 });
 
-app.get("/user/:id/:name/:order/:startNo", async (req, res) => {
-  let list = [req.params.id, req.params.name, req.params.order, Number(req.params.startNo) * 10];
-  let data = await mysql.query("admin", "searchUser", list);
-  res.send(data);
-});
 
-app.get("/user/:join/:order/:startNo", async (req, res) => {
-  let list = [req.params.join, req.params.order, Number(req.params.startNo) * 10];
-  let data = await mysql.query("admin", "filterUser", list);
-  res.send(data);
-});
 
+
+//서영희-상품관리
 app.get("/prod/:name/:cate/:order/:startNo/:no", async (req, res) => {
-  if (Number(req.params.startNo) == null || Number(req.params.no) == null) {
-    let test = "select prod_no,prod_name,price,discount_price,discount_rate,stock,main_category from product where prod_name like concat(concat('%',?),'%') or main_category = ? order by ??"
-    let list2 = [req.params.name, req.params.cate, req.params.order];
-    let data2 = await mysql.query("admin", "searchProd", list2);
-    res.send(data2);
-  } else {
-    let list = [req.params.name, req.params.cate, req.params.order, Number(req.params.startNo) * Number(req.params.no), Number(req.params.no)];
-    let data = await mysql.query("admin", "searchProd", list);
-    res.send(data);
-  }
+  let list = [req.params.name, req.params.cate, req.params.order, Number(req.params.startNo) * Number(req.params.no), Number(req.params.no)];
+  let data = await mysql.query("admin", "searchProd", list);
+  res.send(data);
+});
+
+app.get("/prod/:name/:cate", async (req, res) => {
+  let list = [req.params.name, req.params.cate];
+  let data = await mysql.query("admin", "AllsearchProd", list);
+  res.send(data);
 });
 
 
@@ -836,18 +854,17 @@ app.get("/prod/:order/:startNo/:no", async (req, res) => {
   res.send(list);
 });
 
-app.get("/prods/:pno", async (req, res) => {
-  let data = req.params.pno;
-  let result = await mysql.query("admin", "prodInfo", data);
-  res.send(result);
-});
-
 app.get("/prod/:startNo/:no", async (req, res) => {
   let datas = [Number(req.params.startNo) * Number(req.params.no), Number(req.params.no)];
   let result = await mysql.query("admin", "pricehigh", datas);
   res.send(result);
 });
 
+app.get("/prods/:pno", async (req, res) => {
+  let data = req.params.pno;
+  let result = await mysql.query("admin", "prodInfo", data);
+  res.send(result);
+});
 
 app.post("/prod", async (req, res) => {
   let data = req.body.param;
@@ -866,7 +883,8 @@ app.patch("/prod/:pno", async (req, res) => {
   let result = await mysql.query("admin", "prodDelete", data);
   res.send(result);
 });
-//통계
+
+//서영희-통계
 app.get("/sum", async (req, res) => {
   let result = await mysql.query("admin", "monthsIncome");
   res.send(result);
@@ -895,14 +913,21 @@ app.get("/withMe/:outday/:joinday", async (req, res) => {
   res.send(result);
 });
 
-app.put("/user/:grade/:uid", async (req, res) => {
-  let data = [req.params.grade, req.params.uid];
-  let result = await mysql.query("admin", "stopUser", data);
+//서영희-공지사항
+app.get("/notice", async (req, res) => {
+  let result = await mysql.query("admin", "AllnoticeList");
   res.send(result);
 });
 
-app.get("/notice", async (req, res) => {
-  let result = await mysql.query("admin", "AllnoticeList");
+app.get("/onenotice/:num", async (req, res) => {
+  let data = req.params.num;
+  let result = await mysql.query("admin", "Onenotice",data);
+  res.send(result);
+});
+
+app.put("/onenotice/:num", async (req, res) => {
+  let data = [req.body.param,req.params.num];
+  let result = await mysql.query("admin", "OnenoticeUpdate",data);
   res.send(result);
 });
 
@@ -1480,7 +1505,7 @@ app.delete("/deleteReview/:rno", async (req, res) => {
   })
 
 app.post("/reviewLike/:rno/:uid", async (req, res) => {
-  let data = [req.params.rno,req.params.uid]
+  let data = [req.params.rno,req.params.uid];
   res.send(await mysql.query("reviews", "insertReviewLike", data))
 });
 

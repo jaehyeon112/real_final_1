@@ -1,5 +1,6 @@
 <template>
     <list @changeemit="changeChildData">
+        <template #title>배송목록</template>
         <template #searchData>
             <div>날짜별 배송목록 : <input v-model="startDate" type="date"> ~ <input v-model="lastDate" type="date">
                 <br><br><v-btn @click="orderDate">검색하기</v-btn>  <v-btn @click="refresh">초기화</v-btn>

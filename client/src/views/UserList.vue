@@ -1,6 +1,7 @@
 <template>
     
 <list @changeemit="changeChildData" @search="search">
+    <template #title>회원 목록</template>
     <template #searchData>
         <div class="datatable-input" style="width: 30%;float: right;">
             가입 날짜  <input class="datatable-input" type="date" v-model="days">
@@ -15,7 +16,7 @@
         </template>
         <template #filterSearch>
         <div style="width: 600px;"><a @click="this.order='user_id'">기본순 | </a><a @click="this.order='join_date'">최근 가입일순 | </a><a @click="this.order='user_grade'">등급 높은순</a></div>
-        <br><input v-model="word" @change="searchData" style="border-bottom: 1px black solid;float: left;width: 400px;height: 50px;" placeholder="회원 아이디나 이름을 검색하세요">
+        <br><input v-model="word" @keyup.enter="search(this.word)" style="border-bottom: 1px black solid;float: left;width: 400px;height: 50px;" placeholder="회원 아이디나 이름을 검색하세요">
         
     </template>
     <template #dataList>
@@ -52,7 +53,7 @@
       <div class="modal-container" @click.stop="">
         <h3>이용제한 사유를 입력해주세요</h3>
         <div class="modalPop">
-            <input type="text" autofocus>
+            <textarea type="text" autofocus class="form-control"></textarea>
         </div>
         <div class="modal-btn">
             <v-btn style="border-radius: 10px;" @click="modalCheck = false">닫기</v-btn>
@@ -63,7 +64,7 @@
     <tbody v-if="userList.length==0" style="text-align: center;">
             <tr><td></td><td></td><td><h3>존재하는 회원이 없습니다.</h3></td><td></td><td></td></tr>
         </tbody>
-    <v-container>
+    <v-container v-if="this.totalList.length!=0">
         <page @changePage="changePage" :list="totalList" :totals="this.nums"></page>
     </v-container>
 </template>
@@ -90,6 +91,7 @@ export default {
             conetnt:'',
             order : 'user_id',
             grade : '',
+            
         }
     },
     created(){
@@ -98,6 +100,7 @@ export default {
         this.uList();
     },
     methods : {
+        //전ㅊㅔ리스트 불러오기
         async total() {
                 let total = await axios.get(`/api/user`).catch((err) => {
                     console.log(err);
@@ -105,19 +108,25 @@ export default {
                 this.totalList = total.data;
             },
         async uList(){
-            let list = await axios.get(`/api/user/${this.order}/${this.startNum}`).catch(err=>console.log(err));
+            let list = await axios.get(`/api/user/${this.order}/${this.startNum}/${this.nums}`).catch(err=>console.log(err));
             let result = list.data;
             this.userList = result;
+            this.total();
         },
+        //페이지네이션
         async changePage(no) {
             console.log(this.word,no)
             try {
-                let page = await axios.get(`/api/user/${this.word}/${this.word}/${this.order}/${no}`);
+                let page = await axios.get(`/api/user/${this.word}/${this.word}/${this.order}/${no}/${this.nums}`);
                 console.log(page.data)
                 this.userList = page.data;
             } catch (error) {
                 console.error("Error fetching page data:", error);
             }
+        },
+        //헤더에서 리스트 몇개씩 불러올 것인가
+        changeChildData(childData){
+            this.nums = childData;
         },
         dateFormat(value,format){
             let date = value == '' ? new Date() : new Date(value);
@@ -162,9 +171,6 @@ export default {
         modalOpen() {
             this.modalCheck = !this.modalCheck
         },
-        changeChildData(childData){
-            this.nums = childData;
-        },
         search(searchData){
             if(searchData==''){
                 this.uList();
@@ -172,27 +178,23 @@ export default {
             this.searchList(searchData);
         },
         async searchList(cont){
-            let list = await axios.get(`/api/user/${cont}/${cont}/${this.order}/${this.startNum}`).catch(err=>console.log(err));
-            let result = list.data;
-            this.userList = result;
-            this.totalList = result;
-        },
-        refresh(){
-            this.word ='';
             this.grade = '';
             this.days = this.dateFormat('','yyyy-MM-dd');
-            this.uList();
-            //this.searchList(this.word);
-            this.filterList = [];
+            let AllList = await axios.get(`/api/user/${cont}/${cont}`).catch(err=>console.log(err));
+            this.totalList = AllList.data;
+            let list = await axios.get(`/api/user/${cont}/${cont}/${this.order}/${this.startNum}/${this.nums}`).catch(err=>console.log(err));
+            let result = list.data;
+            this.userList = result;
         },
         async filterData(grade,day){
             this.filterList = [];
             if(grade==''){
-                let list = await axios.get(`/api/user/${day}/${this.order}/${this.startNum}`).catch(err=>console.log(err));
+                this.word = '';
+                let AllList = await axios.get(`/api/user/${day}`).catch(err=>console.log(err));
+                this.totalList = AllList.data;
+                let list = await axios.get(`/api/user/${day}/${this.order}/${this.startNum}/${this.nums}`).catch(err=>console.log(err));
                 let result = list.data;
                 this.userList = result;
-                this.totalList = result;
-                this.word = '';
             }else{
                 if(grade=='일반회원'){
                     grade = 'i1'
@@ -205,18 +207,33 @@ export default {
                 else if(grade=='정지회원'){
                     grade = 'i5'
                 }
-                let list = await axios.get(`/api/user/${day}/${this.order}/${this.startNum}`).catch(err=>console.log(err));
+                let AllList = await axios.get(`/api/user/${day}`).catch(err=>console.log(err));
+                this.totalList = []
+                for(let i=0;i<AllList.data.length;i++){
+                    if(AllList.data[i].user_grade==grade){
+                        this.totalList.push(AllList.data[i]);
+                        // console.log(i+'번째'+AllList.data[i].user_id)
+                    }
+                }
+                let list = await axios.get(`/api/user/${day}/${this.order}/${this.startNum}/${this.nums}`).catch(err=>console.log(err));
                 let result = list.data;
                 for(let i=0;i<result.length;i++){
+                    console.log(i+'번째'+result[i].user_id)
                     if(result[i].user_grade==grade){
                         this.filterList.push(result[i]);
                     }
                 }
                 this.userList = this.filterList;
-                this.totalList = this.userList;
                 this.word = '';
             }
-        }
+        },
+        refresh(){
+            this.word ='';
+            this.grade = '';
+            this.days = this.dateFormat('','yyyy-MM-dd');
+            this.uList();
+            this.filterList = [];
+        },
     },
     components : {
         list,
@@ -229,14 +246,9 @@ export default {
         order(){
             this.uList();
         },
-        word(){
-            if(this.word==''){
-                return;
-            }
-            this.days = this.dateFormat('','yyyy-MM-dd');
-            this.grade='';
-            this.search(this.word);
-        },
+        nums(){
+            this.uList();
+        }
     }
 }
 </script>

@@ -83,24 +83,20 @@
           </ul>
         </li>
         <li class="nav-item">
-          <a class="nav-link d-flex align-items-center gap-2"  @click="notice">
+          <button class="nav-link d-flex align-items-center gap-2 active"  @click="notice">
             <svg class="bi"><use xlink:href="#gear-wide-connected"/></svg>
             공지사항/자주하는 질문
-          </a>
+          </button>
           <ul v-if="isnotice">
             <li class="curs" @click="noticeList">공지사항</li>
             <li class="curs" @click="fnaList">자주하는 질문</li>
           </ul>
         </li>
         <li class="nav-item">
-          <button class="nav-link d-flex align-items-center gap-2 active" @click="chart">
+          <button class="nav-link d-flex align-items-center gap-2 active" @click="sumChart">
             <svg class="bi"><use xlink:href="#graph-up"/></svg>
             통계
           </button>
-          <ul v-if="isChart">
-            <li class="curs" @click="sumChart">매출통계</li>
-            <li class="curs" @click="userChart">회원통계</li>
-          </ul>
         </li>
       </ul>
       
@@ -127,7 +123,6 @@ export default {
       isreview : false,
       isnotice : false,
       isUser : false,
-      isChart : false
     }
   }, 
   methods : {
@@ -139,6 +134,11 @@ export default {
         this.isOk = false;
       }else{
         this.isOk = true;
+
+        this.isorder = false;
+        this.isreview = false;
+        this.isnotice = false;
+        this.isUser = false;
       }
     },
     order(){
@@ -146,6 +146,11 @@ export default {
         this.isorder = false;
       }else{
         this.isorder = true;
+
+        this.isOk = false;
+        this.isreview = false;
+        this.isnotice = false;
+        this.isUser = false;
       }
     },
     review(){
@@ -153,6 +158,11 @@ export default {
         this.isreview = false;
       }else{
         this.isreview = true;
+
+        this.isorder = false;
+        this.isOk = false;
+        this.isnotice = false;
+        this.isUser = false;
       }
     },
     notice(){
@@ -160,6 +170,10 @@ export default {
         this.isnotice = false;
       }else{
         this.isnotice = true;
+        this.isorder = false;
+        this.isOk = false;
+        this.isreview = false;
+        this.isUser = false;
       }
     },
     user(){
@@ -167,13 +181,10 @@ export default {
         this.isUser = false;
       }else{
         this.isUser = true;
-      }
-    },
-    chart(){
-      if(this.isChart==true){
-        this.isChart = false;
-      }else{
-        this.isChart = true;
+        this.isorder = false;
+        this.isOk = false;
+        this.isreview = false;
+        this.isnotice = false;
       }
     },
     prodList(){

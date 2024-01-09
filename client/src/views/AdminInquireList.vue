@@ -1,5 +1,6 @@
 <template>
     <list @changeemit="changeChildData">
+        <template #title>고객 문의목록</template>
         <template #searchData>
             <div style="width: 250px;float: right;"><v-select
             label="문의처리상태"
@@ -38,7 +39,7 @@
           <td>{{ inquire.inquire_no }}</td>
           <td>{{ inquire.user_id }}</td>
           <td>{{ inquire.inquire_title }}</td>
-          <td>{{ inquire.inquire_content }}</td>
+          <td class=cur @click="replyInsert(inquire.inquire_no)">{{ inquire.inquire_content }}</td>
           <td v-if="inquire.inquire_category=='j1'">상품문의</td>
           <td v-else-if="inquire.inquire_category=='j2'">배송문의</td>
           <td v-else-if="inquire.inquire_category=='j1'">환불문의</td>
@@ -201,5 +202,8 @@
   }
   v-btn{
     border-radius: 10px;
+  }
+  .cur{
+    cursor: pointer;
   }
 </style>
