@@ -108,12 +108,13 @@
     try {
         let ipList = await axios.post(`/api/dologin/`, obj);
         
+
+        
         let users = ipList.data.user;
       if(ipList.data.auth){
       localStorage.setItem('token', ipList.data.token);
       console.log(localStorage.getItem('token')+' 이게 토큰 값')
       }   
-        alert(users[0].user_id)
         if (users.length === 0) {
           this.failedAttempts++;
 

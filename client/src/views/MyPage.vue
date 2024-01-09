@@ -92,7 +92,7 @@ export default{
         async getMember(){
             if(this.$store.state.user.user_id==null){
                 this.$router.push({path : '/login'});
-                return
+                return;
             }
             try{
             this.member = (await axios.get(`/api/member`)).data}

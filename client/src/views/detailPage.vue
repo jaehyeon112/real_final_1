@@ -1,18 +1,16 @@
 <template>
    <div>
-      
-
       <section class="py-5" id="top">
          <div class="container px-4 px-lg-5 my-5">
             <div class="row gx-4 gx-lg-5 align-items-center">
-               <div class="col-md-4">
-                  <v-img style="width:600px"  :src="`/api/test/`+ productInfo.file_name"></v-img>
-                  <v-img style="float:left; margin:10px" v-for="(item,idx) in Img" :key="idx" width=100 :src="`/api/test/`+item.file_name"></v-img>
-               </div>
-               <div class="col-md-2"></div>
                <div class="col-md-6">
-                  <h1 class="display-5 fw-bolder">{{ productInfo.prod_name }}</h1>
-                  <h1 class="display-7 fw-bolder">{{ productInfo.price }}</h1>
+                  <b>이미지 삽입하는 곳</b>
+                  <h3>상세 이미지</h3>
+                  <b>상세이미지 삽입하는 곳</b>
+               </div>
+               <div class="col-md-6">
+                  <h1 class="display-5 fw-bolder">상품이름{{ productInfo.prod_name }}</h1>
+                  <h1 class="display-7 fw-bolder">상품원가격{{ productInfo.price }}</h1>
                   <div class="fs-5 mb-5">
                      <br>
                   <table class="table" border="1">
@@ -33,9 +31,9 @@
                   
                   <div class="d-flex">
                      <p>상품선택</p>
-                        <v-btn @click="decreaseQuantity">-</v-btn>
+                        <v-btn @click="minusCount">-</v-btn>
                         <span >{{ counter }} </span>
-                        <v-btn @click="increaseQuantity(productInfo.prod_no)">+</v-btn>
+                        <v-btn @click="plusCount">+</v-btn>
                   </div>
                   <div>
                      <p class="lead">할인률{{ productInfo.discount_rate }}</p>
@@ -47,7 +45,7 @@
                      <br>
                   </div>
                   <div>
-                     <v-btn @click="goToCart(productInfo.prod_no)">장바구니 담기</v-btn>
+                     <v-btn @click="cartInsert">장바구니 담기</v-btn>
                      <v-btn  @click="liked" :color="isShow ? 'red' : 'blue'"> ♡ </v-btn>                                           
                   </div>
                </div>
@@ -139,7 +137,7 @@
                      <td> {{ review.review_grade }}</td>
                      <td> {{ review.review_writedate }}</td>
                      {{ review }}
-                     <!-- <td> <v-btn class="ma-2" variant="text" icon="mdi-thumb-up" :color=" likeState1 ? 'blue-lighten-2':'black'" @click="getLikeCount(review.review_no, review.user_id, review.like_cnt)"></v-btn>{{ review.like_cnt }}</td> -->
+                     <td> <v-btn class="ma-2" variant="text" icon="mdi-thumb-up" :color=" likeState1 ? 'blue-lighten-2':'black'" @click="getLikeCount(review.review_no, review.user_id, review.like_cnt)"></v-btn>{{ review.like_cnt }}</td>
                      <td> <v-btn class="ma-2" variant="text" icon="mdi-thumb-down" color="red-lighten-2"></v-btn></td>
                   </tr>
             </table>
@@ -184,6 +182,7 @@
                   <li>제주, 도서산간 지역은 배송불가합니다.</li>
                </ul>
             </div>
+            
          </div>
       </section>
 
@@ -221,20 +220,16 @@ export default {
             counter:1,
             isShow:false,
             likeState1:false,
-            sheet:false,
-            isSoldOut: false,
-      isStock: false,
-      cartList : []
-      ,Img : []
+            sheet:false
+
         }
     },
     created(){ 
       this.pno = this.$route.query.pno; 
       this.getProductInfo();
-      // this.getLikes();
-      // this.getRivewList();
-      this.soldout();
-    this.getUserCartInfo()
+      this.getLikes();
+      this.getRivewList()
+      
         
     },
     watch:{
@@ -244,11 +239,7 @@ export default {
         async getProductInfo(){
             let info = await axios.get(`/api/detailPro/${this.pno}`)
                                     .catch(err=>console.log(err));
-            this.productInfo = info.data[0]
-            console.log(info.data)
-            this.Img = info.data
-            this.Img.shift();
-                                  
+            this.productInfo = info.data[0]                       
         },
         async getLikes(){
         let list = await axios.get(`/api/prodLike/${this.$store.state.user.user_id}/${this.pno}`)
@@ -275,11 +266,6 @@ export default {
             let likestate = await axios.get(`/api/rLikeCnt/${this.$store.state.user.user_id}/${no}`)
                                        .catch(err=>console.log(err));                 
             let k=0;
-            console.log("==============================")
-            console.log(no)
-            console.log(writer)
-            console.log(likestate.data)
-            console.log('엄지' +this.likeState)
             if(likestate.data.length == 1){
                k=-1
             }else{
@@ -325,117 +311,62 @@ export default {
          }                                                            
       },
 
-      async goToCart(no){
-      let cartQuantity = 0;
-      alert( this.$store.state.cart.length)
-      if(this.$store.state.user.user_id == null){ //비회원일때
-        for(let i = 0 ; i < this.$store.state.cart.length ; i++){
-          if(no == this.$store.state.cart[i].prod_no){
-            cartQuantity = this.$store.state.cart[i].quantity;
-          }
-        }
-        if(this.productInfo.stock >= this.counter+cartQuantity) {
-          alert("장바구니에 등록되었습니다. 비회원")
-      let items = this.productInfo;
-      items.quantity = this.counter;
-      this.$store.commit('addCart',items)
-    }else{
-      alert('보유 재고를 초과하여 장바구니에 넣을 수 없습니다.')
-    }
-  }else{ // 회원으로 로그인 이후
-    this.cartList =  (await axios.get(`/api/cartSelect/${this.productInfo.prod_no}/${this.$store.state.user.user_id}`).catch(err=>console.log(err))).data 
 
-    if(this.cartList.length != 0){ //해당 아이디의 장바구니가 비어있지 않고
-      for(let i = 0 ; i < this.cartList.length; i++){
-        if(no == this.cartList[i].prod_no){
-            cartQuantity = this.cartList[i].quantity;
-          }
-      }
-      if(this.productInfo.stock >= this.counter+cartQuantity){ // 
-            let obj = {
-              param: {
-                quantity : cartQuantity+ this.counter,
-                user_id : this.$store.state.user_user_id
-              }
+         async cartInsert(){
+         let obj ={
+             param: {
+                
+                 prod_no:this.pno,
+                 user_id:this.$store.state.user.user_id,
+                 quantity:this.counter
+             }
+         }
+         console.log('삽입전?' +this.counter)
+         let obj2 ={
+             param: {
+                
+                 quantity:this.cart.quantity+this.counter
+             }
             }
-            await axios.put(`/api/cartAfterLogin/${this.productInfo.prod_no}`, obj)
-            alert('장바구니에 추가적으로 등록되었습니다.')
-            this.$store.commit('loginCart')
-            return
-          }else{
-            alert('보유 재고를 초과하여 장바구니에 넣을 수 없습니다.')
-            return
-          }
-      }else{ // 해당상품이 회원의 장바구니에 없다면?
-            let obj = {
-                param : {
-                  prod_no : this.productInfo.prod_no,
-                  user_id : this.$store.state.user.user_id,
-                  quantity : this.counter
-                }
-              }
-    if(this.productInfo.stock >= this.counter) {
-          await axios.post('/api/cartAfterLogin/',obj).catch(err=>console.log('로그인 이후 카트에 담길때 에러' + err))
-          alert("장바구니에 등록되었습니다. 회원" )
-          this.$store.commit('loginCart')
-      //장바구니 추가
-    }else{
-      alert('보유 재고를 초과하여 장바구니에 넣을 수 없습니다.')
-    }
-  }
-} 
-    },
-    async getUserCartInfo(){
-      if(this.$store.state.user_user_id != null)
-      this.cartList =  (await axios.get(`/api/cartSelect/${this.productInfo.prod_no}/${this.$store.state.user.user_id}`).catch(err=>console.log(err))).data // 유저의 장바구니 카트
-    }
-    ,
-    soldout() {
-      if (this.productInfo.soldout == 1) {
-        this.isSoldOut = true;
-        return;
-      }else if(this.productInfo.stock < 1){
-        this.isStock=true;
-      }
-    },
-
-  
- 
-      decreaseQuantity() {
-      if (this.quantity > 1) {
-        this.quantity--;
-      }
-    },
-
-    async increaseQuantity(no) {
-      let cartQuantity = 0;
-
-      if(this.$store.state.user.user_id != null){ //로그인 했다
-       
-
-        if(this.cartList.length == 0 && this.productInfo.stock > this.quantity){
-          this.counter++;
-          return;
-        }else if(this.productInfo.stock > this.cartList.quantity + this.quantity) {
-          this.counter++;
-          }else{
-            alert('보유 재고를 초과하였습니다.')  
-          }
-
-    }else{
-        for(let i = 0 ; i< this.$store.state.cart.length ; i++){
-          if(no == this.$store.state.cart[i].prod_no){
-            cartQuantity = this.$store.state.cart[i].quantity;
-          }
-        }
-        
-      if(this.productInfo.stock > this.counter+cartQuantity) {
-      this.counter++;
-    }else{
-      alert('보유 재고를 초과하였습니다.')
-    }
-  }
-  },
+         console.log(this.$store.state.user.user_id)
+          let result = await axios.get(`/api/comparisonCart/${this.$store.state.user.user_id}`) //카트 안에 같은 상품이 있는지 정보가져오기 
+                                  .catch(err=>console.log(err)).data
+                                   console.log( '장바구니 불러오기'+ result + this.cart)
+                                   console.log(result)
+                                   console.log( '장바구니 불러오기'+ result)
+                           if(result != null ){
+                              for(let i=0; i < result.length; i++){
+                                 if( this.pno == result[i].prod_no) {   
+                                    console.log(this.pno + 'result'+result[i])                   
+                                    let carts = await axios.put(`/api/updateCart/${this.pno}/${this.$store.state.user.user_id}`,obj2)
+                                    .catch(err=>console.log(err))
+                                    this.cart = this.carts.data
+                                    if(carts.data.changedRows > 0){
+                                       alert('장바구니 수량 변견 완료');
+                                       //this.$router.push({path:'card'})
+                                    }                          
+                                 }else{
+                                    let carts2 = await axios.post(`/api/savingCart`,obj)
+                                    .catch(err=>console.log(err))                           
+                                    if(carts2.data.insertId>0){ 
+                                       alert('장바구니에 담겼습니다');
+                                       console.log('장바구니에 담겼습니다' +this.counter)
+                                       this.cart.cart_no = carts2.data.insertId; 
+                                       //this.$router.push({path:'cart'})
+                                    }
+                                 }               
+                              }                        
+                           }else{
+                              let carts2 = await axios.post(`/api/savingCart`,obj)
+                                    .catch(err=>console.log(err))                           
+                                    if(carts2.data.insertId>0){ 
+                                       alert('장바구니에 담겼습니다');
+                                       this.cart.cart_no = carts2.data.insertId; 
+                                       //this.$router.push({path:'cart'})
+                                    }
+                           }
+                        },
+      
       async liked(){
       //찜하기눌러서 저장하는 곳
       
@@ -467,11 +398,11 @@ export default {
          
      },
 
-    }
-   }
+   },
      
      
     
+}
 </script>
 
 <style scoped>

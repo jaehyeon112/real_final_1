@@ -706,9 +706,8 @@ app.post("/dologin", async (req, res) => {
     });
   } else {
     // 로그인 실패 응답 전송
-    res.status(401).send({
-      auth: false,
-      message: 'Invalid username or password'
+    res.send({
+      user: list
     });
   }
 })
