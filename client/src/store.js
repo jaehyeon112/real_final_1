@@ -1,3 +1,4 @@
+
 import {
   createStore
 } from "vuex";
@@ -33,11 +34,25 @@ const store = createStore({
           return;
         }
       }
-
+ 
       item.cart_checkbox = 0
       state.cart.push(item);
       state.cartCount = state.cart.length
     },
+
+    kakaoLogin(state, id){
+
+      let a = id;
+      state.user = {};
+      state.user.user_id = a
+      state.user.user_name = a;
+      state.kakaoId = a;
+      console.log(id + '/')
+    },
+    kakaoLogout(state){
+      state.user.user_name= ''
+    },
+
     async login(state, userInfo) {
       state.user = userInfo;
         state.loginCartCount = (await axios.get('/api/cartList')).data.length;
@@ -88,16 +103,18 @@ const store = createStore({
       state.orderNo = no;
     }
   },
-  actions: {
 
+  actions: {
+       
   },
+
   plugins: [
     createPersistedState({
-      paths: ['cart', 'cartCount', 'loginCartCount', 'orderNo'],
+      paths: ['cart', 'cartCount', 'loginCartCount', 'orderNo', ],
       storage: window.localStorage,
     }),
     createPersistedState({
-      paths: ['user'], // 세션 스토리지에만 유지할 상태
+      paths: ['user', 'kakaoId'], // 세션 스토리지에만 유지할 상태
       storage: window.sessionStorage, // 세션 스토리지 사용
     })
   ]
