@@ -77,6 +77,10 @@ ORDER BY hotItem DESC
 limit ?, 6;
 `,
 
+  mainReview: `select f.file_name as reviewfile ,f2.file_name as prodfile  , o.prod_no, r.* from review r left join (select * from file where orders='s0') f 
+on (r.review_no = f.review_no) left join order_detail o on r.detail_order_no = o.order_detail_no
+left join (select * from file where orders='s0') f2 on o.prod_no = f2.prod_no
+where review_grade = 5 and f.file_name is not null ORDER BY RAND()  LIMIT 1;`,
 
   cartList: `select distinct * 
              from cart c, product p, user u, (select file_name, prod_no from file where orders='s0') f
@@ -142,7 +146,7 @@ limit ?, 6;
   // 취소 되었을때 포인트 다시 돌려주기
   pointReturn: `update user set point = point + ? where user_id = ?`,
   // 배송불가지역리스트
-  isolatedRegionList : `select * from isolated_region`,
+  isolatedRegionList: `select * from isolated_region`,
 };
 
 let user = {
@@ -249,7 +253,7 @@ let admin = {
   reviewReportList: `select *,(select report_cnt from review where review_no=review_report.review_no) as cnt from review_report order by report_date desc limit ?,?`,
   reasonReportList: `select *,(select report_cnt from review where review_no=review_report.review_no) as cnt from review_report 
   where report_status=? order by report_date desc  limit ?,?`,
-  reviewList: `select prod_name,order_detail_no,user_id,review_title,review_content,review_writedate,review_grade,like_cnt from order_detail o,product p,review r 
+  reviewList2: `select prod_name,order_detail_no,user_id,review_title,review_content,review_writedate,review_grade,like_cnt from order_detail o,product p,review r 
   where o.prod_no=p.prod_no and o.order_detail_no=r.detail_order_no order by ?? desc`,
   //문의사항,공지사항,자주하는질문
   AllinquireList: `select * from inquire order by answer_state,create_date desc`,
@@ -296,10 +300,16 @@ let reviews = {
   reviewInfo: `select * from review where user_id=? and review_no=?`, //마이페이지 리뷰하나 보기
   orderNoReview: `select * from review where user_id=?`,
   //서영희
-  reviewList : `select  r.* from order_detail o,review r where o.order_detail_no=r.detail_order_no and prod_no = ? `,
-  likeUp : `update review set like_cnt = like_cnt+1 where review_no= ?`,
-  likeDown : `update review set like_cnt = like_cnt-1 where review_no= ?`,
-  insertReviewLike : `insert into review_like set review_no=(select review_no from review where review_no = ?), user_id = (select user_id from user where user_id = ?)`,
+  reviewList: `select  file_name, r.* 
+  from review r 
+  left join (select * from file where orders='s0') f 
+  on (r.review_no = f.review_no) 
+  left join order_detail o on o.order_detail_no=r.detail_order_no 
+  where o.prod_no = ?;
+   `,
+  likeUp: `update review set like_cnt = like_cnt+1 where review_no= ?`,
+  likeDown: `update review set like_cnt = like_cnt-1 where review_no= ?`,
+  insertReviewLike: `insert into review_like set review_no=(select review_no from review where review_no = ?), user_id = (select user_id from user where user_id = ?)`,
 
   detailList: `SELECT 
   t1.review_no, 
@@ -330,7 +340,7 @@ WHERE t3.prod_no = ?`, //상세페이지에서 그 상품에대한 리뷰 리스
   insertReviewImage: `insert into image set?`,
   deleteReview: `delete from review where review_no=?`,
   selectReviewLike: `select * from review_like where user_id=? and review_no=?`,
-  insertReviewLike: `insert into review_like set ?`,
+  insertReviewLike: `insert into review_like set review_no = ? , user_id = ?`,
   deleteReviewLike: `delete from review_like where review_no=? and user_id=?`
 
 };
@@ -341,9 +351,9 @@ let point = {
   myPointUseHistory: `select * from point where user_id=? and point_use > 0 order by end_point_date `,
   reviewPoint: `insert into point set point_no = ?, order_detail_no=?, user_id=?, point_history='p2',
               point_save = 500, point_use=0, point_date =current_date(), end_point_date = date_add(current_date(), interval 1 Year);`, //리뷰등록시 포인트 지급
-  reviewPointD:`insert into point set point_no=?, order_detail_no=?, user_id=?, end_point_date = current_date()`,
-  reviewPointUp:`update user set point=point+500 where user_id=?`,
-  reviewPointDown:`update user set point=point-500 where user_id=?`,
+  reviewPointD: `insert into point set point_no=?, order_detail_no=?, user_id=?, end_point_date = current_date()`,
+  reviewPointUp: `update user set point=point+500 where user_id=?`,
+  reviewPointDown: `update user set point=point-500 where user_id=?`,
   pointExpire: `update user as t1,(select sum( point_save) as points, user_id from point where end_point_date = current_date() group by user_id) as t2
               set t1.point = t1.point- t2.points where t1.user_id=t2.user_id;`, //기간소멸
   //그리고 point table에 소멸사유로 인서트 해주는것도 같이..?
@@ -394,14 +404,14 @@ let like = {
   likeDel: `delete from likes where user_id=? and prod_no =?`,
   likeList: `select * from select * from product p right join likes l on p.prod_no = l.prod_no where user_id=?`
 }
-let inquire={
-  inquireList:`select * from inquire where user_id=?`,
-  inquireInfo:`select * from inquire where inquire_no=?`,
-  inquireInsert:`insert into inquire set?`,
-  inquireUpdate:`update inquire set? where user_id=? and inquire_no=?`,
-  inquireAnswer:`select * from reply where inquire_no=?`,
-  photoListInq : `select file_name from file where inquire_no = ?`,
-  deleteInquire:`delete from inquire where inquire_no=?`
+let inquire = {
+  inquireList: `select * from inquire where user_id=?`,
+  inquireInfo: `select * from inquire where inquire_no=?`,
+  inquireInsert: `insert into inquire set?`,
+  inquireUpdate: `update inquire set? where user_id=? and inquire_no=?`,
+  inquireAnswer: `select * from reply where inquire_no=?`,
+  photoListInq: `select file_name from file where inquire_no = ?`,
+  deleteInquire: `delete from inquire where inquire_no=?`
 }
 let member = {
   memberInfo: `select t1.*, count(case when coupon_able=0 then 1 end) as couponCnt from user t1 join coupon t2  on t1.user_id = t2.user_id where t1.user_id= ?`
