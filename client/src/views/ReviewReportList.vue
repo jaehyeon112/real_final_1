@@ -1,5 +1,6 @@
 <template>
     <list @changeemit="changeChildData">
+        <template #title>신고된 리뷰목록</template>
         <template #searchData>
             <div style="width: 250px;float: right;"><v-select
             label="신고처리상태"

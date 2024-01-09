@@ -20,7 +20,6 @@ import reply from '../components/admin/reply.vue'
 import Barchart from '../views/Barchart.vue';
 import Linechart from '../views/LineChart.vue';
 import sumChart from '../views/sumChart.vue';
-import userChart from '../views/userChart.vue';
 import Doughnutchart from '../views/Doughnutchart.vue';
 
 export default {
@@ -117,11 +116,6 @@ export default {
         path : "Linechart",
         name : "Linechart",
         component : Linechart
-      },
-      {
-        path : "userChart",
-        name : "userChart",
-        component : userChart
       },
       {
         path : "sumChart",

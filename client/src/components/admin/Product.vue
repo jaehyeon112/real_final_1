@@ -2,7 +2,7 @@
     <div class="container-fluid" style:width="50px">
       <div class="row">
       <side/>
-    <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+    <main class="col-md-9 col-lg-10 px-md-4">
         <div class="container">
             <h4 class="mb-3" style="text-align: center;">상품 페이지</h4>
               <div class="row g-3">
@@ -264,7 +264,8 @@ export default {
                       "file_name" : this.file[i],
                       "orders" : this.ods,
                       "prod_no" : this.prodNo,
-                      "path" : 'uploads\\'+this.file[i]
+                      "path" : 'uploads\\'+this.file[i],
+                      "types" : 'text'
                     }
                   }
                   let result1 = await axios.post("/api/photo",photos).catch(err=>console.log(err));
@@ -282,7 +283,8 @@ export default {
                   "file_name" : this.newPhoto[i],
                   "orders" : i,
                   "prod_no" : result.data.insertId,
-                  "path" : 'uploads\\'+this.newPhoto[i]
+                  "path" : 'uploads\\'+this.newPhoto[i],
+                  "types" : 'photo'
                 }
               }
               let result1 = await axios.post("/api/photo",photos).catch(err=>console.log(err));
@@ -359,8 +361,8 @@ export default {
           border: 2px solid;
           border-color: rgb(174, 118, 238);
           width: 1000px;
-          padding: 20px;
-          margin-top: 100px;
+          margin: 30px auto;
+          padding: 30px;
           box-shadow:0 12px 15px 0 rgba(0,0,0,.24),0 17px 50px 0 rgba(0,0,0,.19);
         }
     
@@ -379,4 +381,8 @@ export default {
           width: 200px;
           height: 200px;
         }
+        .col-md-9 {
+  margin: 0 auto;
+  padding: 10px;
+}
 </style>

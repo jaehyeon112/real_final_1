@@ -1,5 +1,5 @@
 <template>
-    <Doughnut v-if="loaded" :data="chartData" style="width: 40%;height: 500px;"/>
+    <Doughnut v-if="loaded" :data="chartData" style="width: 40%;height: 400px;"/>
 </template>
 
 <script>
@@ -25,7 +25,7 @@ data() {
             maxBarThickness: 100,   //바 넓이 최대크기 지정
             responsive: false,      //이건 크기지정이라는데..여기가 맞는지 몰겠다
             backgroundColor: [ 
-                "rgba(255, 99, 132,0.6)",   //그래프마다 색상지정가능
+                "rgba(214, 235, 213, 0.735)",   //그래프마다 색상지정가능
                 "rgba(54, 162, 235,0.6)",
                 "rgba(255, 206, 86,0.6)",
             ],
@@ -48,6 +48,15 @@ methods : {
         let list = result.data;
         for(let i=0;i<list.length;i++){
             this.chartData.datasets[0].data.push(list[i].nums);
+            if(list[i].reason=='r1'){
+                list[i].reason = '사고싶은 제품이 없어서'
+            }else if(list[i].reason=='r2'){
+                list[i].reason = '더 좋은 사이트를 발견해서'
+            }else if(list[i].reason=='r3'){
+                list[i].reason = '가격이 너무 비싸서'
+            }else if(list[i].reason=='r4'){
+                list[i].reason = '기타'
+            }
             this.chartData.labels.push(list[i].reason);
         }
         this.loaded = true;
