@@ -51,6 +51,8 @@ io.use(sharedsession(expressSession, {
 }));
 
 
+
+
 app.use(express.json());
 require('dotenv').config();
 const {
@@ -106,6 +108,8 @@ async function sendEmail(to, subject, body) {
 }
 
 
+
+
 server.listen(3000, () => {
   console.log('app대신 socket.io서버 on~~');
 });
@@ -137,8 +141,8 @@ app.post('/send-email', async (req, res) => {
     console.log(to + subject + body + '이메일콘솔');
     const result = await sendEmail(to, subject, body);
     res.status(200).send(result);
-  } catch (error) {
-    console.error(error);
+  } catch (err) {
+    console.log(err);
     res.status(500).send('Internal Server Error');
   }
 }); //이메일
@@ -159,7 +163,7 @@ app.post('/phonecheck', async (req, res) => {
   const coolsms = require('coolsms-node-sdk').default;
   async function printTokenResult(phone, token) {
 
-    const messageService = new coolsms("NCS2IMURYFBUZAPJ", "HRV2IB3X2LNIIWQKOQ2F6XUCIMBFOUXC");
+    const messageService = new coolsms("NCSX69ZDDZ3AMPOA", "RTFTFKLPESGNPPFMBL0I88LTS2CHRNET");
     const result = await messageService
       .sendOne({
         to,
@@ -176,7 +180,6 @@ app.post('/phonecheck', async (req, res) => {
     }
     console.log('checkresult=', checkresult);
     res.send(checkresult);
-    res.send(true);
   }
   printTokenResult(data.phone, data.token);
 }) //end 핸드폰인증 
@@ -284,8 +287,8 @@ app.post("/photo", async (req, res) => {
   res.send(result);
 });
 
-app.get("/photo/:pno", async (req, res) => {
-  let data = req.params.pno;
+app.get("/photo/:column/:pno", async (req, res) => {
+  let data = [req.params.column, req.params.pno];
   let result = await mysql.query("admin", "photoList", data)
   res.send(result);
   console.log('실행' + result)
@@ -445,9 +448,9 @@ app.get("/pointList", async (req, res) => { // 포인트 리스트
 
 app.get("/cartList", async (req, res) => { //장바구니 리스트
   let userId = req.session.user_id;
-  if (!userId) { // user_id가 없을때
-    return res.status(400).send('400에러~')
-  }
+  // if (!userId) { // user_id가 없을때
+  //   return res.status(400).send('400에러~')
+  // }
 
   try {
     let list = await mysql.query("test", "cartList", userId);
@@ -526,7 +529,6 @@ app.delete("/CheckboxDelete/:no", async (req, res) => { // 체크된 장바구�
   let result = await mysql.query("test", 'CheckboxDelete', data);
   res.send(result);
 });
-
 
 app.get("/cartCheckList", async (req, res) => { //주문서의 장바구니체크된거만불러오는 리스트
   let list = await mysql.query("test", "cartCheckList", req.session.user_id);
@@ -650,9 +652,9 @@ app.post("/join/joinIn", async (req, res) => {
     let result = await mysql.query("user", "joinIn", data);
     res.send(result);
   } catch {
-    console.error(error);
+    console.log(err);
     res.status(500).send({
-      error: 'Database query failed'
+      err: 'Database query failed'
     });
   }
 
@@ -702,11 +704,6 @@ app.get("/find/findid/:name/:email", async (req, res) => {
 })
 
 
-// app.post("/find/findid", async(req, res)=> {
-//  let  {user_name, user_email} = req.body;
-
-//   console.log(user_name)
-//   console.log(user_email)
 
 //   res.send(`${user_password}`);
 // })
@@ -840,6 +837,12 @@ app.get("/weeksum/:agoweek/:week", async (req, res) => {
 
 app.get("/counting", async (req, res) => {
   let result = await mysql.query("admin", "counting");
+  res.send(result);
+});
+
+app.get("/outUser/:agoweek/:week", async (req, res) => {
+  let datas = [Number(req.params.agoweek), Number(req.params.week)];
+  let result = await mysql.query("admin", "outUserReason", datas);
   res.send(result);
 });
 
@@ -1020,7 +1023,7 @@ app.get('/review/:status/:sno/:lno', async (req, res) => {
   let result = await mysql.query("admin", "reasonReportList", datas);
   res.send(result);
 });
-
+//관리자-환불관련
 app.get('/refund', async (req, res) => {
   let result = await mysql.query("admin", "AllrefundOrderList");
   res.send(result);
@@ -1043,7 +1046,7 @@ app.put('/refund/:state/:ono', async (req, res) => {
   let result = await mysql.query("admin", "updateRefund", datas);
   res.send(result);
 });
-
+//관리자-배송관련
 app.get('/delivery', async (req, res) => {
   let result = await mysql.query("admin", "Alldelivery");
   res.send(result);
@@ -1066,9 +1069,39 @@ app.get('/delivery/:sday/:eday/:startNo/:lastNo', async (req, res) => {
   let result = await mysql.query("admin", "DatedeliveryList", datas);
   res.send(result);
 });
-
+//관리자-문의사항
 app.get('/inquire', async (req, res) => {
   let result = await mysql.query("admin", "AllinquireList");
+  res.send(result);
+});
+
+app.get('/inquire/:ino', async (req, res) => {
+  let data = req.params.ino;
+  let result = await mysql.query("admin", "inquireInfo", data);
+  res.send(result);
+});
+
+app.put('/inquire/:ino', async (req, res) => {
+  let data = req.params.ino;
+  let result = await mysql.query("admin", "updateInquire", data);
+  res.send(result);
+});
+
+app.post('/reply', async (req, res) => {
+  let data = req.body.param;
+  let result = await mysql.query("admin", "insertReply", data);
+  res.send(result);
+});
+
+app.get('/reply/:ino', async (req, res) => {
+  let data = Number(req.params.ino);
+  let result = await mysql.query("admin", "replyInfo", data);
+  res.send(result);
+});
+
+app.put('/inquire/:ino', async (req, res) => {
+  let data = req.params.ino;
+  let result = await mysql.query("admin", "updateInquire", data);
   res.send(result);
 });
 
@@ -1083,7 +1116,7 @@ app.get('/inquire/:where1/:where2/:where3/:where4/:startNo/:lastNo', async (req,
   let result = await mysql.query("admin", "StateinquireList", datas);
   res.send(result);
 });
-
+//관리자-주문관련
 app.get('/orders/:sday/:eday/:startNo/:lastNo', async (req, res) => {
   let datas = [req.params.sday, req.params.eday, Number(req.params.startNo), Number(req.params.lastNo)];
   let result = await mysql.query("admin", "orderDate", datas);
@@ -1147,35 +1180,26 @@ app.get("/new", async (req, res) => {
   let result = await mysql.query("test", "newListPage");
   res.send(result);
 })
+
+
 //예빈
-//멤버조회정보
-app.get("/member/:id", async (req, res) => {
-  let id = req.params.id;
-  let memberInfo = (await mysql.query("member", "memberInfo", id))[0]; // 데이터 타입 :  객체  
-  let pointInfo = (await mysql.query("point", "showNextMonth", id))[0]; // 데이터 타입 : 숫자
+//멤버정보
+
+app.get("/member", async (req, res) => {
+  //let id = req.session.user_id;
+  let memberInfo = (await mysql.query("member", "memberInfo", req.session.user_id))[0]; // 데이터 타입 :  객체  
+  let pointInfo = (await mysql.query("point", "showNextMonth", req.session.user_id))[0]; // 데이터 타입 : 숫자
   memberInfo.showNextMonth = pointInfo;
+
   res.send(memberInfo);
 })
-
-// app.get("/member", async (req,res)=>{
-//   let id = req.session.id;
-//   let memberInfo= (await mysql.query("member", "memberInfo", id))[0]; // 데이터 타입 :  객체  
-//   let pointInfo = (await mysql.query("point", "showNextMonth", id))[0]; // 데이터 타입 : 숫자
-//   memberInfo.showNextMonth = pointInfo;
-
-//   res.send(memberInfo);
-// })
-// app.get("/member/:id", async (req,res)=>{
-//   let id = req.params.id;
-//   let memberInfo= (await mysql.query("member", "memberInfo", id))[0]; // 데이터 타입 :  객체  
-//   res.send(memberInfo);
-// })
 
 // //다음달 소멸 포인트
 // app.get("/nextMonthPoint/:id", async(req,res)=>{
 //   let id = req.params.id;
 //   res.send(await mysql.query("point", "showNextMonth", id))[0]
 // });
+
 //상세페이지 정보
 app.get("/detailPro/:pno", async (req, res) => {
   let pno = req.params.pno;
@@ -1187,21 +1211,25 @@ app.post("/savingCart", async (req, res) => {
   let data = req.body.param;
   let result = await mysql.query('orders', 'savingCart', data);
   res.send(result);
-});
-app.put("/updateCart/:pno/:id", async (req, res) => {
-  let datas = [req.body.param, req.params.pno, req.params.id];
+})
+app.put("/updateCart/:pno", async (req, res) => {
+  let datas = [req.body.param, req.params.pno, req.session.user_id];
   let result = await mysql.query('orders', 'updateCart', datas);
   res.send(result);
 })
 //장바구니 넣을시 추가할지 업데이트할지
-app.get("/comparisonCart/:id", async (req, res) => {
-  let id = req.params.id;
+app.get("/comparisonCart", async (req, res) => {
+  let id = req.session.user_id;
   let result = await mysql.query('orders', 'comparisonCart', id);
   res.send(result)
 })
+
+
+
+
 //주문내역 관련
-app.get("/myOrders/:id", async (req, res) => {
-  let id = req.params.id
+app.get("/myOrders", async (req, res) => {
+  let id = req.session.user_id
   let lists = await mysql.query('orders', 'orderList', id);
   //let list = await mysql.query('orders', 'orderList', id);
   // 가공
@@ -1220,60 +1248,64 @@ app.get("/myOrders/:id", async (req, res) => {
 //   })
 //   return newList;
 // }
-app.get("/myOrdersName/:ono/:id", async (req, res) => {
-  let datas = [Number(req.params.ono), req.params.id]
+app.get("/myOrdersName/:ono", async (req, res) => {
+  let datas = [Number(req.params.ono), req.session.user_id]
   let info = await mysql.query('orders', 'orderListCount', datas);
   res.send(info);
 })
 //주문 상세내역
-app.get("/myDetailOrders/:ono/:id", async (req, res) => {
-  let datas = [Number(req.params.ono), req.params.id]
+app.get("/myDetailOrders/:ono", async (req, res) => {
+  let datas = [Number(req.params.ono), req.session.user_id]
   let list = await mysql.query('orders', 'detailOrderLists', datas);
   res.send(list);
 })
 //-주문취소
-app.delete('/orders/:ono/:id', async (req, res) => {
-  let datas = [req.body.param.order_status, req.params[ono], req.params[id]];
+app.delete('/orders/:ono', async (req, res) => {
+  let datas = [req.body.param.order_status, req.params[ono], req.session.user_id];
   let result = await mysql.query('orders', 'orderCancle', datas)
   res.send(result)
 })
+
+
+
 //추가 배송지 관련
-app.get('/addDelivery/:id', async (req, res) => {
-  let id = req.params.id;
+app.get('/addDelivery', async (req, res) => {
+  let id = req.session.user_id
   const list = await mysql.query('delivery', 'deliveryList', id);
   res.send(list);
-});
-app.get('/deliveryInfo/:id/:dno', async (req, res) => {
-  let datas = [req.params.id, req.params.dno]
+})
+app.get("/deliveryInfo/:dno", async (req, res) => {
+  let datas = Number(req.params.dno)
   let result = await mysql.query('delivery', 'deliveryInfo', datas)[0];
   res.send(result)
 })
 //배송지정보수정
-app.put("/updateDelivery/:dno/:id", async (req, res) => {
-  let datas = [req.body.param, req.params[dno], req.params[id]]
+app.put("/updateDelivery/:dno", async (req, res) => {
+  let datas = [req.body.param, req.params[dno]]
   let result = await mysql.query('delivery', 'updateDelivery', datas);
   res.send(result)
 })
-//정보삽입
 
+//정보삽입
 app.post("/addDelivery", async (req, res) => {
   let datas = req.body.param
   let result = await mysql.query('delivery', 'addDelivery', datas)
   res.send(result);
-});
-app.delete("/delDelivery", async (req, res) => {
-  let result = await mysql.query('delivery', 'deleteDelivery')
+})
+app.delete("/delDelivery/:dno", async (req, res) => {
+  let dno = req.params.dno
+  let result = await mysql.query('delivery', 'deleteDelivery', dno)
   res.send(result);
 })
 //찜하기 리스트
-app.get("/like/:id", async (req, res) => {
-  let id = req.params.id;
+app.get("/like", async (req, res) => {
+  let id = req.session.user_id;
   let list = await mysql.query('like', "likeList", id)
   res.send(list);
 })
 //쿠폰
-app.get("/myCoupon/:id", async (req, res) => {
-  let id = req.params.id;
+app.get("/myCoupon", async (req, res) => {
+  let id = req.session.user_id;
   let list = await mysql.query('coupon', 'myCoupon', id)
   res.send(list);
 })
@@ -1282,6 +1314,9 @@ app.get("/user", async (req, res) => {
   let list = await mysql.query("admin", "userList");
   res.send(list);
 });
+
+
+
 //포인트
 //기간 만료시 포인트 소멸인거처럼 업데이트 
 //둘다 된다 await를 거는게 더 좋은걸까..?
@@ -1309,23 +1344,31 @@ cron.schedule("0 0 0 * * *", async () => {
 //    })
 //  }
 //마이페이지 포인트 내역조회
-app.get("/myPointSave/:id", async (req, res) => {
-  let id = req.params.id;
+app.get("/myPointSave", async (req, res) => {
+  let id = req.session.user_id;
   let list = await mysql.query("point", "myPointSaveHistory", id);
   res.send(list);
 });
-app.get("/myPointUse/:id", async (req, res) => {
-  let id = req.params.id;
+app.get("/myPointUse", async (req, res) => {
+  let id = req.session.user_id;
   let list = await mysql.query("point", "myPointUseHistory", id);
   res.send(list);
 })
 //리뷰등록시 포인트 지급
-app.post("/reviewPoint/:id", async (req, res) => {
+app.post("/reviewPoint", async (req, res) => {
   //let datas = [request.body.param,Number(req.params.ono),req.params.id]
-  let datas = [req.body.point_no, req.body.order_no, req.params.id]
+  let datas = [req.body.param.point_no, req.body.param.order_detail_no, req.session.param.user_id]
   res.send(await mysql.query("reviews", "reviewPoint", datas));;
 
 });
+app.put("reviewPointUp", async (req, res) => {
+  let id = req.session.user_id
+  res.send(await mysql.query("reviews", "reviewPointUp", id))
+})
+
+
+
+
 
 //리뷰관련
 //상세페이지에서 리뷰목록
@@ -1335,8 +1378,8 @@ app.get("/detailReview/:pno", async (request, response) => {
   response.send(list);
 })
 //마이페이지에서 리뷰목록
-app.get("/myReview/:id", async (request, response) => {
-  let id = request.params.id
+app.get("/myReview", async (request, response) => {
+  let id = request.session.user_id
   let list = await mysql.query('reviews', 'myReview', id)
   response.send(list);
 })
@@ -1347,41 +1390,114 @@ app.post("/reviewInsert", async (req, res) => {
 
 });
 //리뷰 단건 조회
-app.get("/reviewInfo/:id/:rno", async (req, res) => {
-  let datas = [req.params.id, req.params.rno]
+app.get("/myReview/:rno", async (req, res) => {
+  let datas = [req.session.user_id, req.params.rno]
   res.send(await mysql.query("reviews", "reviewInfo", datas))[0]
 });
 //리뷰수정
-app.put("/reviewUpdate/:id/:rno", async (req, res) => {
-  let datas = [req.body.param, req.params.id, Number(req.params.rno)]
+app.put("/reviewUpdate/:rno", async (req, res) => {
+  let datas = [req.body.param, req.session.user_id, Number(req.params.rno)]
   res.send(await mysql.query("reviews", "updateReview", datas));
 })
-
+app.delete("/deleteReview/:rno", async (req, res) => {
+    let rno = req.params.rno
+    let result = await mysql.query('reviews', 'deleteReview', rno)
+    res.send(result);
+  }),
+  app.get("/rLikeCnt/:rno", async (req, res) => {
+    let datas = [req.params.rno, req.session.user_id]
+    res.send(await mysql.query("reviews", "selectReviewLike", datas))
+  })
+app.post("/reviewLike", async (req, res) => {
+  let data = req.body.param
+  res.send(await mysql.query("reviews", "insertReviewLike", data))
+})
+app.delete("/reviewLike/:rno", async (req, res) => {
+  let datas = [req.params.rno, req.session.user_id]
+  res.send(await mysql.query("reviews", "deleteReviewLike", datas))
+})
 //상세페이지 버튼 disable용
-app.get("/orderNoReview/:id", async (req, res) => {
-  let id = req.params.id
+app.get("/orderNoReview", async (req, res) => {
+  let id = req.session.user_id
   res.send(await mysql.query("reviews", "orderNoReview", id))
 });
 
 
-//상세페이지 버튼 disable용
-app.get("/orderNoReview/:id", async (req, res) => {
-  let id = req.params.id
-  res.send(await mysql.query("reviews", "orderNoReview", id))
-});
+
+
+
 //찜하기
-app.get("/prodLike/:id/:pno", async (req, res) => {
-  let datas = [req.params.id, req.params.pno]
-  res.send(await mysql.query("like", "likeList", datas))[0]
+app.delete("/DelprodLike/:pno", async (req, res) => {
+  console.log('????');
+  let datas = [req.session.user_id, req.params.pno]
+  console.log(datas);
+  res.send(await mysql.query("like", "likeDel", datas))
 });
-app.delete("/DelprodLike/:id:/:pno", async (req, res) => {
-  let id = req.params.id
-  res.send(await mysql.query("like", "likeDel", id))
+app.get("/prodLike/:pno", async (req, res) => {
+  let datas = [req.session.user_id, req.params.pno]
+  res.send(await mysql.query("like", "likeInfo", datas))[0]
 });
+app.get("/prodLikes", async (req, res) => {
+  let id = req.session.user_id
+  res.send(await mysql.query("like", "likeList", id))
+});
+
 app.post("/prodLike", async (req, res) => {
   let data = req.body.param
   res.send(await mysql.query("like", "likeInsert", data))
 });
+
+
+
+
+//문의하기
+app.get("/inquire", async (req, res) => {
+  let id = req.session.user_id;
+  res.send(await mysql.query("inquire", "inquireList", id))
+})
+app.get("/inquire/:ino", async (req, res) => {
+  let ino = Number(req.params.ino)
+  res.send(await mysql.query("inquire", "inquireInfo", ino))
+})
+app.post("/inquire", async (req, res) => {
+  let data = req.body.param
+  res.send(await mysql.query("inquire", "inquireInsert", data))
+})
+app.put("/inquireUpdate/:ino", async (req, res) => {
+  let datas = [req.body.param, req.session.user_id, req.params.ino]
+  res.send(await mysql.query("inquire", "inquireUpdate", datas))
+})
+//답변
+app.get("/inquireAnswer/:ino", async (req, res) => {
+  let ino = Number(req.params.ino);
+  res.send(await mysql.query("inquire", "inquireAnswer", ino))
+})
+
+app.get("/photoInq/:ino", async (req, res) => {
+  let ino = req.params.ino
+  res.send(await mysql.query("inquire", "photoListInq", ino))
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1456,8 +1572,8 @@ app.get(`/cartSelect/:no/:id`, async (req, res) => {
   res.send(list)
 })
 
-
 app.get('/cart', async (req, res) => {
+
   res.send(await mysql.query('test', 'cartList', req.session.user_id))
 })
 

@@ -19,7 +19,7 @@
       <hr>
       <div v-if="orderList.length > 0" style="padding: 100px; margin: ;">
         <p>상품 이미지
-            <img src="/api/test" alt="상품이미지" style="width: 200px; margin-left: 100px; margin-bottom: 20px;">
+            <v-img width="400" height="300" :src="`api/test/`+ orderList[0].file_name"></v-img>
         </p>
             <p>상품 명 
             <span>{{ prodName }}</span>

@@ -10,12 +10,12 @@
             v-model = grade
             variant="underlined"
             return-object
-            ></v-select>
+            >등급</v-select>
             <v-btn @click="filterData(this.grade,this.days)">검색</v-btn>     <v-btn @click="refresh">초기화</v-btn></div>
         </template>
         <template #filterSearch>
-        <div style="width: 600px;"><a @click="this.order='user_id'">기본순 | </a><a @click="this.order='join_date'">최근 가입일순 | </a><a @click="this.order='user_grade'">등급 높은순</a>
-        <input v-model="word" @change="searchData" style="border-bottom: 1px black solid;float: right;width: 300px;" placeholder="회원 아이디나 이름을 검색하세요"></div>
+        <div style="width: 600px;"><a @click="this.order='user_id'">기본순 | </a><a @click="this.order='join_date'">최근 가입일순 | </a><a @click="this.order='user_grade'">등급 높은순</a></div>
+        <br><input v-model="word" @change="searchData" style="border-bottom: 1px black solid;float: left;width: 400px;height: 50px;" placeholder="회원 아이디나 이름을 검색하세요">
         
     </template>
     <template #dataList>
@@ -30,7 +30,7 @@
             <th></th>
         </tr>
     </thead>
-                    
+    
     <tbody>
         <tr :key="idx" v-for="(user,idx) in userList">
             <td>{{ user.user_id }}</td>
@@ -154,7 +154,7 @@ export default {
                     alert('오류가 남'); 
                 }
             }else{
-                alert('이용제한이 해지되었습니다');
+                alert('취소되었습니다.');
                 this.uList();
             }
         },
@@ -185,13 +185,13 @@ export default {
             this.filterList = [];
         },
         async filterData(grade,day){
-            this.word = '';
             this.filterList = [];
             if(grade==''){
                 let list = await axios.get(`/api/user/${day}/${this.order}/${this.startNum}`).catch(err=>console.log(err));
                 let result = list.data;
                 this.userList = result;
                 this.totalList = result;
+                this.word = '';
             }else{
                 if(grade=='일반회원'){
                     grade = 'i1'
@@ -213,6 +213,7 @@ export default {
                 }
                 this.userList = this.filterList;
                 this.totalList = this.userList;
+                this.word = '';
             }
         }
     },
@@ -228,7 +229,10 @@ export default {
             this.uList();
         },
         word(){
-            this.days = '';
+            if(this.word==''){
+                return;
+            }
+            this.days = this.dateFormat('','yyyy-MM-dd');
             this.grade='';
             this.search(this.word);
         },

@@ -52,8 +52,11 @@
                     <v-btn v-show="this.nums==i" @click="this.nums=this.nums+1">+</v-btn><v-btn v-show="this.nums==i&&this.nums!=1" @click="this.nums=this.nums-1">-</v-btn>
                   </div>
                   <div v-for="idx in file">첨부파일 : {{ idx }}<p @click="delMultiple(idx)">삭제</p></div>
-                  <div v-show="open==true" v-for="idx in photo"><img id="ima" :src="getPath(idx)" style="position: relative;height=300"><p @click="delPhoto(idx)">삭제</p></div>
-                  <v-btn @click="showing" v-show="photo.length>0">사진보기</v-btn> <!-- <v-btn @click="uploadPhoto">저장완료</v-btn> -->
+                  <!--기존에 있던 사진 삭제-->
+                  <div v-show="open==true" v-for="idx in photo"><img id="ima" :src="getPath(idx)" style="position: relative;height=300"><p @click="RealRemove(idx)">삭제</p></div>
+                  <!--새로 추가된 사진 삭제-->
+                  <div v-show="open==true" v-for="idx in newPhoto"><img id="ima" :src="getPath(idx)" style="position: relative;height=300"><p @click="delPhoto(idx)">새로운사진삭제</p></div>
+                  <v-btn @click="showing" v-show="photo.length>0||newPhoto.length>0">사진보기</v-btn>
                 </div>
                 
                 <div class="col-md-5">
@@ -122,6 +125,7 @@ export default {
           },
           showIcon : false,
           photo : [],
+          newPhoto : [],
           file : [],
           open : false,
           nums : 1,
@@ -152,10 +156,14 @@ export default {
           async photoList(no){
             this.photo = [];
             console.log(no)
-            let list = await axios.get(`/api/photo/${no}`).catch(err=>console.log(err));
+            let list = await axios.get(`/api/photo/prod_no/${no}`).catch(err=>console.log(err));
             for(let i=0;i<list.data.length;i++){
-              this.photo.push(list.data[i].file_name);
-              console.log('사진 리스트 ' +list.data[i])
+              console.log('현재의 타입'+list.data[i].types)
+              if(list.data[i].types=='photo'){
+                this.photo.push(list.data[i].file_name);
+              }else if(list.data[i].types=='text'){
+                this.file.push(list.data[i].file_name);
+              }
             }
           },
           async prodUpdateList(){
@@ -181,24 +189,50 @@ export default {
                 }
               }
               let result = await axios.put(`/api/prod/${this.prodNo}`,datas).catch(err=>console.log(err));
+              console.log(result.data)
               if(result.data.affectedRows > 0){
-                
                 alert('수정성공!');
-                for(let i=0;i<this.photo.length;i++){
+
+                for(let i=0;i<this.file.length;i++){
                   this.ods = 's'+i
                   let photos = {
                     param : {
                       "file_category" : 'r3',
-                      "file_name" : this.photo[i],
+                      "file_name" : this.file[i],
                       "orders" : this.ods,
                       "prod_no" : this.prodNo,
-                      "path" : 'uploads\\'+this.photo[i]
+                      "path" : 'uploads\\'+this.file[i],
+                      "types" : 'text'
                     }
                   }
-                  let result1 = axios.post("/api/photo",photos).catch(err=>console.log(err));
-                  alert('테이블ㅇㅔ 추가');
+                  let result1 = await axios.post("/api/photo",photos).catch(err=>console.log(err));
+                  if(result1.data.affectedRows>0){
+                    alert('테이블ㅇㅔ 사진추가');
+                  }else{
+                    alert('테이블ㅇㅔ 실패');
+                  }
                 }
-                this.$router.push({name : 'prodList'});
+                for(let i=0;i<this.newPhoto.length;i++){
+                  this.ods = 's'+i
+                  let ph = {
+                    param : {
+                      "file_category" : 'r3',
+                      "file_name" : this.newPhoto[i],
+                      "orders" : this.ods,
+                      "prod_no" : this.prodNo,
+                      "path" : 'uploads\\'+this.newPhoto[i],
+                      "types" : 'photo'
+                    }
+                  }
+                  let result1 = await axios.post("/api/photo",ph).catch(err=>console.log(err));
+                  if(result1.data.affectedRows>0){
+                    alert('테이블ㅇㅔ 사진추가');
+                  }else{
+                    alert('테이블ㅇㅔ 실패');
+                  }
+                }
+
+              this.$router.push({name : 'prodList'});
               }else{
                   alert('수정 실패')
               }
@@ -222,19 +256,41 @@ export default {
             let result = await axios.post(`/api/prod`,data).catch(err=>console.log(err));
             if(result.data.affectedRows > 0){
               alert('등록성공!');
-              for(let i=0;i<this.photo.length;i++){
-              console.log(this.photo[i])
+              for(let i=0;i<this.file.length;i++){
+                  this.ods = 's'+i
+                  let photos = {
+                    param : {
+                      "file_category" : 'r3',
+                      "file_name" : this.file[i],
+                      "orders" : this.ods,
+                      "prod_no" : this.prodNo,
+                      "path" : 'uploads\\'+this.file[i]
+                    }
+                  }
+                  let result1 = await axios.post("/api/photo",photos).catch(err=>console.log(err));
+                  if(result1.data.affectedRows>0){
+                    alert('테이블ㅇㅔ 파일추가');
+                  }else{
+                    alert('테이블ㅇㅔ 실패');
+                  }
+                }
+              for(let i=0;i<this.newPhoto.length;i++){
+              console.log(this.newPhoto[i])
               let photos = {
                 param : {
                   "file_category" : 'r3',
-                  "file_name" : this.photo[i],
+                  "file_name" : this.newPhoto[i],
                   "orders" : i,
                   "prod_no" : result.data.insertId,
-                  "path" : 'uploads\\'+this.photo[i]
+                  "path" : 'uploads\\'+this.newPhoto[i]
                 }
               }
-              let result1 = axios.post("/api/photo",photos).catch(err=>console.log(err));
-              alert('테이블ㅇㅔ 추가')
+              let result1 = await axios.post("/api/photo",photos).catch(err=>console.log(err));
+              if(result1.affectedRows>0){
+                alert('테이블ㅇㅔ 사진추가')
+              }else{
+                alert('실패...')
+              }
             }
               console.log('현재 등록된 상품' + result.data.insertId)
               this.$router.push({name : 'prodList'});
@@ -244,7 +300,9 @@ export default {
           },
           info(data){
             for(let i=0;i<data.length;i++){
-              this.photo.push(data[i]);
+              console.log(data[i])
+              this.newPhoto.push(data[i]);
+              console.log('현재 새로운 포토'+this.newPhoto)
             }
           },
           text(data){
@@ -262,18 +320,20 @@ export default {
           getPath(name){
               return `/api/fileCall/${name}`;
           },
-          // delMultiple(file){
-          //   const fileName = file;
-          //   const encodedFileName = encodeURIComponent(fileName);
-          //   console.log('현재파일'+encodedFileName)
-          //   let list = axios.delete(`/api/photo/${encodedFileName}`).catch((error) => {console.error(error)});
-          //   alert('삭제')
-          //   this.photoList(this.prodNo);
-          // },
+          async RealRemove(file){
+            const fileName = file;
+            const encodedFileName = encodeURIComponent(fileName);
+            console.log('현재파일'+encodedFileName)
+            let list = await axios.delete(`/api/photo/${encodedFileName}`).catch((error) => {console.error(error)});
+            if(list.data.affectedRows>0){
+              alert('테이블에서 삭제완료');
+              this.photoList(this.prodNo);
+            }
+          },
           delPhoto(name){
-            for(let i = 0; i < this.photo.length; i++) {
-                if(this.photo[i] === name)  {
-                    this.photo.splice(i, 1);
+            for(let i = 0; i < this.newPhoto.length; i++) {
+                if(this.newPhoto[i] === name)  {
+                    this.newPhoto.splice(i, 1);
                     i--;
                 }
             }
@@ -286,26 +346,6 @@ export default {
                 }
             }
         },
-          // uploadPhoto(){
-          //   for(let i=0;i<this.photo.length;i++){
-          //     console.log(this.photo[i])
-          //     let photos = {
-          //       param : {
-          //         "file_category" : 'r3',
-          //         "file_name" : this.photo[i],
-          //         "orders" : i,
-          //         "prod_no" : this.prodNo,
-          //         "path" : 'uploads\\'+this.photo[i]
-          //       }
-          //     }
-          //     let result1 = axios.post("/api/photo",photos).catch(err=>console.log(err));
-          //       if(result1.data.affectedRows>0){
-          //         alert('테이블ㅇㅔ 추가')
-          //       }else{
-          //         alert('테이블ㅇㅔ 실패')
-          //       }
-          //   }
-          // }
         },
         components : {
         side,

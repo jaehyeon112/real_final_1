@@ -7,8 +7,8 @@
               <td>
                 <v-checkbox v-model="list.cart_checkbox" true-value="1" false-value="0" @click="updateCheckbox(list)"></v-checkbox>
               </td>
-              <td style="border-radius: 1px black;">
-                <img src="/api/test" alt="상품이미지" style="width: 150px;">
+              <td>
+                <v-img width="150" height="150" :src="`api/test/`+ list.file_name"></v-img>
               </td>
               <td>{{ list.prod_name }}</td>
               <td>

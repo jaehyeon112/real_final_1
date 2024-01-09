@@ -17,7 +17,7 @@ export default {
         loaded : false,
         week : 0,
         chartData: {
-            labels: ['1주전','2주전','3주전','이번주'],
+            labels: ['3주전','2주전','1주전','이번주'],
             datasets: [
                 {
                 label: '주간 매출액',
@@ -58,6 +58,7 @@ export default {
         //             }
         //         },
         // }
+        
     }
 },
     created(){

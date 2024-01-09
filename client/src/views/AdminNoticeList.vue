@@ -8,7 +8,8 @@
             variant="underlined"
             return-object
             ></v-select>
-            <v-btn @click="refresh">초기화</v-btn><v-btn @click="insertNotice">공지사항 등록</v-btn></div>
+            <v-btn @click="refresh">초기화</v-btn>           
+            <v-btn @click="insertNotice">공지사항 등록</v-btn></div>
         </template>
         <template #filterSearch>
             <div><a @click="this.order='notice_no'">기본순 | </a><a @click="this.order='notice_views'">조회수 많은 순</a></div>
@@ -42,25 +43,6 @@
       <tbody v-if="noticeList.length==0" style="text-align: center;">
             <tr><td></td><td></td><td><h3>존재하는 데이터가 없습니다</h3></td></tr>
         </tbody>
-      <div class="modal-wrap" v-show="modalCheck" @click="modalOpen">
-      <div class="modal-container" @click.stop="">
-        <h3>취소 사유를 입력해주세요</h3>
-        <div class="modalPop">
-            <v-select
-            label="취소사유"
-            :items="['물량부족','공급사 제작지연','기타']"
-            v-model = reasons
-            variant="underlined"
-            return-object
-            ></v-select>
-        </div>
-        <input v-model = "reasons" type="text" placeholder="기타 사유를 적어주세요..">
-        <div class="modal-btn">
-            <v-btn style="border-radius: 10px;" @click="modalCheck = false,this.reason=''">닫기</v-btn>
-            <v-btn style="border-radius: 10px;" @click="sendMessage">회원에게 취소 알림 보내기</v-btn>
-        </div>
-      </div>
-    </div>
         <v-container>
           <page @changePage="changePage" :list="totalList" :totals="this.nums"></page>
         </v-container>

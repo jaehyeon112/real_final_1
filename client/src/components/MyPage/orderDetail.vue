@@ -13,8 +13,9 @@
                 <small class="d-block text-body-secondary">지불가격:{{ detail.prod_discount_price }}</small>
                 <small class="d-block text-body-secondary">수량:{{ detail.order_quantity }}</small>
             </span>
-            <p>배송완료</p>
+            <p>{{ detail.delivery_status }}</p>
                 <v-btn @click="goToReview(detail.order_detail_no)" :disabled="detail.test">리뷰작성</v-btn>
+                <v-btn  @click="goToInquire(detail.order_detail_no)" >문의하기</v-btn>
                 <v-btn @click="orderCancel">주문취소</v-btn>
             </label>
             <div>
@@ -37,46 +38,24 @@ export default {
    },
    created(){
     
-    this.orderNo = this.$route.query.orderNo;
-    this.getDetailList();
-    //this.getReviewList();
-
-   },
-    computed: {
-        existReview(){
-            this.reviewList.detail_order_no = this.productList.order_detail_no
-            return true;
-        }
-            
-    }
-            ,
-   methods:{
+       this.getDetailList();
+       
+    },
     
-    
-    // async getReviewList(){
-           
-    //         this.reviewList = (await axios.get(`/api/myReview/${member_id}`)
-    //                                .catch(err => console.log(err))).data; 
-            
-    //         },
-    async getDetailList(){
+    methods:{
+        
+        async getDetailList(){
+        this.orderNo = this.$route.query.orderNo;
         let member_id = this.$store.state.user.user_id;
         let a = (await axios.get(`/api/myDetailOrders/${this.orderNo}/${member_id}`)
                                         .catch(err=>console.log(err))).data // 상세의 데이터
+                                        
         let b = (await axios.get(`/api/orderNoReview/${member_id}`)
                                    .catch(err => console.log(err))).data;  // 리뷰의 데이터 
-
-        // for(let i = 0; i < a.length; i++){
-        //     for( let j = 0 ; j < b.length; j++){
-        //         if(a[i].order_detail_no == b[j].detail_order_no){
-        //             a[i].test = true;
-        //         }else{
-        //             a[i].test= false;
-        //         }
-        //     }
-        // }
-        //                          this.reviewList = b;
-        //                          this.productList = a;   
+         console.log('a의 값')
+         console.log(a)                           
+         console.log('b의 값')
+         console.log(b)                           
         for(let i =0; i<a.length; i ++){
             for( let j = 0 ; j < b.length; j++){
             if(a[i].order_detail_no == b[j].detail_order_no){
@@ -90,6 +69,12 @@ export default {
     goToReview(detailNo){
             this.$router.push({path:'/reviewForm', query:{detailNo : detailNo}})
             console.log(detailNo)
+    },
+    goToInquire(detailNo){
+        this.$router.push({path:'/inquireForm', query:{detailNo : detailNo}})
+        console.log(detailNo)
+    },
+
         },
 
     orderCancel() {
@@ -118,5 +103,5 @@ export default {
         }
    }
    
-}
+
 </script>

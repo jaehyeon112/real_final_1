@@ -1,7 +1,5 @@
 <template>
 <div>
-    
-  
         <main class="d-flex flex-nowrap">
         <sidebar class="sidebar"/>
         <div >
@@ -32,7 +30,7 @@
                             </a>
                         </div>
             </div>
-                <div class="col-sm-3 " style="background-color: lightgreen; margin:10px">
+                <div class="col-sm-3 " style="background-color: rgb(138, 38, 215); margin:10px">
                     <div class="col p-4 d-flex flex-column position-static">
                         <strong class="d-inline-block mb-2 text-success-emphasis">잔여포인트</strong>
                         <h3 class="mb-0">{{ member.point }} p</h3>
@@ -40,7 +38,7 @@
                     </div>
                 </div>
            
-                <div class="col-sm-3"  style="background-color: lightgreen; margin:10px">
+                <div class="col-sm-3"  style="background-color: rgb(138, 38, 215); margin:10px">
                     <div class="col p-4 d-flex flex-column position-static">
                         <strong class="d-inline-block mb-2 text-success-emphasis">잔여쿠폰</strong>
                         
@@ -66,8 +64,6 @@
 </template>
 
 <script>
-
-//import coupon from '../components/MyPage/couponList.vue'
 import sidebar from'../components/MyPage/sidebar.vue'
 import axios from 'axios'
 
@@ -76,12 +72,12 @@ export default{
         return {
             member:{},
             couponList:[],
-            //NextMonthPoint:{},
+            
             dialog:false
         } 
     },
     components : {
-        //coupon,
+     
         sidebar
     },
     created(){
@@ -94,10 +90,10 @@ export default{
     methods: {
         //일단 멤버 정보를 셀렉트 해오는걸로 시험 중 나중에 로그인 세션그걸로 바꿔야 함
         async getMember(){
-            let member_id = this.$store.state.user.user_id;
-            this.member = (await axios.get(`/api/member/${member_id}`)
+            
+            this.member = (await axios.get(`/api/member`)
                                       .catch(err=>{console.log(err)})).data
-                                      console.log(this.member.sump)                          
+                                      console.log( '포인트소멸'+this.member.showNextMonth.sump)                          
         },
         // async getNextMontPoint(){
         //     let member_id = this.$store.state.user.user_id;
