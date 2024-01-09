@@ -1322,6 +1322,11 @@ app.get("/deliveryInfo/:dno", async (req, res) => {
   let result = await mysql.query('delivery', 'deliveryInfo', datas)[0];
   res.send(result)
 })
+app.get("/deliveryBasic/:id", async (req, res) => {
+  let id = req.params.id
+  let result = await mysql.query('delivery', 'deliveryUser', id);
+  res.send(result)
+})
 //배송지정보수정
 app.put("/updateDelivery/:dno", async (req, res) => {
   let datas = [req.body.param, req.params[dno]]
