@@ -89,8 +89,8 @@ limit ?, 6;
 
   // 장바구니 체크 리스트
   cartCheckList: `select distinct *
-              from cart c, product p, user u
-              WHERE cart_checkbox = 1 AND c.user_id = u.user_id AND p.prod_no = c.prod_no AND c.user_id = ?
+              from cart c, product p, user u, (select file_name, prod_no from file where orders='s0') f
+              WHERE cart_checkbox = 1 AND c.user_id = u.user_id AND p.prod_no = c.prod_no AND c.prod_no = f.prod_no AND c.user_id = ?
               order by cart_no`,
   CheckboxUpdate: `UPDATE cart set cart_checkbox = ? WHERE cart_no = ?`,
   CheckAllUpdate: `UPDATE cart set cart_checkbox = ? WHERE user_id = ?`,
@@ -114,9 +114,9 @@ limit ?, 6;
   pointList: `select *
                from user
                where user_id = ?`,
-  orderList: `  select distinct * 
-                from orders a, order_detail b , product c 
-                where a.order_no = b.order_no AND b.prod_no = c.prod_no AND b.order_no = ?`,
+  orderList: `select distinct * 
+              from orders a, order_detail b , product c , (select file_name, prod_no from file where orders='s0') f
+              where a.order_no = b.order_no AND b.prod_no = c.prod_no AND b.prod_no = f.prod_no AND b.order_no = ?`,
   orderInsert: `insert into orders set ?`,
   orderdetailInsert: `insert into order_detail set?`,
   // 주문서에서 쿠폰사용해서 결제완료했을경우 쿠폰업데이트
