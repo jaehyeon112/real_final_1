@@ -19,37 +19,37 @@
         </router-link>
       </li>
       <li>
-        <router-link to="/myPage/delivery" class="nav-link active">
+        <router-link to="/myPage/delivery" class="nav-link text-white  active">
          
           배송지관리
         </router-link>
       </li>
       <li>
-        <router-link to="/myPage/myReview" class="nav-link active">
+        <router-link to="/myPage/myReview" class="nav-link text-white active">
           <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#grid"/></svg>
           상품후기
         </router-link>
       </li>
       <li>
-        <router-link to ="/myPage/myInquire" class="nav-link active">
+        <router-link to ="/myPage/myInquire" class="nav-link active text-white">
           <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#people-circle"/></svg>
           상품문의
         </router-link>
       </li>
       <li>
-        <router-link to="/myPage/point" class="nav-link active">
+        <router-link to="/myPage/point" class="nav-link text-white ">
           <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#people-circle"/></svg>
           포인트
         </router-link>
       </li>
       <li>
-        <router-link to="/myPage/coupon" class="nav-link active">
+        <router-link to="/myPage/coupon" class="nav-link text-white  active">
           <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#people-circle"/></svg>
           쿠폰
         </router-link>
       </li>
       <li>
-        <router-link to="/putpass" class="nav-link active">
+        <router-link to="/putpass" class="nav-link text-white  active">
           <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#people-circle"/></svg>
           개인정보수정
         </router-link>

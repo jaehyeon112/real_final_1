@@ -142,7 +142,7 @@ limit ?, 6;
   // 취소 되었을때 포인트 다시 돌려주기
   pointReturn: `update user set point = point + ? where user_id = ?`,
   // 배송불가지역리스트
-  isolatedRegionList: `select * from isolated_region`,
+  isolatedRegionList : `select * from isolated_region`,
 };
 
 let user = {
@@ -329,8 +329,8 @@ WHERE t3.prod_no = ?`, //상세페이지에서 그 상품에대한 리뷰 리스
   updateReview: `update review set ? where user_id= ? and review_no= ?`,
   insertReviewImage: `insert into image set?`,
   deleteReview: `delete from review where review_no=?`,
-  selectReviewLike: `select user_id as u from review_like where user_id=? and review_no=?`,
-  //insertReviewLike: `insert into review_like set ?`,
+  selectReviewLike: `select * from review_like where user_id=? and review_no=?`,
+  insertReviewLike: `insert into review_like set ?`,
   deleteReviewLike: `delete from review_like where review_no=? and user_id=?`
 
 };
@@ -341,9 +341,9 @@ let point = {
   myPointUseHistory: `select * from point where user_id=? and point_use > 0 order by end_point_date `,
   reviewPoint: `insert into point set point_no = ?, order_detail_no=?, user_id=?, point_history='p2',
               point_save = 500, point_use=0, point_date =current_date(), end_point_date = date_add(current_date(), interval 1 Year);`, //리뷰등록시 포인트 지급
-  reviewPointD: `insert into point set point_no=?, order_detail_no=?, user_id=?, end_point_date = current_date()`,
-  reviewPointUp: `update user set point=point+500 where user_id=?`,
-  reviewPointDown: `update user set point=point-500 where user_id=?`,
+  reviewPointD:`insert into point set point_no=?, order_detail_no=?, user_id=?, end_point_date = current_date()`,
+  reviewPointUp:`update user set point=point+500 where user_id=?`,
+  reviewPointDown:`update user set point=point-500 where user_id=?`,
   pointExpire: `update user as t1,(select sum( point_save) as points, user_id from point where end_point_date = current_date() group by user_id) as t2
               set t1.point = t1.point- t2.points where t1.user_id=t2.user_id;`, //기간소멸
   //그리고 point table에 소멸사유로 인서트 해주는것도 같이..?
@@ -392,16 +392,16 @@ let like = {
   likeInfo: `select* from likes where user_id=? and prod_no=?`,
   likeInsert: `insert into likes set?`,
   likeDel: `delete from likes where user_id=? and prod_no =?`,
-  likeList: `select * from likes where user_id=?`
+  likeList: `select * from select * from product p right join likes l on p.prod_no = l.prod_no where user_id=?`
 }
-let inquire = {
-  inquireList: `select * from inquire where user_id=?`,
-  inquireInfo: `select * from inquire where inquire_no=?`,
-  inquireInsert: `insert into inquire set?`,
-  inquireUpdate: `update inquire set? where user_id=? and inquire_no=?`,
-  inquireAnswer: `select * from reply where inquire_no=?`,
-  photoListInq: `select file_name from file where inquire_no = ?`,
-  deleteInquire: `delete from inquire where inquire_no=?`
+let inquire={
+  inquireList:`select * from inquire where user_id=?`,
+  inquireInfo:`select * from inquire where inquire_no=?`,
+  inquireInsert:`insert into inquire set?`,
+  inquireUpdate:`update inquire set? where user_id=? and inquire_no=?`,
+  inquireAnswer:`select * from reply where inquire_no=?`,
+  photoListInq : `select file_name from file where inquire_no = ?`,
+  deleteInquire:`delete from inquire where inquire_no=?`
 }
 let member = {
   memberInfo: `select t1.*, count(case when coupon_able=0 then 1 end) as couponCnt from user t1 join coupon t2  on t1.user_id = t2.user_id where t1.user_id= ?`
