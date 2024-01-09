@@ -296,10 +296,10 @@ let reviews = {
   reviewInfo: `select * from review where user_id=? and review_no=?`, //마이페이지 리뷰하나 보기
   orderNoReview: `select * from review where user_id=?`,
   //서영희
-  reviewList : `select  r.* from order_detail o,review r where o.order_detail_no=r.detail_order_no and prod_no = ? `,
-  likeUp : `update review set like_cnt = like_cnt+1 where review_no= ?`,
-  likeDown : `update review set like_cnt = like_cnt-1 where review_no= ?`,
-  insertReviewLike : `insert into review_like set review_no=(select review_no from review where review_no = ?), user_id = (select user_id from user where user_id = ?)`,
+  reviewList: `select  r.* from order_detail o,review r where o.order_detail_no=r.detail_order_no and prod_no = ? `,
+  likeUp: `update review set like_cnt = like_cnt+1 where review_no= ?`,
+  likeDown: `update review set like_cnt = like_cnt-1 where review_no= ?`,
+  insertReviewLike: `insert into review_like set review_no=(select review_no from review where review_no = ?), user_id = (select user_id from user where user_id = ?)`,
 
   detailList: `SELECT 
   t1.review_no, 
