@@ -606,6 +606,10 @@ app.post("/join/joinIn", async (req, res) => {
 });
 
 
+app.get('/logout', async (req,res)=>{
+  req.session.destroy();
+})
+
 //로그인 - 아이디비번 일치해야 로그인 (5회 오류시 보안프로그램실행)
 app.post("/dologin", async (req, res) => {
   let data = [req.body.param.user_id, req.body.param.user_password];
