@@ -26,9 +26,6 @@
   
           <div class="hr"></div>
           
-        
-
-
           <div class="foot-lnk">
           <b-button variant="link" a href="finding">ID/PASSWORD 찾기</b-button>
             <router-link to="/join"> <v-btn squared variant="success" a href="join">회원가입</v-btn></router-link>
@@ -71,8 +68,11 @@
   
 </template>
   
- 
- <script>
+  <script>
+  
+    var onloadCallback = function() {
+      alert("grecaptcha is ready!");
+    };
   import axios from 'axios';
   
   export default {
@@ -108,7 +108,7 @@
   
   let ipList = await axios.post(`/api/dologin/`,obj)  
                   .catch(err => console.log(err));
-                  // console.log(ipList.data)
+                  console.log(ipList.data)
                   
        let users = ipList.data;
          
@@ -136,7 +136,7 @@
           alert('아디 비번 확인;')
           return;
          }else{
-          //  alert(users[0].user_name +'님 환영합니다');
+           alert(users[0].user_name +'님 환영합니다');
           if(users[0].user_grade == 'i4'){
             this.$router.push('/admin/Main')
             return;

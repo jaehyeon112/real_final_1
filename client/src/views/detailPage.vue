@@ -242,7 +242,7 @@ export default {
             this.productInfo = info.data[0]                       
         },
         async getLikes(){
-        let list = await axios.get(`/api/prodLike/${this.$store.state.user.user_id}/${this.pno}`)
+        let list = await axios.get(`/api/prodLike/${this.pno}`)
                                   .catch(err=>console.log(err));
             this.likeList =list.data
             console.log(this.likeList)
@@ -263,7 +263,7 @@ export default {
         },
         
           async getLikeCount(no, writer, cnt){
-            let likestate = await axios.get(`/api/rLikeCnt/${this.$store.state.user.user_id}/${no}`)
+            let likestate = await axios.get(`/api/rLikeCnt/${no}`)
                                        .catch(err=>console.log(err));                 
             let k=0;
             console.log("==============================")
@@ -306,7 +306,7 @@ export default {
                                  
                }
             }else{                       
-            let result3 = await axios.delete(`/api/reviewLike/${no}/${this.$store.state.user.user_id}`)         
+            let result3 = await axios.delete(`/api/reviewLike/${no}`)         
                                     .catch(err=>console.log(err))
                                     console.log('result3'+result3)
             if(result3.data.affectedRows >0){
@@ -334,7 +334,7 @@ export default {
              }
             }
          console.log(this.$store.state.user.user_id)
-          let result = await axios.get(`/api/comparisonCart/${this.$store.state.user.user_id}`) //카트 안에 같은 상품이 있는지 정보가져오기 
+          let result = await axios.get(`/api/comparisonCart`) //카트 안에 같은 상품이 있는지 정보가져오기 
                                   .catch(err=>console.log(err)).data
                                    console.log( '장바구니 불러오기'+ result + this.cart)
                                    console.log(result)
@@ -343,7 +343,7 @@ export default {
                               for(let i=0; i < result.length; i++){
                                  if( this.pno == result[i].prod_no) {   
                                     console.log(this.pno + 'result'+result[i])                   
-                                    let carts = await axios.put(`/api/updateCart/${this.pno}/${this.$store.state.user.user_id}`,obj2)
+                                    let carts = await axios.put(`/api/updateCart/${this.pno}`,obj2)
                                     .catch(err=>console.log(err))
                                     this.cart = this.carts.data
                                     if(carts.data.changedRows > 0){
@@ -383,7 +383,7 @@ export default {
       //찜하기눌러서 저장하는 곳
       
             if(this.isShow == true ){ //찜한상태라는 말
-               let dellike = await axios.delete(`/api/prodDisike/${this.$store.state.user.user_id}/${this.pno}`)
+               let dellike = await axios.delete(`/api/prodDisike/${this.pno}`)
                                        .catch(err=>console.log(err));
                   if(dellike.data.affectedRows>0){                        
                      alert('삭제성공')
