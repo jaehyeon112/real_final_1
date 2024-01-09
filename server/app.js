@@ -425,6 +425,10 @@ app.post("/cancel", async (req, res, next) => {
     res.status(400).send(error);
   }
 })
+app.get("/isolatedRegionList", async (req, res) => { // 배송불가 지역리스트
+  let list = await mysql.query("test", "isolatedRegionList");
+  res.send(list);
+});
 
 app.get("/couponList", async (req, res) => { // 쿠폰 리스트
   let list = await mysql.query("test", "couponList", req.session.user_id);
