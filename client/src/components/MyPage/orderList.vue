@@ -65,7 +65,7 @@ export default {
     },
     methods:{
         async getOrderList(){
-            this.orderList = (await axios.get(`/api/myOrders/${this.$store.state.user.user_id}`)
+            this.orderList = (await axios.get(`/api/myOrders`)
                                           .catch(err=>console.log(err))).data
         },
         // async getDetailList(){
