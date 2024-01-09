@@ -5,7 +5,7 @@
       <table class="rwd-table" :key="idx" v-for="(list, idx) in cartList">
         <tr>
           <td>
-            <img src="/api/test" alt="상품이미지" style="width: 100px;">
+            <v-img width="150" height="150" :src="`api/test/`+ list.file_name"></v-img>
           </td>
           <td>{{ list.prod_name }}</td>
           <td>{{ list.quantity }} 개</td>
