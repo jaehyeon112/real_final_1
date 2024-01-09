@@ -33,8 +33,3 @@ app
   .mixin(mixin)
   .mount('#app')
 
-  //리캡챠
-// app.use(VueRecaptchaPlugin, {
-//   v2SiteKey: '6LeemEkpAAAAACmzeMW6xkgqnSjDGmkpX--9CWWZ',
-//   //v3SiteKey: 'YOUR_V3_SITEKEY_HERE',
-// })

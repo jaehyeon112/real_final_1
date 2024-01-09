@@ -136,11 +136,11 @@ import { mapActions } from 'vuex';
 if (users.length > 0) {
   alert(`${users[0].user_name}님 환영합니다.`);
 
-  // user_grade가 정의되어 있는지 확인 후 로직 수행
-  // if (users[0].user_grade === 'i4') {
-  //   this.$router.push('/admin/Main');
-  //   return;
-  // }
+  //user_grade가 정의되어 있는지 확인 후 로직 수행
+  if (users[0].user_grade === 'i4') {
+    this.$router.push('/admin/Main');
+    return;
+  }
          
   
   /*
@@ -261,11 +261,12 @@ if (users.length > 0) {
           console.log(myKakao);
 
 
-          if(result.data.length == 0){
-             this.$store.commit('kakaoLogin', res.id)
-          alert(this.$store.state.kakaoId)
+          if(res.length == 1){
+            alert(this.$store.state.kakaoId+'로그인실패야너')
           this.$router.push({ name: 'join' });
           } else {
+            this.$store.commit('kakaoLogin', res.id)
+            this.$store.state.user.user_name = res.id
            this.$router.push({name : 'realmain'})
           }
 

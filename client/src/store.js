@@ -41,10 +41,16 @@ const store = createStore({
     },
 
     kakaoLogin(state, id){
-      state.kakaoId = id;
+
+      let a = id;
+      state.user = {};
+      state.user.user_id = a
+      state.user.user_name = a;
+      state.kakaoId = a;
+      console.log(id + '/')
     },
     kakaoLogout(state){
-      state.kakaoId = ''
+      state.user.user_name= ''
     },
 
     async login(state, userInfo) {
