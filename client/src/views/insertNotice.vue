@@ -26,7 +26,7 @@
                   </div>
                   <div v-for="idx in file">첨부파일 : {{ idx }}<p @click="delMultiple(idx)">삭제</p></div>
                   <div v-show="open==true" v-for="idx in photo"><img id="ima" :src="getPath(idx)" style="position: relative;height=300"><p @click="delPhoto(idx)">삭제</p></div>
-                  <v-btn @click="showing" v-show="photo.length>0">사진보기</v-btn> <!-- <v-btn @click="uploadPhoto">저장완료</v-btn> -->
+                  <v-btn @click="showing" v-show="photo.length>0">사진보기</v-btn>
                 </div>
               </div>
               <div class="my-3">
@@ -79,7 +79,7 @@ export default {
             let result = datas.data;
             console.log('파일'+this.file.length+'사진'+this.photo.length)
             if(result.affectedRows==1){
-                alert('공지사항이 등록되었습니다 현재 파일',this.file.length,'현재사진',this.photo.length);
+                alert('공지사항이 등록되었습니다');
                 for(let i=0;i<this.file.length;i++){
                   this.ods = 's'+i
                   let photos = {
@@ -91,9 +91,12 @@ export default {
                       "path" : 'uploads\\'+this.file[i]
                     }
                   }
-                  let result1 = axios.post("/api/photo",photos).catch(err=>console.log(err));
-                  console.log(result1)
-                  alert('테이블ㅇㅔ 추가');
+                  let result1 = await axios.post("/api/photo",photos).catch(err=>console.log(err));
+                  if(result1.data.affectedRows>0){
+                    alert('테이블ㅇㅔ 파일추가');
+                  }else{
+                    alert('테이블ㅇㅔ 실패');
+                  }
                 }
                 for(let i=0;i<this.photo.length;i++){
                   this.ods = 's'+i
@@ -106,9 +109,12 @@ export default {
                       "path" : 'uploads\\'+this.photo[i]
                     }
                   }
-                  let result1 = axios.post("/api/photo",ph).catch(err=>console.log(err));
-                  console.log(result1)
-                  alert('테이블ㅇㅔ 추가');
+                  let result1 = await axios.post("/api/photo",ph).catch(err=>console.log(err));
+                  if(result1.data.affectedRows>0){
+                    alert('테이블ㅇㅔ 사진추가');
+                  }else{
+                    alert('테이블ㅇㅔ 실패');
+                  }
                 }
                 this.$router.push({path : "noticeList"})
             }

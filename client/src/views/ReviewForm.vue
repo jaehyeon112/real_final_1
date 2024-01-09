@@ -10,14 +10,8 @@
             <input type="text" id="title"  v-model="reviewInfo.review_title">
 
              <label for="grade">평점</label>
-            <div><v-slider  id="grade" label="별점(5점 만점)" track-color="white" :ticks="tickLabels" :max="5" step="1" show-ticks tick-size="6" thumb-size="20" v-model="reviewInfo.review_grade"></v-slider></div>
-            <!-- <v-item-group v-model="model" class="d-flex justify-sm-space-between px-6 pt-2 pb-6">
-                <v-item v-for="n in 5" :key="n">
-                    <template v-slot:default="{ toggle }">
-                    <v-btn :icon="`mdi-numeric-${n}`" :active="model != null && model + 1 >= n" height="40" variant="text" width="40" @click="toggle"></v-btn>
-                    </template>
-                </v-item>
-            </v-item-group> -->
+            <div> <v-rating  hover :length="5" :size="67" v-model="reviewInfo.review_grade" color="deep-purple-lighten-1" active-color="deep-purple-lighten-1"  label="별점(5점 만점)"/></div>
+               
 
             <label for="content">내용</label>
             <textarea id="content" style="height:200px" v-model="reviewInfo.review_content"></textarea>
@@ -27,8 +21,18 @@
             <input type="regdate" id="regdate" v-if="reviewInfo.review_no > 0" v-model="reviewInfo.review_updatedate" readonly > <!--model필드명 칼럼명이랑 일치-->
             <input type="regdate" id="regdate" v-else v-model="reviewInfo.review_writedate" readonly >
 
-            <label for="image">이미지 첨부</label>
-
+            <label for="File input">이미지 첨부</label>
+            
+            <div class="col-12">
+                  <label for="stock" class="form-label">첨부파일</label>
+                  <div :key="i" v-for="i in nums" style="width: 500px;">
+                    <upload :numbers=this.nums @info="info" @text="text"/>
+                    <v-btn v-show="this.nums==i" @click="this.nums=this.nums+1">+</v-btn><v-btn v-show="this.nums==i&&this.nums!=1" @click="this.nums=this.nums-1">-</v-btn>
+                  </div>
+                  <div :key= idx v-for="idx in file">첨부파일 : {{ idx }}<p @click="delMultiple(idx)">삭제</p></div>
+                  <div :key=idx v-show="open==true" v-for="idx in photo"><img id="ima" :src="getPath(idx)" style="position: relative;height=300"><p @click="delPhoto(idx)">삭제</p></div>
+                  <v-btn @click="showing" v-show="photo.length>0">사진보기</v-btn> <!-- <v-btn @click="uploadPhoto">저장완료</v-btn> -->
+                </div>
             <button type="button" class="btn btn-xs btn-info" @click="isUpdated? reviewUpdate() :reviewInsert()" >저장</button>
 
         </form>
@@ -37,6 +41,7 @@
 
 <script>
 import axios from 'axios';
+import uploads from "@/components/menu/upload.vue";
 export default {
     data() {
         return {
@@ -53,9 +58,17 @@ export default {
                 like_cnt:''
             },
             isUpdated : false,
-            point_no : ''
+            point_no : '',
+            photo : [],
+        file : [],
+        open : false,
+        ods : '',
+        nums : 1,
         };
     },
+    components :{ 
+                 uploads
+                },
     created() {
         this.reviewNo = this.$route.query.reviewNo; //마이페이지 리뷰수정 눌러서 가져오는 값
         this.detailNo = this.$route.query.detailNo;//주문상세에서 리뷰등록시 가져올 주문번호
@@ -72,7 +85,7 @@ export default {
     },
     methods: {
         async getReviewInfo() {
-           let result = (await axios.get(`/api/reviewInfo/${this.$store.state.user.user_id}/${this.reviewNo}`) //sql.js 단건조회 경로 그대로 가져오기 api붙여주는 이유 proxy와 관련
+           let result = (await axios.get(`/api/myReview/${this.reviewNo}`) //sql.js 단건조회 경로 그대로 가져오기 api붙여주는 이유 proxy와 관련
                                     .catch(err=>{console.log(err)}))
                                     
             
@@ -102,25 +115,79 @@ export default {
             let obj2={
                param: {
                  
-                 order_no:this.detailNo,
-                 user_id:this.$store.state.user.user_id, 
-                 point_history:'리뷰등록',
-                 point_save : 500, 
-                 point_use: 0,
+                 order_detail_no:this.detailNo,
+                //  user_id:this.reviewInfo.user_id, 
+                //  point_history:'리뷰등록',
+                //  point_save : 500, 
+                //  point_use: 0,
                  //point_date =current_date(), 
                  //end_point_date = date_add(current_date(), interval 1 Year)
                 }
             }
              let result = await axios.post('/api/reviewInsert', obj) //sql에서 두번째로 넘어오는 데이터(body.param)를 obj에 넣는다 
                                      .catch(err=>console.log('리뷰등록오류'+err))
-             let point = await axios.post(`/api/reviewPoint/${this.detailNo}/${this.$store.state.user.user_id}`,obj2)
-                                    .catch(err=>console.log('포인트오류 '+err))                              
+             let point = await axios.post(`/api/reviewPoint`,obj2)
+                                    .catch(err=>console.log('포인트오류 '+err))
+             let points = await axios.put(`/api/reviewPointUp`)
+                                     .catch(err=>console.log("업데오류"+err))                                                                
             if(result.data.insertId>0){ //글번호는 자동으로 부여되니까 obj에서 주는게 아니라 따로 빼서 
-                alert('등록완료');
+                alert('등록완료' + '=>리뷰 500포인트 적립' +points.data);
                 this.reviewInfo.no = result.data.insertId; //여기에 data가 있고 없고 차이는..?
                 this.point_no = point.data.insertId;
                 this.$router.push({path:'myPage/myReview'})
-            }                         
+            }
+            for(let i=0;i<this.photo.length;i++){
+                  this.ods = 's'+i
+                  let ph = {
+                    param : {
+                      "file_category" : 'r3',
+                      "file_name" : this.photo[i],
+                      "orders" : this.ods,
+                      "notice_no" : result.insertId,
+                      "path" : 'uploads\\'+this.photo[i]
+                    }
+                  }
+                  let result1 = axios.post("/api/photo",ph).catch(err=>console.log(err));
+                  console.log(result1)
+                  alert('테이블ㅇㅔ 추가');
+                }
+                this.$router.push({path : "noticeList"})
+            },
+            info(data){
+            for(let i=0;i<data.length;i++){
+              this.photo.push(data[i]);
+            }
+        },
+        text(data){
+            for(let i=0;i<data.length;i++){
+              this.file.push(data[i]);
+            }
+        },
+        showing(){
+            if(this.open == true){
+              this.open = false;
+            }else if(this.open == false){
+              this.open = true;
+            }
+        },
+        getPath(name){
+            return `/api/fileCall/${name}`;
+        },
+        delMultiple(name){
+            for(let i = 0; i < this.file.length; i++) {
+                if(this.file[i] === name)  {
+                    this.file.splice(i, 1);
+                    i--;
+                }
+            }
+        },
+        delPhoto(name){
+            for(let i = 0; i < this.photo.length; i++) {
+                if(this.photo[i] === name)  {
+                    this.photo.splice(i, 1);
+                    i--;
+                }
+            }               
         },
         async reviewUpdate(){
             let obj ={
@@ -133,16 +200,17 @@ export default {
                     //review_updatedate:this.reviewInfo.review_updatedate
                 }
             }
-            let result = await axios.put(`/api/reviewUpdate/${this.$store.state.user.user_id}/${this.reviewNo}`, obj) //얘는 왜 searchNo아니고..?
+            let result = await axios.put(`/api/reviewUpdate/${this.reviewNo}`, obj) //얘는 왜 searchNo아니고..?
                                     .catch((err=>console.log(err))) //수정된 정보를 저장한다
-            if(result.data.changedRows > 0){
+            if(result.data.affectedRows > 0){
                 alert('수정완료');
                 this.$router.push({path:'myPage/myReview'})
             }                        
             
-        }
+        },
 
     }
+
 }
 </script>
 <style scoped>

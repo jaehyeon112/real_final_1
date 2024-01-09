@@ -3,6 +3,7 @@
     <div class="row">
         <side/>
     <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+        <br>
         <h4 style="text-align: center;">==자주하는 질문 목록==</h4>
         <v-btn style="float: right;color: red;" @click="this.modalCheck=true">등록하기</v-btn>
     <div>
@@ -66,12 +67,12 @@
         </div>
         <br>
         <hr>
-        <div style="width: 100px; height: 100px;">
-            제목 : <textarea v-model = "title" type="text" placeholder="질문 제목"></textarea>
+        <div style="width: 300px;">
+            제목 : <v-textarea v-model = "title" type="text" label="Label" variant="outlined"></v-textarea>
         </div>
         <br>
-        <div style="width: 100px; height: 100px;">
-            내용 : <textarea v-model = "content" type="text" placeholder="질문 내용"></textarea>
+        <div style="width: 400px;">
+            내용 : <v-textarea v-model = "content" type="text" label="Label" variant="outlined"></v-textarea>
         </div>
         <div class="modal-btn">
             <v-btn style="border-radius: 10px;" @click="modalCheck = false,this.category=''">닫기</v-btn>
@@ -94,13 +95,12 @@
         </div>
         <br>
         <hr>
-        <div style="width: 200px;">
-            제목 : <textarea v-model = "this.one.q_title" type="text" placeholder="질문 제목"></textarea>
+        <div style="width: 300px;">
+            제목  <v-textarea v-model = "this.one.q_title" type="text" label="Label" variant="outlined"></v-textarea>
         </div>
         <br>
-        <div style="width: 200px;">
-            내용 : <textarea v-model = "this.one.q_content" type="text" placeholder="질문 내용">{{ this.one.q_content }}</textarea>
-            내용 : <textarea v-model = "this.one.q_content" type="text" placeholder="질문 내용">{{ this.one.q_content }}</textarea>
+        <div style="width: 400px;">
+            내용  <v-textarea v-model = "this.one.q_content" type="text" label="Label" variant="outlined">{{ this.one.q_content }}</v-textarea>
         </div>
         <div class="modal-btn">
             <v-btn style="border-radius: 10px;" @click="modCheck = false,this.category=''">닫기</v-btn>

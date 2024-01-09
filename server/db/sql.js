@@ -77,8 +77,8 @@ limit ?, 6;
 
 
   cartList: `select distinct * 
-              from cart c, product p, user u
-              where c.user_id = u.user_id AND p.prod_no = c.prod_no AND c.user_id = ?`,
+             from cart c, product p, user u, (select file_name, prod_no from file where orders='s0') f
+             where c.user_id = u.user_id AND p.prod_no = c.prod_no AND c.user_id = ? AND c.prod_no = f.prod_no`,
   //로그인 후 비회원 장바구니가 로그인 장바구니로 이동
   cartAfterLogin: `insert into cart set ?`,
   //로그인 전 비회원 장바구니와 로그인 장바구니를 똑같은거 있으믄 비교해서 수량 업데이트
@@ -89,17 +89,17 @@ limit ?, 6;
 
   // 장바구니 체크 리스트
   cartCheckList: `select distinct *
-              from cart c, product p, user u
-              WHERE cart_checkbox = 1 AND c.user_id = u.user_id AND p.prod_no = c.prod_no AND c.user_id = ?
+              from cart c, product p, user u, (select file_name, prod_no from file where orders='s0') f
+              WHERE cart_checkbox = 1 AND c.user_id = u.user_id AND p.prod_no = c.prod_no AND c.prod_no = f.prod_no AND c.user_id = ?
               order by cart_no`,
   CheckboxUpdate: `UPDATE cart set cart_checkbox = ? WHERE cart_no = ?`,
   CheckAllUpdate: `UPDATE cart set cart_checkbox = ? WHERE user_id = ?`,
-  Cartquantity: `UPDATE cart set quantity = ? WHERE cart_no = ?`,
+  Cartquantity: `update cart set quantity = ? WHERE cart_no = ?`,
   // 장바구니 상품 수량 증가
-  CartPlusquantity: `UPDATE cart
-                 SET quantity = quantity + 1
-                 WHERE prod_no = ?  
-                 AND user_id = ?`,
+  CartPlusquantity: `update cart
+                    set quantity = quantity + 1
+                    where prod_no = ?  
+                    and user_id = ?`,
   // 장바구니 상품 수량 감소
   CartMinusquantity: `UPDATE cart
                  SET quantity = quantity - 1
@@ -114,10 +114,10 @@ limit ?, 6;
   pointList: `select *
                from user
                where user_id = ?`,
-  orderList: `  select distinct * 
-                from orders a, order_detail b , product c 
-                where a.order_no = b.order_no AND b.prod_no = c.prod_no AND b.order_no = ?`,
-  orderInsert: `insert into orders set?`,
+  orderList: `select distinct * 
+              from orders a, order_detail b , product c , (select file_name, prod_no from file where orders='s0') f
+              where a.order_no = b.order_no AND b.prod_no = c.prod_no AND b.prod_no = f.prod_no AND b.order_no = ?`,
+  orderInsert: `insert into orders set ?`,
   orderdetailInsert: `insert into order_detail set?`,
   // 주문서에서 쿠폰사용해서 결제완료했을경우 쿠폰업데이트
   couponUpdate: `update coupon set ? where coupon_no = ?`,
@@ -126,14 +126,24 @@ limit ?, 6;
   // 포인트를 사용한 경우에만 포인트 테이블 적용
   pointInsert: `insert into point set ?`,
   // 포인트를 사용했을때 유저테이블에 포인트를 업데이트
-  pointUpdate: `update user set ? where user_id = ?`
-
-
+  pointUpdate: `update user set ? where user_id = ?`,
+  // 주문 취소했을때 주문상태 업데이트
+  orderUpdate : `update orders set order_status = 'c4' where order_no = ?`,
+  // 취소 된 상품 재고살리기
+  StockReturn : `update product set stock = stock + ? where prod_no = ?`,
+  // 사용한 쿠폰 리스트 조회
+  couponUseList : `select * from coupon c, order_detail o where c.order_no = o.order_no AND c.order_no = ?`,
+  // 결제 취소되었을때 환불/취소 테이블에 등록
+  refundInsert: `insert into refund_cancel set ?`,
+  // 취소 되었을때 쿠폰 다시 돌려주기
+  couponReturn : `update coupon set coupon_able = 0 where order_no = ?`,
+  // 취소 되었을때 포인트 다시 돌려주기
+  pointReturn : `update user set point = point + ? where user_id = ?`
 };
 
 let user = {
   //아이디 중복 체크할 때
-  duplicateId: `select user_id from user where user_id=?`,
+  duplicateId: `select user_id from user where user_id= ?`,
 
   //회원가입
   joinIn: `INSERT INTO user SET ?`,
@@ -188,10 +198,13 @@ let user = {
 let admin = {
   //기타-통계
   weekIncome: `select sum(total_payment) as sum from orders where order_date BETWEEN DATE_ADD(NOW(), INTERVAL -?-1 week ) AND DATE_ADD(NOW(), INTERVAL -? week);`,
+  outUserReason : `select withdrawal_reason reason,count(withdrawal_reason) as nums from withdrawal_user 
+  where withdrawal_date BETWEEN DATE_ADD(NOW(), INTERVAL -?-1 month ) AND DATE_ADD(NOW(), INTERVAL -? month)
+  group by withdrawal_reason`,
   //최근 3개월 주문내역 매출액
-  monthsIncome: `select month(order_date) as month,sum(total_payment) as sum from orders where order_date > now() - INTERVAL 3 MONTH group by month order by month desc`,
-  withUser: `select count(*) as ours,(select count(*) from withdrawal_user where withdrawal_date = curdate()-?) as yours from user where join_date = curdate()-?;`,
-  counting: `select count(*) as orderNo,(select count(*) from orders where order_status = 'c2') as delNo,
+  monthsIncome: `select year(order_date) as year,month(order_date) as month,sum(total_payment) as sum from orders where order_date > now() - INTERVAL 3 MONTH group by month order by year, month`,
+  withUser : `select count(*) as ours,(select count(*) from withdrawal_user where withdrawal_date = curdate()-?) as yours from user where join_date = curdate()-?;`,
+  counting : `select count(*) as orderNo,(select count(*) from orders where order_status = 'c2') as delNo,
   (select count(*) from refund_cancel where cancel_status='o1') as refundNo,
   (select count(*) from review_report where report_status = 'p1') as reportNo,
   (select count(*) from inquire where answer_state = 0) as inquireNo
@@ -213,18 +226,9 @@ let admin = {
   prodInfo: `select prod_no,prod_name,price,discount_price,discount_rate,stock,cooking_time,allergy,main_category,sub_category,refrigeration from product where prod_no = ?`,
   productMod: `update product set ? where prod_no = ?`,
   searchProd: `select prod_no,prod_name,price,discount_price,discount_rate,stock,main_category from product where prod_name like concat(concat('%',?),'%') or main_category = ? order by ?? limit ?,?`,
-  photoList: `select file_name from file where prod_no = ?`,
-  delPhoto: `DELETE file 
-  FROM file 
-  JOIN (
-    SELECT file_no 
-    FROM file 
-    WHERE file_name = ?
-  ) AS subquery 
-  ON file.file_no = subquery.file_no`,
   //주문관리
   AllOrderList: `select * from orders order by order_status`,
-  orderList: `select * from orders order by order_date desc limit ?,?`,
+  orderList: `select *,(select user_tel from user where user_id = orders.user_id) as phone from orders order by order_date desc limit ?,?`,
   orderDate: `select * from orders where order_date between ? and ? order by order_date desc limit ?,?`,
   updateOrder: `update orders set order_status = ? where order_no= ?`,
   orderStatus: `select * from orders where order_status = ? order by order_date desc limit ?,?`,
@@ -232,15 +236,34 @@ let admin = {
   insertDelivery: `insert into delivery set order_no=(select order_no from orders where order_no=?),tracking_no = ?,
   user_id=(select user_id from orders where order_no=?),delivery_request=(select delivery_request from orders where order_no=?),released_date=current_date(),delivery_status='d4'`,
   //배송관리
+  deliveryList: `select * from delivery limit ?,?`,
+  DatedeliveryList: `select * from delivery where released_date between ? and ? limit ?,?`,
+  StatedeliveryList: `select * from delivery where delivery_status = ? limit ?,?`,
+  Alldelivery: `select * from delivery`,
+  //리뷰
   AllreviewReportList: `select *,(select report_cnt from review where review_no=review_report.review_no) as cnt from review_report order by report_date desc`,
   reviewReportList: `select *,(select report_cnt from review where review_no=review_report.review_no) as cnt from review_report order by report_date desc limit ?,?`,
   reasonReportList: `select *,(select report_cnt from review where review_no=review_report.review_no) as cnt from review_report 
   where report_status=? order by report_date desc  limit ?,?`,
-  AllinquireList: `select * from inquire order by create_date desc`,
-  inquireList: `select * from inquire order by create_date desc limit ?,?`,
-  StateinquireList: ` select * from inquire where (inquire_category= ? or answer_state=?) or (inquire_category= ? and answer_state=?) order by create_date desc limit ?,?`,
   reviewList: `select prod_name,order_detail_no,user_id,review_title,review_content,review_writedate,review_grade,like_cnt from order_detail o,product p,review r 
   where o.prod_no=p.prod_no and o.order_detail_no=r.detail_order_no order by ?? desc`,
+  //문의사항,공지사항,자주하는질문
+  AllinquireList: `select * from inquire order by answer_state,create_date desc`,
+  inquireList: `select * from inquire order by answer_state,create_date desc limit ?,?`,
+  StateinquireList: ` select * from inquire where (inquire_category= ? or answer_state=?) or (inquire_category= ? and answer_state=?) order by create_date desc limit ?,?`,
+  inquireInfo: `select * from inquire where inquire_no = ?`,
+  noticeList: `select * from notice order by ? limit ?,?`,
+  AllnoticeList: `select * from notice order by notice_no`,
+  StateNoticeList: `select * from notice where importance in(?,?) order by ?? desc limit ?,?`,
+  insertNotice: `insert into notice set ?`,
+  FNQList: `select * from fnq where ?? = ?`,
+  insertFNQ: `insert into fnq set ?`,
+  updateFNQ: `update fnq set ? where qno = ?`,
+  delFNQ: `delete from fnq where qno = ?`,
+  insertReply : `insert into reply set ?`,
+  replyInfo : `select * from reply where inquire_no = ?`,
+  updateInquire : `update inquire set answer_state = 1 where inquire_no = ?`,
+  //주문취소
   refundOrder: `update orders set order_status = 'c4' where order_no = ?`,
   adminRefund: `insert into refund_cancel set order_no=?,user_id=(select user_id from orders where order_no=refund_cancel.order_no),
   return_point=(select point_use from orders where order_no=refund_cancel.order_no),cancel_status='o2',cancel_request=current_date()`,
@@ -248,19 +271,17 @@ let admin = {
   refundOrderList: `select * from refund_cancel order by cancel_request desc limit ?,?`,
   updateRefund: `update refund_cancel set cancel_status = ? where order_no= ?`,
   refundState: `select * from refund_cancel where cancel_status = ? order by cancel_request desc limit ?,?`,
-  Alldelivery: `select * from delivery`,
-  deliveryList: `select * from delivery limit ?,?`,
-  DatedeliveryList: `select * from delivery where released_date between ? and ? limit ?,?`,
-  StatedeliveryList: `select * from delivery where delivery_status = ? limit ?,?`,
-  AllnoticeList: `select * from notice order by notice_no`,
-  noticeList: `select * from notice order by ? limit ?,?`,
-  StateNoticeList: `select * from notice where importance in(?,?) order by ?? desc limit ?,?`,
-  insertNotice: `insert into notice set ?`,
-  FNQList: `select * from fnq where ?? = ?`,
-  insertFNQ: `insert into fnq set ?`,
-  updateFNQ: `update fnq set ? where qno = ?`,
-  delFNQ: `delete from fnq where qno = ?`,
-  insertFile: `insert into file set ?`,
+  //첨부파일
+  insertFile : `insert into file set ?`,
+  photoList : `select file_name,types from file where ?? = ?`,
+  delPhoto : `DELETE file 
+  FROM file 
+  JOIN (
+    SELECT file_no 
+    FROM file 
+    WHERE file_name = ?
+  ) AS subquery 
+  ON file.file_no = subquery.file_no`,
 }
 
 
@@ -270,20 +291,47 @@ let reviews = {
   myReview: `select * from review where user_id=? `, //마이페이지에서 내가 작성한 리뷰 리스트
   reviewInfo: `select * from review where user_id=? and review_no=?`, //마이페이지 리뷰하나 보기
   orderNoReview: `select * from review where user_id=?`,
-  detailList: `select t2.prod_no, t1.review_title, t1.review_content, t1.review_grade, t1.user_id, t1.review_writedate, t1.like_cnt, t1.report_cnt
-                                from review t1 join order_detail t2 on t1.detail_order_no = t2.order_detail_no
-                                                     join product t3 on t3.prod_no = t2.prod_no
-                                                     where t3.prod_no=?`, //상세페이지에서 그 상품에대한 리뷰 리스트
+  detailList: `SELECT 
+  t1.review_no, 
+  t2.prod_no, 
+  t1.review_title, 
+  t1.review_content, 
+  t1.review_grade, 
+  t1.user_id AS 'writer', 
+  t1.review_writedate, 
+  COALESCE(like_data.like_cnt, 0) AS like_cnt, 
+  t1.report_cnt,
+  CASE 
+      WHEN t4.user_id IS NOT NULL THEN TRUE 
+      ELSE FALSE 
+  END AS 'likestate'
+FROM review t1 
+JOIN order_detail t2 ON t1.detail_order_no = t2.order_detail_no
+JOIN product t3 ON t3.prod_no = t2.prod_no
+LEFT JOIN (
+  SELECT review_no, COUNT(*) AS like_cnt
+  FROM review_like 
+  GROUP BY review_no
+) AS like_data ON like_data.review_no = t1.review_no 
+LEFT JOIN review_like t4 ON t4.review_no = t1.review_no AND t4.user_id = ?
+WHERE t3.prod_no = ?`, //상세페이지에서 그 상품에대한 리뷰 리스트
   insertReview: `insert into review set?`, //주문상세내역->리뷰등록
   updateReview: `update review set ? where user_id= ? and review_no= ?`,
-  insertReviewImage: `insert into image set?`
+  insertReviewImage: `insert into image set?`,
+  deleteReview:`delete from review where review_no=?`,
+  selectReviewLike:`select * from review_like where user_id=? and review_no=?`,
+  insertReviewLike:`insert into review_like set ?`,
+  deleteReviewLike:`delete from review_like where review_no=? and user_id=?`
+
 };
+
 let point = {
   myPoint: `select point from user where user_id=?`, //마이페이지 보유 포인트
   myPointSaveHistory: `select * from point where user_id= ? and point_save > 0 order by end_point_date `,
   myPointUseHistory: `select * from point where user_id=? and point_use > 0 order by end_point_date `,
-  reviewPoint: `insert into point set point_no = ?, order_no=?, user_id=?, point_history='리뷰등록',
+  reviewPoint: `insert into point set point_no = ?, order_detail_no=?, user_id=?, point_history='p2',
               point_save = 500, point_use=0, point_date =current_date(), end_point_date = date_add(current_date(), interval 1 Year);`, //리뷰등록시 포인트 지급
+  reviewPointUp:`update user set point=point+500 where user_id=?`,
   pointExpire: `update user as t1,(select sum( point_save) as points, user_id from point where end_point_date = current_date() group by user_id) as t2
               set t1.point = t1.point- t2.points where t1.user_id=t2.user_id;`, //기간소멸
   //그리고 point table에 소멸사유로 인서트 해주는것도 같이..?
@@ -301,9 +349,12 @@ let orders = {
   updateCart: `update cart set quantity=quantity+? where prod_no =? and user_id=?;`,
   comparisonCart: `select * from cart where user_id=?`,
   detailInfo: `select * from product where prod_no=?`,
+
+
   //detailOrderLists:`select * from order_detail o1 left join orders o2 on o1.order_no = o2.order_no where o1.order_no =? and user_id = ?`,//주문창에서 상세주문내역으로 이동시 불러올 값
-  orderList: `select  ord.order_date, dord.order_detail_no, ord.delivery_charge, ord.total_payment, ord.real_payment, ord.payment_no, ord.order_no, pro.prod_name
-              from orders ord  join order_detail dord on ord.order_no = ord.order_no
+  orderList: `select ord.order_date, dord.order_detail_no, ord.delivery_charge, ord.total_payment, ord.real_payment, ord.payment_no, ord.order_no, group_concat(prod_name) prod_name_list, ord.order_status, ord.point_use , dord.order_quantity, dord.prod_no
+              from orders ord  join order_detail dord on ord.order_no = dord.order_no
+
                                join product pro on pro.prod_no = dord.prod_no
                                where ord.user_id=?
                                group by ord.order_no
@@ -317,15 +368,26 @@ let orders = {
 }
 let delivery = {
   addDelivery: `insert into add_delivery set?`,
-  deliveryList: `select * from add_delivery where user_id=?`,
+  //deliveryList: `select * from add_delivery where user_id=?`,
   deliveryInfo: `select * from add_delivery where user_id=? and delivery_no=?`,
   updateDelivery: `update add_delivery set? where delivery_no=? and user_id=?`,
-  deleteDelivery: `delete from add_delivery where delivery_no=?`
+  deleteDelivery: `delete from add_delivery where delivery_no=?`,
+  deliveryList: `select *, (select address from user where user_id=?) as joinaddress, (select detail_address from user where user_id=?) as joinDetail, (select postcode from user where user_id=?) as joinPost from add_delivery where user_id=?`
 }
+//찜테이블
 let like = {
-  likeList: `select* from likes where user_id=? and prod_no=?`,
-  likeInsert: `insert into likes set;`,
-  likeDel: `delete from likes where user_id=? prod_no =?;`
+  likeInfo: `select* from likes where user_id=? and prod_no=?`,
+  likeInsert: `insert into likes set?`,
+  likeDel: `delete from likes where user_id=? and prod_no =?`,
+  likeList:`select * from likes where user_id=?`
+}
+let inquire={
+  inquireList:`select * from inquire where user_id=?`,
+  inquireInfo:`select * from inquire where inquire_no=?`,
+  inquireInsert:`insert into inquire set?`,
+  inquireUpdate:`update inquire set? where user_id=? and inquire_no=?`,
+  inquireAnswer:`select * from reply where inquire_no=?`,
+  photoListInq : `select file_name from file where inquire_no = ?`,
 }
 let member = {
   memberInfo: `select t1.*, count(case when coupon_able=0 then 1 end) as couponCnt from user t1 join coupon t2  on t1.user_id = t2.user_id where t1.user_id= ?`
@@ -341,5 +403,6 @@ module.exports = {
   delivery,
   like,
   member,
-  admin
+  admin,
+  inquire
 };

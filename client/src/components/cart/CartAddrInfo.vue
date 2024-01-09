@@ -4,23 +4,26 @@
       <hr>
       <div>
         <p>배송지 <span style="font-size: 30px;">{{ this.$store.state.user.address }}  {{ this.$store.state.user.detail_address }} {{ this.$store.state.user.postcode }}</span></p>
+        <v-radio-group label="기본 배송지 변경">
+          <v-radio label="1번배송지 변경" value="1"></v-radio>
+          <v-radio label="2번배송지 변경" value="2"></v-radio>
+          <v-radio label="3번배송지 변경" value="3"></v-radio>
+        </v-radio-group>
       </div>
       <v-checkbox v-model="checkbox" @change="CheckboxChange" label="배송지가 동일한 경우 선택"></v-checkbox>
         <form>
-          <p><span class="address">우편번호 </span>
-            <input type="text" v-model="zip" style="width: 130px;" readonly>
-            <v-btn @click="showApi">우편번호 찾기</v-btn>
-          </p>
-          <p><span class="address">주소 </span><input type="text" v-model="addr1" style="width: 500px;" readonly></p>
-          <p><span class="address">상세주소 </span><input type="text" v-model="addr2" style="width: 500px;" @input="getAddress"></p>
-          <p><span class="address">요청사항</span><input type="text" v-model="deliveryrequest" style="width: 500px;" @input="getdelivery"></p>
+          <v-btn @click="showApi">우편번호 찾기</v-btn>
+          <v-text-field label="우편번호" v-model="zip" hide-details="auto" style="width: 100px;"></v-text-field>
+          <v-text-field label="주소" v-model="addr1" hide-details="auto" ></v-text-field>
+          <v-text-field label="상세주소" v-model="addr2" hide-details="auto" ></v-text-field>
+          <v-text-field label="요청사항" v-model="deliveryrequest" hide-details="auto" ></v-text-field>
         </form>
     </v-container>
   </template>
   
   <script>
   export default {
-    name: 'daumMap',
+    name: 'CartAddInfo',
     data() {
       return {
         zip: '',

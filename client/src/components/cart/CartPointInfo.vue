@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <v-container>
     <h1>쿠폰정보</h1>
     <hr />
     <v-select v-if="Coupons"
@@ -10,21 +10,21 @@
     <hr />
     <p>포인트 <span v-if="Points">{{ pointList[0].point }} 원</span></p>
     <input
-  style="border-bottom: 1px solid black;"
-  v-if="Points || CartItems"
-  type="number"
-  v-model="inputValue"
-  @input="updateInputValue"
-/>
-<v-btn
-  v-if="Points"
-  @click="useAllPoints"
-  :disabled="this.$store.state.user.point === 0 || (CheckCoupon && selectedCouponIndex !== 0)"
->
-  모두 사용
-</v-btn>
-    <hr />
-  </div>
+      style="border-bottom: 1px solid black; text-align: center;"
+      v-if="Points || CartItems"
+      type="number"
+      v-model="inputValue"
+      @input="updateInputValue"
+    /> 원
+
+  <v-btn
+    v-if="Points"
+    @click="useAllPoints"
+    :disabled="this.$store.state.user.point === 0 || (CheckCoupon && selectedCouponIndex !== 0)"
+  >
+    모두 사용
+  </v-btn>
+  </v-container>
 </template>
   
   <script>

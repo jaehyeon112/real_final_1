@@ -2,8 +2,7 @@
     <div>
         <ul class="list-group" v-if ="likeList.length !=0">
             <li class="list-group-item" :key="idx" v-for="(like, idx) in likeList">
-                <input class="form-check-input me-1" type="checkbox" value="" aria-label="...">
-                <p>{{ like.prod_no }}</p>
+                {{ like.prod_no }}
                 <button @click="goToCart">장바구니에 담기</button>
             </li>
         </ul>
@@ -24,7 +23,7 @@ export default {
     },
     methods:{
         async getLikeList(){
-            let result= await axios.get(`/api/like/test`)
+            let result= await axios.get(`/api/prodLikes`)
                                    .catch(err=>console.log(err))
             this.likeList = result.data;                       
         }

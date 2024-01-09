@@ -71,11 +71,11 @@ export default {
     },
     methods:{
         async getPointSaveHistory(){
-            this.pointSaveList = (await axios.get(`/api/myPointSave/${this.$store.state.user.user_id}`)
+            this.pointSaveList = (await axios.get(`/api/myPointSave`)
                                           .catch(err=>console.log(err))).data
         },
         async getPointUseHistory(){
-            this.pointUseList = (await axios.get(`/api/myPointUse/${this.$store.state.user.user_id}`)
+            this.pointUseList = (await axios.get(`/api/myPointUse`)
                                           .catch(err=>console.log(err))).data
         }
     }
