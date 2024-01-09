@@ -657,7 +657,7 @@ app.post("/join/joinIn", async (req, res) => {
 });
 
 
-app.get('/logout', async (req,res)=>{
+app.get('/logout', async (req, res) => {
   req.session.destroy();
 })
 
@@ -1550,7 +1550,7 @@ app.get('/sockettest', async (req, res) => {
 app.get("/searchHeader/:word", async (req, res) => {
   let data = req.params.word
   let list = await mysql.query('test', 'searchHeaderPage', data)
-  io.to('ADMIN').emit('alert', 'eksdj~');
+  io.to('ADMIN').emit('alert', data);
   res.send(list)
 })
 

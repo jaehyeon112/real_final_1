@@ -348,6 +348,10 @@ import icon from '../components/admin/icon.vue';
       this.showNotification(m)
       })
 
+      this.$socket.on('report', (m)=>{
+      this.showNotification(m)
+      })
+
       if (Notification.permission !== 'granted') {
       Notification.requestPermission();
     }
