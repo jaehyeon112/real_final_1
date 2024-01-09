@@ -330,8 +330,8 @@ import icon from '../components/admin/icon.vue';
       //this.getSum();
       if(this.$store.state.user.user_id != 'admin'){
         alert('권한이 없습니다');
-        this.$router.push({path : "/login"});
         this.$store.commit('logout');
+        this.$router.push({path : "/login"});
       }
       this.getOrderList();
       this.getReviewList();
