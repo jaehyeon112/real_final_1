@@ -2,14 +2,18 @@
     <list @changeemit="changeChildData">
         <template #searchData>
             <div>날짜별 배송목록 : <input v-model="startDate" type="date"> ~ <input v-model="lastDate" type="date">
-             <v-btn @click="orderDate">검색하기</v-btn>  <v-btn @click="refresh">초기화</v-btn>
-             <v-select
+                <br><br><v-btn @click="orderDate">검색하기</v-btn>  <v-btn @click="refresh">초기화</v-btn>
+            </div>
+        </template>
+        <template #filterSearch>
+            <v-select
             label="배송상태"
             :items="['배송중','배송완료']"
             v-model = orders
             variant="underlined"
             return-object
-            ></v-select></div>
+            style="width: 200px;"
+            ></v-select>
         </template>
         <template #dataList>
         <thead>
@@ -101,9 +105,18 @@
                 this.totals = childData;
             },
             async orderDate(){
-                let total = await axios.get(`/api/delivery/${this.startDate}/${this.lastDate}/${this.startNum}/${this.nums}`).catch((err) => {console.log(err);});
-                console.log(total.data)
-                this.deliveryList = total.data;
+                this.orders = ''
+                if(this.startNo>this.lastNo){
+                    alert('날짜를 다시 확인해주세요');
+                    this.startNo = '2000-01-01';
+                    this.lastNo = this.dateFormat('','yyyy-MM-dd');
+                }else if(this.startNo==''||this.lastNo==''){
+                    alert('날짜가 비어있습니다.')
+                }else{
+                    let total = await axios.get(`/api/delivery/${this.startDate}/${this.lastDate}/${this.startNum}/${this.nums}`).catch((err) => {console.log(err);});
+                    console.log(total.data)
+                    this.deliveryList = total.data;
+                }
             },
             async orderState(od){
                 if(od=='배송중'){
@@ -127,6 +140,11 @@
                 this.delList(this.nums);
             },
             orders(){
+                if(this.orders==''){
+                    return;
+                }
+                this.startDate = '2000-01-01';
+                this.lastDate = this.dateFormat('','yyyy-MM-dd');
                 this.orderState(this.orders);
             }
     }

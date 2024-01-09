@@ -89,8 +89,8 @@ limit ?, 6;
 
   // 장바구니 체크 리스트
   cartCheckList: `select distinct *
-              from cart c, product p, user u
-              WHERE cart_checkbox = 1 AND c.user_id = u.user_id AND p.prod_no = c.prod_no AND c.user_id = ?
+              from cart c, product p, user u, (select file_name, prod_no from file where orders='s0') f
+              WHERE cart_checkbox = 1 AND c.user_id = u.user_id AND p.prod_no = c.prod_no AND c.prod_no = f.prod_no AND c.user_id = ?
               order by cart_no`,
   CheckboxUpdate: `UPDATE cart set cart_checkbox = ? WHERE cart_no = ?`,
   CheckAllUpdate: `UPDATE cart set cart_checkbox = ? WHERE user_id = ?`,
@@ -114,9 +114,9 @@ limit ?, 6;
   pointList: `select *
                from user
                where user_id = ?`,
-  orderList: `  select distinct * 
-                from orders a, order_detail b , product c 
-                where a.order_no = b.order_no AND b.prod_no = c.prod_no AND b.order_no = ?`,
+  orderList: `select distinct * 
+              from orders a, order_detail b , product c , (select file_name, prod_no from file where orders='s0') f
+              where a.order_no = b.order_no AND b.prod_no = c.prod_no AND b.prod_no = f.prod_no AND b.order_no = ?`,
   orderInsert: `insert into orders set ?`,
   orderdetailInsert: `insert into order_detail set?`,
   // 주문서에서 쿠폰사용해서 결제완료했을경우 쿠폰업데이트
@@ -198,10 +198,13 @@ let user = {
 let admin = {
   //기타-통계
   weekIncome: `select sum(total_payment) as sum from orders where order_date BETWEEN DATE_ADD(NOW(), INTERVAL -?-1 week ) AND DATE_ADD(NOW(), INTERVAL -? week);`,
+  outUserReason : `select withdrawal_reason reason,count(withdrawal_reason) as nums from withdrawal_user 
+  where withdrawal_date BETWEEN DATE_ADD(NOW(), INTERVAL -?-1 month ) AND DATE_ADD(NOW(), INTERVAL -? month)
+  group by withdrawal_reason`,
   //최근 3개월 주문내역 매출액
-  monthsIncome: `select month(order_date) as month,sum(total_payment) as sum from orders where order_date > now() - INTERVAL 3 MONTH group by month order by month desc`,
-  withUser: `select count(*) as ours,(select count(*) from withdrawal_user where withdrawal_date = curdate()-?) as yours from user where join_date = curdate()-?;`,
-  counting: `select count(*) as orderNo,(select count(*) from orders where order_status = 'c2') as delNo,
+  monthsIncome: `select year(order_date) as year,month(order_date) as month,sum(total_payment) as sum from orders where order_date > now() - INTERVAL 3 MONTH group by month order by year, month`,
+  withUser : `select count(*) as ours,(select count(*) from withdrawal_user where withdrawal_date = curdate()-?) as yours from user where join_date = curdate()-?;`,
+  counting : `select count(*) as orderNo,(select count(*) from orders where order_status = 'c2') as delNo,
   (select count(*) from refund_cancel where cancel_status='o1') as refundNo,
   (select count(*) from review_report where report_status = 'p1') as reportNo,
   (select count(*) from inquire where answer_state = 0) as inquireNo
@@ -223,18 +226,9 @@ let admin = {
   prodInfo: `select prod_no,prod_name,price,discount_price,discount_rate,stock,cooking_time,allergy,main_category,sub_category,refrigeration from product where prod_no = ?`,
   productMod: `update product set ? where prod_no = ?`,
   searchProd: `select prod_no,prod_name,price,discount_price,discount_rate,stock,main_category from product where prod_name like concat(concat('%',?),'%') or main_category = ? order by ?? limit ?,?`,
-  photoList: `select file_name from file where prod_no = ?`,
-  delPhoto: `DELETE file 
-  FROM file 
-  JOIN (
-    SELECT file_no 
-    FROM file 
-    WHERE file_name = ?
-  ) AS subquery 
-  ON file.file_no = subquery.file_no`,
   //주문관리
   AllOrderList: `select * from orders order by order_status`,
-  orderList: `select * from orders order by order_date desc limit ?,?`,
+  orderList: `select *,(select user_tel from user where user_id = orders.user_id) as phone from orders order by order_date desc limit ?,?`,
   orderDate: `select * from orders where order_date between ? and ? order by order_date desc limit ?,?`,
   updateOrder: `update orders set order_status = ? where order_no= ?`,
   orderStatus: `select * from orders where order_status = ? order by order_date desc limit ?,?`,
@@ -242,15 +236,34 @@ let admin = {
   insertDelivery: `insert into delivery set order_no=(select order_no from orders where order_no=?),tracking_no = ?,
   user_id=(select user_id from orders where order_no=?),delivery_request=(select delivery_request from orders where order_no=?),released_date=current_date(),delivery_status='d4'`,
   //배송관리
+  deliveryList: `select * from delivery limit ?,?`,
+  DatedeliveryList: `select * from delivery where released_date between ? and ? limit ?,?`,
+  StatedeliveryList: `select * from delivery where delivery_status = ? limit ?,?`,
+  Alldelivery: `select * from delivery`,
+  //리뷰
   AllreviewReportList: `select *,(select report_cnt from review where review_no=review_report.review_no) as cnt from review_report order by report_date desc`,
   reviewReportList: `select *,(select report_cnt from review where review_no=review_report.review_no) as cnt from review_report order by report_date desc limit ?,?`,
   reasonReportList: `select *,(select report_cnt from review where review_no=review_report.review_no) as cnt from review_report 
   where report_status=? order by report_date desc  limit ?,?`,
-  AllinquireList: `select * from inquire order by create_date desc`,
-  inquireList: `select * from inquire order by create_date desc limit ?,?`,
-  StateinquireList: ` select * from inquire where (inquire_category= ? or answer_state=?) or (inquire_category= ? and answer_state=?) order by create_date desc limit ?,?`,
   reviewList: `select prod_name,order_detail_no,user_id,review_title,review_content,review_writedate,review_grade,like_cnt from order_detail o,product p,review r 
   where o.prod_no=p.prod_no and o.order_detail_no=r.detail_order_no order by ?? desc`,
+  //문의사항,공지사항,자주하는질문
+  AllinquireList: `select * from inquire order by answer_state,create_date desc`,
+  inquireList: `select * from inquire order by answer_state,create_date desc limit ?,?`,
+  StateinquireList: ` select * from inquire where (inquire_category= ? or answer_state=?) or (inquire_category= ? and answer_state=?) order by create_date desc limit ?,?`,
+  inquireInfo: `select * from inquire where inquire_no = ?`,
+  noticeList: `select * from notice order by ? limit ?,?`,
+  AllnoticeList: `select * from notice order by notice_no`,
+  StateNoticeList: `select * from notice where importance in(?,?) order by ?? desc limit ?,?`,
+  insertNotice: `insert into notice set ?`,
+  FNQList: `select * from fnq where ?? = ?`,
+  insertFNQ: `insert into fnq set ?`,
+  updateFNQ: `update fnq set ? where qno = ?`,
+  delFNQ: `delete from fnq where qno = ?`,
+  insertReply : `insert into reply set ?`,
+  replyInfo : `select * from reply where inquire_no = ?`,
+  updateInquire : `update inquire set answer_state = 1 where inquire_no = ?`,
+  //주문취소
   refundOrder: `update orders set order_status = 'c4' where order_no = ?`,
   adminRefund: `insert into refund_cancel set order_no=?,user_id=(select user_id from orders where order_no=refund_cancel.order_no),
   return_point=(select point_use from orders where order_no=refund_cancel.order_no),cancel_status='o2',cancel_request=current_date()`,
@@ -258,19 +271,17 @@ let admin = {
   refundOrderList: `select * from refund_cancel order by cancel_request desc limit ?,?`,
   updateRefund: `update refund_cancel set cancel_status = ? where order_no= ?`,
   refundState: `select * from refund_cancel where cancel_status = ? order by cancel_request desc limit ?,?`,
-  Alldelivery: `select * from delivery`,
-  deliveryList: `select * from delivery limit ?,?`,
-  DatedeliveryList: `select * from delivery where released_date between ? and ? limit ?,?`,
-  StatedeliveryList: `select * from delivery where delivery_status = ? limit ?,?`,
-  AllnoticeList: `select * from notice order by notice_no`,
-  noticeList: `select * from notice order by ? limit ?,?`,
-  StateNoticeList: `select * from notice where importance in(?,?) order by ?? desc limit ?,?`,
-  insertNotice: `insert into notice set ?`,
-  FNQList: `select * from fnq where ?? = ?`,
-  insertFNQ: `insert into fnq set ?`,
-  updateFNQ: `update fnq set ? where qno = ?`,
-  delFNQ: `delete from fnq where qno = ?`,
-  insertFile: `insert into file set ?`,
+  //첨부파일
+  insertFile : `insert into file set ?`,
+  photoList : `select file_name,types from file where ?? = ?`,
+  delPhoto : `DELETE file 
+  FROM file 
+  JOIN (
+    SELECT file_no 
+    FROM file 
+    WHERE file_name = ?
+  ) AS subquery 
+  ON file.file_no = subquery.file_no`,
 }
 
 

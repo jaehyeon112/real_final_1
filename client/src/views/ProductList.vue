@@ -95,7 +95,6 @@
                     let result = list.data;
                     this.productList = result;
                 }
-                this.total();
             },
             async changePage(no) {
                 if(this.order=='high'){
@@ -133,15 +132,19 @@
             async searchList(cont){
                 if(cont=='한식'){
                     cont = 'e1';
-                    this.word = '';
+                    this.word='';
                 }else if(cont=='중식'){
                     cont = 'e2';
+                    this.word='';
                 }else if(cont=='양식'){
                     cont = 'e3';
+                    this.word='';
                 }else if(cont=='일식'){
                     cont = 'e4';
+                    this.word='';
                 }else if(cont=='분식'){
                     cont = 'e5';
+                    this.word='';
                 }
 
                 if(cont==''){
@@ -151,12 +154,9 @@
                 }
                 
                 let list = await axios.get(`/api/prod/${cont}/${cont}/${this.order}/${this.startNum}/${this.nums}`).catch(err=>console.log(err));
-                let list2 = await axios.get(`/api/prod/${cont}/${cont}/${this.order}//`).catch(err=>console.log(err));
                 let result = list.data;
-                let result2 = list2.data;
                 console.log('리스트 : '+result)
                 this.productList = result;
-                this.totalList = list2;
             },
             refresh(){
                 this.category = '';
@@ -173,6 +173,9 @@
                 this.prodList(this.nums);
             },
             word(){
+                if(this.word==''){
+                    return;
+                }
                 this.search(this.word);
                 this.category = '';
             },
