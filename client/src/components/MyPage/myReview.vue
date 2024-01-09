@@ -45,8 +45,8 @@ export default {
     },
     methods : {
         async getReviewList(){
-            let member_id = this.$store.state.user.user_id;
-            this.reviewList = (await axios.get(`/api/myReview/${member_id}`)
+            
+            this.reviewList = (await axios.get(`/api/myReview`)
                                    .catch(err => console.log(err))).data;
         },
         

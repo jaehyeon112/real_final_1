@@ -51,7 +51,7 @@ export default {
     },
     methods: {
         async getReviewInfo() {
-           let result = await axios.get(`api/reivews/${this.searchNo}`) //sql.js 단건조회 경로 그대로 가져오기 api붙여주는 이유 proxy와 관련
+           let result = await axios.get(`api/myReview/${this.searchNo}`) //sql.js 단건조회 경로 그대로 가져오기 api붙여주는 이유 proxy와 관련
                                     .catch(err=>{
                                         consoel.log(err)
                                     })      

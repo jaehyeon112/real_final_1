@@ -47,7 +47,7 @@ export default {
     },
     methods:{
         async getCouponList(){
-            this.couponList = (await axios.get(`/api/myCoupon/${this.$store.state.user.user_id}`,)
+            this.couponList = (await axios.get(`/api/myCoupon`,)
                                             .catch(err=>console.log(err))).data
             console.log(this.couponList);                                
         },
