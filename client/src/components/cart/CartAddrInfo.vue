@@ -3,21 +3,20 @@
       <h1>배송지 정보</h1>
       <hr>
       <div>
-        {{ deliveryList }}
-        <v-radio-group v-model="selectedAddressType">
-          <v-radio v-for="delivery in deliveryList" :key="delivery.delivery_no" :label="delivery.delivery_name" :value="[delivery.delivery_address, delivery.delivery_detail_address, delivery.delivery_postcode]"></v-radio>
+        <v-radio-group v-model="selectedAddressType" inline>
+          <v-radio v-for="(delivery) in deliveryList" :key="delivery.delivery_no" :label="delivery.delivery_name" :value="[delivery.delivery_address, delivery.delivery_detail_address, delivery.delivery_postcode]">
+          </v-radio>
         </v-radio-group>
-         {{ selectedAddressType }}
-      </div>
-      <div>
-          <v-btn @click="showApi">우편번호 찾기</v-btn>
-          <v-responsive class="mx-auto" max-width="344">
-            <v-text-field label="우편번호" hide-details="auto" v-model="zip" style="width: 200px;" :rules="[zip.required]" clearable></v-text-field>
+        <v-form @input="submitAddress"> 
+          <v-responsive class="mx-auto" max-width="500" inline>
+            <v-btn @click="showApi">우편번호 찾기</v-btn>
+            {{ deliveryStatus }}
           </v-responsive>
-          {{ deliveryStatus }}
-          <v-text-field label="주소" v-model="addr1" hide-details="auto" ></v-text-field>
-          <v-text-field label="상세주소" v-model="addr2" hide-details="auto" ></v-text-field>
-          <v-text-field label="요청사항" v-model="deliveryrequest" hide-details="auto" ></v-text-field>
+            <v-text-field label="우편번호" hide-details="auto" v-model="zip" style="width: 200px;" :rules="[required]" clearable maxlength="5"></v-text-field>
+            <v-text-field label="주소" v-model="addr1" hide-details="auto" :rules="[required]" clearable></v-text-field>
+            <v-text-field label="상세주소" v-model="addr2" hide-details="auto" clearable></v-text-field>
+            <v-text-field label="요청사항을 입력해주세요" v-model="deliveryrequest" hide-details="auto" clearable></v-text-field>
+        </v-form>
       </div>
     </v-container>
   </template>
@@ -31,24 +30,18 @@
       return {
         isolatedList : [],
         deliveryList : [],
-        zip: {
-          default: Number,
-          required: '필수로 입력하셔야 됩니다'
-        },
+        zip: '',
         addr1: '',
         addr2: '',
         deliveryrequest: '',
-        checkbox : false,
         deliveryStatus : '', // 배송가능지역유무판별
-        selectedAddressType: '' // 선택된 배송지 유형
+        selectedAddressType: [],// 선택된 배송지 유형
+        isMountainousArea : false,
       }
     },
     created(){
       this.getdeliveryList();
       this.getisolatedRegionList();
-      this.zip = this.$store.state.user.postcode;
-      this.addr1 = this.$store.state.user.address;
-      this.addr2 = this.$store.state.user.detail_address;
     },
     computed : {
       deliveryStatus() {
@@ -57,14 +50,28 @@
               return this.zip >= list.start_code && this.zip <= list.end_postcode;
             });
             if (isMountainousArea) {
-              return '배송불가지역입니다 우편번호를 다시 입력해주세요';
+              alert('배송불가지역입니다 주소를 다시 입력해주세요');
+              this.zip = '';
+              this.addr1 = '';
+              this.addr2 = '';
             } else {
-              return '배송가능지역';
+              // alert('배송가능지역입니다');
             }
           } 
         },
     },
+    watch : {
+      selectedAddressType: 'SelectedAddressTypeCheck'
+    },
     methods: {
+      submitAddress(){
+        this.$emit('getAddress', {
+        zip: this.zip,
+        addr1: this.addr1,
+        addr2: this.addr2,
+        deliveryrequest: this.deliveryrequest
+      });
+      },
       async getisolatedRegionList(){
           await axios.get(`/api/isolatedRegionList`)
                       .then(response => {
@@ -77,22 +84,12 @@
         })
         .then(response => {
           this.deliveryList = response.data;
+          // 초기 선택값 
+          this.selectedAddressType = [this.deliveryList[0].delivery_address, this.deliveryList[0].delivery_detail_address, this.deliveryList[0].delivery_postcode];
             })
             .catch(error => {
               console.log(error)
             });
-          },
-          CheckboxChange() {
-            if (this.checkbox == true ) {
-              this.zip = this.$store.state.user.postcode
-              this.addr1 = this.$store.state.user.address
-              this.addr2 = this.$store.state.user.detail_address
-              this.$emit('getAddress', this.zip, this.addr1, this.addr2);
-            } else {
-              this.zip = '';
-              this.addr1 = '';
-              this.addr2 = '';
-        }
       },
       showApi() {
         new window.daum.Postcode({
@@ -123,19 +120,29 @@
               }
   
               // 우편번호와 주소 정보를 해당 필드에 넣는다.
-              this.zip = parseInt(data.zonecode); //5자리 새우편번호 사용
+              this.zip = data.zonecode; //5자리 새우편번호 사용
               this.addr1 = fullRoadAddr;
+              this.addr2 = ''
               // 이벤트 발생
-              this.$emit('getAddress', this.zip, this.addr1, this.addr2);
+              this.getAddress();
           }
         }).open();
       },
       getAddress() {
-        this.$emit('getAddress', this.zip, this.addr1, this.addr2);
+        this.$emit('getAddress', this.zip, this.addr1, this.addr2,this.deliveryrequest);
       },
-      getdelivery(){
-        this.$emit('getdelivery', this.deliveryrequest);
+      required(value) { // 필수입력조건
+        return !! value || '필수로 입력해야 합니다'
       },
+      SelectedAddressTypeCheck(select) {
+        if (select) {
+          this.zip = select[2];
+          this.addr1 = select[0];
+          this.addr2 = select[1];
+
+          this.getAddress();
+        }
+      }
     }
   }
   </script>

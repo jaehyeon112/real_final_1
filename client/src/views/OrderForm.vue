@@ -9,8 +9,7 @@
           :cartList="cartList"/>
           <CartUserInfo/>
           <CartAddrInfo
-          @getAddress="GetAddress"
-          @getdelivery="getdelivery"/>
+          @getAddress="getAddress"/>
           <CartPointInfo
           :cartList="cartList"
           :couponList="couponList"
@@ -24,7 +23,9 @@
           <CartPayment
           @selectedPayMethod="selectedPayMethod"
           :cartList="cartList"
-          :final="final"/>
+          :final="final"
+          :zip="zip"
+          :addr1="addr1"/>
         </v-card>
       </v-col>
       <v-col>
@@ -41,6 +42,8 @@
         :final="final"/>
       </v-col>
     </v-row>
+    {{ zip }}
+    {{ addr1 }}
     </v-container>
 </template>
 <script>
@@ -114,9 +117,9 @@ export default {
       this.getBill();
     },
     addrInfo(){
-      this.GetAddress();
-      
-    },
+      this.getdelivery();
+      this.getAddress();
+    }
   },
   methods: {
     async fetchCartCheckList() {
@@ -155,6 +158,14 @@ export default {
     inputValue(point){
       this.pointInput = point;
     },
+    getAddress(zip,addr1,addr2,input){
+      this.zip = zip;
+      this.addr1 = addr1;
+      this.addr2 = addr2;
+      this.deliveryrequest = input;
+    },
+    getdelivery(input){
+    },
     couponNo(couponNo){
       this.coupons = couponNo;
       console.log(this.coupons,'선택한 쿠폰의 번호');
@@ -192,14 +203,6 @@ export default {
         this.finalPrice();  // 실제 결제금액
         this.savePointRate();
         this.savePoint();
-    },
-    GetAddress(zip,addr1,addr2){
-      this.zip = zip
-      this.addr1 = addr1
-      this.addr2 = addr2
-    },
-    getdelivery(input){
-      this.deliveryrequest = input;
     },
     savePointRate(){
       if (this.$store.state.user.user_grade === 'i1' || 'i6') { // 일반 또는 정지회원
@@ -269,22 +272,26 @@ export default {
           return; // 아임포트 응답 처리하지 않고 함수 종료
         }
         
-        let iamport = window.IMP;
-        iamport.init('imp61344571'); // 아임포트에서 발급받은 가맹점 식별코드 입력
-
-        iamport.request_pay(paymentInfo, (rsp) => {
-          if (rsp.success) {
-            // 결제 완료 처리
-            this.orderInsert(this.Number)
+        if (this.zip == '' || this.addr1 == '') {
+            alert('주소를 입력해주세요.');
           } else {
-            // 결제 실패 처리
-            alert('결제 취소했습니다. 장바구니로 다시 이동합니다.');
-            this.$router.replace("/cartList")
-          }
-        });
-      },
+            let iamport = window.IMP;
+            iamport.init('imp61344571'); // 아임포트에서 발급받은 가맹점 식별코드 입력
 
-async orderInsert(orderNo){ // orders 테이블 등록
+            iamport.request_pay(paymentInfo, (rsp) => {
+              if (rsp.success) {
+                // 결제 완료 처리
+                this.orderInsert(this.Number);
+              } else {
+                // 결제 실패 처리
+                alert('결제취소했습니다. 장바구니로 이동합니다.');
+                this.$router.replace("/cartList");
+              }
+            });
+          }
+  },
+
+  async orderInsert(orderNo){ // orders 테이블 등록
         this.orderNumber();
             let obj = {
                 param : {
@@ -418,4 +425,5 @@ async orderInsert(orderNo){ // orders 테이블 등록
   }
 }
 </script>
-
+<style>
+</style>

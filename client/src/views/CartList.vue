@@ -1,6 +1,6 @@
 <template>
     <v-container v-if="cartList.length > 0 && this.$store.state.user.user_id != null">
-              <v-card style="padding: 20px;" >
+              <v-card style="padding: 20px;">
                 <v-row>
                   <v-col cols="9">
                     <h1>장바구니</h1>
