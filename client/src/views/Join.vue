@@ -8,13 +8,11 @@
       <div class="sign-up-htm">
 
         <!-- 회원 수정 시 id랑 이름은 readonly로 수정못하게 해야함 -->
-        <div class="group">
+        <div class="group" v-if="!$store.state.kakaoId">
           <label for="user" class="label"> ID </label>
           <p>{{ $store.state.kakaoId != '' ? '카카오로로그인함' : '걍로그인함' }}</p>
-          <div v-if="$store.state.kakaoId != ''" ><input  id="user" type="text" class="input" v-model="userInfo.kakaoid" :readonly="mode =='edit' || $store.state.kakaoId != ''" autofocus >
-            카카오 input
-          </div>
-          <div v-else>
+      
+          <div>
           <input  id="user" type="text" class="input" v-model="userInfo.user_id" :readonly="mode =='edit'" autofocus placeholder="영문+숫자 조합 6자이상 11자 이하" 
            ></div>
           <div>
@@ -27,17 +25,17 @@
 
         </div>
 
-        <div class="group">
+        <div class="group" v-if="!$store.state.kakaoId">
           <!-- type 두개 password로 바꾸기 -->
           <label for="pass" class="label">Password</label>
-          <input id="pass" type="text" class="input" data-type="text" maxlength=16 v-model="userInfo.user_password" @blur="passwordValid" v-bind:="isUpdated">
+          <input id="pass" type="text" class="input" data-type="text" maxlength=16 v-model="userInfo.user_password" @input="passwordValid" v-bind:="isUpdated">
           <div v-if="!userInfo.user_password && !passwordValidFlag"  style="color: red;">
             유효하지 않은 비밀번호 입니다.
           </div>
              <div v-if="!userInfo.user_password && !isFieldValid.user_password" class="error-message"  :style="{ color: 'red' }">{{ fieldErrorMessages.user_password }}</div>
         </div>
 
-        <div class="group">
+        <div class="group" v-if="!$store.state.kakaoId">
           <label for="pass" class="label"> Password CHECK</label>
           <input id="pass" type="text" class="input" data-type="text" maxlength=16 v-model="userInfo.userChPass" @blur="passwordCheckValid">
           
@@ -156,12 +154,43 @@
           <label for="check1"><span class="icon"></span>
            <v-dialog width="500">
             <template v-slot:activator="{ props }">
-              <v-btn v-bind="props" text="약관1"> </v-btn>
+              <v-btn v-bind="props" text="이용약관 동의(필수)"> </v-btn>
             </template>
 
               <template v-slot:default="{ isActive }">
               <v-card title="Dialog">
-                <v-card-text> 약관내용좌르르르르륵 </v-card-text>
+                <v-card-text> 
+                  <pre>
+제1조(목적) 이 약관은 업체 회사(전자상거래 사업자)가 운영하는 업체 사이버 몰(이하 “몰”이라 한다)에서 제공하는 인터넷 관련 서비스(이하 “서비스”라 한다)를 이용함에 있어 사이버 몰과 이용자의 권리․의무 및 책임사항을 규정함을 목적으로 합니다.
+ 
+  ※「PC통신, 무선 등을 이용하는 전자상거래에 대해서도 그 성질에 반하지 않는 한 이 약관을 준용합니다.」
+ 
+제2조(정의)
+ 
+  ① “몰”이란 업체 회사가 재화 또는 용역(이하 “재화 등”이라 함)을 이용자에게 제공하기 위하여 컴퓨터 등 정보통신설비를 이용하여 재화 등을 거래할 수 있도록 설정한 가상의 영업장을 말하며, 아울러 사이버몰을 운영하는 사업자의 의미로도 사용합니다.
+ 
+  ② “이용자”란 “몰”에 접속하여 이 약관에 따라 “몰”이 제공하는 서비스를 받는 회원 및 비회원을 말합니다.
+ 
+  ③ ‘회원’이라 함은 “몰”에 회원등록을 한 자로서, 계속적으로 “몰”이 제공하는 서비스를 이용할 수 있는 자를 말합니다.
+ 
+  ④ ‘비회원’이라 함은 회원에 가입하지 않고 “몰”이 제공하는 서비스를 이용하는 자를 말합니다.
+ 
+제3조 (약관 등의 명시와 설명 및 개정) 
+ 
+  ① “몰”은 이 약관의 내용과 상호 및 대표자 성명, 영업소 소재지 주소(소비자의 불만을 처리할 수 있는 곳의 주소를 포함), 전화번호․모사전송번호․전자우편주소, 사업자등록번호, 통신판매업 신고번호, 개인정보관리책임자 등을 이용자가 쉽게 알 수 있도록 00 사이버몰의 초기 서비스화면(전면)에 게시합니다. 다만, 약관의 내용은 이용자가 연결화면을 통하여 볼 수 있도록 할 수 있습니다.
+ 
+  ② “몰은 이용자가 약관에 동의하기에 앞서 약관에 정하여져 있는 내용 중 청약철회․배송책임․환불조건 등과 같은 중요한 내용을 이용자가 이해할 수 있도록 별도의 연결화면 또는 팝업화면 등을 제공하여 이용자의 확인을 구하여야 합니다.
+ 
+  ③ “몰”은 「전자상거래 등에서의 소비자보호에 관한 법률」, 「약관의 규제에 관한 법률」, 「전자문서 및 전자거래기본법」, 「전자금융거래법」, 「전자서명법」, 「정보통신망 이용촉진 및 정보보호 등에 관한 법률」, 「방문판매 등에 관한 법률」, 「소비자기본법」 등 관련 법을 위배하지 않는 범위에서 이 약관을 개정할 수 있습니다.
+ 
+  ④ “몰”이 약관을 개정할 경우에는 적용일자 및 개정사유를 명시하여 현행약관과 함께 몰의 초기화면에 그 적용일자 7일 이전부터 적용일자 전일까지 공지합니다. 다만, 이용자에게 불리하게 약관내용을 변경하는 경우에는 최소한 30일 이상의 사전 유예기간을 두고 공지합니다.  이 경우 "몰“은 개정 전 내용과 개정 후 내용을 명확하게 비교하여 이용자가 알기 쉽도록 표시합니다. 
+ 
+  ⑤ “몰”이 약관을 개정할 경우에는 그 개정약관은 그 적용일자 이후에 체결되는 계약에만 적용되고 그 이전에 이미 체결된 계약에 대해서는 개정 전의 약관조항이 그대로 적용됩니다. 다만 이미 계약을 체결한 이용자가 개정약관 조항의 적용을 받기를 원하는 뜻을 제3항에 의한 개정약관의 공지기간 내에 “몰”에 송신하여 “몰”의 동의를 받은 경우에는 개정약관 조항이 적용됩니다.
+ 
+  ⑥ 이 약관에서 정하지 아니한 사항과 이 약관의 해석에 관하여는 전자상거래 등에서의 소비자보호에 관한 법률, 약관의 규제 등에 관한 법률, 공정거래위원회가 정하는 「전자상거래 등에서의 소비자 보호지침」 및 관계법령 또는 상관례에 따릅니다.
+   </pre>
+
+                </v-card-text>
 
                 <v-card-actions>
                   <v-spacer></v-spacer>
@@ -179,12 +208,60 @@
           <label for="check2"><span class="icon"></span> 
           <v-dialog width="500">
             <template v-slot:activator="{ props }">
-              <v-btn v-bind="props" text="약관2"> </v-btn>
+              <v-btn v-bind="props" text="개인정보 수집 및 이용 동의(필수)"> </v-btn>
             </template>
 
               <template v-slot:default="{ isActive }">
               <v-card title="Dialog">
-                <v-card-text> 약관2내용좌르르르르륵 </v-card-text>
+                <v-card-text> 
+                  개인정보처리방침
+
+[차례]
+1. 총칙
+2. 개인정보 수집에 대한 동의
+3. 개인정보의 수집 및 이용목적
+4. 수집하는 개인정보 항목
+5. 개인정보 자동수집 장치의 설치, 운영 및 그 거부에 관한 사항
+6. 목적 외 사용 및 제3자에 대한 제공
+7. 개인정보의 열람 및 정정
+8. 개인정보 수집, 이용, 제공에 대한 동의철회
+9. 개인정보의 보유 및 이용기간
+10. 개인정보의 파기절차 및 방법
+11. 아동의 개인정보 보호
+12. 개인정보 보호를 위한 기술적 대책
+13. 개인정보의 위탁처리
+14. 의겸수렴 및 불만처리
+15. 부 칙(시행일) 
+
+1. 총칙
+
+본 업체 사이트는 회원의 개인정보보호를 소중하게 생각하고, 회원의 개인정보를 보호하기 위하여 항상 최선을 다해 노력하고 있습니다. 
+1) 회사는 「정보통신망 이용촉진 및 정보보호 등에 관한 법률」을 비롯한 모든 개인정보보호 관련 법률규정을 준수하고 있으며, 관련 법령에 의거한 개인정보처리방침을 정하여 이용자 권익 보호에 최선을 다하고 있습니다.
+2) 회사는 「개인정보처리방침」을 제정하여 이를 준수하고 있으며, 이를 인터넷사이트 및 모바일 어플리케이션에 공개하여 이용자가 언제나 용이하게 열람할 수 있도록 하고 있습니다.
+3) 회사는 「개인정보처리방침」을 통하여 귀하께서 제공하시는 개인정보가 어떠한 용도와 방식으로 이용되고 있으며 개인정보보호를 위해 어떠한 조치가 취해지고 있는지 알려드립니다.
+4) 회사는 「개인정보처리방침」을 홈페이지 첫 화면 하단에 공개함으로써 귀하께서 언제나 용이하게 보실 수 있도록 조치하고 있습니다.
+5) 회사는  「개인정보처리방침」을 개정하는 경우 웹사이트 공지사항(또는 개별공지)을 통하여 공지할 것입니다.
+
+2. 개인정보 수집에 대한 동의
+
+귀하께서 본 사이트의 개인정보보호방침 또는 이용약관의 내용에 대해 「동의 한다」버튼 또는 「동의하지 않는다」버튼을 클릭할 수 있는 절차를 마련하여, 「동의 한다」버튼을 클릭하면 개인정보 수집에 대해 동의한 것으로 봅니다.
+
+3. 개인정보의 수집 및 이용목적
+
+본 사이트는 다음과 같은 목적을 위하여 개인정보를 수집하고 있습니다.
+서비스 제공을 위한 계약의 성립 : 본인식별 및 본인의사 확인 등
+서비스의 이행 : 상품배송 및 대금결제
+회원 관리 : 회원제 서비스 이용에 따른 본인확인, 개인 식별, 연령확인, 불만처리 등 민원처리
+기타 새로운 서비스, 신상품이나 이벤트 정보 안내
+단, 이용자의 기본적 인권 침해의 우려가 있는 민감한 개인정보(인종 및 민족, 사상 및 신조, 출신지 및 본적지, 정치적 성향 및 범죄기록, 건강상태 등)는 수집하지 않습니다.
+
+4. 수집하는 개인정보 항목
+
+본 사이트는 회원가입, 상담, 서비스 신청 등을 위해 아래와 같은 개인정보를 수집하고 있습니다. 
+1) 개인정보 수집방법 : 홈페이지(회원가입)
+2) 수집항목 : 이름 , 생년월일 , 성별 , 로그인ID , 비밀번호 , 전화번호 , 주소 , 휴대전화번호 , 이메일 , 주민등록번호 , 접속 로그 , 접속 IP 정보 , 결제기록
+
+                  </v-card-text>
 
                 <v-card-actions>
                   <v-spacer></v-spacer>
@@ -220,6 +297,8 @@ export default {
 
   data() {
     return {
+
+
       mode: 'sign-up', //모드에 따라서 가입창, 수정창 바뀜
       isUpdated : false, // 수정?등록? => 수정일때 true
       oneUserId : '', //수정용 - 개인 아이디찾으려고
@@ -232,11 +311,17 @@ export default {
       today : '', //생년월일 오늘날짜까지만 선택하게 하려고
       isAgeValid : true,
 
+      isAnyFieldEmpty : false,
+
       //인증번호 제한시간 주기! 아아앙맘ㅇㄴ랑라;너ㅓ;ㅏ인ㄹㄹ
       emailVerifTimer : null,
       textVerifTimer : null,
-      emailVerifTimerRemain : 30, // 이메일 인증 남은시간 30초
-      textVerifTimerRemain : 30,
+      emailVerifTimerRemain : 10, // 이메일 인증 남은시간 10초
+      textVerifTimerRemain : 10,
+
+
+
+
 
       //회원가입 v-model
       userInfo : {
@@ -275,7 +360,6 @@ export default {
      // 주소 지번 선택 플래그
      isJibunAddressSelected: false, 
 
-    //oneUserId : '' // 로그인된 회원의 아이디로 그 정보 불러와야함.
 
       // 입력칸 채워진거 확인하고 플래그 띄워줌
       errorMessage : '', // 플래그용
@@ -325,9 +409,15 @@ export default {
     this.today = `${year}-${month}-${day}`
   },
 
+
+
+
+
+
   created() {
     // $route.params.id로 전달된 파라미터에 접근
     this.oneUserId = this.$route.query.user_id;
+
 
     // userId가 존재하면 회원 수정 모드로 변경
     if (this.oneUserId) {
@@ -335,12 +425,19 @@ export default {
       this.getUserInfo();
       // 기존정보 불러오거나 수정작업 수행하기.
       this.isUpdated = true;
-      
     }
+
+   // 카카오 사용자 ID가 있을 때만 ID 입력란을 자동으로 채움
+  if(this.$store.state.kakaoId) {
+    console.log('카톡로그인 회원ㄱ입폼')
+    console.log(this.$store.state.kakaoId);
+    this.userInfo.user_id = this.$store.state.kakaoId;
+    this.$store.commit('kakaoLogin', 'kakao') 
+    //this.$store.commit('kakaoLogin', this.userInfo.user_name) 
+  }
    
   }, //created
 computed: {
-
 
    userEmailFull: function() {
       if (this.userInfo.email_domain === '직접입력') {
@@ -348,7 +445,8 @@ computed: {
       } else {
         return `${this.userInfo.user_emailid}@${this.userInfo.email_domain}`;
       }
-    }
+    },
+
 
   
  
@@ -385,15 +483,9 @@ computed: {
 
 
   methods: {
-    //  getToday(){
-    //   return this.$dateFormat('', 'yyyy-MM-dd');
-    // },
+
     updateCheck(){
       console.log("updateCheck function is called");
-
-      // this.userInfo.allCh = this.userInfo.ch1 && this.userInfo.ch2;
-      
-
        // ch1과 ch2가 모두 체크되면 allCh도 체크
       if (this.userInfo.ch1 && this.userInfo.ch2) {
         this.userInfo.allCh = true;
@@ -414,23 +506,24 @@ computed: {
       }
     },
 
+
+
+
     //아이디 중복체크: db에 아이디 있으면 중복되는 아이디 있다고 메세지 띄우기! 
     async checkId(id){
-      
+    let list;
 
      if(!this.userInfo.user_id.trim()){
       console.log(id);
       alert(`아이디를 입력해주세요`);
        this.validId = false;
      } else{
-
-
       let result = await axios.get(`/api/join-id/${id}`)
                   .catch(err => console.log(err));
              
       //let list = result.data.length;
       console.log(result.data);
-      let list = result.data;
+      list = result.data;
       console.log(list);
      }
 
@@ -461,25 +554,29 @@ computed: {
   //비밀번호
   checkPwd(pwd){
 
-  // 영어(대소문자)와 숫자만 정규표현식
-  var onlyEngNum = /^[a-zA-Z0-9]*$/;
+// *, !, ^, $, @, ? 특수문자만 포함하여 영어(대소문자)와 숫자만 정규표현식
+var allowedSpecialChars = /^[a-zA-Z0-9*!^$@?]*$/;
 
-  // 비밀번호 유효성 검사
-  if(!this.validationPwd(pwd)){
-    alert("비밀번호는 영어 대문자 혹은 소문자, 숫자, 특수문자를 반드시 포함하는 8자 이상이어야 합니다."); 
-  } else if(!onlyEngNum.test(pwd)){
-    alert("비밀번호에는 영어와 숫자 외의 문자가 포함될 수 없습니다."); 
-  } else {
-    alert("비밀번호가 유효합니다."); 
-  }
-},
+// 비밀번호 유효성 검사
+if (!this.validationPwd(pwd)) {
+  alert("비밀번호는 영어 대문자 혹은 소문자, 숫자, *, !, ^, $, @, ? 특수문자를 반드시 포함하는 8자 이상이어야 합니다.");
+} else if (!allowedSpecialChars.test(pwd)) {
+  alert("비밀번호에는 영어와 숫자, *, !, ^, $, @, ? 특수문자 외의 문자가 포함될 수 없습니다.");
+} else {
+  alert("비밀번호가 유효합니다.");
+}
+  },
 
 //비번
 passwordValid() {
-   if (this.userInfo.user_password === '') {
+  
+   if (this.userInfo.user_password.trim() === '') {
     this.passwordValidFlag = true;
   } else {
     this.passwordValidFlag = this.validationPwd(this.userInfo.user_password);
+    if(this.passwordValidFlag) {
+      this.checkPwd(this.userInfo.user_password);
+    }
   }
   },
 
@@ -522,7 +619,7 @@ passwordValid() {
           this.isEmailSent = false;
          alert(`이메일 인증시간 초과. 인증번호 재발급 하세요.`)
         }
-      }, 30000) // 30초 ! / 3분(180,000 milliseconds), 1분(60000)
+      }, 10000) // 30초 ! / 3분(180,000 milliseconds), 1분(60000)
     },
 
       // 휴대폰 문자 인증 시간제한 걸기! 
@@ -536,8 +633,7 @@ passwordValid() {
           this.isEmailSent = false;
          alert(`휴대폰 인증시간 초과. 인증번호 재발급 하세요.`)
         }
-     
-      
+
       }, 30000) // 3초 3분(180,000 milliseconds)
     },
 
@@ -564,14 +660,15 @@ passwordValid() {
   }
 
   try {
-    let result = await axios.get(`/api/join-email/${email}`);
+    let result = await axios.get(`/api/join-email/${this.userInfo.user_email}`);
+    
     console.log(result);
     console.log(result.data);
     let list = result.data;
     console.log(list);
 
 
-    if (list.length == 1) {
+    if (list.length >= 1) {
       alert(`중복된 이메일 입니다.`);
     } else {
       alert(`사용가능한 이메일입니다.`);
@@ -601,11 +698,11 @@ passwordValid() {
          if(result.data.status == "200" ){
           alert('이메일로 인증번호 보내기 성공');
           this.isEmailSent = true;
-          this.emailVerifTimerRemain = 30; //남은시간 초기화
-           this.goEmailVerifTimer(); //타이머 시작! 
+          this.emailVerifTimerRemain = 10; //남은시간 초기화
+          this.goEmailVerifTimer(); //타이머 시작! 
           return;
        }else{
-          alert('이메일 인증번호 보내기 실패');
+          alert('이메일 인증번호 보내기');
           this.isEmailSent = true;
           return;
         }
@@ -662,7 +759,7 @@ passwordValid() {
         console.log(this.phoneNo);
         alert(`인증성공`);
         this.validTextNum = true;
-        this.textVerifTimerRemain = 30; //남은시간 
+        this.textVerifTimerRemain = 10; //남은시간 
         clearInterval(this.textVerifTimer); //타이머초기화
       }
     },
@@ -706,9 +803,27 @@ checkAge(){
       }
      }
 
+     // user_password와 userChPass 추가
+if (!this.$store.state.kakaoId) {
+  // 카카오로 로그인하지 않은 경우에만 비밀번호와 비밀번호 확인 필드 체크
+  if (!this.userInfo.user_password || !this.userInfo.userChPass) {
+    this.isFieldValid.user_password = false;
+    this.isFieldValid.userChPass = false;
+    this.isFieldValid.verificationCode = false;
+     this.isFieldValid.verificationText = false;
+    this.isAnyFieldEmpty = true;
+    this.errorMessage = this.fieldErrorMessages.user_password; // 또는 userChPass에 맞는 에러 메세지로 설정
+  }
+}
+
  
 //필드가 모두 채워져 있는지 확인 - 일단! 나중ㅇ에 바꿔야함
-  if (
+  if (this.$store.state.kakaoId) {
+    // 카카오로 로그인한 경우, 필요한 필드 초기화
+    this.userInfo.user_password = '';
+    this.userInfo.userChPass = '';
+  } else {
+    if(
     !this.userInfo.user_id ||
     !this.userInfo.user_password ||
     !this.userInfo.userChPass ||
@@ -726,9 +841,10 @@ checkAge(){
     !this.userInfo.allCh ||
     !this.userInfo.ch1 ||
     !this.userInfo.ch2
-  ) {
+    ){
     alert('모든 필드를 입력해주세요.');
     return;
+  }
   }
 
 
@@ -746,8 +862,8 @@ checkAge(){
         "user_id" : this.userInfo.user_id,
         "user_name" : this.userInfo.user_name,
         "user_password" : this.userInfo.user_password,
-        "user_emailid" : this.userInfo.user_emailid,
-        "email_domain" : this.userInfo.email_domain,
+        //"user_emailid" : this.userInfo.user_emailid,
+       // "email_domain" : this.userInfo.email_domain,
         "user_email" : this.userInfo.user_email,
         "user_tel" : this.userInfo.user_tel,
         "birth" : this.userInfo.birth,
@@ -769,6 +885,7 @@ checkAge(){
       return;
   }
   },
+  
 
 
 
@@ -839,10 +956,13 @@ checkAge(){
 
         //회원수정시 id 정보 뿌릴거
         async getUserInfo(){
-            let result = await axios.get(`/api/join/${this.oneUserId}`)
+            let result = await axios.get(`/api/selectid/${this.oneUserId}`)
                                     .catch(err => console.log(err));
-
+            console.log(this.oneUserId);
+            console.log(result);
+            console.log(result.data);
             this.userInfo  = result.data[0];   
+            //console.log(result.data);
             this.userInfo.birth = this.$dateFormat(this.userInfo.birth, 'yyyy-MM-dd');
 
             let email = this.userInfo.user_email;

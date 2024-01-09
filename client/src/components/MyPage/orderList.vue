@@ -11,7 +11,7 @@
               <hr>
               <img src="/api/test" alt="상품이미지">
               <dl>주문번호: {{ order.order_no }}</dl>
-              <dl>상품명: {{ order.prod_name }}</dl>
+              <dl>상품명: {{ order.prod_name_list}}</dl>
               <dl>총 가격: {{ order.total_payment }}</dl>
               <dl>실 결제 가격: {{ order.real_payment }}</dl>
               <dl>배송비: {{ order.delivery_charge }}</dl>

@@ -111,9 +111,10 @@ export default {
         let total = await axios.get(`/api/frozen/X/X/X/X/X`).catch((err) => {console.log(err);});
         this.totalList = total.data;
       }else if(this.category == `best`){
+        console.log('여기는 되는데 에러인가?')
         this.totalList = (await axios.get('/api/best')).data;
-      
       }else if(this.category == `sale`){
+        console.log('여기는 되는데 에러인가?')
         this.totalList = (await axios.get('/api/sale')).data;
       }
 

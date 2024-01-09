@@ -162,7 +162,7 @@ export default {
             let obj ={
                 param: {
                    
-               
+                    user_id:this.$store.state.user.user_id,
                     inquire_title:this.inquireInfo.inquire_title,
                     inquire_content:this.inquireInfo.inquire_content,
                     inquire_category:this.inquireInfo.inquire_category,
@@ -237,48 +237,56 @@ export default {
                 }
             }
         },
-        // async inquireUpdate(){
-        //         if(this.inquireInfo.answer_state ==0){
-        //             let obj ={
-        //                 param: {
+        async inquireUpdate(){
+
+          if(this.inquireInfo.inquire_category.category == '상품문의'){
+                this.inquireInfo.inquire_category = 'j1'
+            }else if(this.inquireInfo.inquire_category.category == '배송문의'){
+                this.inquireInfo.inquire_category = 'j2'
+            }else if(this.inquireInfo.inquire_category.category == '환불문의'){
+                this.inquireInfo.inquire_category = 'j3'
+            }else{
+                this.inquireInfo.inquire_category = 'j4'
+            }
+
+                // if(this.inquireInfo.answer_state ==0){
+                    let obj ={
+                        param: {
                             
-        //                     user_id:this.inquireInfo.user_id,
-        //                     inquire_title:this.inquireInfo.review_title,
-        //                     inquire_content:this.inquireInfo.inquire_content,
-        //                     inquire_category:this.inquireInfo.inquire_category,
-        //                     create_date:this.inquireInfo.create_date,
-        //                     order_detail_no: this.detailNo,
+                            user_id:this.inquireInfo.user_id,
+                            inquire_title:this.inquireInfo.inquire_title,
+                            inquire_content:this.inquireInfo.inquire_content,
+                            inquire_category:this.inquireInfo.inquire_category.category,
+                            //create_date:this.inquireInfo.create_date,
+                            order_detail_no: this.inquireInfo.order_detail_no,
                 
-        //                 }
-        //             }
-        //             let result = await axios.put(`/api/inquireUpdate/${this.inquireNo}`, obj) 
-        //                                     .catch((err=>console.log(err))) 
-        //                                     console.log(result)
-        //             if(result.data.affectedRows > 0){
-        //                 alert('수정성공!');
-        //                 for(let i=0;i<this.photo.length;i++){
-        //                 this.ods = 's'+i
-        //                 let photos = {
-        //                     param : {
-        //                     "file_category" : 'r2',
-        //                     "file_name" : this.photo[i],
-        //                     "orders" : this.ods,
-        //                     "prod_no" : this.prodNo,
-        //                     "path" : 'uploads\\'+this.photo[i]
-        //                     }
-        //                 }
-        //                 let result1 = axios.post("/api/photo",photos).catch(err=>console.log(err));
-        //                 alert('테이블ㅇㅔ 추가');
-        //                 }
-        //                 this.$router.push({path:'myPage/myInquire'})
-        //                 }else{
-        //                      alert('수정 실패')
-        //                 }
-                        
-                        
-        //                 }                        
+                        }
+                    }
+                    let result = await axios.put(`/api/inquireUpdate/${this.inquireNo}`, obj) 
+                                            .catch((err=>console.log(err))) 
+                                            console.log(result)
+                    if(result.data.affectedRows > 0){
+                        alert('수정성공!');
+                        for(let i=0;i<this.photo.length;i++){
+                        this.ods = 's'+i
+                        let photos = {
+                            param : {
+                            "file_category" : 'r2',
+                            "file_name" : this.photo[i],
+                            "orders" : this.ods,
+                            "prod_no" : this.prodNo,
+                            "path" : 'uploads\\'+this.photo[i]
+                            }
+                        }
+                        let result1 = axios.post("/api/photo",photos).catch(err=>console.log(err));
+                        alert('테이블ㅇㅔ 추가');
+                        }
+                        this.$router.push({path:'myPage/myInquire'})
+                        }else{
+                             alert('수정 실패')
+                        }                       
                 
-        // }
+        }
     }
 }
 </script>

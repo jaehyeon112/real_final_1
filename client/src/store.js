@@ -15,7 +15,7 @@ const store = createStore({
       searchList: [],
       orderNo: 0,
       loginCartCount: 0,
-      kakaoId:''
+      kakaoId: ''
     }
   },
   getters: {
@@ -38,9 +38,29 @@ const store = createStore({
       state.cart.push(item);
       state.cartCount = state.cart.length
     },
+
+    kakaoLogin(state, id) {
+
+       let a = id;
+      // state.user = {};
+      state.user.user_id = a;
+      state.user.user_name = state.user.user_id
+      // state.kakaoId = a;
+      // console.log(id + '/')
+      //state.kakaoId = id;
+      state.user.user_name = state.kakaoId
+    },
+
+    kakaoLogout(state){
+      state.kakaoId = ''
+    },
+    // kakaoLogout(state) {
+    //   state.user.user_name = ''
+    // },
+
     async login(state, userInfo) {
       state.user = userInfo;
-        state.loginCartCount = (await axios.get('/api/cartList')).data.length;
+      state.loginCartCount = (await axios.get('/api/cartList')).data.length;
     },
     loginCartCheck(state, count) {
       state.loginCartCount -= count;
@@ -48,9 +68,11 @@ const store = createStore({
     async loginCart(state) {
       state.loginCartCount = (await axios.get('/api/cartList')).data.length;
     },
-    logout(state) {
-      state.user = '';
+    async logout(state) {
+      state.user = {};
       state.cartCount = state.cart.length
+
+      await axios.get('/api/logout')
     },
     cartEmpty(state) {
       state.cart = []
@@ -88,16 +110,18 @@ const store = createStore({
       state.orderNo = no;
     }
   },
+
   actions: {
 
   },
+
   plugins: [
     createPersistedState({
-      paths: ['cart', 'cartCount', 'loginCartCount', 'orderNo'],
+      paths: ['cart', 'cartCount', 'loginCartCount', 'orderNo', 'kakaoId'],
       storage: window.localStorage,
     }),
     createPersistedState({
-      paths: ['user'], // 세션 스토리지에만 유지할 상태
+      paths: ['user', 'kakaoId'], // 세션 스토리지에만 유지할 상태
       storage: window.sessionStorage, // 세션 스토리지 사용
     })
   ]
