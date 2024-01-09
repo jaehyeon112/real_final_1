@@ -291,14 +291,40 @@ let reviews = {
   myReview: `select * from review where user_id=? `, //마이페이지에서 내가 작성한 리뷰 리스트
   reviewInfo: `select * from review where user_id=? and review_no=?`, //마이페이지 리뷰하나 보기
   orderNoReview: `select * from review where user_id=?`,
-  detailList: `select t2.prod_no, t1.review_title, t1.review_content, t1.review_grade, t1.user_id, t1.review_writedate, t1.like_cnt, t1.report_cnt
-                                from review t1 join order_detail t2 on t1.detail_order_no = t2.order_detail_no
-                                                     join product t3 on t3.prod_no = t2.prod_no
-                                                     where t3.prod_no=?`, //상세페이지에서 그 상품에대한 리뷰 리스트
+  detailList: `SELECT 
+  t1.review_no, 
+  t2.prod_no, 
+  t1.review_title, 
+  t1.review_content, 
+  t1.review_grade, 
+  t1.user_id AS 'writer', 
+  t1.review_writedate, 
+  COALESCE(like_data.like_cnt, 0) AS like_cnt, 
+  t1.report_cnt,
+  CASE 
+      WHEN t4.user_id IS NOT NULL THEN TRUE 
+      ELSE FALSE 
+  END AS 'likestate'
+FROM review t1 
+JOIN order_detail t2 ON t1.detail_order_no = t2.order_detail_no
+JOIN product t3 ON t3.prod_no = t2.prod_no
+LEFT JOIN (
+  SELECT review_no, COUNT(*) AS like_cnt
+  FROM review_like 
+  GROUP BY review_no
+) AS like_data ON like_data.review_no = t1.review_no 
+LEFT JOIN review_like t4 ON t4.review_no = t1.review_no AND t4.user_id = ?
+WHERE t3.prod_no = ?`, //상세페이지에서 그 상품에대한 리뷰 리스트
   insertReview: `insert into review set?`, //주문상세내역->리뷰등록
   updateReview: `update review set ? where user_id= ? and review_no= ?`,
-  insertReviewImage: `insert into image set?`
+  insertReviewImage: `insert into image set?`,
+  deleteReview:`delete from review where review_no=?`,
+  selectReviewLike:`select * from review_like where user_id=? and review_no=?`,
+  insertReviewLike:`insert into review_like set ?`,
+  deleteReviewLike:`delete from review_like where review_no=? and user_id=?`
+
 };
+
 let point = {
   myPoint: `select point from user where user_id=?`, //마이페이지 보유 포인트
   myPointSaveHistory: `select * from point where user_id= ? and point_save > 0 order by end_point_date `,
@@ -322,9 +348,12 @@ let orders = {
   updateCart: `update cart set quantity=quantity+? where prod_no =? and user_id=?;`,
   comparisonCart: `select * from cart where user_id=?`,
   detailInfo: `select * from product where prod_no=?`,
+
+
   //detailOrderLists:`select * from order_detail o1 left join orders o2 on o1.order_no = o2.order_no where o1.order_no =? and user_id = ?`,//주문창에서 상세주문내역으로 이동시 불러올 값
   orderList: `select ord.order_date, dord.order_detail_no, ord.delivery_charge, ord.total_payment, ord.real_payment, ord.payment_no, ord.order_no, pro.prod_name, ord.order_status, ord.point_use , dord.order_quantity, dord.prod_no
               from orders ord  join order_detail dord on ord.order_no = dord.order_no
+
                                join product pro on pro.prod_no = dord.prod_no
                                where ord.user_id=?
                                group by ord.order_no
@@ -338,15 +367,26 @@ let orders = {
 }
 let delivery = {
   addDelivery: `insert into add_delivery set?`,
-  deliveryList: `select * from add_delivery where user_id=?`,
+  //deliveryList: `select * from add_delivery where user_id=?`,
   deliveryInfo: `select * from add_delivery where user_id=? and delivery_no=?`,
   updateDelivery: `update add_delivery set? where delivery_no=? and user_id=?`,
-  deleteDelivery: `delete from add_delivery where delivery_no=?`
+  deleteDelivery: `delete from add_delivery where delivery_no=?`,
+  deliveryList: `select *, (select address from user where user_id=?) as joinaddress, (select detail_address from user where user_id=?) as joinDetail, (select postcode from user where user_id=?) as joinPost from add_delivery where user_id=?`
 }
+//찜테이블
 let like = {
-  likeList: `select* from likes where user_id=? and prod_no=?`,
-  likeInsert: `insert into likes set;`,
-  likeDel: `delete from likes where user_id=? prod_no =?;`
+  likeInfo: `select* from likes where user_id=? and prod_no=?`,
+  likeInsert: `insert into likes set?`,
+  likeDel: `delete from likes where user_id=? and prod_no =?`,
+  likeList:`select * from likes where user_id=?`
+}
+let inquire={
+  inquireList:`select * from inquire where user_id=?`,
+  inquireInfo:`select * from inquire where inquire_no=?`,
+  inquireInsert:`insert into inquire set?`,
+  inquireUpdate:`update inquire set? where user_id=? and inquire_no=?`,
+  inquireAnswer:`select * from reply where inquire_no=?`,
+  photoListInq : `select file_name from file where inquire_no = ?`,
 }
 let member = {
   memberInfo: `select t1.*, count(case when coupon_able=0 then 1 end) as couponCnt from user t1 join coupon t2  on t1.user_id = t2.user_id where t1.user_id= ?`
@@ -362,5 +402,6 @@ module.exports = {
   delivery,
   like,
   member,
-  admin
+  admin,
+  inquire
 };

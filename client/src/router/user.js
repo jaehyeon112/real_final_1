@@ -19,12 +19,16 @@ import MyorderList from "@/components/MyPage/orderList.vue";
 import detailOrder from "@/components/MyPage/orderDetail.vue";
 import like from "@/components/MyPage/likeBasket.vue";
 import delivery from "@/components/MyPage/delivery.vue";
-import addDeli from "@/components/MyPage/addDelivery.vue";
+//import addDeli from "@/components/MyPage/addDelivery.vue";
+import myInquire from "@/components/ServiceCenter/inquire.vue";
+import myInquireInfo from "@/components/ServiceCenter/inquireInfo.vue";
 import coupon from "@/components/MyPage/couponList.vue";
 import point from "@/components/MyPage/point.vue";
 import myReview from "@/components/MyPage/myReview.vue";
 import reviewForm from "../views/ReviewForm.vue";
+import inquireForm from "../views/inquireForm.vue";
 import search from '@/components/menu/search.vue';
+import replyList from'@/components/common/replyList.vue'
 
 
 export default {
@@ -158,16 +162,23 @@ export default {
           component: delivery
         },
         {
-          path: "addDeli",
-          name: "addDeli",
-          component: addDeli
-        },
-        {
           path: "point",
           name: "point",
           component: point
         },
         {
+          path:"myInquire",
+          name:"myInquire",
+          component:myInquire
+         },
+         {
+          path:"myInquireInfo",
+          name:"myInquireInfo",
+          component:myInquireInfo
+         },
+         
+         {
+
           path: "coupon",
           name: "coupon",
           component: coupon
@@ -185,5 +196,16 @@ export default {
       name: "reviewForm",
       component: reviewForm
     },
+    {
+      path:"inquireForm",
+      name:"inquireForm",
+      component:inquireForm
+     },
+    {
+      path:"replyList",
+      name:"replyList",
+      component:replyList
+    },
+
   ],
 };

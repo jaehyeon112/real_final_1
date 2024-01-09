@@ -1,142 +1,195 @@
 <template>
-<section class="py-5" id="top">
-   <div class="container px-4 px-lg-5 my-5">
-      <div class="row gx-4 gx-lg-5 align-items-center">
-         <div class="col-md-6">
-            <b>이미지 삽입하는 곳</b>
-            <h3>상세 이미지</h3>
-            <b>상세이미지 삽입하는 곳</b>
-         </div>
-         <div class="col-md-6">
-            <h1 class="display-5 fw-bolder">상품이름{{ productInfo.prod_name }}</h1>
-            <h1 class="display-7 fw-bolder">상품원가격{{ productInfo.price }}</h1>
-            <div class="fs-5 mb-5">
-                <br>
-              <table class="table" border="1">
-                <tr>
-                    <th>판매자</th>
-                    <td>최고다최고</td>
-                </tr>
-                <tr>
-                    <th>냉장/냉동</th>
-                    <td>정보{{ productInfo.refrigeration }}</td>
-                </tr>
-                <tr>
-                    <th>알레르기 정보</th>
-                    <td>알레르기 정보 {{ productInfo.allergy }}</td>
-                </tr>
-              </table>
+   <div>
+      <section class="py-5" id="top">
+         <div class="container px-4 px-lg-5 my-5">
+            <div class="row gx-4 gx-lg-5 align-items-center">
+               <div class="col-md-6">
+                  <b>이미지 삽입하는 곳</b>
+                  <h3>상세 이미지</h3>
+                  <b>상세이미지 삽입하는 곳</b>
+               </div>
+               <div class="col-md-6">
+                  <h1 class="display-5 fw-bolder">상품이름{{ productInfo.prod_name }}</h1>
+                  <h1 class="display-7 fw-bolder">상품원가격{{ productInfo.price }}</h1>
+                  <div class="fs-5 mb-5">
+                     <br>
+                  <table class="table" border="1">
+                     <tr>
+                        <th>판매자</th>
+                        <td>최고다최고</td>
+                     </tr>
+                     <tr>
+                        <th>냉장/냉동</th>
+                        <td>정보{{ productInfo.refrigeration }}</td>
+                     </tr>
+                     <tr>
+                        <th>알레르기 정보</th>
+                        <td>알레르기 정보 {{ productInfo.allergy }}</td>
+                     </tr>
+                  </table>
+                  </div>
+                  
+                  <div class="d-flex">
+                     <p>상품선택</p>
+                        <v-btn @click="minusCount">-</v-btn>
+                        <span >{{ counter }} </span>
+                        <v-btn @click="plusCount">+</v-btn>
+                  </div>
+                  <div>
+                     <p class="lead">할인률{{ productInfo.discount_rate }}</p>
+                     <p class="lead">할인률 적용된 가격{{  productInfo.discount_price }}</p>
+                  <br>
+                  <br>
+                     <p class="lead">총 가격: {{  productInfo.discount_price*counter }}</p>
+                     <p style="margin-left:20px;margin-bottom:0;color:black">무료배송 (40,000원 이상 구매 시)</p>
+                     <br>
+                  </div>
+                  <div>
+                     <v-btn @click="cartInsert">장바구니 담기</v-btn>
+                     <v-btn  @click="liked" :color="isShow ? 'red' : 'blue'"> ♡ </v-btn>                                           
+                  </div>
+               </div>
             </div>
             
-            <div class="d-flex">
-                <p>상품선택</p>
-                  <v-btn @click="minusCount">-</v-btn>
-                  <span >{{ counter }} </span>
-                  <v-btn @click="plusCount">+</v-btn>
-            </div>
-            <div>
-                <p class="lead">할인률{{ productInfo.discount_rate }}</p>
-                <p class="lead">할인률 적용된 가격{{  productInfo.discount_price }}</p>
-            <br>
-               <p style="margin-left:20px;margin-bottom:0;color:black">무료배송 (40,000원 이상 구매 시)</p>
-               <br>
-            </div>
-            <div>
-               <v-btn @click="cartInsert">장바구니 담기</v-btn><v-btn  @click="likes" :color="love?red:blue">찜</v-btn>
-                                                                    
-            </div>
-         </div>
-      </div>
-      <!--선택하는 바?-->
-      <div class="container px-4 px-lg-5 my-5" style="text-align:center;">
-         <a style="border: none; padding: 10px 50px; color: black; font-size: 18px"
-            href="#detail">제품 정보</a>
-         <a style="border: none; padding: 10px 50px; color: black; font-size: 18px"
-            href="#review">상세정보</a>
-            <a style="border: none; padding: 10px 50px; color: black; font-size: 18px"
-            href="#qna">리뷰{{ count }}</a>
-            <a style="border: none; padding: 10px 50px; color: black; font-size: 18px"
-            href="#order">문의</a>
-         <hr>
-      </div>
-      <!--상세정보?-->
-      <a id="detail"></a>
-         <div class="container px-4 px-lg-5 my-5" style="text-align:center;" id="detail">
-            
-         </div>
-      <hr>
 
-       <!--리뷰게시판  부분 -->
-       <a id="review"></a>
-      <div id="review" class="reviewTable">
-        <p> 베스트 리뷰</p>
-        <p>리뷰 베스트 5 나열할 곳</p>
-        <!--
-        <input :key="idx" v-for="(bestR, idx) in reviewList" type="file">-->
-        <table class="table" border="1">
-            <tr>
-                <th>작성자</th>
-                <th>리뷰제목</th>
-                <th>리뷰내용</th>
-                <th>평점</th>
-                <th>작성일자</th>
-                <th>추천</th>
-                <th>신고</th>
-            </tr>
-            <tr :key="idx" v-for="(review, idx) in reviewList">
-                <td> {{ review.user_id }}</td>
-                <td> {{ review.review_title }}</td>
-                <td> {{ review.review_content }}</td>
-                <td> {{ review.review_grade }}</td>
-                <td> {{ review.review_writedate }}</td>
-                <td> <v-btn class="ma-2" variant="text" icon="mdi-thumb-up" color="blue-lighten-2" @click="reviewLike"></v-btn>{{ review.like_cnt }}</td>
-                <td> <v-btn class="ma-2" variant="text" icon="mdi-thumb-down" color="red-lighten-2"></v-btn></td>
-            </tr>
-        </table>
-       </div>
-      <hr>
-      <!-- 문의게시판 건드린 부분 -->
-      <a id="qna"></a>
-      <div id="qna" class="qnaTable">
-        <table class="table" border="1">
-            <tr>
-                <th>No.</th>
-                <th>카테고리</th>
-                <th>제목</th>
-                <th>내용</th>
-                <th>작성일자</th>
-            </tr>
-            <tr :key="idx" v-for="(inquire, idx) in inquireList">
-                <td> {{ inquire.inquire_no }}</td>
-                <td> {{ inquire.inquire_category }}</td>
-                <td> {{ inquire.inquire_title }}</td>
-                <td> {{ inquire.inquire_content }}</td>
-                <td> {{ inquire.inquire_writedate }}</td>
-                
-            </tr>
-        </table>
-      </div>
-      
-      
-      <!--주문정보 파트-->
-      <a id="order"></a>
-      <div id="order">
-         <div id="arrow"></div>
-         <h2 id="text1">취소/교환/반품안내</h2>
-         <ul>
-            <li>주문취소는 '결제완료' 단계에서만 가능합니다.</li>
-            <li>주문 내 일부 상품의 부분 취소는 불가능합니다.</li>
-            <li>주문취소는 '마이페이지 > 주문내역 > 주문취소' 를 통해 직접 취소하실 수 있습니다.</li>
-            <li>교환 및 반품은 배송 완료일 기준으로 1일 이내 신청 가능합니다.</li>
-            <li>단순변심으로 인한 교환/반품은 고객님이 부담합니다.</li>
-         </ul>
-         <ul id="list" style="display:none">
-            <li>제주, 도서산간 지역은 배송불가합니다.</li>
-         </ul>
-      </div>
-      
+            <div class="text-center">
+            <v-btn
+               size="large"
+               text="Click"
+               @click="sheet = !sheet"
+            ></v-btn>
+
+            <v-bottom-sheet v-model="sheet">
+               <v-card
+               class="text-center"
+               height="200"
+               >
+               <v-card-text>
+                  <v-btn
+                     variant="text"
+                     @click="sheet = !sheet"> x</v-btn>
+
+                  <br>
+                  <br>
+
+                  
+                     <div class="d-flex">
+                     <p>상품선택</p>
+                        <v-btn @click="minusCount">-</v-btn>
+                        <span >{{ counter }} </span>
+                        <v-btn @click="plusCount">+</v-btn>
+                     <p class="lead">할인률: {{ productInfo.discount_rate }}</p>
+                     <p class="lead">할인률 적용된 가격: {{  productInfo.discount_price }}</p>
+                     
+                     <p class="lead">총 가격: {{  productInfo.discount_price*counter }}</p>
+                  <br>
+                     <p style="margin-left:20px;margin-bottom:0;color:black">무료배송 (40,000원 이상 구매 시)</p>
+                     <br>
+                  <v-btn>구매하기</v-btn>
+                  </div>      
+               </v-card-text>
+               </v-card>
+            </v-bottom-sheet>
+         </div>
+
+
+            <!--선택하는 바?-->
+            <div class="container px-4 px-lg-5 my-5" style="text-align:center;">
+               <a style="border: none; padding: 10px 50px; color: black; font-size: 18px"
+                  href="#detail">제품 정보</a>
+               <a style="border: none; padding: 10px 50px; color: black; font-size: 18px"
+                  href="#review">상세정보</a>
+                  <a style="border: none; padding: 10px 50px; color: black; font-size: 18px"
+                  href="#qna">리뷰{{ count }}</a>
+                  <a style="border: none; padding: 10px 50px; color: black; font-size: 18px"
+                  href="#order">문의</a>
+               <hr>
+            </div>
+            <!--상세정보?-->
+            <a id="detail"></a>
+               <div class="container px-4 px-lg-5 my-5" style="text-align:center;" id="detail">
+                  
+               </div>
+            <hr>
+
+            <!--리뷰게시판  부분 -->
+            <a id="review"></a>
+            <div id="review" class="reviewTable">
+            <p> 베스트 리뷰</p>
+            <p>리뷰 베스트 5 나열할 곳</p>
+            <!--
+            <input :key="idx" v-for="(bestR, idx) in reviewList" type="file">-->
+            <table class="table" border="1">
+                  <tr>
+                     <th>작성자</th>
+                     <th>리뷰제목</th>
+                     <th>리뷰내용</th>
+                     <th>평점</th>
+                     <th>작성일자</th>
+                     <th>추천</th>
+                     <th>신고</th>
+                  </tr>
+                  <tr :key="idx" v-for="(review, idx) in reviewList">
+                     <!-- <td> {{ review.review_no }}</td> -->
+                     <td> {{ review.user_id }}</td>
+                     <td> {{ review.review_title }}</td>
+                     <td> {{ review.review_content }}</td>
+                     <td> {{ review.review_grade }}</td>
+                     <td> {{ review.review_writedate }}</td>
+                     {{ review }}
+                     <td> <v-btn class="ma-2" variant="text" icon="mdi-thumb-up" :color=" likeState1 ? 'blue-lighten-2':'black'" @click="getLikeCount(review.review_no, review.user_id, review.like_cnt)"></v-btn>{{ review.like_cnt }}</td>
+                     <td> <v-btn class="ma-2" variant="text" icon="mdi-thumb-down" color="red-lighten-2"></v-btn></td>
+                  </tr>
+            </table>
+            </div>
+            <hr>
+            <!-- 문의게시판 건드린 부분 -->
+            <a id="qna"></a>
+            <div id="qna" class="qnaTable">
+            <table class="table" border="1">
+                  <tr>
+                     <th>No.</th>
+                     <th>카테고리</th>
+                     <th>제목</th>
+                     <th>내용</th>
+                     <th>작성일자</th>
+                  </tr>
+                  <tr :key="idx" v-for="(inquire, idx) in inquireList">
+                     <td> {{ inquire.inquire_no }}</td>
+                     <td> {{ inquire.inquire_category }}</td>
+                     <td> {{ inquire.inquire_title }}</td>
+                     <td> {{ inquire.inquire_content }}</td>
+                     <td> {{ inquire.inquire_writedate }}</td>
+                     
+                  </tr>
+            </table>
+            </div>
+            
+            
+            <!--주문정보 파트-->
+            <a id="order"></a>
+            <div id="order">
+               <div id="arrow"></div>
+               <h2 id="text1">취소/교환/반품안내</h2>
+               <ul>
+                  <li>주문취소는 '결제완료' 단계에서만 가능합니다.</li>
+                  <li>주문 내 일부 상품의 부분 취소는 불가능합니다.</li>
+                  <li>주문취소는 '마이페이지 > 주문내역 > 주문취소' 를 통해 직접 취소하실 수 있습니다.</li>
+                  <li>교환 및 반품은 배송 완료일 기준으로 1일 이내 신청 가능합니다.</li>
+                  <li>단순변심으로 인한 교환/반품은 고객님이 부담합니다.</li>
+               </ul>
+               <ul id="list" style="display:none">
+                  <li>제주, 도서산간 지역은 배송불가합니다.</li>
+               </ul>
+            </div>
+            
+         </div>
+      </section>
+
+
+         
+
    </div>
-</section>
 <!-- Related items section-->
 
 </template>
@@ -155,13 +208,20 @@ export default {
                  user_id:'',
                  quantity:''
             },
+            like:{
+               like_no:'',
+               user_id:'',
+               prod_no:''
+            },
             productInfo:{},
             likeList:{},
             reviewList:[],
             inquireList:[],
             counter:1,
-            love:''
-            
+            isShow:false,
+            likeState1:false,
+            sheet:false
+
         }
     },
     created(){ 
@@ -171,6 +231,9 @@ export default {
       this.getRivewList();
       
         
+    },
+    watch:{
+      
     },
     methods:{
         async getProductInfo(){
@@ -183,20 +246,77 @@ export default {
                                   .catch(err=>console.log(err));
             this.likeList =list.data
             console.log(this.likeList)
-            if(list.data != null){
-               console.log('찜한상태'+list.data)
-               this.love= true;
+            if(list.data.length == 0 ){
+               console.log('찜안한상태'+list.data)
+               this.isShow= false;
             }else{
-               this.love=false;
+               this.isShow= true;
             }
          },
-        async getRivewList() {
+        async getRivewList() { //여기 조인해라
             let list = await axios.get(`/api/detailReview/${this.pno}`)
                                   .catch(err=>console.log(err));
             this.reviewList =list.data;
-            console.log(this.reviewList)                      
+            console.log
+            console.log(this.reviewList)    
+            console.log(this.likeR)    
         },
-       
+        
+          async getLikeCount(no, writer, cnt){
+            let likestate = await axios.get(`/api/rLikeCnt/${this.$store.state.user.user_id}/${no}`)
+                                       .catch(err=>console.log(err));                 
+            let k=0;
+            console.log("==============================")
+            console.log(no)
+            console.log(writer)
+            console.log(likestate.data)
+            console.log('엄지' +this.likeState)
+            if(likestate.data.length == 1){
+               k=-1
+            }else{
+               k=+1
+            }
+            let obj ={
+                param: {
+                  like_cnt : cnt + k
+                }
+            }
+            let obj2={
+               param: { 
+                  review_no : no,
+                  user_id : this.$store.state.user.user_id
+               }
+            }
+            console.log(writer+ no + obj)
+            let result = await axios.put(`/api/reviewUpdate/${writer}/${no}`, obj) 
+                                    .catch((err=>console.log(err)))
+                                    console.log('좋아요 수 업데이트'+result.data)
+                                    console.log('현재k'+k)
+
+
+            if(likestate.data.length == 0){        
+            let result2 = await axios.post(`/api/reviewLike`,obj2)   
+                                    .catch(err=>console.log(err)) 
+                                    console.log('좋아요 한 사람 추가' + result2)
+                                    
+                     alert(result2.data)
+               if( result2.data.affectedRows > 0){
+                     alert('좋아요 성공~~');
+                     this.likeState1=true 
+                                 
+               }
+            }else{                       
+            let result3 = await axios.delete(`/api/reviewLike/${no}/${this.$store.state.user.user_id}`)         
+                                    .catch(err=>console.log(err))
+                                    console.log('result3'+result3)
+            if(result3.data.affectedRows >0){
+             this.likeState1=false  
+             alert('좋아요 취소~~')
+            }      
+         }                                                            
+      },
+
+
          async cartInsert(){
          let obj ={
              param: {
@@ -259,28 +379,36 @@ export default {
       plusCount(){
          this.counter++;
       },              
-   //    async likes(){
-   //    //찜하기눌러서 저장하는 곳
+      async liked(){
+      //찜하기눌러서 저장하는 곳
       
-   //          if(this.love == true ){ //찜한상태라는 말
-   //             let dellike = await axios.delete(`/api/DelprodLike/${this.$store.state.user.user_id}/${this.pno}`)
-   //                                     .catch(err=>console.log(err));
-   //                if(dellike.data.affectedRows>0){                        
-   //                   alert('삭제성공')
-   //                   this.love=false
-   //                }else{
-   //                   console.log(err)
-   //                }
-   //          }else{
-   //             let likes = await axios.post(`/api/prodLike`)
-   //                                     .catch(err=>console.log(err));
-   //             if(likes.data.changedRows>0){
-   //                alert('찜상태 변화')
-   //                this.love=true
-   //             }                         
-   //           }      
+            if(this.isShow == true ){ //찜한상태라는 말
+               let dellike = await axios.delete(`/api/prodDisike/${this.$store.state.user.user_id}/${this.pno}`)
+                                       .catch(err=>console.log(err));
+                  if(dellike.data.affectedRows>0){                        
+                     alert('삭제성공')
+                     this.isShow= false
+                  }else{
+                     console.log(err)
+                  }
+            }else{
+               let obj = {
+                  param:{
+                     user_id:this.$store.state.user.user_id,
+                     prod_no:this.pno
+                  }
+               }
+               let likes = await axios.post(`/api/prodLike`,obj)
+                                       .catch(err=>console.log(err));
+               if(likes.data.affectedRows>0){
+                 // this.like.like_no = likes.data.insertId;
+                  alert('찜한상태')
+                  this.isShow= true
+                  
+               }                         
+             }      
          
-   //   },
+     },
 
    },
      
@@ -289,7 +417,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
    #arrow{
       position:relative;
       top:10px;
