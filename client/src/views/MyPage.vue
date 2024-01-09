@@ -6,15 +6,15 @@
         <div class="row" style="width:900px;">
             <div class="col-sm-5">
                         <div class="col p-4 d-flex flex-column position-static">
-                            <strong class="d-inline-block mb-2 text-success-emphasis" v-if="member.user_grade=='i1'"> 등급 : 일반</strong>
-                            <strong class="d-inline-block mb-2 text-success-emphasis" v-else-if="member.user_grade=='i2'"> 등급 : 실버</strong>
-                            <strong class="d-inline-block mb-2 text-success-emphasis" v-else> 등급 : 골드</strong>
+                            <div class="grade">
+                            <strong class="d-inline-block mb-2 text-body-secondary text-success-emphasis" v-if="member.user_grade=='i1'"> 일반</strong>
+                            <strong class="d-inline-block mb-2 text-body-secondary text-success-emphasis" v-else-if="member.user_grade=='i2'">  실버</strong>
+                            <strong class="d-inline-block mb-2 text-body-secondary text-success-emphasis" v-else> 골드</strong></div>
                             <h3 class="mb-0">{{ member.user_id}}님</h3>
-                            <div class="mb-1 text-body-secondary">일반</div>
                             <p class="mb-auto"></p>
                             <a href="#" class="icon-link gap-1 icon-link-hover ">
                                 <div class="text-center">
-                                    <v-btn color="primary" @click="dialog = true">다음달 소멸 포인트 조회</v-btn>
+                                    <v-btn color="#FF9100" @click="dialog = true">다음달 소멸 포인트 조회</v-btn>
                                     <v-dialog v-model="dialog" persistent width="300px">
                                     <v-card>
                                         <v-card-text style="text-align: center;">
@@ -30,7 +30,7 @@
                             </a>
                         </div>
             </div>
-                <div class="col-sm-3 " style="background-color: rgb(138, 38, 215); margin:10px">
+                <div class="col-sm-3 " style="background-color: #FFAB40; margin:10px">
                     <div class="col p-4 d-flex flex-column position-static">
                         <strong class="d-inline-block mb-2 text-success-emphasis">잔여포인트</strong>
                         <h3 class="mb-0">{{ member.point }} p</h3>
@@ -38,7 +38,7 @@
                     </div>
                 </div>
            
-                <div class="col-sm-3"  style="background-color: rgb(138, 38, 215); margin:10px">
+                <div class="col-sm-3"  style="background-color: #FFAB40; margin:10px">
                     <div class="col p-4 d-flex flex-column position-static">
                         <strong class="d-inline-block mb-2 text-success-emphasis">잔여쿠폰</strong>
                         
@@ -90,16 +90,12 @@ export default{
     methods: {
         //일단 멤버 정보를 셀렉트 해오는걸로 시험 중 나중에 로그인 세션그걸로 바꿔야 함
         async getMember(){
-            if(this.$store.state.user.user_id==null){
-                this.$router.push({path : '/login'});
-                return
-            }
-            try{
-            this.member = (await axios.get(`/api/member`)).data}
-                                    //   .catch(err=>{console.log(err)})).data}
-            catch(err){
+            
+          
+            this.member = (await axios.get(`/api/member/${this.$store.state.user.user_id}`)
+                                      .catch(err=>console.log(err))).data
+           
                
-            }
                                                           
         },
         
@@ -134,6 +130,18 @@ export default{
 .sidebar{
     position:sticky;
     top: 10px;
+}
+.grade{
+   
+  background-color : #FF9100;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  display: table-cell;
+  padding : 15px 0;
+  vertical-align: text-bottom;
+  text-align:center;
+
 }
 
 </style>

@@ -386,7 +386,7 @@ let like = {
   likeInfo: `select* from likes where user_id=? and prod_no=?`,
   likeInsert: `insert into likes set?`,
   likeDel: `delete from likes where user_id=? and prod_no =?`,
-  likeList: `select * from likes where user_id=?`
+  likeList: `select * from select * from product p right join likes l on p.prod_no = l.prod_no where user_id=?`
 }
 let inquire={
   inquireList:`select * from inquire where user_id=?`,

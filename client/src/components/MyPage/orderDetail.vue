@@ -20,23 +20,26 @@
             </label>
             <div>
                 <p>결제정보</p>
-                <small class="d-block text-body-secondary">금액:{{ detail.total_payment }}</small>
-                <small class="d-block text-body-secondary">할인금액:{{ detail.total_payment- detail.real_payment }}</small>
-                <small class="d-block text-body-secondary">결제금액:{{ detail.real_payment }}</small>
                 
-                <small class="d-block text-body-secondary">배송비:{{ detail.delivery_charge }}</small>
-                <small class="d-block text-body-secondary">쿠폰할인:{{ detail.coupon_discount_rate }}</small>
-                <small class="d-block text-body-secondary">포인트사용:{{ detail.point_use }}</small>
-                <small class="d-block text-body-secondary">포인트적립률:{{ detail.point_save_rate }}</small>
-                
-                <small class="d-block text-body-secondary">결제방법:{{ detail.payment_method }}</small>
-                <small class="d-block text-body-secondary">결제일시:{{ detail.order_date }}</small>
-                <p>배송정보</p>
-                <small class="d-block text-body-secondary">보내는분:{{ detail.user_id }}</small>
-                <small class="d-block text-body-secondary">받는분:{{ detail.recipient }}</small>
-                <small class="d-block text-body-secondary">받는주소:{{ detail.recipient_address }}</small>
-                <small class="d-block text-body-secondary">받는상세주소:{{ detail.recipient_detail_address }}</small>
-                <small class="d-block text-body-secondary">배송 요청사항:{{ detail.deliveyry_request }}</small>
+                <div v-for="(item,idx) in productList" :key="idx">
+                        <small class="d-block text-body-secondary">금액:{{ item.total_payment }}</small>
+                        <small class="d-block text-body-secondary">할인금액:{{ item.total_payment - item.real_payment }}</small>
+                        <small class="d-block text-body-secondary">결제금액:{{ item.real_payment }}</small>
+                        
+                        <small class="d-block text-body-secondary">배송비:{{ item.delivery_charge }}</small>
+                        <small class="d-block text-body-secondary">쿠폰할인:{{ item.coupon_discount_rate }}</small>
+                        <small class="d-block text-body-secondary">포인트사용:{{ item.point_use }}</small>
+                        <small class="d-block text-body-secondary">포인트적립률:{{ item.point_save_rate }}</small>
+                        
+                        <small class="d-block text-body-secondary">결제방법:{{ item.payment_method }}</small>
+                        <small class="d-block text-body-secondary">결제일시:{{ item.order_date }}</small>
+                        <p>배송정보</p>
+                        <small class="d-block text-body-secondary">보내는분:{{ item.user_id }}</small>
+                        <small class="d-block text-body-secondary">받는분:{{ item.recipient }}</small>
+                        <small class="d-block text-body-secondary">받는주소:{{ item.recipient_address }}</small>
+                        <small class="d-block text-body-secondary">받는상세주소:{{ item.recipient_detail_address }}</small>
+                        <small class="d-block text-body-secondary">배송 요청사항:{{ item.deliveyry_request }}</small>
+                    </div>
             </div>
         </div>   
     </div>
@@ -80,6 +83,7 @@ export default {
             }
         }
             this.productList = a
+            console.log( '배송비랑 멕시멈..'+this.productList)
         }    
     },
     

@@ -1229,10 +1229,10 @@ app.get("/new", async (req, res) => {
 //예빈
 //멤버정보
 
-app.get("/member", async (req, res) => {
-  //let id = req.session.user_id;
-  let memberInfo = (await mysql.query("member", "memberInfo", req.session.user_id))[0]; // 데이터 타입 :  객체  
-  let pointInfo = (await mysql.query("point", "showNextMonth", req.session.user_id))[0]; // 데이터 타입 : 숫자
+app.get("/member/:id", async (req, res) => {
+  let id = req.params.id;
+  let memberInfo = (await mysql.query("member", "memberInfo", id))[0]; // 데이터 타입 :  객체  
+  let pointInfo = (await mysql.query("point", "showNextMonth",id))[0]; // 데이터 타입 : 숫자
   memberInfo.showNextMonth = pointInfo;
 
   res.send(memberInfo);

@@ -138,7 +138,9 @@ export default {
                                      .catch(err=>console.log("업데오류"+err))                                                                
             if(result.data.insertId>0){ //글번호는 자동으로 부여되니까 obj에서 주는게 아니라 따로 빼서 
                 alert('등록완료' + '=>리뷰 500포인트 적립');
-                this.reviewInfo.no = result.data.insertId; //여기에 data가 있고 없고 차이는..?
+                console
+                this.reviewInfo.review_no = result.data.insertId;
+                console.log('등록번호' +result.data.insertId) //여기에 data가 있고 없고 차이는..?
                 this.point_no = point.data.insertId;
                 this.$router.push({path:'myPage/myReview'})
             }
@@ -146,10 +148,10 @@ export default {
                   this.ods = 's'+i
                   let ph = {
                     param : {
-                      "file_category" : 'r3',
+                      "file_category" : 'r2',
                       "file_name" : this.photo[i],
                       "orders" : this.ods,
-                      "notice_no" : result.insertId,
+                      "review_no" : this.reviewInfo.review_no,
                       "path" : 'uploads\\'+this.photo[i]
                     }
                   }
@@ -157,7 +159,7 @@ export default {
                   console.log(result1)
                   alert('테이블ㅇㅔ 추가');
                 }
-                this.$router.push({path : "myReview"})
+                this.$router.push({path : "myPage/myReview"})
             },
             info(data){
             for(let i=0;i<data.length;i++){
