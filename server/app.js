@@ -721,7 +721,7 @@ app.get("/login/kakao", async (req, res) => {
 })
 
 //putPass
-app.get("/putpass/:id", async(req, res)=> {
+app.get("/putpass/:id", async (req, res) => {
   let uid = req.params.id;
   let pass = await mysql.query("user", "putPass", uid);
   console.log(pass);
@@ -730,9 +730,9 @@ app.get("/putpass/:id", async(req, res)=> {
 })
 
 //changePass
-app.put("/changepass/:password/:id", async(req, res)=> {
+app.put("/changepass/:password/:id", async (req, res) => {
   let data = [req.params.password, req.params.id]
-  let result = await mysql.query('user','changePass', data);
+  let result = await mysql.query('user', 'changePass', data);
   res.send(result);
   console.log(result);
 
@@ -1314,7 +1314,7 @@ app.delete('/orders/:ono', async (req, res) => {
 
 //추가 배송지 관련
 app.get('/addDelivery', async (req, res) => {
-  let id = [req.session.user_id,req.session.user_id,req.session.user_id,req.session.user_id]
+  let id = [req.session.user_id, req.session.user_id, req.session.user_id, req.session.user_id]
   const list = await mysql.query('delivery', 'deliveryList', id);
   res.send(list);
 })
@@ -1521,16 +1521,16 @@ app.put("/inquireUpdate/:ino", async (req, res) => {
   let datas = [req.body.param, req.session.user_id, req.params.ino]
   res.send(await mysql.query("inquire", "inquireUpdate", datas))
 })
-app.delete('/deleteInquire/:ino', async (req,res)=>{
+app.delete('/deleteInquire/:ino', async (req, res) => {
   let ino = req.params.ino;
-  let result = await mysql.query("inquire", "deleteInquire",ino)
+  let result = await mysql.query("inquire", "deleteInquire", ino)
   res.send(result)
 })
-  //답변
-  app.get("/inquireAnswer/:ino", async(req,res)=>{
-    let ino = Number(req.params.ino);
-    res.send(await mysql.query("inquire", "inquireAnswer", ino))
-  })
+//답변
+app.get("/inquireAnswer/:ino", async (req, res) => {
+  let ino = Number(req.params.ino);
+  res.send(await mysql.query("inquire", "inquireAnswer", ino))
+})
 
 app.get("/photoInq/:ino", async (req, res) => {
   let ino = req.params.ino
