@@ -17,17 +17,17 @@
                         <td>
                           <v-checkbox v-model="list.cart_checkbox" true-value="1" false-value="0" @click="updateCheckbox(list)"></v-checkbox>
                         </td>
-                        <td><v-img width="150" height="150" :src="`api/test/`+ list.file_name"></v-img></td>
+                        <td><v-img width="100" height="100" :src="`api/test/`+ list.file_name"></v-img></td>
                         <td>{{ list.prod_name }}</td>
                         <td>
-                          <v-btn  @click="quantityPlus(list)">
-                            <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAiIGhlaWdodD0iMzAiIHZpZXdCb3g9IjAgMCAzMCAzMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICAgIDxwYXRoIGQ9Ik0xNiAxMHY0aDR2MmgtNHY0aC0ydi00aC00di0yaDR2LTRoMnoiIGZpbGw9IiMzMzMiIGZpbGwtcnVsZT0ibm9uemVybyIvPgo8L3N2Zz4K" alt="">
+                          <v-btn @click="quantityMinus(list)">
+                            <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAiIGhlaWdodD0iMzAiIHZpZXdCb3g9IjAgMCAzMCAzMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICAgIDxwYXRoIGQ9Ik0yMCAxNHYySDEwdi0yeiIgZmlsbD0iIzMzMyIgZmlsbC1ydWxlPSJub256ZXJvIi8+Cjwvc3ZnPgo=" alt="">
                           </v-btn>
                         </td>
                         <td>{{ list.quantity }}개</td>
                         <td>
-                          <v-btn @click="quantityMinus(list)">
-                            <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAiIGhlaWdodD0iMzAiIHZpZXdCb3g9IjAgMCAzMCAzMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICAgIDxwYXRoIGQ9Ik0yMCAxNHYySDEwdi0yeiIgZmlsbD0iIzMzMyIgZmlsbC1ydWxlPSJub256ZXJvIi8+Cjwvc3ZnPgo=" alt="">
+                          <v-btn  @click="quantityPlus(list)">
+                            <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAiIGhlaWdodD0iMzAiIHZpZXdCb3g9IjAgMCAzMCAzMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICAgIDxwYXRoIGQ9Ik0xNiAxMHY0aDR2MmgtNHY0aC0ydi00aC00di0yaDR2LTRoMnoiIGZpbGw9IiMzMzMiIGZpbGwtcnVsZT0ibm9uemVybyIvPgo8L3N2Zz4K" alt="">
                           </v-btn>
                         </td>
                         <td>
@@ -77,16 +77,16 @@
                         </div>
                             <td>{{ list.prod_name }}</td>
                             <td>
-                              <v-btn @click="quantityPlus(list)">
-                                <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAiIGhlaWdodD0iMzAiIHZpZXdCb3g9IjAgMCAzMCAzMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICAgIDxwYXRoIGQ9Ik0xNiAxMHY0aDR2MmgtNHY0aC0ydi00aC00di0yaDR2LTRoMnoiIGZpbGw9IiMzMzMiIGZpbGwtcnVsZT0ibm9uemVybyIvPgo8L3N2Zz4K" alt="">
-                              </v-btn>
-                            </td>
-                            <td>{{ list.quantity }}개</td>
-                            <td>
-                              <v-btn @click="quantityMinus(list)">
-                                <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAiIGhlaWdodD0iMzAiIHZpZXdCb3g9IjAgMCAzMCAzMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICAgIDxwYXRoIGQ9Ik0yMCAxNHYySDEwdi0yeiIgZmlsbD0iIzMzMyIgZmlsbC1ydWxlPSJub256ZXJvIi8+Cjwvc3ZnPgo=" alt="">
-                              </v-btn>
-                            </td>
+                          <v-btn @click="quantityMinus(list)">
+                            <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAiIGhlaWdodD0iMzAiIHZpZXdCb3g9IjAgMCAzMCAzMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICAgIDxwYXRoIGQ9Ik0yMCAxNHYySDEwdi0yeiIgZmlsbD0iIzMzMyIgZmlsbC1ydWxlPSJub256ZXJvIi8+Cjwvc3ZnPgo=" alt="">
+                          </v-btn>
+                          </td>
+                          <td>{{ list.quantity }}개</td>
+                          <td>
+                            <v-btn  @click="quantityPlus(list)">
+                              <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAiIGhlaWdodD0iMzAiIHZpZXdCb3g9IjAgMCAzMCAzMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICAgIDxwYXRoIGQ9Ik0xNiAxMHY0aDR2MmgtNHY0aC0ydi00aC00di0yaDR2LTRoMnoiIGZpbGw9IiMzMzMiIGZpbGwtcnVsZT0ibm9uemVybyIvPgo8L3N2Zz4K" alt="">
+                            </v-btn>
+                          </td>
                             <td>
                               <ul>
                                 <li>{{ $wonComma(list.discount_price * list.quantity) }} 원</li>
@@ -103,7 +103,7 @@
                       :discount="discount"
                       :delivery="delivery"
                       :final="final"/>
-                      <v-btn v-model="check" @click="goTologinForm" class="css-fwelhw e4nu7ef3" height="72">로그인</v-btn>
+                      <v-btn @click="goTologinForm" class="css-fwelhw e4nu7ef3" height="72">로그인</v-btn>
                     </v-col>
                   </v-row>
                 </v-card> 
@@ -123,8 +123,8 @@
               :discount="discount"
               :delivery="delivery"
               :final="final"/>
-              <v-btn v-if="this.$store.state.user.user_id != null" v-model="check" @click="showMenu" class="css-fwelhw e4nu7ef3" >주문하기</v-btn>
-              <v-btn v-else v-model="check" @click="goTologinForm" class="css-fwelhw e4nu7ef3" >로그인</v-btn>
+              <v-btn v-if="this.$store.state.user.user_id != null" @click="showMenu" class="css-fwelhw e4nu7ef3" >주문하기</v-btn>
+              <v-btn v-else @click="goTologinForm" class="css-fwelhw e4nu7ef3" >로그인</v-btn>
             </v-col>
           </v-row>
         </v-card> 
@@ -158,17 +158,6 @@ export default {
     this.fetchCartList();
     this.ProdCheck();
   },
-  computed :{
-    // check() { // 장바구니 체크안되면 주문하기버튼 활성화가 안되게 설정
-    //       let checkbox = 0;
-    //       for (let i = 0; i < this.cartList.length; i++) {
-    //         if (this.cartList[i].cart_checkbox == 1) {
-    //           checkbox = 1;
-    //         }
-    //       }
-    //           this.box = checkbox
-    //     }
-  },
   // watch : {
   //   cartList(){
   //     for (let i = 0; i < this.cartList.length; i++) {              
@@ -177,7 +166,7 @@ export default {
   //   }
   // },
   methods : {
-          ProdCheck() {
+          ProdCheck() { // 상품 품절/상품준비중
             for(let i = 0; i < this.cartList.length; i++) {
               if (this.cartList[i].soldout == 1) {
                 this.isSoldOut = true;
@@ -240,12 +229,12 @@ export default {
             let result = ''
             if(this.$store.state.user.user_id !=null){
               if(list.cart_checkbox == 1) {
-                  result = await axios.put(`/api/CheckboxUpdate/0/${list.cart_no}`, );
+                result = await axios.put(`/api/CheckboxUpdate/0/${list.cart_no}`, );
                 console.log(result.data,'0으로 바꾸기');
                 if(result.data.affectedRows> 0){
                 }
               }else {
-                  result =  await axios.put(`/api/CheckboxUpdate/1/${list.cart_no}`, );
+                result =  await axios.put(`/api/CheckboxUpdate/1/${list.cart_no}`, );
                 console.log(result,'1으로 바꾸기');
                 if(result.data.affectedRows > 0){
                 }
@@ -262,11 +251,14 @@ export default {
             this.delivery = 0;
             this.final = 0;
             this.getBill();
+
+            console.log(list,'확인')
+                // let selectItem =  ;
+                // this.discount = selectItem.length;
             },
             selectAll() {
               let allChecked = true;
               
-                
                 for (let i = 0; i < this.cartList.length; i++) {
                   if (this.cartList[i].cart_checkbox != "1") {
                     allChecked = false;
@@ -338,7 +330,7 @@ export default {
           this.finalPrice();
         },
         showMenu() {
-          let Option = confirm("주문하시겠습니까?");
+          let Option = confirm("이대로 주문하시겠습니까?");
           if (Option) {
             this.moveOrderForm();
           }
@@ -356,21 +348,17 @@ export default {
             }
           }
     },
-      discountPrice() {
-        this.discount = 0;
+    discountPrice() {
+          let totaldiscount = 0;
+
           for (let i = 0; i < this.cartList.length; i++) {
-            if (this.cartList[i].discount_price != null) {
-        for (let i = 0; i < this.cartList.length; i++) {
-            if(this.cartList[i].cart_checkbox == 1){
-              if (this.cartList[i].discount_price != null) {
-              this.discount = (this.cartList[i].discount_price * this.cartList[i].quantity) - (this.cartList[i].price * this.cartList[i].quantity);
-              }
-              console.log(this.discount,'상품할인ㄱ듬액')
+            if (this.cartList[i].cart_checkbox == "1") {
+                totaldiscount += (this.cartList[i].discount_price * this.cartList[i].quantity) - (this.cartList[i].price * this.cartList[i].quantity);
             }
           }
-        }
-      }
-    },
+
+          this.discount = totaldiscount;
+      },
       deliveryPrice() {
         for (let i = 0; i < this.cartList.length; i++) {
             if(this.cartList[i].cart_checkbox == 1){

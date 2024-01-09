@@ -3,15 +3,13 @@
       <h1>배송지 정보</h1>
       <hr>
       <div>
-        <p>배송지 <span style="font-size: 30px;">{{ this.$store.state.user.address }}  {{ this.$store.state.user.detail_address }} {{ this.$store.state.user.postcode }}</span></p>
-        <v-radio-group label="기본 배송지 변경">
-          <v-radio label="1번배송지 변경" value="1"></v-radio>
-          <v-radio label="2번배송지 변경" value="2"></v-radio>
-          <v-radio label="3번배송지 변경" value="3"></v-radio>
+        {{ deliveryList }}
+        <v-radio-group v-model="selectedAddressType">
+          <v-radio v-for="delivery in deliveryList" :key="delivery.delivery_no" :label="delivery.delivery_name" :value="[delivery.delivery_address, delivery.delivery_detail_address, delivery.delivery_postcode]"></v-radio>
         </v-radio-group>
+         {{ selectedAddressType }}
       </div>
-      <v-checkbox v-model="checkbox" @change="CheckboxChange" label="배송지가 동일한 경우 선택"></v-checkbox>
-        <form>
+      <div>
           <v-btn @click="showApi">우편번호 찾기</v-btn>
           <v-responsive class="mx-auto" max-width="344">
             <v-text-field label="우편번호" hide-details="auto" v-model="zip" style="width: 200px;" :rules="[zip.required]" clearable></v-text-field>
@@ -20,7 +18,7 @@
           <v-text-field label="주소" v-model="addr1" hide-details="auto" ></v-text-field>
           <v-text-field label="상세주소" v-model="addr2" hide-details="auto" ></v-text-field>
           <v-text-field label="요청사항" v-model="deliveryrequest" hide-details="auto" ></v-text-field>
-        </form>
+      </div>
     </v-container>
   </template>
   
@@ -32,19 +30,25 @@
     data() {
       return {
         isolatedList : [],
-        zip : {
-          default : '',
-          required : value => !! value || '필수로 입력하셔야 됩니다',
+        deliveryList : [],
+        zip: {
+          default: Number,
+          required: '필수로 입력하셔야 됩니다'
         },
         addr1: '',
         addr2: '',
         deliveryrequest: '',
         checkbox : false,
-        deliveryStatus : '' // 배송가능지역유무판별
+        deliveryStatus : '', // 배송가능지역유무판별
+        selectedAddressType: '' // 선택된 배송지 유형
       }
     },
     created(){
+      this.getdeliveryList();
       this.getisolatedRegionList();
+      this.zip = this.$store.state.user.postcode;
+      this.addr1 = this.$store.state.user.address;
+      this.addr2 = this.$store.state.user.detail_address;
     },
     computed : {
       deliveryStatus() {
@@ -58,19 +62,36 @@
               return '배송가능지역';
             }
           } 
-        }
+        },
     },
     methods: {
-      CheckboxChange() {
-        if (this.checkbox == true ) {
-          this.zip = this.$store.state.user.postcode
-          this.addr1 = this.$store.state.user.address
-          this.addr2 = this.$store.state.user.detail_address
-          this.$emit('getAddress', this.zip, this.addr1, this.addr2);
-        } else {
-          this.zip = '';
-          this.addr1 = '';
-          this.addr2 = '';
+      async getisolatedRegionList(){
+          await axios.get(`/api/isolatedRegionList`)
+                      .then(response => {
+                            this.isolatedList = response.data;
+                      })
+                      .catch(err => console.log(err));
+      },
+      async getdeliveryList() { // 추가배송지
+         await axios.get('/api/adddeliveryList', {
+        })
+        .then(response => {
+          this.deliveryList = response.data;
+            })
+            .catch(error => {
+              console.log(error)
+            });
+          },
+          CheckboxChange() {
+            if (this.checkbox == true ) {
+              this.zip = this.$store.state.user.postcode
+              this.addr1 = this.$store.state.user.address
+              this.addr2 = this.$store.state.user.detail_address
+              this.$emit('getAddress', this.zip, this.addr1, this.addr2);
+            } else {
+              this.zip = '';
+              this.addr1 = '';
+              this.addr2 = '';
         }
       },
       showApi() {
@@ -114,13 +135,6 @@
       },
       getdelivery(){
         this.$emit('getdelivery', this.deliveryrequest);
-      },
-      async getisolatedRegionList(){
-          await axios.get(`/api/isolatedRegionList`)
-                      .then(response => {
-                            this.isolatedList = response.data;
-                      })
-                      .catch(err => console.log(err));
       },
     }
   }

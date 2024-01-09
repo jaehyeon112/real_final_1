@@ -76,8 +76,9 @@ HAVING hotItem > 1 and avg_grade > 4
 ORDER BY hotItem DESC
 limit ?, 6;
 `,
-
-
+  // 추가 배송지 
+  adddeliveryList : `select * from add_delivery where user_id =?`,
+  // 장바구니 리스트
   cartList: `select distinct * 
              from cart c, product p, user u, (select file_name, prod_no from file where orders='s0') f
              where c.user_id = u.user_id AND p.prod_no = c.prod_no AND c.user_id = ? AND c.prod_no = f.prod_no`,
