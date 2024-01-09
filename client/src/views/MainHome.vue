@@ -1,7 +1,9 @@
 <template>
   <div>
     <Header />
-    <router-view :key="$route.fullPath" />
+    <div class="maincontainer">
+      <router-view :key="$route.fullPath" />
+    </div>
     <Footer />
   </div>
 </template>
@@ -51,4 +53,9 @@ export default {
 };
 </script>
 
-<style></style>
+<style>
+ .maincontainer {
+  min-height : 600px;
+  margin : 15px;
+ }
+</style>

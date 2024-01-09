@@ -1,6 +1,6 @@
 <template>
-    <v-container>
-      <v-card class="container">
+    <v-container justify="end">
+      <v-card >
         <p>주문 금액 <span>{{ $wonComma(discount) }} 원</span></p>
         <div class="discount">
           <svg width="16" height="20" viewBox="0 0 16 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -75,14 +75,7 @@
   * {
     list-style: none;
   }
-  
-  .container {
-    margin: auto 0;
-    padding: 19px 18px 18px 20px;
-    border: 1px solid rgb(242, 242, 242);
-    background-color: rgb(250, 250, 250);
-  }
-  
+
   .discount {
     color: rgb(153, 153, 153);
     font-size: 14px;

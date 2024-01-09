@@ -13,11 +13,13 @@
       <v-checkbox v-model="checkbox" @change="CheckboxChange" label="배송지가 동일한 경우 선택"></v-checkbox>
         <form>
           <v-btn @click="showApi">우편번호 찾기</v-btn>
-          <v-text-field label="우편번호" v-model="zip" hide-details="auto" style="width: 100px;"></v-text-field>
+          <v-responsive class="mx-auto" max-width="344">
+            <v-text-field label="우편번호" hide-details="auto" v-model="zip" style="width: 200px;" :rules="[zip.required]" clearable></v-text-field>
+          </v-responsive>
+          {{ deliveryStatus }}
           <v-text-field label="주소" v-model="addr1" hide-details="auto" ></v-text-field>
           <v-text-field label="상세주소" v-model="addr2" hide-details="auto" ></v-text-field>
           <v-text-field label="요청사항" v-model="deliveryrequest" hide-details="auto" ></v-text-field>
-          {{ deliveryStatus }}
         </form>
     </v-container>
   </template>
@@ -30,12 +32,14 @@
     data() {
       return {
         isolatedList : [],
-        zip: '',
+        zip : {
+          default : '',
+          required : value => !! value || '필수로 입력하셔야 됩니다',
+        },
         addr1: '',
         addr2: '',
         deliveryrequest: '',
         checkbox : false,
-        isMountainousArea: '',
         deliveryStatus : '' // 배송가능지역유무판별
       }
     },
@@ -43,8 +47,19 @@
       this.getisolatedRegionList();
     },
     computed : {
+      deliveryStatus() {
+          if (this.zip && this.zip.length == 5 && this.isolatedList.length > 0) {
+            let isMountainousArea = this.isolatedList.some(list => {
+              return this.zip >= list.start_code && this.zip <= list.end_postcode;
+            });
+            if (isMountainousArea) {
+              return '배송불가지역입니다 우편번호를 다시 입력해주세요';
+            } else {
+              return '배송가능지역';
+            }
+          } 
+        }
     },
-    
     methods: {
       CheckboxChange() {
         if (this.checkbox == true ) {
@@ -107,17 +122,6 @@
                       })
                       .catch(err => console.log(err));
       },
-      checkDeliveryStatus() {
-      if (this.zip && this.isolatedList.length > 0) {
-        this.isMountainousArea = this.isolatedList.some(list => {
-          return this.zip >= list.start_code && this.zip <= list.end_postcode;
-        });
-        this.deliveryStatus = this.isMountainousArea ? '배송불가지역' : '배송가능지역';
-      } else {
-        this.deliveryStatus = '';
-      }
-    }
-
     }
   }
   </script>
