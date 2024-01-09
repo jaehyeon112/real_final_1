@@ -315,7 +315,7 @@ import icon from '../components/admin/icon.vue';
         inquireList : [],
         orderOne : [],
         counting : '',
-        dialog : false
+        dialog : true
       }
     },
     components : {
