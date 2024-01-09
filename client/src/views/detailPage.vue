@@ -134,14 +134,15 @@
                   </tr>
                   <tr :key="idx" v-for="(review, idx) in reviewList">
                      <!-- <td> {{ review.review_no }}</td> -->
+                     <td> {{ review.review_no }}</td>
                      <td> {{ review.user_id }}</td>
                      <td> {{ review.review_title }}</td>
                      <td> {{ review.review_content }}</td>
                      <td> {{ review.review_grade }}</td>
-                     <td> {{ review.review_writedate }}</td>
-                     {{ review }}
-                     <!-- <td> <v-btn class="ma-2" variant="text" icon="mdi-thumb-up" :color=" likeState1 ? 'blue-lighten-2':'black'" @click="getLikeCount(review.review_no, review.user_id, review.like_cnt)"></v-btn>{{ review.like_cnt }}</td> -->
-                     <td> <v-btn class="ma-2" variant="text" icon="mdi-thumb-down" color="red-lighten-2"></v-btn></td>
+                     <td> {{ $dateFormat(review.review_writedate,'yyyy년 MM월 dd일') }}</td>
+                     <td v-if="review.u=='y'"><v-btn class="ma-2" variant="text" icon="mdi-thumb-up" style="color: red;" @click="upCnt(review.review_no)">좋아요</v-btn>{{ review.like_cnt }}</td>
+                     <td v-else><v-btn class="ma-2" variant="text" icon="mdi-thumb-up" style="color: black;" @click="upCnt(review.review_no)">좋아요</v-btn>{{ review.like_cnt }}</td>
+                     <td> <v-btn class="ma-2" variant="text" icon="mdi-thumb-down" color="red-lighten-2">신고</v-btn></td>
                   </tr>
             </table>
             </div>
@@ -202,6 +203,8 @@ import axios from'axios';
 export default {
     data(){
         return{
+         user : this.$store.state.user.user_id,
+         list : [],
             pno:'',
             cart:{
                cart_no:'',
@@ -235,13 +238,22 @@ export default {
       // this.getLikes();
       // this.getRivewList();
       this.soldout();
-    this.getUserCartInfo()
+      this.getUserCartInfo()
+      //this.getLikes();
+      this.getRivewList();
+      
         
     },
     watch:{
-      
+      reviewList(){
+         
+      }
     },
+
     methods:{
+      cul(i){
+         return this.list[i].u 
+      },
         async getProductInfo(){
             let info = await axios.get(`/api/detailPro/${this.pno}`)
                                     .catch(err=>console.log(err));
@@ -263,68 +275,91 @@ export default {
                this.isShow= true;
             }
          },
-        async getRivewList() { //여기 조인해라
-            let list = await axios.get(`/api/detailReview/${this.pno}`)
-                                  .catch(err=>console.log(err));
+        async getRivewList() {
+            let list = await axios.get(`/api/reviewList/${this.pno}`).catch(err=>console.log(err));
+            for(let i=0;i<list.data.length;i++){
+               let search = await axios.get(`/api/rLikeCnt/${this.user}/${list.data[i].review_no}`).catch(err=>console.log(err));
+               let resu = 'y'
+               if(search.data==''){
+                  resu = 'n'
+               }
+               list.data[i].u=resu;
+            }
             this.reviewList =list.data;
-            console.log
-            console.log(this.reviewList)    
-            console.log(this.likeR)    
         },
-        
-          async getLikeCount(no, writer, cnt){
-            let likestate = await axios.get(`/api/rLikeCnt/${this.$store.state.user.user_id}/${no}`)
-                                       .catch(err=>console.log(err));                 
-            let k=0;
-            console.log("==============================")
-            console.log(no)
-            console.log(writer)
-            console.log(likestate.data)
-            console.log('엄지' +this.likeState)
-            if(likestate.data.length == 1){
-               k=-1
+        async upCnt(rno){
+            let search = await axios.get(`/api/rLikeCnt/${this.user}/${rno}`).catch(err=>console.log(err));
+            if(search.data.length==0){
+               //좋아요 증가
+               let list = await axios.put(`/api/likeUp/${rno}`).catch(err=>console.log(err));
+               let inse = await axios.post(`/api/reviewLike/${rno}/${this.user}`).catch(err=>console.log(err));
+               if(list.data.affectedRows==1&&inse.data.affectedRows==1){
+                  alert('좋아여 추가');
+                  this.getRivewList();
+               }
             }else{
-               k=+1
+               let result3 = await axios.delete(`/api/reviewLike/${rno}/${this.user}`).catch(err=>console.log(err))
+               if(result3.data.affectedRows>0){
+                  alert('좋아요 취소~~');
+                  this.getRivewList();
+               }      
             }
-            let obj ={
-                param: {
-                  like_cnt : cnt + k
-                }
-            }
-            let obj2={
-               param: { 
-                  review_no : no,
-                  user_id : this.$store.state.user.user_id
-               }
-            }
-            console.log(writer+ no + obj)
-            let result = await axios.put(`/api/reviewUpdate/${writer}/${no}`, obj) 
-                                    .catch((err=>console.log(err)))
-                                    console.log('좋아요 수 업데이트'+result.data)
-                                    console.log('현재k'+k)
+        },
+
+        
+      //     async getLikeCount(no, writer, cnt){
+      //       let likestate = await axios.get(`/api/rLikeCnt/${this.$store.state.user.user_id}/${no}`)
+      //                                  .catch(err=>console.log(err));                 
+      //       let k=0;
+      //       console.log("==============================")
+      //       console.log(no)
+      //       console.log(writer)
+      //       console.log(likestate.data)
+      //       console.log('엄지' +this.likeState)
+      //       if(likestate.data.length == 1){
+      //          k=-1
+      //       }else{
+      //          k=+1
+      //       }
+      //       let obj ={
+      //           param: {
+      //             like_cnt : cnt + k
+      //           }
+      //       }
+      //       let obj2={
+      //          param: { 
+      //             review_no : no,
+      //             user_id : this.$store.state.user.user_id
+      //          }
+      //       }
+      //       console.log(writer+ no + obj)
+      //       let result = await axios.put(`/api/reviewUpdate/${writer}/${no}`, obj) 
+      //                               .catch((err=>console.log(err)))
+      //                               console.log('좋아요 수 업데이트'+result.data)
+      //                               console.log('현재k'+k)
 
 
-            if(likestate.data.length == 0){        
-            let result2 = await axios.post(`/api/reviewLike`,obj2)   
-                                    .catch(err=>console.log(err)) 
-                                    console.log('좋아요 한 사람 추가' + result2)
+      //       if(likestate.data.length == 0){        
+      //       let result2 = await axios.post(`/api/reviewLike`,obj2)   
+      //                               .catch(err=>console.log(err)) 
+      //                               console.log('좋아요 한 사람 추가' + result2)
                                     
-                     alert(result2.data)
-               if( result2.data.affectedRows > 0){
-                     alert('좋아요 성공~~');
-                     this.likeState1=true 
+      //                alert(result2.data)
+      //          if( result2.data.affectedRows > 0){
+      //                alert('좋아요 성공~~');
+      //                this.likeState1=true 
                                  
-               }
-            }else{                       
-            let result3 = await axios.delete(`/api/reviewLike/${no}/${this.$store.state.user.user_id}`)         
-                                    .catch(err=>console.log(err))
-                                    console.log('result3'+result3)
-            if(result3.data.affectedRows >0){
-             this.likeState1=false  
-             alert('좋아요 취소~~')
-            }      
-         }                                                            
-      },
+      //          }
+      //       }else{                       
+      //       let result3 = await axios.delete(`/api/reviewLike/${no}/${this.$store.state.user.user_id}`)         
+      //                               .catch(err=>console.log(err))
+      //                               console.log('result3'+result3)
+      //       if(result3.data.affectedRows >0){
+      //        this.likeState1=false  
+      //        alert('좋아요 취소~~')
+      //       }      
+      //    }                                                            
+      // },
 
       async goToCart(no){
       let cartQuantity = 0;
