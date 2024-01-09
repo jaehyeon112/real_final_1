@@ -1,54 +1,54 @@
 let test = {
   //전체 메뉴 리스트 불러오기
   list: `select file_name, p.*, format(avg(review_grade),1) AS 'star' from product p left join order_detail d on p.prod_no = d.prod_no
-  left join review r  on r.detail_order_no = d.order_detail_no left join (select file_name,prod_no from file where orders='s0') f on(p.prod_no = f.prod_no) group by d.prod_no`,
+  left join review r  on r.detail_order_no = d.order_detail_no left join (select file_name,prod_no from file where orders='s0') f on(p.prod_no = f.prod_no) group by p.prod_no`,
   list2: `select file_name, p.*, format(avg(review_grade),1) AS 'star' from product p left join order_detail d on p.prod_no = d.prod_no
-  left join review r  on r.detail_order_no = d.order_detail_no left join (select file_name,prod_no from file where orders='s0') f on(p.prod_no = f.prod_no) group by d.prod_no limit ? , 6`,
+  left join review r  on r.detail_order_no = d.order_detail_no left join (select file_name,prod_no from file where orders='s0') f on(p.prod_no = f.prod_no) group by p.prod_no limit ? , 6`,
   // 헤더의 카테고리에서 카테고리 선택된것들 불러오기
   categoryList: `select  file_name, p.*, format(avg(review_grade),1) AS 'star' from product p left join order_detail d on p.prod_no = d.prod_no
-  left join review r  on r.detail_order_no = d.order_detail_no  left join (select file_name,prod_no from file where orders='s0') f on(p.prod_no = f.prod_no)  where ?? = ? group by d.prod_no limit ? , 6`,
+  left join review r  on r.detail_order_no = d.order_detail_no  left join (select file_name,prod_no from file where orders='s0') f on(p.prod_no = f.prod_no)  where ?? = ? group by p.prod_no limit ? , 6`,
   categoryListPage: `select file_name, p.*, format(avg(review_grade),1) AS 'star' from product p left join order_detail d on p.prod_no = d.prod_no
-  left join review r  on r.detail_order_no = d.order_detail_no  left join (select file_name,prod_no from file where orders='s0') f on(p.prod_no = f.prod_no)   where ?? = ? group by d.prod_no `,
+  left join review r  on r.detail_order_no = d.order_detail_no  left join (select file_name,prod_no from file where orders='s0') f on(p.prod_no = f.prod_no)   where ?? = ? group by p.prod_no `,
   //글자 필터시 검색 후 메뉴 불러오기
   //일단 
   wordFilter: `select file_name, p.*, format(avg(review_grade),1) AS 'star' from product p left join order_detail d on p.prod_no = d.prod_no
-  left join review r  on r.detail_order_no = d.order_detail_no  left join (select file_name,prod_no from file where orders='s0') f on(p.prod_no = f.prod_no)   where  prod_name >= ? and prod_name < ? group by d.prod_no limit ? , 6`,
+  left join review r  on r.detail_order_no = d.order_detail_no  left join (select file_name,prod_no from file where orders='s0') f on(p.prod_no = f.prod_no)   where  prod_name >= ? and prod_name < ? group by p.prod_no limit ? , 6`,
   wordFilterPage: `select file_name,  p.*, format(avg(review_grade),1) AS 'star' from product p left join order_detail d on p.prod_no = d.prod_no
-  left join review r  on r.detail_order_no = d.order_detail_no  left join (select file_name,prod_no from file where orders='s0') f on(p.prod_no = f.prod_no)   where  prod_name >= ? and prod_name < ? group by d.prod_no `,
+  left join review r  on r.detail_order_no = d.order_detail_no  left join (select file_name,prod_no from file where orders='s0') f on(p.prod_no = f.prod_no)   where  prod_name >= ? and prod_name < ? group by p.prod_no `,
   categoryWordFilter: `select  file_name, p.*, format(avg(review_grade),1) AS 'star' from product p left join order_detail d on p.prod_no = d.prod_no
-  left join review r  on r.detail_order_no = d.order_detail_no   left join (select file_name,prod_no from file where orders='s0') f on(p.prod_no = f.prod_no)  where  prod_name >= ? and prod_name < ? and ?? = ? group by d.prod_no limit ? , 6`,
+  left join review r  on r.detail_order_no = d.order_detail_no   left join (select file_name,prod_no from file where orders='s0') f on(p.prod_no = f.prod_no)  where  prod_name >= ? and prod_name < ? and ?? = ? group by p.prod_no limit ? , 6`,
   categoryWordFilterPage: `select file_name, p.*, format(avg(review_grade),1) AS 'star' from product p left join order_detail d on p.prod_no = d.prod_no
-  left join review r  on r.detail_order_no = d.order_detail_no  left join (select file_name,prod_no from file where orders='s0') f on(p.prod_no = f.prod_no)  where  prod_name >= ? and prod_name < ? and ?? = ? group by d.prod_no `,
+  left join review r  on r.detail_order_no = d.order_detail_no  left join (select file_name,prod_no from file where orders='s0') f on(p.prod_no = f.prod_no)  where  prod_name >= ? and prod_name < ? and ?? = ? group by p.prod_no `,
 
   //가격 필터시 검색 후 메뉴 불러오기
   priceFilter: `select file_name, p.*, format(avg(review_grade),1) AS 'star' from product p left join order_detail d on p.prod_no = d.prod_no
-  left join review r  on r.detail_order_no = d.order_detail_no left join (select file_name,prod_no from file where orders='s0') f on(p.prod_no = f.prod_no) where discount_price between ? and ? group by d.prod_no limit ? , 6`,
+  left join review r  on r.detail_order_no = d.order_detail_no left join (select file_name,prod_no from file where orders='s0') f on(p.prod_no = f.prod_no) where discount_price between ? and ? group by p.prod_no limit ? , 6`,
   priceFilterPage: `select file_name, p.*, format(avg(review_grade),1) AS 'star' from product p left join order_detail d on p.prod_no = d.prod_no
-  left join review r  on r.detail_order_no = d.order_detail_no left join (select file_name,prod_no from file where orders='s0') f on(p.prod_no = f.prod_no) where discount_price between ? and ? group by d.prod_no `,
+  left join review r  on r.detail_order_no = d.order_detail_no left join (select file_name,prod_no from file where orders='s0') f on(p.prod_no = f.prod_no) where discount_price between ? and ? group by p.prod_no `,
   categoryPriceFilter: `select file_name, p.*, format(avg(review_grade),1) AS 'star' from product p left join order_detail d on p.prod_no = d.prod_no
-  left join review r  on r.detail_order_no = d.order_detail_no left join (select file_name,prod_no from file where orders='s0') f on(p.prod_no = f.prod_no) where discount_price between ? and ? and ?? = ? group by d.prod_no limit ? , 6`,
+  left join review r  on r.detail_order_no = d.order_detail_no left join (select file_name,prod_no from file where orders='s0') f on(p.prod_no = f.prod_no) where discount_price between ? and ? and ?? = ? group by p.prod_no limit ? , 6`,
   categoryPriceFilterPage: `select file_name,  p.*, format(avg(review_grade),1) AS 'star' from product p left join order_detail d on p.prod_no = d.prod_no
-  left join review r  on r.detail_order_no = d.order_detail_no left join (select file_name,prod_no from file where orders='s0') f on(p.prod_no = f.prod_no) where discount_price between ? and ? and ?? = ? group by d.prod_no`,
+  left join review r  on r.detail_order_no = d.order_detail_no left join (select file_name,prod_no from file where orders='s0') f on(p.prod_no = f.prod_no) where discount_price between ? and ? and ?? = ? group by p.prod_no`,
   //둘다 필터 해서 불러오기.
   bothFilter: `select file_name, p.*, format(avg(review_grade),1) AS 'star' from product p left join order_detail d on p.prod_no = d.prod_no
-  left join review r  on r.detail_order_no = d.order_detail_no left join (select file_name,prod_no from file where orders='s0') f on(p.prod_no = f.prod_no) where prod_name >= ? and prod_name < ? and discount_price between ? and ? group by d.prod_no limit ? , 6`,
+  left join review r  on r.detail_order_no = d.order_detail_no left join (select file_name,prod_no from file where orders='s0') f on(p.prod_no = f.prod_no) where prod_name >= ? and prod_name < ? and discount_price between ? and ? group by p.prod_no limit ? , 6`,
   bothFilterPage: `select file_name, p.*, format(avg(review_grade),1) AS 'star' from product p left join order_detail d on p.prod_no = d.prod_no
-  left join review r  on r.detail_order_no = d.order_detail_no left join (select file_name,prod_no from file where orders='s0') f on(p.prod_no = f.prod_no) where prod_name >= ? and prod_name < ? and discount_price between ? and ? group by d.prod_no`,
+  left join review r  on r.detail_order_no = d.order_detail_no left join (select file_name,prod_no from file where orders='s0') f on(p.prod_no = f.prod_no) where prod_name >= ? and prod_name < ? and discount_price between ? and ? group by p.prod_no`,
   categoryBothFilter: `select file_name, p.*, format(avg(review_grade),1) AS 'star' from product p left join order_detail d on p.prod_no = d.prod_no
-  left join review r  on r.detail_order_no = d.order_detail_no left join (select file_name,prod_no from file where orders='s0') f on(p.prod_no = f.prod_no) where prod_name >= ? and prod_name < ? and discount_price between ? and ? and ?? = ? group by d.prod_no limit ? , 6`,
+  left join review r  on r.detail_order_no = d.order_detail_no left join (select file_name,prod_no from file where orders='s0') f on(p.prod_no = f.prod_no) where prod_name >= ? and prod_name < ? and discount_price between ? and ? and ?? = ? group by p.prod_no limit ? , 6`,
   categoryBothFilterPage: `select file_name, p.*, format(avg(review_grade),1) AS 'star' from product p left join order_detail d on p.prod_no = d.prod_no
-  left join review r  on r.detail_order_no = d.order_detail_no left join (select file_name,prod_no from file where orders='s0') f on(p.prod_no = f.prod_no) where prod_name >= ? and prod_name < ? and discount_price between ? and ? and ?? = ? group by d.prod_no `,
+  left join review r  on r.detail_order_no = d.order_detail_no left join (select file_name,prod_no from file where orders='s0') f on(p.prod_no = f.prod_no) where prod_name >= ? and prod_name < ? and discount_price between ? and ? and ?? = ? group by p.prod_no `,
   // 헤더 검색
   searchHeader: `select file_name, p.*, format(avg(review_grade),1) AS 'star' from product p left join order_detail d on p.prod_no = d.prod_no
-  left join review r  on r.detail_order_no = d.order_detail_no left join (select file_name,prod_no from file where orders='s0') f on(p.prod_no = f.prod_no) where prod_name like concat(concat('%',?),'%') group by d.prod_no limit ?,6`,
+  left join review r  on r.detail_order_no = d.order_detail_no left join (select file_name,prod_no from file where orders='s0') f on(p.prod_no = f.prod_no) where prod_name like concat(concat('%',?),'%') group by p.prod_no limit ?,6`,
   searchHeaderPage: `select file_name, p.*, format(avg(review_grade),1) AS 'star' from product p left join order_detail d on p.prod_no = d.prod_no
-  left join review r  on r.detail_order_no = d.order_detail_no left join (select file_name,prod_no from file where orders='s0') f on(p.prod_no = f.prod_no) where prod_name like concat(concat('%',?),'%') group by d.prod_no`,
+  left join review r  on r.detail_order_no = d.order_detail_no left join (select file_name,prod_no from file where orders='s0') f on(p.prod_no = f.prod_no) where prod_name like concat(concat('%',?),'%') group by p.prod_no`,
 
   //신상품
   newListPage: `select file_name, p.*, format(avg(review_grade),1) AS 'star' from product p left join order_detail d on p.prod_no = d.prod_no
-  left join review r  on r.detail_order_no = d.order_detail_no left join (select file_name,prod_no from file where orders='s0') f on(p.prod_no = f.prod_no) where registration >= DATE_SUB(CURDATE(), INTERVAL 7 DAY) group by d.prod_no ;`,
+  left join review r  on r.detail_order_no = d.order_detail_no left join (select file_name,prod_no from file where orders='s0') f on(p.prod_no = f.prod_no) where registration >= DATE_SUB(CURDATE(), INTERVAL 7 DAY) group by p.prod_no ;`,
   newList: `select file_name, p.*, format(avg(review_grade),1) AS 'star' from product p left join order_detail d on p.prod_no = d.prod_no
-  left join review r  on r.detail_order_no = d.order_detail_no left join (select file_name,prod_no from file where orders='s0') f on(p.prod_no = f.prod_no) where registration >= DATE_SUB(CURDATE(), INTERVAL 7 DAY) group by d.prod_no limit ?,6;`,
+  left join review r  on r.detail_order_no = d.order_detail_no left join (select file_name,prod_no from file where orders='s0') f on(p.prod_no = f.prod_no) where registration >= DATE_SUB(CURDATE(), INTERVAL 7 DAY) group by p.prod_no limit ?,6;`,
 
   //베스트 상품
   bestListPage: `SELECT  file_name,

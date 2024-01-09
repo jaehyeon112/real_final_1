@@ -1107,7 +1107,7 @@ app.get("/show/:col/:category/:no", async (req, res) => {
   let data = [req.params.col];
   if (req.params.category == 'all') {
     let test = `select file_name, p.*, format(avg(review_grade),1) AS 'star' from product p left join order_detail d on p.prod_no = d.prod_no
-    left join review r  on r.detail_order_no = d.order_detail_no left join (select file_name,prod_no from file where orders='s0') f on(p.prod_no = f.prod_no) group by d.prod_no limit ? , 6`
+    left join review r  on r.detail_order_no = d.order_detail_no left join (select file_name,prod_no from file where orders='s0') f on(p.prod_no = f.prod_no) group by p.prod_no limit ? , 6`
     let data = []
     data.push(Number(req.params.no) * 6);
     let result = await mysql.query2(test, data);
@@ -1124,8 +1124,8 @@ app.get("/show/:col/:category/:no", async (req, res) => {
 app.get("/show/:col/:category/", async (req, res) => {
   let data = [req.params.col];
   if (req.params.category == 'all') {
-    let test = `elect file_name, p.*, format(avg(review_grade),1) AS 'star' from product p left join order_detail d on p.prod_no = d.prod_no
-    left join review r  on r.detail_order_no = d.order_detail_no left join (select file_name,prod_no from file where orders='s0') f on(p.prod_no = f.prod_no) group by d.prod_no`
+    let test = `select file_name, p.*, format(avg(review_grade),1) AS 'star' from product p left join order_detail d on p.prod_no = d.prod_no
+    left join review r  on r.detail_order_no = d.order_detail_no left join (select file_name,prod_no from file where orders='s0') f on(p.prod_no = f.prod_no) group by p.prod_no`
     let result = await mysql.query2(test, data);
     res.send(result)
 
@@ -1408,7 +1408,7 @@ app.get("/frozen/:first/:last/:A/:B/:no", async (req, res) => {
     params.push(Number(A), Number(B));
   }
 
-  base += ` group by d.prod_no `
+  base += ` group by p.prod_no `
 
   if (no !== 'X') {
     base += ` LIMIT ?, 6`;
@@ -1424,7 +1424,7 @@ app.get("/searchHeader/:word/:no", async (req, res) => {
   let word = [req.params.word, Number(req.params.no)];
   let list = await mysql.query('test', 'searchHeader', word)
   res.send(list);
-  io.to('ADMIN').emit('alert', 'eksdj~');
+
 })
 
 app.get('/sockettest', async (req, res) => {
@@ -1434,6 +1434,7 @@ app.get('/sockettest', async (req, res) => {
 app.get("/searchHeader/:word", async (req, res) => {
   let data = req.params.word
   let list = await mysql.query('test', 'searchHeaderPage', data)
+  io.to('ADMIN').emit('alert', 'eksdj~');
   res.send(list)
 })
 
@@ -1542,7 +1543,7 @@ left join review r  on r.detail_order_no = d.order_detail_no left join (select f
   if (A != 'X' && B != 'X') {
     base += ` and discount_price between ${A} and ${B} `
   }
-  base += ` group by d.prod_no`
+  base += ` group by p.prod_no`
 
   if (no != 'X') { // 2번째가 X라면 전체페이지, 아니면 6페이지씩
     base += ' limit ' + no * 6 + ', 6';
