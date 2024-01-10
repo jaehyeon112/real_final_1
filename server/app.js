@@ -1448,7 +1448,7 @@ app.delete('/orders/:ono', async (req, res) => {
 
 //추가 배송지 관련
 app.get('/addDelivery', async (req, res) => {
-  let id = [req.session.user_id, req.session.user_id, req.session.user_id, req.session.user_id]
+  let id = [req.session.user_id]
   const list = await mysql.query('delivery', 'deliveryList', id);
   res.send(list);
 })
@@ -1663,9 +1663,9 @@ app.post("/prodLike", async (req, res) => {
 
 
 //문의하기
-app.get("/inquire", async (req, res) => {
-  let id = req.session.user_id;
-  res.send(await mysql.query("inquire", "inquireList", id))
+app.get("/myInquire/:id", async (req, res) => {
+  let id = req.params.id;
+  res.send(await mysql.query("inquire", "myInquireList", id))
 })
 app.get("/inquire/:ino", async (req, res) => {
   let ino = Number(req.params.ino)
