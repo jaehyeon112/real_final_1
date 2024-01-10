@@ -77,13 +77,14 @@ ORDER BY hotItem DESC
 limit ?, 6;
 `,
   // 추가 배송지 
-  adddeliveryList : `select * from add_delivery where user_id =?`,
-  
-  mainReview: `select f.file_name as reviewfile ,f2.file_name as prodfile  , o.prod_no, r.* from review r left join (select * from file where orders='s0') f 
+  adddeliveryList: `select * from add_delivery where user_id =?`,
+
+  mainReview: `select f.file_name as reviewfile ,f2.file_name as prodfile  , p.prod_name, o.prod_no, r.* from review r left join (select * from file where orders='s0') f 
   on (r.review_no = f.review_no) left join order_detail o on r.detail_order_no = o.order_detail_no
   left join (select * from file where orders='s0') f2 on o.prod_no = f2.prod_no
+  left join product p on o.prod_no = p.prod_no 
   where review_grade = 5 and f.file_name is not null ORDER BY RAND()  LIMIT 1;`,
-  
+
   // 장바구니 리스트
   cartList: `select distinct * 
              from cart c, product p, user u, (select file_name, prod_no from file where orders='s0') f
@@ -171,7 +172,7 @@ let user = {
   //회원수정 - id > 마이페이지> 회원가입때 입력한 값 그대로 출력 > 수정
   // 수정하기전에 비번입력해야함
   //putPass: `select user_password from user where user_id = ?`,
-  putPwd : `select * from user where user_id = ? and user_password=?`,
+  putPwd: `select * from user where user_id = ? and user_password=?`,
 
   //id 별 조회
   selectId: `select user_id, user_name, user_password, user_email, user_tel, birth, address, detail_address, postcode 
@@ -387,8 +388,8 @@ let orders = {
   savingCart: `insert into cart set ?`,
   updateCart: `update cart set quantity=quantity+? where prod_no =? and user_id=?;`,
   comparisonCart: `select * from cart where user_id=?`,
-  detailInfo: `  select distinct file_name, p.* from product p left join order_detail d on p.prod_no = d.prod_no
-  left join review r  on r.detail_order_no = d.order_detail_no left join file f on(p.prod_no = f.prod_no) where p.prod_no = ? order by f.orders`,
+  detailInfo: `  select distinct file_name,format(avg(review_grade),1) as star,count(review_grade) as total, p.* from product p left join order_detail d on p.prod_no = d.prod_no
+  left join review r  on r.detail_order_no = d.order_detail_no left join file f on(p.prod_no = f.prod_no) where p.prod_no = ? group by  d.prod_no order by f.orders;`,
 
 
   //detailOrderLists:`select * from order_detail o1 left join orders o2 on o1.order_no = o2.order_no where o1.order_no =? and user_id = ?`,//주문창에서 상세주문내역으로 이동시 불러올 값
@@ -425,27 +426,27 @@ let like = {
   likeDel: `delete from likes where user_id=? and prod_no =?`,
   likeList: `select * from product p right join likes l on p.prod_no = l.prod_no where user_id=?`
 }
-let inquire={
-  inquireList:`select * from inquire where user_id=?`,
-  inquireListP:`select * from inquire i join order_detail o on i.order_detail_no=o.order_detail_no where prod_no=?`,
-  inquireInfo:`select * from inquire where inquire_no=?`,
-  inquireInsert:`insert into inquire set?`,
-  inquireUpdate:`update inquire set? where user_id=? and inquire_no=?`,
-  inquireAnswer:`select * from reply where inquire_no=?`,
-  photoListInq : `select file_name from file where inquire_no = ?`,
-  deleteInquire:`delete from inquire where inquire_no=?`
+let inquire = {
+  inquireList: `select * from inquire where user_id=?`,
+  inquireListP: `select * from inquire i join order_detail o on i.order_detail_no=o.order_detail_no where prod_no=?`,
+  inquireInfo: `select * from inquire where inquire_no=?`,
+  inquireInsert: `insert into inquire set?`,
+  inquireUpdate: `update inquire set? where user_id=? and inquire_no=?`,
+  inquireAnswer: `select * from reply where inquire_no=?`,
+  photoListInq: `select file_name from file where inquire_no = ?`,
+  deleteInquire: `delete from inquire where inquire_no=?`
 }
 let member = {
   memberInfo: `select t1.*, count(case when coupon_able=0 then 1 end) as couponCnt from user t1 join coupon t2  on t1.user_id = t2.user_id where t1.user_id= ?`
 }
 let notice = {
-  noticeList:`select * from notice order by importance`,
-  noticeInfo:`select * from notice where notcie_no=?;`
-  }
-  let fnq = {
-    fnqList:`select * from fnq `,
-    fnqInfo:`select * from fnq where qno=?;`
-  }
+  noticeList: `select * from notice order by importance`,
+  noticeInfo: `select * from notice where notcie_no=?;`
+}
+let fnq = {
+  fnqList: `select * from fnq `,
+  fnqInfo: `select * from fnq where qno=?;`
+}
 
 module.exports = {
   user,

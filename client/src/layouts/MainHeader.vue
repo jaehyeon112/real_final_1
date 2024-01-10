@@ -14,7 +14,7 @@
       
     </ul>
     
-    <div class="container " style="margin-bottom: 20px; margin-left: 450px;">
+    <div class="container justify-content-end" style="margin-bottom: 20px;">
       <div class="row">
         <div class="col-4">
           <router-link

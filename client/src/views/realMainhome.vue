@@ -34,7 +34,7 @@ export default {
   },
   methods: {
     async productList(){
-      let proList = await axios.get("/api/show/" + 0);
+      let proList = await axios.get("/api/mainbest");
       this.list = proList.data;
     }
     

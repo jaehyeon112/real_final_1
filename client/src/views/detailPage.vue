@@ -11,7 +11,11 @@
                </div>
                <div class="col-md-2"></div>
                <div class="col-md-6">
-                  <h1 class="display-5 fw-bolder">{{ productInfo.prod_name }}</h1>
+                  <h1 class="display-5 fw-bolder">{{ productInfo.prod_name }}</h1>                  
+                  <span style="font-size: 40px;" v-for="star in 5" :key="star">
+            <span class="mdi mdi-star" :style="{ color: star <= productInfo.star ? 'coral' : 'grey' }"></span>
+            </span><span style="font-size: 25px; font-weight: 700;">{{ productInfo.star > 0.0 ? productInfo.star : "0.0" }}</span>
+            <span style="color: gray; font-size:25px">{{ " | "+productInfo.total }}</span>
                   <h1 class="display-7 fw-bolder">{{ productInfo.price }}</h1>
                   <div class="fs-5 mb-5">
                      <br>
@@ -40,7 +44,7 @@
                   <br>
                   <br>
                   
-                     <p class="lead">총 가격: {{  totalPrice}}</p>
+                     <p class="lead">총 가격: {{ $wonComma(productInfo.discount_price*counter) + '원'}}</p>
                      <p style="margin-left:20px;margin-bottom:0;color:black">무료배송 (40,000원 이상 구매 시)</p>
                      <br>
                   </div>
@@ -366,13 +370,7 @@ export default {
       this.getInquireList();
         
     },
-    watch:{
-      reviewList(){},
-      totalPrice(){
-       return  this.$wonComma(this.counter*this.productInfo.discount_price)         
-      },
     
-    },
 
     methods:{
       formatText(text) {

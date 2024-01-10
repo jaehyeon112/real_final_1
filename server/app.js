@@ -1923,3 +1923,11 @@ app.get('/reviewreport/:rno', async (req, res) => {
   let data = [req.session.user_id, Number(req.params.rno)]
   res.send(await mysql.query2(query, data))
 })
+
+app.get('/mainbest', async (req, res) => {
+  res.send(await mysql.query2(`select file_name, p.*, format(avg(review_grade),1) AS 'star' from product p 
+  left join order_detail d on p.prod_no = d.prod_no
+  left join review r  on r.detail_order_no = d.order_detail_no 
+  left join (select file_name,prod_no from file where orders='s0') f on(p.prod_no = f.prod_no) 
+  where p.stock > 0 group by p.prod_no order by count(d.prod_no) desc limit 0 , 6;`))
+})

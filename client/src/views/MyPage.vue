@@ -108,7 +108,7 @@ export default{
 }
 </script>
 
-<style scope>
+<style scoped>
 .container{
     margin-left: 200px;
 }
