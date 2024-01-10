@@ -57,7 +57,7 @@
                      </v-row >
                      <v-row align="center" justify="center">
                         <v-col cols="auto">
-                           <v-btn class="btn2" size="x-large" elevation="6" ><span style="font-weight: 700;">바로구매</span></v-btn>                                           
+                           <v-btn class="btn2" size="x-large" elevation="6" ><span style="font-weight: 700;" @click="goToOrderForm(productInfo.prod_no)">바로구매</span></v-btn>                                           
                         </v-col>
                      </v-row>
                   </div>
@@ -359,7 +359,7 @@ export default {
             reviewList:[],
             inquireList:[],
             counter:1,
-            isShow:false,
+            isShow:'',
             likeState1:false,
             sheet:false,
             isSoldOut: false,
@@ -385,6 +385,28 @@ export default {
     
 
     methods:{
+      async goToOrderForm(no){
+         if(this.$store.state.user.user_id == null){
+            alert('로그인 후 구매하세요.')
+            this.$router.push('login')
+            return
+         }
+         await axios.put(`/api/CheckAllUpdate/0}`)
+         let obj = {
+            param : {
+               user_id : this.$store.state.user.user_id,
+               quantity : this.counter,
+               prod_no : no,
+               cart_checkbox: 1
+            }
+         }
+
+         await axios.post(`/api/savingCart`,obj)
+         this.$router.push('orderForm')
+         
+
+      }
+      ,
       formatText(text) {
       const maxLength = 40;
       if (text.length > maxLength) {
@@ -445,14 +467,15 @@ export default {
                                   
         },
         async getLikes(){
-         if(this.$store.state.user.user_id ==null){
+         if(this.$store.state.user.user_id == null){
             return;
          }
-        let list = await axios.get(`/api/prodLike/${this.pno}`)
+         console.log(this.$store.state.user.user_id)
+         console.log('================')
+        let list = await axios.get(`/api/prodLike/${this.$store.state.user.user_id}/${this.pno}`)
                                   .catch(err=>console.log(err));
+            console.log(list)
             this.likeList =list.data
-            console.log(list.data + "?")
-            console.log(this.likeList)
             if(list.data.length == 0 ){
                console.log('찜안한상태'+list.data)
                this.isShow= false;
@@ -494,14 +517,12 @@ export default {
                let inse = await axios.post(`/api/reviewLike/${rno}/${this.user}`).catch(err=>console.log(err));
                console.log(inse.data)
                if(list.data.affectedRows==1&&inse.data.affectedRows==1){
-                  alert('좋아여 추가');
                   this.getRivewList();
                }
             }else{
                let list2 = await axios.put(`/api/likeDown/${rno}`).catch(err=>console.log(err));
                let result3 = await axios.delete(`/api/reviewLike/${rno}/${this.$store.state.user.user_id}`).catch(err=>console.log(err))
                if(list2.data.affectedRows>0&&result3.data.affectedRows>0){
-                  alert('좋아요 취소~~');
                   this.getRivewList();
                }      
             }
@@ -567,7 +588,6 @@ export default {
 
       async goToCart(no){
       let cartQuantity = 0;
-      alert( this.$store.state.cart.length)
       if(this.$store.state.user.user_id == null){ //비회원일때
         for(let i = 0 ; i < this.$store.state.cart.length ; i++){
           if(no == this.$store.state.cart[i].prod_no){
@@ -686,7 +706,7 @@ export default {
             return;
          }
             if(this.isShow == true ){ //찜한상태라는 말
-               let dellike = await axios.delete(`/api//DelprodLike/${this.$store.state.user.user_id}/${this.pno}`)
+               let dellike = await axios.delete(`/api/DelprodLike/${this.$store.state.user.user_id}/${this.pno}`)
                                        .catch(err=>console.log(err));
                   if(dellike.data.affectedRows>0){                        
                      alert('삭제성공')

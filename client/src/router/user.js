@@ -8,7 +8,7 @@ import join from "../views/Join.vue";
 import login from "../views/LoginForm.vue";
 import finding from "../views/Finding.vue";
 import withdrawal from "../views/Withdrawal.vue";
-
+import intro from '@/views/intro.vue';
 import putpass from "../views/PutPassword.vue";
 import message from "../views/Message.vue";
 import changePass from "../views/ChangePass.vue"
@@ -36,7 +36,6 @@ import search from '@/components/menu/search.vue';
 import replyList from '@/components/common/replyList.vue'
 
 
-
 export default {
   path: "/",
   name: "main",
@@ -47,6 +46,11 @@ export default {
       name: "realmain",
       component: realmain,
       bread: '홈'
+    },
+    {
+      path: "intro",
+      name: "intro",
+      component: intro,
     },
     {
       path: "menu/search/:word",
@@ -103,7 +107,7 @@ export default {
       component: login,
     },
     {
-      path: "join",
+      path: "join/:id/:name",
       name: "join",
       component: join
     },
@@ -150,7 +154,7 @@ export default {
         {
           path: "noticeList",
           name: "noticeList",
-          component:noticeList
+          component: noticeList
         },
         {
           path: "qnaInfo", //  

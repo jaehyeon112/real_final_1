@@ -833,7 +833,7 @@ app.put('/delivery/:ono', async (req, res) => {
 });
 
 app.post('/delivery/:ono/:uid/:ono/:save', async (req, res) => {
-  let datas = [req.params.ono,req.params.uid,req.params.ono,Number(req.params.save)];
+  let datas = [req.params.ono, req.params.uid, req.params.ono, Number(req.params.save)];
   let result = await mysql.query("admin", "insertPoint", datas);
   res.send(result);
 });
@@ -857,7 +857,7 @@ app.get('/userInfo/:uid', async (req, res) => {
 });
 
 app.post('/delivery/:ono/:uid/:ono/:save', async (req, res) => {
-  let datas = [req.params.ono,req.params.uid,req.params.ono,Number(req.params.save)];
+  let datas = [req.params.ono, req.params.uid, req.params.ono, Number(req.params.save)];
   let result = await mysql.query("admin", "insertPoint", datas);
   res.send(result);
 });
@@ -951,8 +951,9 @@ app.post("/dologin", async (req, res) => {
 })
 
 //카카오로그인 - 카카오아이디있는지 체크
-app.get("/login/kakao", async (req, res) => {
-  let list = await mysql.query("user", "checkKakao");
+app.get("/login/kakao/:id", async (req, res) => {
+  let id = req.params.id;
+  let list = await mysql.query("user", "checkKakao", id);
   console.log(list);
   res.send(list);
 })
@@ -1258,7 +1259,7 @@ app.get('/Onereview/:rno', async (req, res) => {
 })
 
 app.put('/report/:state/:rno', async (req, res) => {
-  let datas = [req.params.state,req.params.rno];
+  let datas = [req.params.state, req.params.rno];
   let result = await mysql.query("admin", "updateReport", datas);
   res.send(result);
 });
@@ -1288,7 +1289,7 @@ app.get('/refunds/:state', async (req, res) => {
 });
 
 app.put('/refund/:state/:date/:ono', async (req, res) => {
-  let datas = [req.params.state,req.params.date,req.params.ono];
+  let datas = [req.params.state, req.params.date, req.params.ono];
   let result = await mysql.query("admin", "updateRefund", datas);
   res.send(result);
 });
@@ -1425,7 +1426,10 @@ app.get("/member/:id", async (req, res) => {
 
   res.send(memberInfo);
 })
-
+app.get("/userGrade", async (req, res) => {
+  let grade = (await mysql.query("member", "memberState"))
+  res.send(grade)
+})
 // //다음달 소멸 포인트
 // app.get("/nextMonthPoint/:id", async(req,res)=>{
 //   let id = req.params.id;
@@ -1699,10 +1703,14 @@ app.delete("/DelprodLike/:id/:pno", async (req, res) => {
   console.log(datas);
   res.send(await mysql.query("like", "likeDel", datas))
 });
-app.get("/prodLike/:pno", async (req, res) => {
-  let datas = [req.session.user_id, req.params.pno]
-  res.send(await mysql.query("like", "likeInfo", datas))[0]
+
+app.get("/prodLike/:id/:pno", async (req, res) => {
+  let datas = [req.params.id, Number(req.params.pno)]
+  console.log(datas)
+  let aa = await mysql.query("like", "likeInfo", datas)
+  res.send(aa)
 });
+
 app.get("/prodLikes", async (req, res) => {
   let id = req.session.user_id
   res.send(await mysql.query("like", "likeList", id))

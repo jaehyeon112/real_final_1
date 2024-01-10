@@ -4,7 +4,7 @@
         <ssidebar class="sidebar"/>
     <h1>고객센터</h1>
     <router-view :key="$route.fullPath" />
-    </main>
+</main>
 </div>
 </template>
 <script>

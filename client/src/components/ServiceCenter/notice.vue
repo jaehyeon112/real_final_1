@@ -38,10 +38,9 @@ export default {
     },
     created(){
         this.getNoticeList();
+
     },
-    watch(){
-        
-    },
+    
     methods : {
         async getNoticeList(){
             this.inquireList = (await axios.get('/api/notice')

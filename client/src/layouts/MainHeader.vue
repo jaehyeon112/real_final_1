@@ -32,7 +32,7 @@
   <span class="text-end" @click="moveCartList">
     <!-- 장바구니 갯수 조절해야함 -->
     <v-badge color="error" :content='$store.state.user.user_id == null ? $store.state.cartCount : $store.state.loginCartCount'>
-            <span class="mdi mdi-cart-minus" style="font-size: 30px"></span>
+            <span class="mdi mdi-cart-minus" style="font-size: 30px; cursor: pointer; "></span>
           </v-badge>
         </span>
       </div>
@@ -61,7 +61,7 @@
       
     </div>
     <div class="col">
-      <router-link class="nav-custom" to="/">소개</router-link>
+      <router-link class="nav-custom" to="/intro">소개</router-link>
     </div>
     <div class="col">
       <router-link class="nav-custom" to="/menu/new">신제품</router-link>
@@ -76,7 +76,7 @@
         <router-link class="nav-custom" to="/menu/frozen">냉동밀키트</router-link>
       </div>
       <div class="col">
-        <router-link class="nav-link" to="/myPage/myOrderList">마이페이지</router-link>
+        <router-link class="nav-link" to="/myPage">마이페이지</router-link>
       </div>
       <div class="col"></div>
     </div>
