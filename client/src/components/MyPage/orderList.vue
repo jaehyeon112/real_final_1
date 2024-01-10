@@ -11,7 +11,7 @@
               <hr>
               <img :src=" `/api/test/`+order.file_name " alt="상품이미지">
               <dl>주문번호: {{ order.order_no }}</dl>
-              <dl>상품명: {{ order.prod_name_list}}</dl>
+              <dl>상품명: {{ order.prod_name_list }}</dl>
               <dl>총 가격: {{ order.total_payment }}</dl>
               <dl>실 결제 가격: {{ order.real_payment }}</dl>
               <dl>배송비: {{ order.delivery_charge }}</dl>
@@ -127,6 +127,7 @@ export default {
         
         alert('취소신청 됬습니다.');
         this.refundInsert(orderno);
+        this.orderUpdate(orderno);
 
     }
 
@@ -137,14 +138,21 @@ export default {
 
         this.day = date
     },
+    async orderUpdate(orderno){ //상품 주문 취소되었을때 주문상태 변경
+
+      await axios.put(`/api/orderUpdate/${orderno}`)
+      .catch(err => console.log(err));
+
+      for(let i=0;i<this.orderList.length;i++){  // 
+      this.orderList[i].order_status = "c4"; // vue 에서도 c4 상태업데이트 해준다!
+      }
+
+      },
     async refundInsert(orderno){ // 주문취소되었을때 환불/취소되었을때 테이블등록
 
       for(let i=0;i<this.orderList.length;i++){  // 
         this.point = this.orderList[i].point_use;
       }
-      console.log(orderno,'확인')
-      console.log(this.point,'확인')
-      debugger;
 
         await axios.get(`/api/couponUseList/${orderno}`, {
             })
