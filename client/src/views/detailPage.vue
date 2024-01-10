@@ -350,7 +350,8 @@ export default {
       isStock: false,
       cartList : [],
       inquireList:[]
-      ,Img : []
+      ,Img : [],
+      totalPrice: 0,
         }
     },
     created(){ 
@@ -369,7 +370,8 @@ export default {
       reviewList(){},
       totalPrice(){
        return  this.$wonComma(this.counter*this.productInfo.discount_price)         
-      }
+      },
+    
     },
 
     methods:{
@@ -419,6 +421,7 @@ export default {
             console.log('=======================')
             console.log(info.data[0])
             this.productInfo.price=this.$wonComma(this.productInfo.price)
+            this.calculateTotalPrice()
 
             this.Img = info.data
             this.Img.shift();
@@ -615,12 +618,14 @@ export default {
         this.isStock=true;
       }
     },
-
+    calculateTotalPrice() {
+       this.totalPrice = this.counter * this.productInfo.price;
+  },
   
  
       decreaseQuantity() {
-      if (this.quantity > 1) {
-        this.quantity--;
+      if (this.counter > 1) {
+        this.counter--;
       }
     },
 

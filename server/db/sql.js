@@ -170,7 +170,8 @@ let user = {
 
   //회원수정 - id > 마이페이지> 회원가입때 입력한 값 그대로 출력 > 수정
   // 수정하기전에 비번입력해야함
-  putPass: `select user_password from user where user_id = ?`,
+  //putPass: `select user_password from user where user_id = ?`,
+  putPwd : `select * from user where user_id = ? and user_password=?`,
 
   //id 별 조회
   selectId: `select user_id, user_name, user_password, user_email, user_tel, birth, address, detail_address, postcode 
@@ -222,20 +223,22 @@ let admin = {
   from orders where order_status = 'c1';`,
   //회원관리
   AlluserList: `select user_id,user_name,user_email,user_tel,join_date,user_grade from user where not user_grade in('i4','i5')`,
-  userList: `select user_id,user_name,user_email,user_tel,join_date,user_grade from user where not user_grade in('i4','i5') order by ?? desc limit ?,?`,
+  userList: `select user_id,user_name,user_email,user_tel,join_date,user_grade from user where not user_grade in('i4','i5') order by ?? desc limit ?,10`,
   AllsearchUser: `select user_id,user_name,user_email,user_tel,join_date,user_grade from user
-  where user_id like concat(concat('%',?),'%') or user_name like concat(concat('%',?),'%')`,
+  where not user_grade in('i4','i5') and user_id like concat(concat('%',?),'%') or user_name like concat(concat('%',?),'%')`,
   searchUser: `select user_id,user_name,user_email,user_tel,join_date,user_grade from user
-  where user_id like concat(concat('%',?),'%') or user_name like concat(concat('%',?),'%') order by ?? limit ?,?`,
-  filterUser: `select user_id,user_name,user_email,user_tel,join_date,user_grade from user where join_date like concat(concat('%',?),'%') order by ?? limit ?,?`,
-  AllfilterUser: `select user_id,user_name,user_email,user_tel,join_date,user_grade from user where join_date like concat(concat('%',?),'%')`,
+  where not user_grade in('i4','i5') and user_id like concat(concat('%',?),'%') or user_name like concat(concat('%',?),'%') order by ?? limit ?,10`,
+  filterUser: `select user_id,user_name,user_email,user_tel,join_date,user_grade from user where not user_grade in('i4','i5') and 
+  user_grade = ? order by ?? limit ?,10`,
+  AllfilterUser: `select user_id,user_name,user_email,user_tel,join_date,user_grade from user where not user_grade in('i4','i5') and 
+  user_grade = ?`,
   stopUser: `update user set user_grade = ? where user_id = ?`,
   outList: `select * from withdrawal_user where user_id != ''`,
   //상품관리
   AllprodList: `select prod_no,prod_name,price,discount_price,discount_rate,stock,main_category from product`,
-  prodList: `select prod_no,prod_name,price,discount_price,discount_rate,stock,main_category,registration from product order by ?? limit ?,?`,
-  pricehigh: `select prod_no,prod_name,price,discount_price,discount_rate,stock,main_category from product order by discount_price desc limit ?,?`,
-  searchProd: `select prod_no,prod_name,price,discount_price,discount_rate,stock,main_category from product where prod_name like concat(concat('%',?),'%') or main_category = ? order by ?? limit ?,?`,
+  prodList: `select prod_no,prod_name,price,discount_price,discount_rate,stock,main_category,registration from product order by ?? limit ?,10`,
+  pricehigh: `select prod_no,prod_name,price,discount_price,discount_rate,stock,main_category from product order by discount_price desc limit ?,10`,
+  searchProd: `select prod_no,prod_name,price,discount_price,discount_rate,stock,main_category from product where prod_name like concat(concat('%',?),'%') or main_category = ? order by ?? limit ?,10`,
   AllsearchProd: `select prod_no,prod_name,price,discount_price,discount_rate,stock,main_category from product where prod_name like concat(concat('%',?),'%') or main_category = ?`,
   productMod: `update product set ? where prod_no = ?`,
   prodInfo: `select prod_no,prod_name,price,discount_price,discount_rate,stock,cooking_time,allergy,main_category,sub_category,refrigeration from product where prod_no = ?`,
@@ -243,55 +246,60 @@ let admin = {
   prodDelete: `update product set soldout=1 where prod_no=?`,
   //주문관리
   AllOrderList: `select * from orders order by order_status`,
-  orderList: `select *,(select user_tel from user where user_id = orders.user_id) as phone from orders order by order_date desc limit ?,?`,
+  orderList: `select *,(select user_tel from user where user_id = orders.user_id) as phone from orders order by order_date desc limit ?,10`,
   AllorderDate: `select * from orders where order_date between ? and ? order by order_date desc`,
-  orderDate: `select * from orders where order_date between ? and ? order by order_date desc limit ?,?`,
+  orderDate: `select * from orders where order_date between ? and ? order by order_date desc limit ?,10`,
   AllorderStatus: `select * from orders where order_status = ? order by order_date desc`,
-  orderStatus: `select * from orders where order_status = ? order by order_date desc limit ?,?`,
+  orderStatus: `select * from orders where order_status = ? order by order_date desc limit ?,10`,
   updateOrder: `update orders set order_status = ? where order_no= ?`,
   oneOrder: `select * from orders where order_no = ?`,
   insertDelivery: `insert into delivery set order_no=(select order_no from orders where order_no=?),tracking_no = ?,
   user_id=(select user_id from orders where order_no=?),delivery_request=(select delivery_request from orders where order_no=?),released_date=current_date(),delivery_status='d4'`,
   //배송관리
   AlldeliveryList: `select * from delivery`,
-  deliveryList: `select * from delivery limit ?,?`,
+  deliveryList: `select * from delivery limit ?,10`,
   AllDatedeliveryList: `select * from delivery where released_date between ? and ?`,
-  DatedeliveryList: `select * from delivery where released_date between ? and ? limit ?,?`,
+  DatedeliveryList: `select * from delivery where released_date between ? and ? limit ?,10`,
   AllStatedeliveryList: `select * from delivery where delivery_status = ?`,
-  StatedeliveryList: `select * from delivery where delivery_status = ? limit ?,?`,
-  //리뷰
+  StatedeliveryList: `select * from delivery where delivery_status = ? limit ?,10`,
+  //리뷰-리뷰신고
   AllreviewReportList: `select *,(select report_cnt from review where review_no=review_report.review_no) as cnt from review_report order by report_date desc`,
-  reviewReportList: `select *,(select report_cnt from review where review_no=review_report.review_no) as cnt from review_report order by report_date desc limit ?,?`,
+  reviewReportList: `select *,(select report_cnt from review where review_no=review_report.review_no) as cnt from review_report order by report_date desc limit ?,10`,
+  AllreasonReportList: `select *,(select report_cnt from review where review_no=review_report.review_no) as cnt from review_report 
+  where report_status=? order by report_date desc`,
   reasonReportList: `select *,(select report_cnt from review where review_no=review_report.review_no) as cnt from review_report 
-  where report_status=? order by report_date desc  limit ?,?`,
+  where report_status=? order by report_date desc  limit ?,10`,
   reviewList2: `select prod_name,order_detail_no,user_id,review_title,review_content,review_writedate,review_grade,like_cnt from order_detail o,product p,review r 
   where o.prod_no=p.prod_no and o.order_detail_no=r.detail_order_no order by ?? desc`,
-  //문의사항,공지사항,자주하는질문
+  //문의사항
   AllinquireList: `select * from inquire order by answer_state,create_date desc`,
-  inquireList: `select * from inquire order by answer_state,create_date desc limit ?,?`,
-  StateinquireList: ` select * from inquire where (inquire_category= ? or answer_state=?) or (inquire_category= ? and answer_state=?) order by create_date desc limit ?,?`,
+  inquireList: `select * from inquire order by answer_state,create_date desc limit ?,10`,
+  AllStateinquireList: ` select * from inquire where (inquire_category= ? or answer_state=?) or (inquire_category= ? and answer_state=?) order by create_date desc`,
+  StateinquireList: ` select * from inquire where (inquire_category= ? or answer_state=?) or (inquire_category= ? and answer_state=?) order by create_date desc limit ?,10`,
   inquireInfo: `select * from inquire where inquire_no = ?`,
+  insertReply: `insert into reply set ?`,
+  replyInfo: `select * from reply where inquire_no = ?`,
+  updateInquire: `update inquire set answer_state = 1 where inquire_no = ?`,
+  //공지사항
   noticeList: `select * from notice order by ? limit ?,?`,
   AllnoticeList: `select * from notice order by notice_no`,
   Onenotice: `select * from notice where notice_no = ?`,
   OnenoticeUpdate: `update notice set ? where notice_no = ?`,
   StateNoticeList: `select * from notice where importance in(?,?) order by ?? desc limit ?,?`,
   insertNotice: `insert into notice set ?`,
+  //자주하는질문
   FNQList: `select * from fnq where ?? = ?`,
   insertFNQ: `insert into fnq set ?`,
   updateFNQ: `update fnq set ? where qno = ?`,
   delFNQ: `delete from fnq where qno = ?`,
-  insertReply: `insert into reply set ?`,
-  replyInfo: `select * from reply where inquire_no = ?`,
-  updateInquire: `update inquire set answer_state = 1 where inquire_no = ?`,
   //주문취소
   refundOrder: `update orders set order_status = 'c4' where order_no = ?`,
   adminRefund: `insert into refund_cancel set order_no=?,user_id=(select user_id from orders where order_no=refund_cancel.order_no),
-  return_point=(select point_use from orders where order_no=refund_cancel.order_no),cancel_status='o2',cancel_request=current_date()`,
+  return_point=(select point_use from orders where order_no=refund_cancel.order_no),cancel_status='o2',cancel_request=current_date(),cancel_date=current_date()`,
   AllrefundOrderList: `select * from refund_cancel order by cancel_request desc`,
-  refundOrderList: `select * from refund_cancel order by cancel_request desc limit ?,?`,
-  updateRefund: `update refund_cancel set cancel_status = ? where order_no= ?`,
-  refundState: `select * from refund_cancel where cancel_status = ? order by cancel_request desc limit ?,?`,
+  refundOrderList: `select * from refund_cancel order by cancel_request desc limit ?,10`,
+  updateRefund: `update refund_cancel set cancel_status = ?, cancel_date = curdate() where order_no= ?`,
+  refundState: `select * from refund_cancel where cancel_status = ? order by cancel_request desc limit ?,10`,
   //첨부파일
   insertFile: `insert into file set ?`,
   photoList: `select file_name,types from file where ?? = ?`,

@@ -1,6 +1,6 @@
 <template>
   <v-sheet width="300" class="mx-auto">
-  <v-form fast-fail @submit.prevent>
+  <v-form class="custom-form" fast-fail @submit.prevent>
    
     <v-row>
 
@@ -8,8 +8,8 @@
 
       <v-col cols="12">
         <div class="field">
-          <label for="oldPass">변경할 비밀번호 :</label>
-          <v-text-field v-model="oldPass" label="oldPass" :rules="firstNameRules"></v-text-field>
+          <label for="oldPass">변경 비밀번호 :</label>
+          <v-text-field v-model="oldPass" label="new pass" :rules="firstNameRules"></v-text-field>
         <div v-if="!passwordValidFlag"  style="color: red;">
             유효하지 않은 비밀번호 입니다. </div>
         </div>
@@ -17,8 +17,8 @@
 
       <v-col cols="12">
         <div class="field">
-          <label for="newPass">변경비밀번호 확인 :</label>
-          <v-text-field v-model="newPass" label="newPass" :rules="lastNameRules"></v-text-field>
+          <label for="newPass"> 변경비밀번호 확인:</label>
+          <v-text-field v-model="newPass" label="new pass check" :rules="lastNameRules"></v-text-field>
             <div v-if="!passwordCheckFlag"  style="color: red;">
               비밀번호가 동일하지 않습니다.
             </div>
@@ -27,7 +27,7 @@
 
 
       <v-col cols="12">
-        <v-btn type="button" block class="mt-2" @click="changePass()">Submit</v-btn>
+        <v-btn type="button" block class="mt-2 submit-button" @click="changePass()" color="orange" >Submit</v-btn>
       </v-col>
 
     </v-row>
@@ -50,7 +50,7 @@ import axios from 'axios'
         firstNameRules: [
                             value => {
                              if (value?.length > 1) return true
-                             return '이전 비밀번호를 입력해주세요'
+                             return '비밀번호를 입력해주세요'
                             
                             },
                         ],
@@ -60,7 +60,7 @@ import axios from 'axios'
                             value => {
                             if (/[^0-9]/.test(value)) return true
 
-                            return '새로운 비밀번호를 입력해주세요'
+                            return '동일하게 입력해주세요'
                             },
                         ],
 
@@ -109,7 +109,22 @@ async changePass(){
 
 
 <style scoped>
+.custom-form {
+  width: 550px;
+  height : auto;
+  margin-top: 20px;
+   margin-bottom : 20px;
+  padding: 20px;
+  border: 1px  #000000;
+  border-radius: 5px;
+   box-shadow: 0 5px 10px rgba(1, 1, 1, 0.1);
+}
+.submit-button {
+ width: 30%;
+  font-size: 14px; /* Adjust font size */
 
+  border-radius: 10px; /* Add some border-radius for a slightly rounded corner */
+}
 .label-margin {
   margin-right: 20px;  
 }

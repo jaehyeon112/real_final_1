@@ -1,22 +1,24 @@
 <template>
+<v-app dark>
 <div class="container">
-  <h2>탈퇴 사유를 알려주세요.</h2>
-  <v-container fluid>
-    <p>Selected Button: {{ radios }}</p>
+  <h2 class="font-weight-bold" >❝ 탈퇴 사유를 알려주세요 ❞</h2>
+  
+  <v-container class="box" fluid>
+    <!-- <p>Selected Button: {{ radios }}</p> -->
     <v-radio-group v-model="radios">
-      <v-radio label="사고싶은 제품이 없어서" value="r1" >  </v-radio>
-      <v-radio label="더 좋은 site를 발견해서" value="r2" ></v-radio>
-      <v-radio label="가격이 너무 비싸서" value="r3" ></v-radio>
-      <v-radio label="기타 (사유를 입력해주세요.)" value="r4" ></v-radio>
+      <v-radio label="1. 마음에 드는 제품이 없음" value="w1" > </v-radio>
+      <v-radio label="2. 타사이트 이용 " value="w2" ></v-radio>
+      <v-radio label="3. 저렴하지 않은 가격" value="w3" ></v-radio>
+      <v-radio label="기타 (사유를 입력해주세요.)" value="w4" ></v-radio>
     </v-radio-group>
     <v-textarea
-      v-if="this.radios === 'r4'"
+      v-if="this.radios === 'w4'"
       label="기타 사유 작성해주세요."
       v-model="textarea"
     ></v-textarea>
 
     <v-checkbox
-      label="탈퇴동의합니다." 
+      label="(동의)탈퇴하겠습니다." 
       v-model="checkbox"
       
     ></v-checkbox>
@@ -25,12 +27,15 @@
    <v-container>
     <v-row justify="center">
       <v-col cols="auto">
-        <v-btn
+        <router-link to="/main">
+        <v-btn 
           height="50"
           min-width="80"
+          color="orange"
         >
           홈으로
         </v-btn>
+        </router-link>
       </v-col>
 
       <v-col cols="auto">
@@ -49,6 +54,7 @@
   </div>
   </v-container>
   </div>
+    </v-app>
 </template>
 
 
@@ -87,9 +93,9 @@ export default {
       },
     };
 
-    if (this.radios === 'r1' || this.radios === 'r2' || this.radios === 'r3') {
+    if (this.radios === 'w1' || this.radios === 'w2' || this.radios === 'w3') {
       data.param.withdrawal_reason = this.radios;
-    } else if (this.radios === 'r4') {
+    } else if (this.radios === 'w4') {
       data.param.withdrawal_reason = this.radios;
 
       if (!this.textarea.trim()) {
@@ -123,3 +129,19 @@ export default {
 },
 };
 </script>
+
+<style scoped>
+.container{
+  width: 550px;
+  height : auto;
+  margin: 50px auto;
+  padding: 20px;
+  /* border: 1px solid #000000; */
+  border-radius: 5px;
+  box-shadow: 0 2px 10px rgba(88, 88, 88, 0.705);
+}
+.theme--dark.v-label,
+.theme--dark.v-checkbox {
+  color: #000000;
+}
+</style>
