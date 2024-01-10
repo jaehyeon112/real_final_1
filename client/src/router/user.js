@@ -107,7 +107,7 @@ export default {
       component: login,
     },
     {
-      path: "join",
+      path: "join/:id/:name",
       name: "join",
       component: join
     },
