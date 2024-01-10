@@ -2,7 +2,7 @@
     <div class="container-fluid" style:width="50px">
     <div class="row">
         <side/>
-    <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+    <main class="col-md-9 col-lg-10 px-md-4">
         <br>
         <h4 style="text-align: center;">==자주하는 질문 목록==</h4>
         <v-btn style="float: right;color: red;" @click="this.modalCheck=true">등록하기</v-btn>
@@ -273,4 +273,8 @@ import side from '../components/admin/SideBar.vue';
   v-btn{
     border-radius: 10px;
   }
+  .col-md-9 {
+  margin: 0 auto;
+  padding: 10px;
+}
 </style>

@@ -19,7 +19,7 @@ data() {
         labels: [],
         datasets: [
             {
-            label: '최근 3개월 매출액',
+            label: '탈퇴 사유',
             //backgroundColor: '#f87979',
             data: [],
             maxBarThickness: 100,   //바 넓이 최대크기 지정
