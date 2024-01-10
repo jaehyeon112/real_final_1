@@ -170,7 +170,8 @@ let user = {
 
   //회원수정 - id > 마이페이지> 회원가입때 입력한 값 그대로 출력 > 수정
   // 수정하기전에 비번입력해야함
-  putPass: `select user_password from user where user_id = ?`,
+  //putPass: `select user_password from user where user_id = ?`,
+  putPwd : `select * from user where user_id = ? and user_password=?`,
 
   //id 별 조회
   selectId: `select user_id, user_name, user_password, user_email, user_tel, birth, address, detail_address, postcode 
