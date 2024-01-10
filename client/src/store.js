@@ -41,7 +41,7 @@ const store = createStore({
 
     kakaoLogin(state, id) {
 
-       let a = id;
+      let a = id;
       // state.user = {};
       state.user.user_id = a;
       state.user.user_name = state.user.user_id
@@ -51,7 +51,7 @@ const store = createStore({
       state.user.user_name = state.kakaoId
     },
 
-    kakaoLogout(state){
+    kakaoLogout(state) {
       state.kakaoId = ''
     },
     // kakaoLogout(state) {

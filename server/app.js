@@ -707,6 +707,7 @@ app.post("/dologin", async (req, res) => {
   } else {
     // 로그인 실패 응답 전송
     res.send({
+
       user: list
     });
   }
@@ -720,7 +721,7 @@ app.get("/login/kakao", async (req, res) => {
 })
 
 //putPass
-app.get("/putpass/:id", async(req, res)=> {
+app.get("/putpass/:id", async (req, res) => {
   let uid = req.params.id;
   let pass = await mysql.query("user", "putPass", uid);
   console.log(pass);
@@ -729,9 +730,9 @@ app.get("/putpass/:id", async(req, res)=> {
 })
 
 //changePass
-app.put("/changepass/:password/:id", async(req, res)=> {
+app.put("/changepass/:password/:id", async (req, res) => {
   let data = [req.params.password, req.params.id]
-  let result = await mysql.query('user','changePass', data);
+  let result = await mysql.query('user', 'changePass', data);
   res.send(result);
   console.log(result);
 
@@ -1016,7 +1017,7 @@ app.get('/order', async (req, res) => {
 
 app.get('/review/:order', async (req, res) => {
   let data = req.params.order;
-  let result = await mysql.query("admin", "reviewList", data);
+  let result = await mysql.query("admin", "reviewList2", data);
   res.send(result);
 });
 
@@ -1231,7 +1232,7 @@ app.get("/new", async (req, res) => {
 app.get("/member/:id", async (req, res) => {
   let id = req.params.id;
   let memberInfo = (await mysql.query("member", "memberInfo", id))[0]; // 데이터 타입 :  객체  
-  let pointInfo = (await mysql.query("point", "showNextMonth",id))[0]; // 데이터 타입 : 숫자
+  let pointInfo = (await mysql.query("point", "showNextMonth", id))[0]; // 데이터 타입 : 숫자
   memberInfo.showNextMonth = pointInfo;
 
   res.send(memberInfo);
@@ -1313,7 +1314,7 @@ app.delete('/orders/:ono', async (req, res) => {
 
 //추가 배송지 관련
 app.get('/addDelivery', async (req, res) => {
-  let id = [req.session.user_id,req.session.user_id,req.session.user_id,req.session.user_id]
+  let id = [req.session.user_id, req.session.user_id, req.session.user_id, req.session.user_id]
   const list = await mysql.query('delivery', 'deliveryList', id);
   res.send(list);
 })
@@ -1478,14 +1479,14 @@ app.delete("/deleteReview/:rno", async (req, res) => {
     res.send(result);
   }),
   app.get("/rLikeCnt/:user/:rno", async (req, res) => {
-    let datas = [req.params.user,req.params.rno]
+    let datas = [req.params.user, req.params.rno]
     let result = await mysql.query("reviews", "selectReviewLike", datas)
     res.send(result);
     console.log(result)
   })
 
 app.post("/reviewLike/:rno/:uid", async (req, res) => {
-  let data = [req.params.rno,req.params.uid]
+  let data = [Number(req.params.rno), req.params.uid]
   res.send(await mysql.query("reviews", "insertReviewLike", data))
 });
 
@@ -1757,3 +1758,8 @@ app.get('/sessiontest', (req, res) => {
   console.log(grade)
   console.log('=!=')
 })
+
+app.get('/mainreview',
+  async (req, res) => {
+    res.send(await mysql.query('test', 'mainReview'))
+  })
