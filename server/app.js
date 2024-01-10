@@ -1657,8 +1657,8 @@ app.post("/prodLike", async (req, res) => {
 
 
 //문의하기
-app.get("/inquire", async (req, res) => {
-  let id = req.session.user_id;
+app.get("/inquire/:id", async (req, res) => {
+  let id = req.params.id;
   res.send(await mysql.query("inquire", "inquireList", id))
 })
 app.get("/inquire/:ino", async (req, res) => {

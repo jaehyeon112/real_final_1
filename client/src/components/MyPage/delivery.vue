@@ -25,16 +25,18 @@
         <v-card-text>
           <v-container>
             <v-row>
-                <label>
-                    <p>배송지 이름</p>
-                    <input type="text"  style="background-color:#FFB300 ;" v-model="delivery.delivery_name" >
-                    </label>
-                    <v-input type="text"  placeholder="우편번호" style="background-color:#FFB300" v-model="delivery.delivery_postcode" />
-                    <v-btn @click="search()">우편번호 찾기</v-btn><br>
-                    <v-input type="text"  id="roadAddress" placeholder="도로명주소" style="background-color:#FFB300" v-model="delivery.delivery_address"/>
-                    <span id="guide" style="color:#000;display:none"></span>
-                    <v-input type="text" id="detailAddress" placeholder="상세주소" style="background-color:#FFB300" v-model="delivery.delivery_detail_address"/>
-                    <!-- <v-btn  @click="isUpdated? UpdateDelivery() :InsertDelivery()">저장</v-btn> -->
+                
+                    <div><p>배송지 이름</p></div>
+                    <v-text-field  variant="outlined" style="background-color:antiquewhite ;" v-model="delivery.delivery_name" ></v-text-field>
+                
+                    <div><v-btn @click="search()">우편번호 찾기</v-btn></div>
+                    <hr>
+                    <v-text-field  variant="outlined" placeholder="우편번호" style="background-color:antiquewhite " v-model="delivery.delivery_postcode" />
+                    
+                    <v-text-field  variant="outlined" id="roadAddress" placeholder="도로명주소" style="background-color:antiquewhite " v-model="delivery.delivery_address"/>
+                    <!-- <span id="guide" style="color:#000;display:none"></span> -->
+                    <v-text-field variant="outlined" id="detailAddress" placeholder="상세주소" style="background-color:antiquewhite " v-model="delivery.delivery_detail_address"/>
+                    
             </v-row>
           </v-container>
       
@@ -46,14 +48,14 @@
             variant="text"
             @click="dialog = false"
           >
-            Close
+            닫기
           </v-btn>
           <v-btn
             color="blue-darken-1"
             variant="text"
             @click="dialog = false, InsertDelivery()"
           >
-            Save
+            배송지 저장
           </v-btn>
         </v-card-actions>
       </v-card>

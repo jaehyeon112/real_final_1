@@ -52,7 +52,7 @@ export default {
     },
     methods : {
         async getInquireList(){
-            this.inquireList = (await axios.get('/api/inquire')
+            this.inquireList = (await axios.get(`/api/inquire/${this.$store.state.user.user_id}`)
                                    .catch(err => console.log(err))).data;
                                    console.log(this.inquireList)
         },
