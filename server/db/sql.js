@@ -170,7 +170,7 @@ let user = {
   forLogin: `select * from user where user_id = ? and user_password = ?`,
 
   //로그인- 카카오아이디 있는지 체크
-  checkKakao: `select user_id from user where user_id like '%3244970366%'`,
+  checkKakao: `select user_id from user where user_id = ?`,
 
   //회원수정 - id > 마이페이지> 회원가입때 입력한 값 그대로 출력 > 수정
   // 수정하기전에 비번입력해야함
@@ -238,7 +238,7 @@ let admin = {
   user_grade = ?`,
   stopUser: `update user set user_grade = ? where user_id = ?`,
   outList: `select * from withdrawal_user where user_id != ''`,
-  userInfo : `select user_grade from user where user_id = ?`,
+  userInfo: `select user_grade from user where user_id = ?`,
   //상품관리
   AllprodList: `select prod_no,prod_name,price,discount_price,discount_rate,stock,main_category,soldout from product`,
   prodList: `select prod_no,prod_name,price,discount_price,discount_rate,stock,main_category,registration,soldout from product order by ?? limit ?,10`,
@@ -270,15 +270,15 @@ let admin = {
   updateDelivery: `update delivery set delivery_status = 'd5' where order_no = ?`,
   insertPoint: `insert into point set order_no=?,user_id=?,point_history='p3',
   point_save=(select real_payment from orders where order_no = ?)*(?/100),end_point_date = date_add(current_date(), interval 1 Year)`,
-  updatePoint : `update user set point = point + ?`,
-  selectPoint : `select point_save from point where point_history = 'p3' and order_no = ?`,
+  updatePoint: `update user set point = point + ?`,
+  selectPoint: `select point_save from point where point_history = 'p3' and order_no = ?`,
   //리뷰-리뷰신고
   AllreviewReportList: `select *,count(review_no) cnt from review_report group by review_no order by report_date desc`,
   reviewReportList: `select *,count(review_no) cnt from review_report group by review_no order by report_date desc limit ?,10`,
   AllreasonReportList: `select *,count(review_no) cnt from review_report where report_status=? group by review_no order by report_date desc`,
   reasonReportList: `select *,count(review_no) cnt from review_report where report_status=? group by review_no order by report_date desc limit ?,10`,
-  reviewInfo : `select * from review where review_no = ?`,
-  updateReport : `update review_report set report_status = ? where review_no = ?`,
+  reviewInfo: `select * from review where review_no = ?`,
+  updateReport: `update review_report set report_status = ? where review_no = ?`,
   reviewList2: `select prod_name,order_detail_no,user_id,review_title,review_content,review_writedate,review_grade,like_cnt from order_detail o,product p,review r 
   where o.prod_no=p.prod_no and o.order_detail_no=r.detail_order_no order by ?? desc`,
   //문의사항
@@ -329,7 +329,8 @@ let admin = {
 
 let reviews = {
   myReview: `select * from review where user_id=? `, //마이페이지에서 내가 작성한 리뷰 리스트
-  reviewInfo: `select * from review where user_id=? and review_no=?`, //마이페이지 리뷰하나 보기
+  reviewInfo: `select * from review r left join file f on r.review_no = f.review_no where r.user_id=? and r.review_no=?`, //마이페이지 리뷰하나 보기
+  //orderNoReview: `select * from review where user_id=?`,
   //서영희
   reviewList: `select  file_name, r.* 
   from review r 
@@ -435,7 +436,7 @@ let delivery = {
 }
 //찜테이블
 let like = {
-  likeInfo: `select* from likes where user_id=? and prod_no=?`,
+  likeInfo: `select * from likes where user_id = ? and prod_no=?`,
   likeInsert: `insert into likes set?`,
   likeDel: `delete from likes where user_id=? and prod_no =?`,
   likeList: `SELECT *
@@ -446,7 +447,7 @@ let like = {
   ) f
   RIGHT JOIN product p ON p.prod_no = f.prod_no
   RIGHT JOIN likes l ON p.prod_no = l.prod_no
-  WHERE user_id =`
+  WHERE user_id =?`
 }
 let inquire = {
   myInquireList: `select * from inquire where user_id=?`,
@@ -460,6 +461,7 @@ let inquire = {
 }
 let member = {
   memberInfo: `select t1.*, count(case when coupon_able=0 then 1 end) as couponCnt from user t1 join coupon t2  on t1.user_id = t2.user_id where t1.user_id= ?`
+, memberState:`select user_grade from user where user_id=?`
 }
 let notice = {
   noticeList: `select * from notice order by importance`,

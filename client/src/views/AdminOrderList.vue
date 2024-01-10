@@ -32,7 +32,7 @@
             </tr>
         </thead>
         <tbody>
-        <tr v-for="order in orderList">
+        <tr :key="idx" v-for="(order,idx) in orderList">
             <td>{{ $dateFormat(order.order_date,'yyyy년 MM월 dd일') }}</td>
             <td>{{ order.order_no }}</td>
           <td>{{ order.user_id }}</td>
@@ -45,8 +45,8 @@
           <td v-else-if="order.order_status=='c3'">출고완료</td>
           <td v-else-if="order.order_status=='c4'" style="color: red;">취소신청</td>
           <td v-if="order.order_status=='c1'"><v-btn type="button" @click="this.orderStatus='c2',this.orderGetOne(order.order_no),modalCheck2=true">주문상세보기</v-btn>   <v-btn type="button" @click="modalCheck=true,this.orderNo=order.order_no,this.phoneNo=order.phone">주문취소 신청</v-btn></td>
-          <td v-else-if="order.order_status=='c2'"><v-btn type="button" @click="delNo=true">상품 출고하기</v-btn><p v-show="delNo">운송장번호 : <input type="number" v-model="deliveryNum"><v-btn @click="this.orderStatus='c3',changeStatus(order.order_no)">배송출발</v-btn></p></td>
-          <td v-else-if="order.order_status=='c3'"><v-btn type="button">배송 조회</v-btn></td>
+          <td v-else-if="order.order_status=='c2'"><v-btn type="button" @click="this.num=idx">상품 출고하기</v-btn><p v-if="idx==this.num">운송장번호 : <input type="number" v-model="deliveryNum"><v-btn @click="this.orderStatus='c3',changeStatus(order.order_no)">배송출발</v-btn></p></td>
+          <td v-else-if="order.order_status=='c3'"><v-btn @click="goto2">배송목록 가기</v-btn></td>
           <td v-else-if="order.order_status=='c4'"><v-btn @click="goto">취소목록 가기</v-btn></td>
         </tr>
       </tbody>
@@ -180,7 +180,7 @@
                 deliveryNum : '',
                 phoneNo : '',
                 accessToken : '',
-
+              num : ''
             }
         },
         components : {
@@ -402,6 +402,9 @@
             },
             goto(){
               this.$router.push({path : "refundList"})
+            },
+            goto2(){
+              this.$router.push({path : "deliveryList"})
             }
         },
         watch : {
