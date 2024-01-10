@@ -1,14 +1,14 @@
 <template>
   <v-sheet width="300" class="mx-auto">
-    <v-form @submit.prevent>
-      <div class= "field"> <label for="password">비밀번호:</label>  
+    <v-form class="custom-form" @submit.prevent>
+      <div class= "field" > <label for="password">비밀번호:</label>  
       <v-text-field
         v-model="user_password"
         :rules="rules"
         label="password"
       ></v-text-field>
       </div>
-      <v-btn type="button" @click="goToUpdate" block class="mt-2">입력하기</v-btn>
+      <v-btn type="button" @click="goToUpdate" block class="mt-2" color="orange">submit</v-btn>
     </v-form>
   </v-sheet>
 </template>
@@ -34,16 +34,19 @@
       async goToUpdate() {
 
         let uid = this.$store.state.user.user_id ;
-        let result = await axios.get(`/api/putpass/${uid}`)
+
+        let result = await axios.get(`/api/putpwd/${uid}/${this.user_password}`)
                                 .catch(err => console.log(err));
               console.log(result);
-              console.log(result.data[0])
+            
               
         // let info = result.data;           
         // console.log(info);             
 
-        if(this.user_password == result.data[0].user_password){
- 
+
+        if(result.data[0] != null) {
+              console.log(this.user_password);
+              console.log(result.data[0].user_password);
           this.$router.push({path: 'join', query: {user_id : this.$store.state.user.user_id}})
         
         }else{
@@ -56,6 +59,16 @@
 </script>
 
 <style>
+.custom-form {
+  width: 400px;
+  height : auto;
+  margin-top: 20px;
+   margin-bottom : 20px;
+  padding: 20px;
+  border: 1px  #000000;
+  border-radius: 5px;
+   box-shadow: 0 20px 20px rgba(0, 0, 0, 0.1);
+}
 .field {
   display: flex; /* 라벨과 텍스트 필드 가로 배열 */
   align-items: center; 

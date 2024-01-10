@@ -1,6 +1,5 @@
 <template>
     <div>
-
         <div class="container">
         <table class="table table-hover">
             <thead>
@@ -29,7 +28,6 @@
 </template>
 
 <script>
-
 import axios from 'axios';
 
 export default {

@@ -32,7 +32,7 @@
             <td v-else>{{ order.coupon_no }}</td>
             <td>{{ order.return_point }}</td>
             <td>{{ $dateFormat(order.cancel_request,'yyyy년 MM월 dd일') }}</td>
-            <td v-if="order.cancel_date==null">취소가 완료되지 않았습니다</td>
+            <td v-if="order.cancel_date=='0000-00-00'">취소가 완료되지 않았습니다</td>
             <td v-else>{{ $dateFormat(order.cancel_date,'yyyy년 MM월 dd일') }}</td>
             <td v-if="order.cancel_status=='o1'">취소신청</td>
             <td v-else-if="order.cancel_status=='o2'">취소/환불 처리중</td>
@@ -123,7 +123,8 @@
                 this.orderList = result.data;
             },
             async oneOrder(ono){
-                let result = await axios.get(`/api/order/${ono}`).catch(err=>console.log(err));
+                console.log(ono)
+                let result = await axios.get(`/api/Oneorder/${ono}`).catch(err=>console.log(err));
                 if(result.data[0].payment_method=='h1'){
                     result.data[0].payment_method = '신용카드(이니시스)'
                 }else if(result.data[0].payment_method=='h2'){

@@ -1,8 +1,11 @@
 <template>
     <div>
+        <br>
+        <br>
+        <br>
         <table class="table" border="2px">
-            <thead>
-                <tr>
+            <thead >
+                <tr >
                 <th>쿠폰번호</th>
                 <th>쿠폰이름</th>
                 <th>쿠폰내용</th>
@@ -57,3 +60,8 @@ export default {
     }
 }
 </script>
+<style scoped>
+th{
+    background-color: #FFA726;
+}
+</style>

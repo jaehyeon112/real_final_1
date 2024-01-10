@@ -1,8 +1,11 @@
 <template>
-    <div class="container">
-       
+    <div >
+       <br>
+       <br>
+       <br>
+       <br>
         <div v-if="reviewList.length != 0">
-            <table class="table table-hover">
+            <table class="table ">
                 <thead>
                     <tr>
                         <th>No.</th>
@@ -12,6 +15,7 @@
                         <th>평점</th>
                         <th>작성일자</th>
                         <th>좋아요</th>
+                        <th>삭제</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -64,8 +68,14 @@ export default {
     }
 }
 </script>
+
 <style scoped>
-    table *{
+table *{
         text-align: center;
-    }
+}
+   
+th{
+    background-color: #FFA726;
+}
+
 </style>

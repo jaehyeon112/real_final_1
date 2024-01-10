@@ -33,7 +33,7 @@
                   <div :key=idx v-show="open==true" v-for="idx in photo"><img id="ima" :src="getPath(idx)" style="position: relative;height=300"><p @click="delPhoto(idx)">삭제</p></div>
                   <v-btn @click="showing" v-show="photo.length>0">사진보기</v-btn> <!-- <v-btn @click="uploadPhoto">저장완료</v-btn> -->
                 </div>
-            <button type="button" class="btn btn-xs btn-info" @click="isUpdated? reviewUpdate() :reviewInsert()" >저장</button>
+            <button type="button" class="btn btn-xs btn-info" @click="isUpdated? reviewUpdate() :reviewInsert()" style="color: #FF8F00;" >저장</button>
 
         </form>
     </div>

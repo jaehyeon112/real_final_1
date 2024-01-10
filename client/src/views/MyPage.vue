@@ -1,8 +1,8 @@
 <template>
 <div>
         <main class="d-flex flex-nowrap">
-        <sidebar class="sidebar"/>
-        <div >
+            <sidebar class="sidebar"/>
+        
         <div class="row" style="width:900px;">
             <div class="col-sm-5">
                         <div class="col p-4 d-flex flex-column position-static">
@@ -10,7 +10,9 @@
                             <strong class="d-inline-block mb-2 text-body-secondary text-success-emphasis" v-if="member.user_grade=='i1'"> 일반</strong>
                             <strong class="d-inline-block mb-2 text-body-secondary text-success-emphasis" v-else-if="member.user_grade=='i2'">  실버</strong>
                             <strong class="d-inline-block mb-2 text-body-secondary text-success-emphasis" v-else> 골드</strong></div>
-                            <h3 class="mb-0">{{ member.user_id}}님</h3><v-btn  fav small id="withdrawl"   color="#FFB300" @click="goTodelete">탈퇴하기</v-btn>
+                            <div>
+                            <h3 class="mb-0">{{ member.user_id}}님</h3> <v-btn  fav small id="withdrawl"   color="white" @click="goTodelete">탈퇴하기</v-btn>
+                        </div>
                             <p class="mb-auto"></p>
                             <a href="#" class="icon-link gap-1 icon-link-hover ">
                                 <div class="text-center">
@@ -30,28 +32,25 @@
                             </a>
                         </div>
             </div>
-                <div class="col-sm-3 " style="background-color: #FFB300; margin:10px">
+                <div class="col-sm-3 "  style=" margin:10px">
                     <div class="col p-4 d-flex flex-column position-static">
                         <strong class="d-inline-block mb-2 text-success-emphasis  text-center">잔여포인트</strong>
                         <h3 class="mb-0">{{ member.point }} p</h3>
                         <p class="mb-auto"></p>
                     </div>
                 </div>
-           
-                <div class="col-sm-3"  style="background-color: #FFB300; margin:10px">
+
+                <div class="col-sm-3"  style= "margin:10px">
                     <div class="col p-4 d-flex flex-column position-static">
                         <strong class="d-inline-block mb-2 text-success-emphasis  text-center">잔여쿠폰</strong>
-                        
                         <router-link to="/myPage/coupon"><h3 class="mb-0">{{ member.couponCnt }} 개</h3></router-link>
-                         
-                           
                     </div>
                 </div>
-            </div>
+            
             <!--자식컴포넌트 자리-->
         <router-view :key="$route.fullPath" />
+            </div>
         
-        </div>
         
      
     
@@ -90,13 +89,14 @@ export default{
     methods: {
         //일단 멤버 정보를 셀렉트 해오는걸로 시험 중 나중에 로그인 세션그걸로 바꿔야 함
         async getMember(){
-            
+            if(this.$store.state.user.user_id==null){
+                this.$router.push({path : '/login'});
+                return
+            }
           
             this.member = (await axios.get(`/api/member/${this.$store.state.user.user_id}`)
                                       .catch(err=>console.log(err))).data
-            if(this.$store.state.user.user_grade=='i4'){
-                this.$router.push('/admin')
-            }
+         
                
                                                           
         },
@@ -152,6 +152,9 @@ export default{
     width: 50px;
     height: 50px;
     
+}
+.col-sm-3{
+    border:3px solid  #FF9100;
 }
 
 </style>

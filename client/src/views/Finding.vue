@@ -1,16 +1,15 @@
 <template>
   <v-sheet width="300" class="mx-auto">
-  <v-form fast-fail @submit.prevent>
-    <router-link to="/message"><v-btn>메세지창으로 가는 버튼</v-btn></router-link>
-        <router-link to="/changePass"><v-btn>비밀번호변경으로 가는 버튼</v-btn></router-link>
+  <v-form class="custom-form" fast-fail @submit.prevent>
+  
     <v-row>
 
       <v-col cols="12">
         <div class="radio">
           <input type="radio" name="option" value="findId" checked v-model="selectedOption">
-          <span class="radio-text">아이디찾기</span>
+          <span class="radio-text font-weight-bold">find ID</span>
           <input type="radio" name="option" value="findPwd" v-model="selectedOption">
-          <span class="radio-text">비밀번호찾기</span>
+          <span class="radio-text">find Password</span>
         </div>
       </v-col>
 
@@ -36,7 +35,7 @@
       </v-col>
 
       <v-col cols="12">
-        <v-btn type="button" block class="mt-2" @click="findIdPass()">Submit</v-btn>
+        <v-btn type="button" block class="mt-2 submit-button" @click="findIdPass()" color="orange">Submit</v-btn>
       </v-col>
 
     </v-row>
@@ -60,7 +59,7 @@ import axios from 'axios'
           return '두 글자 이상 입력해주세요'
         },
       ],
-      user_email: '입력값들어가는거',
+      user_email: '',
       lastNameRules: [
         value => {
           if (/[^0-9]/.test(value)) return true
@@ -166,7 +165,16 @@ import axios from 'axios'
 
 
 <style scoped>
-
+.custom-form {
+  width: 550px;
+  height : auto;
+  margin-top: 20px;
+   margin-bottom : 20px;
+  padding: 20px;
+  border: 1px  #000000;
+  border-radius: 5px;
+   box-shadow: 0 5px 10px rgba(1, 1, 1, 0.1);
+}
 .label-margin {
   margin-right: 20px;  
 }
@@ -194,5 +202,12 @@ import axios from 'axios'
 
   margin-right: 30px;
 
+}
+
+.submit-button {
+ width: 30%;
+  font-size: 14px; /* Adjust font size */
+
+  border-radius: 10px; /* Add some border-radius for a slightly rounded corner */
 }
 </style>

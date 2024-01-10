@@ -2,7 +2,7 @@
     <!-- <v-alert v-show="alarm2" class="alarm" closable text="삭제하시면 품절처리 됩니다. 정말 품절처리 하시겠습니까?" type="warning" variant="tonal">
             <br><v-btn @click="this.yes=true">확인</v-btn><v-btn @click="this.alarm=false">취소</v-btn>
             </v-alert> -->
-    <list @changeemit="changeChildData" @search="search">
+    <list @search="search">
         <template #title>상품 목록</template>
         <template #searchData>
             <div style="width: 25%;">
@@ -14,11 +14,11 @@
                 return-object
                 style="width: 100%;"
                 ></v-select>
-                <v-btn @click="searchList(this.category)">검색</v-btn>  <v-btn @click="refresh">초기화</v-btn></div>
+                <v-btn @click="searchList(this.category,this.startNum)">검색</v-btn>  <v-btn @click="refresh">초기화</v-btn></div>
         </template>
         <template #filterSearch>
             <div><a @click="this.order='prod_no'">기본순 | </a><a @click="this.order='registration'">최근 등록순 | </a><a @click="this.order='high'">높은 가격순(판매가 기준) | </a><a @click="this.order='discount_price'">낮은 가격순(판매가 기준)</a></div>
-            <br><input class="datatable-input" v-model="word" @keyup.enter="search(this.word),this.category=''" style="border-bottom: 1px black solid;width: 300px;" placeholder="상품명을 검색하세요">
+            <br><input class="datatable-input" v-model="word" @keyup.enter="searchList(this.word,this.startNum),this.category=''" style="border-bottom: 1px black solid;width: 300px;" placeholder="상품명을 검색하세요">
         </template>
         <template #dataList>
         <thead>
@@ -50,7 +50,7 @@
             <tr><td></td><td><h3>존재하는 데이터가 없습니다</h3></td></tr>
         </tbody>
         <v-container v-if="this.totalList.length!=0">
-          <page @changePage="changePage" :list="totalList" :totals="this.nums"></page>
+          <page ref="pagination1" @changePage="changePage" :list="totalList" :totals="10"></page>
         </v-container>
         </template>
     </list>
@@ -65,13 +65,11 @@
             return{
                 word : '',
                 productList : [],
-                nums : 0,
                 startNum : 0,
                 totalList: "",
                 totals :'',
                 order : 'prod_no',
                 category : '',
-                content : '',
                 alarm2 : false,
                 yes : false
             }
@@ -82,37 +80,37 @@
         },
         created(){
             window.scrollTo(0, 0);
-            //this.prodList();
+            this.prodList(this.startNum);
             this.total();
         },
         methods : {
+            //전체리스트 불러오기
             async total() {
                 let total = await axios.get(`/api/prod`).catch((err) => {
                     console.log(err);
                 });
                 this.totalList = total.data;
             },
-            async prodList(pno){
+            async prodList(no){
                 if(this.order=='high'){
-                    let list = await axios.get(`/api/prod/${this.startNum}/${pno}`).catch(err=>console.log(err));
+                    let list = await axios.get(`/api/oprod/${no}`).catch(err=>console.log(err));
                     let result = list.data;
                     this.productList = result;
                 }else{
-                    let list = await axios.get(`/api/prod/${this.word}/${this.category}/${this.order}/${this.startNum}/${pno}`).catch(err=>console.log(err));
+                    let list = await axios.get(`/api/oprod/${this.order}/${no}`).catch(err=>console.log(err));
                     let result = list.data;
                     this.productList = result;
                 }
                 this.total();
             },
+            //페이지네이션
             async changePage(no) {
-                if(this.order=='high'){
-                    let list = await axios.get(`/api/prod/${no}/${this.nums}`).catch(err=>console.log(err));
-                    let result = list.data;
-                    this.productList = result;
-                }else{
-                    let page = await axios.get(`/api/prod/${this.content}/${this.content}/${this.order}/${no}/${this.nums}`).catch(err=>console.log(err));
-                    this.productList = page.data;
-                    this.totals = this.nums;
+                if(this.category==''&&this.word==''){
+                    this.prodList(no);
+                }else if(this.category!=''&&this.word==''){
+                    this.searchList(this.category,no);
+                }else if(this.category==''&&this.word!=''){
+                    this.searchList(this.word,no);
                 }
             },
             async modProd(pno){
@@ -122,7 +120,6 @@
                 this.alarm2=true;
                 if(confirm('삭제하시면 품절처리 됩니다\n정말 품절처리 하시겠습니까?')){
                     let result = await axios.patch(`/api/prod/${pno}`).catch(err=>console.log(err));
-                    console.log(result.data)
                     if(result.data.affectedRows==1){
                         alert('상품이 품절되었습니다');
                     }else{
@@ -130,15 +127,7 @@
                     }
                 }
             },
-            changeChildData(childData){
-                console.log('받음'+childData);
-                this.nums = childData;
-            },
-            search(searchData){
-                this.content = searchData;
-                this.searchList(this.content);
-            },
-            async searchList(cont){
+            async searchList(cont,no){
                 if(cont=='한식'){
                     cont = 'e1';
                     this.word='';
@@ -157,35 +146,32 @@
                 }
 
                 if(cont==''){
-                    this.total();
-                    this.prodList(this.nums);
+                    this.prodList(this.startNum);
                     return;
                 }
                 
                 let AllList = await axios.get(`/api/prod/${cont}/${cont}`).catch(err=>console.log(err));
                 this.totalList = AllList.data;
-                let list = await axios.get(`/api/prod/${cont}/${cont}/${this.order}/${this.startNum}/${this.nums}`).catch(err=>console.log(err));
+                let list = await axios.get(`/api/prod/${cont}/${cont}/${this.order}/${no}`).catch(err=>console.log(err));
                 let result = list.data;
-                console.log('리스트 : '+result)
                 this.productList = result;
+                this.$refs.pagination1.currentPage2(no);
             },
             refresh(){
                 this.category = '';
                 this.word = '';
-                this.prodList(this.nums);
+                this.prodList(this.startNum);
             },
             
         },
         watch : {
             nums(){
-                this.prodList(this.nums);
+                this.prodList(this.startNum);
             },
             order(){
-                this.prodList(this.nums);
+                this.prodList(this.startNum);
             },
-            content(){
-                this.searchList(this.content);
-            },
+
         }
     }
 </script>

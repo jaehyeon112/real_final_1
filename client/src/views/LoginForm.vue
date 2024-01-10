@@ -14,25 +14,44 @@
             <input id="pass" type="password" class="input" data-type="password" v-model="user_password">
           </div>
   
-  
-          <div class="group">
-              <b-button variant="link" a href="finding">ID/PASSWORD 찾기</b-button>
-            <input type="submit" class="button" @click="doLogin()" value="로그인버튼">
+      <div style="line-height:180%">
+        <v-row>
+          <v-col class="text-right">
+            <div class="font-italic"> <router-link to="/finding"> Forgot your ID/PASSWORD?</router-link></div>
+            
+          </v-col>
+        </v-row> 
+      </div>
+
+          <div class="group" style="line-height:130%">
+            <input type="submit" class="button" @click="doLogin()" value="SIGN UP">
             <!-- 추가: 남은 차단 시간 표시 -->
           <div v-if="isBlocked">남은 차단 시간: {{ remainingBlockTime }}초</div>
-            
-   
+
           </div>
   
-          <div class="hr"></div>
+         <v-divider class="mt-4"></v-divider>
 
           <div class="foot-lnk">
-          <b-button variant="link" a href="finding">ID/PASSWORD 찾기</b-button>
-            <router-link to="/join"> <v-btn squared variant="success" a href="join">회원가입</v-btn></router-link>
+         
+     <v-row justify="center" align="center"> <!-- Center both the image and Join button -->
+          <v-col class="text-center">
+            <div
+              id="custom-login-btn" @click="kakaoLogin()">
+              <a><img src="https://cdn.imweb.me/thumbnail/20220403/a8e484f2dfe39.png" width="35" alt="카카오 로그인 버튼"></a>
+            </div>
+          </v-col>
+          
+          <v-col class="text-right">
+            <v-btn color="green" class="headline" block a href="join">Join</v-btn>
+          </v-col>
+        </v-row>
+
+            <!-- <router-link to="/join"> <v-btn squared variant="success" a href="join">회원가입</v-btn></router-link> -->
   
           </div>
 
-          <div class="foot-lnk" >
+          <!-- <div class="foot-lnk" >
   
         <a id="custom-login-btn" @click="kakaoLogin()">
         <router-link to="/join">카카오회원가입하고회원가입페이지로<img
@@ -44,15 +63,15 @@
   
       
           </div>
-  
-        <div>
+   -->
+        <!-- <div>
         <router-link to="/finding" class="button"> 아이디비번찾기페이지로 </router-link> 
         <router-link to="/test" class="button"> test 페이지로 </router-link> 
         <router-link to="/putpass" class="button"> 비번입력창 </router-link> 
         <router-link to="/withdrawal" class="button"> 탈퇴페이지 </router-link> 
         
-        </div>  
-  
+        </div>   -->
+   <div> <v-btn @click="kakaoLogout()">카카오 로그아웃</v-btn></div>
         </div>
   
       </div>
@@ -61,8 +80,13 @@
   
   </div>
   
+
   
 </template>
+
+
+ 
+
   
  
  <script>
@@ -96,13 +120,12 @@
         alert("아이디와 비밀번호를 모두 입력해주세요.");
         return;
       }
-
+    
       let obj = {
         param: {
           user_id: this.user_id,
           user_password: this.user_password,
         }
-        
       };
   
     try {
@@ -142,10 +165,7 @@
 if (users.length > 0) {
   alert(`${users[0].user_name}님 환영합니다.`);
 
- 
-         
-  
-     
+
            //만약 비로그인시 장바구니에 안 담았다면, 그냥 넘어가게
           let cartList =  (await axios.get(`/api/cartList`).catch(err=>console.log(err))).data
           let vuexCart = this.$store.state.cart;
@@ -193,7 +213,6 @@ if (users.length > 0) {
             }
            axios.post(`/api/cartAfterLogin`, obj).catch(err=>{console.log(err)})
            }
-          
           }
       }
    
@@ -335,8 +354,10 @@ this.$socket.emit('authenticate', token);
     .login-wrap{
       width:100%;
       margin:auto;
+      margin-top: 30px;
+      margin-bottom : 30px;
       max-width:525px;
-      min-height:1000px;
+      min-height:600px;
       position:relative;
       
       box-shadow:0 12px 15px 0 rgba(0,0,0,.24),0 17px 50px 0 rgba(0,0,0,.19);
@@ -346,7 +367,7 @@ this.$socket.emit('authenticate', token);
       height:100%;
       position:absolute;
       padding:90px 70px 50px 70px;
-      background:rgba(239, 233, 183, 0.9);
+      background:rgba(245, 244, 239, 0.9);
     }
     .login-html .sign-in-htm,
     .login-html .sign-up-htm{
@@ -368,6 +389,7 @@ this.$socket.emit('authenticate', token);
     .login-form .group .label,
     .login-form .group .button{
       text-transform:uppercase;
+      margin : auto;
     }
     .login-html .tab{
       font-size:22px;
@@ -379,8 +401,9 @@ this.$socket.emit('authenticate', token);
     }
     .login-html .sign-in:checked + .tab,
     .login-html .sign-up:checked + .tab{
-      color:#130b02;
-      border-color:#0f0902;
+      color:#070300;
+      font-weight : bold;
+      /* border-color:#0f0902; */
     }
     .login-form{
       min-height:345px;
@@ -419,7 +442,7 @@ this.$socket.emit('authenticate', token);
       font-size:12px;
     }
     .login-form .group .button{
-      background:#c5b438;
+      background:#d1cca4;
     }
     .login-form .group label .icon{
       width:15px;

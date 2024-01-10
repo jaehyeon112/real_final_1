@@ -170,7 +170,8 @@ let user = {
 
   //회원수정 - id > 마이페이지> 회원가입때 입력한 값 그대로 출력 > 수정
   // 수정하기전에 비번입력해야함
-  putPass: `select user_password from user where user_id = ?`,
+  //putPass: `select user_password from user where user_id = ?`,
+  putPwd : `select * from user where user_id = ? and user_password=?`,
 
   //id 별 조회
   selectId: `select user_id, user_name, user_password, user_email, user_tel, birth, address, detail_address, postcode 
@@ -222,20 +223,22 @@ let admin = {
   from orders where order_status = 'c1';`,
   //회원관리
   AlluserList: `select user_id,user_name,user_email,user_tel,join_date,user_grade from user where not user_grade in('i4','i5')`,
-  userList: `select user_id,user_name,user_email,user_tel,join_date,user_grade from user where not user_grade in('i4','i5') order by ?? desc limit ?,?`,
+  userList: `select user_id,user_name,user_email,user_tel,join_date,user_grade from user where not user_grade in('i4','i5') order by ?? desc limit ?,10`,
   AllsearchUser: `select user_id,user_name,user_email,user_tel,join_date,user_grade from user
-  where user_id like concat(concat('%',?),'%') or user_name like concat(concat('%',?),'%')`,
+  where not user_grade in('i4','i5') and user_id like concat(concat('%',?),'%') or user_name like concat(concat('%',?),'%')`,
   searchUser: `select user_id,user_name,user_email,user_tel,join_date,user_grade from user
-  where user_id like concat(concat('%',?),'%') or user_name like concat(concat('%',?),'%') order by ?? limit ?,?`,
-  filterUser: `select user_id,user_name,user_email,user_tel,join_date,user_grade from user where join_date like concat(concat('%',?),'%') order by ?? limit ?,?`,
-  AllfilterUser: `select user_id,user_name,user_email,user_tel,join_date,user_grade from user where join_date like concat(concat('%',?),'%')`,
+  where not user_grade in('i4','i5') and user_id like concat(concat('%',?),'%') or user_name like concat(concat('%',?),'%') order by ?? limit ?,10`,
+  filterUser: `select user_id,user_name,user_email,user_tel,join_date,user_grade from user where not user_grade in('i4','i5') and 
+  user_grade = ? order by ?? limit ?,10`,
+  AllfilterUser: `select user_id,user_name,user_email,user_tel,join_date,user_grade from user where not user_grade in('i4','i5') and 
+  user_grade = ?`,
   stopUser: `update user set user_grade = ? where user_id = ?`,
   outList: `select * from withdrawal_user where user_id != ''`,
   //상품관리
   AllprodList: `select prod_no,prod_name,price,discount_price,discount_rate,stock,main_category from product`,
-  prodList: `select prod_no,prod_name,price,discount_price,discount_rate,stock,main_category,registration from product order by ?? limit ?,?`,
-  pricehigh: `select prod_no,prod_name,price,discount_price,discount_rate,stock,main_category from product order by discount_price desc limit ?,?`,
-  searchProd: `select prod_no,prod_name,price,discount_price,discount_rate,stock,main_category from product where prod_name like concat(concat('%',?),'%') or main_category = ? order by ?? limit ?,?`,
+  prodList: `select prod_no,prod_name,price,discount_price,discount_rate,stock,main_category,registration from product order by ?? limit ?,10`,
+  pricehigh: `select prod_no,prod_name,price,discount_price,discount_rate,stock,main_category from product order by discount_price desc limit ?,10`,
+  searchProd: `select prod_no,prod_name,price,discount_price,discount_rate,stock,main_category from product where prod_name like concat(concat('%',?),'%') or main_category = ? order by ?? limit ?,10`,
   AllsearchProd: `select prod_no,prod_name,price,discount_price,discount_rate,stock,main_category from product where prod_name like concat(concat('%',?),'%') or main_category = ?`,
   productMod: `update product set ? where prod_no = ?`,
   prodInfo: `select prod_no,prod_name,price,discount_price,discount_rate,stock,cooking_time,allergy,main_category,sub_category,refrigeration from product where prod_no = ?`,
@@ -311,7 +314,7 @@ let admin = {
 let reviews = {
   myReview: `select * from review where user_id=? `, //마이페이지에서 내가 작성한 리뷰 리스트
   reviewInfo: `select * from review where user_id=? and review_no=?`, //마이페이지 리뷰하나 보기
-  orderNoReview: `select * from review where user_id=?`,
+  //orderNoReview: `select * from review where user_id=?`,
   //서영희
   reviewList: `select  file_name, r.* 
   from review r 
@@ -420,7 +423,7 @@ let like = {
   likeInfo: `select* from likes where user_id=? and prod_no=?`,
   likeInsert: `insert into likes set?`,
   likeDel: `delete from likes where user_id=? and prod_no =?`,
-  likeList: ` select * from product p right join likes l on p.prod_no = l.prod_no where user_id=?`
+  likeList: `select * from product p right join likes l on p.prod_no = l.prod_no where user_id=?`
 }
 let inquire={
   inquireList:`select * from inquire where user_id=?`,

@@ -62,3 +62,8 @@ export default {
     }
 }
 </script>
+<style scoped>
+th{
+    background-color: #FFA726;
+}
+</style>
