@@ -20,7 +20,7 @@
                      <span v-if="productInfo.discount_rate" style=" margin-right: 18px; font-size:40px; font-weight: 700; color:coral">{{ productInfo.discount_rate+'%'}}</span>
                      <span style="margin-right: 18px; font-size:36px; font-weight: 700;" > {{ $wonComma(productInfo.discount_price) }}<span style="font-size:24px" >원</span></span>
                      
-                     <span v-if="productInfo.price" style="text-decoration: line-through; color:gray; font-size:24px; font-weight: 700;"> {{ productInfo.price }}<span style="font-size:16px">원</span> </span>
+                     <span v-if="productInfo.same" style="text-decoration: line-through; color:gray; font-size:24px; font-weight: 700;"> {{ productInfo.price }}<span style="font-size:16px">원</span> </span>
                      
                   </div>
                   <div class="fs-5 mb-5">
@@ -349,7 +349,9 @@ export default {
                prod_no:''
             },
             productInfo:{
-               discount_price:''
+               discount_price:'',
+               price: '',
+               same: false,
             },                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
             likeList:{},
             reviewList:[],
@@ -409,6 +411,7 @@ export default {
       if(a.length == 0){
          let b = (await axios.post(`/api/reviewreport`,obj)).data
          if (b.affectedRows != 0){
+            await axios.put(`/api/reviewreport/${rNo}`)
             alert('신고 요청이 처리되었습니다.')
          }
       }else{
@@ -425,6 +428,11 @@ export default {
             let info = await axios.get(`/api/detailPro/${this.pno}`)
             .catch(err=>console.log(err));
             this.productInfo = info.data[0]
+            if(this.productInfo.discount_price == this.productInfo.price){
+               this.productInfo.same = false;
+            }else{
+               this.productInfo.same = true;
+            }
             console.log('=======================')
             console.log(info.data[0])
             this.productInfo.price=this.$wonComma(this.productInfo.price)
@@ -467,7 +475,7 @@ export default {
         async getInquireList() {
          let list = await axios.get(`/api/inquireP/${this.pno}`)
                                   .catch(err=>console.log(err));
-            this.inquireList =list.data
+            this.inquireList = list.data
         },
         async upCnt(rno){
            if(this.$store.state.user.user_id==null){
@@ -643,10 +651,10 @@ export default {
       if(this.$store.state.user.user_id != null){ //로그인 했다
        
 
-        if(this.cartList.length == 0 && this.productInfo.stock > this.quantity){
+        if(this.cartList.length == 0 && this.productInfo.stock > this.counter){
           this.counter++;
           return;
-        }else if(this.productInfo.stock > this.cartList.quantity + this.quantity) {
+        }else if(this.productInfo.stock > this.cartList.quantity + this.counter) {
           this.counter++;
           }else{
             alert('보유 재고를 초과하였습니다.')  

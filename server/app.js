@@ -1913,9 +1913,16 @@ app.post('/reviewreport', async (req, res) => {
   let data = req.body.param
   let query = `insert into review_report set ?`
   let result = await mysql.query2(query, data)
+
   res.send(result);
   io.to('ADMIN').emit('report', '새로운 신고요청건이 있습니다.')
 
+})
+app.put('/reviewreport/:rno', async (req, res) => {
+  let query = `update review set report_cnt = report_cnt + 1 where review_no = ?`
+  let data = req.params.rno;
+  let result = await mysql.query2(query, data)
+  res.send(result)
 })
 
 app.get('/reviewreport/:rno', async (req, res) => {
