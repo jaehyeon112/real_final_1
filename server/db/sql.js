@@ -313,7 +313,7 @@ let admin = {
 let reviews = {
   myReview: `select * from review where user_id=? `, //마이페이지에서 내가 작성한 리뷰 리스트
   reviewInfo: `select * from review where user_id=? and review_no=?`, //마이페이지 리뷰하나 보기
-  orderNoReview: `select * from review where user_id=?`,
+  //orderNoReview: `select * from review where user_id=?`,
   //서영희
   reviewList: `select  file_name, r.* 
   from review r 
@@ -422,7 +422,7 @@ let like = {
   likeInfo: `select* from likes where user_id=? and prod_no=?`,
   likeInsert: `insert into likes set?`,
   likeDel: `delete from likes where user_id=? and prod_no =?`,
-  likeList: ` select * from product p right join likes l on p.prod_no = l.prod_no where user_id=?`
+  likeList: `select * from product p right join likes l on p.prod_no = l.prod_no where user_id=?`
 }
 let inquire={
   inquireList:`select * from inquire where user_id=?`,

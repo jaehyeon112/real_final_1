@@ -76,7 +76,7 @@ export default {
         let a = (await axios.get(`/api/myDetailOrders/${this.orderNo}`)
                                         .catch(err=>console.log(err))).data // 상세의 데이터
                                         
-        let b = (await axios.get(`/api/orderNoReview`)
+        let b = (await axios.get(`/api/myReview`)
                                    .catch(err => console.log(err))).data;  // 리뷰의 데이터 
          console.log('a의 값')
          console.log(a)                           

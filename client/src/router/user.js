@@ -13,8 +13,6 @@ import putpass from "../views/PutPassword.vue";
 import message from "../views/Message.vue";
 import changePass from "../views/ChangePass.vue"
 import test from "../views/test.vue";
-
-
 import serviceCenter from "@/views/ServiceCenter.vue";
 import myPage from "@/views/MyPage.vue";
 import detailPage from "@/views/detailPage.vue";
@@ -24,13 +22,12 @@ import like from "@/components/MyPage/likeBasket.vue";
 import delivery from "@/components/MyPage/delivery.vue";
 import coupon from "@/components/MyPage/couponList.vue";
 import point from "@/components/MyPage/point.vue";
-
 import myReview from "@/components/MyPage/myReview.vue";
 import myReviewInfo from "@/components/MyPage/myReviewInfo.vue";
 import myInquire from "@/components/ServiceCenter/inquire.vue";
 import myInquireInfo from "@/components/ServiceCenter/inquireInfo.vue";
-import qnaList from "@/components/ServiceCenter/qna.vue";
-import qnaInfo from "@/components/ServiceCenter/qnaInfo.vue";
+import qnaList from "@/components/ServiceCenter/fnq.vue";
+import qnaInfo from "@/components/ServiceCenter/fnqInfo.vue";
 import noticeList from "@/components/ServiceCenter/notice.vue";
 import noticeInfo from "@/components/ServiceCenter/noticeInfo.vue";
 import reviewForm from "../views/ReviewForm.vue";
