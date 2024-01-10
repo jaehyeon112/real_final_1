@@ -24,6 +24,7 @@ export default {
   },
   created() {
     if(this.$store.state.user.user_id == 'admin'){
+      this.$socket.emit('joinRoom', 'ADMIN');
       this.$router.push({path : "/admin/Main"})
     }else{
       this.$router.push({path : "/admin/Adminlogin"})
@@ -46,7 +47,7 @@ export default {
       if (Notification.permission !== 'granted') {
       Notification.requestPermission();
     }
-    this.$socket.emit('joinRoom', 'ADMIN');
+    
   },
 
 }
