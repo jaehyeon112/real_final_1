@@ -167,7 +167,7 @@ app.post('/phonecheck', async (req, res) => {
   async function printTokenResult(phone, token) {
 
     const messageService = new coolsms("NCSX69ZDDZ3AMPOA", "RTFTFKLPESGNPPFMBL0I88LTS2CHRNET");
-    
+
     const result = await messageService
       .sendOne({
         to,
@@ -843,24 +843,24 @@ app.get("/join-email/:email", async (req, res) => {
 //회원가입용(insert) 
 app.post("/join/joinIn", async (req, res) => {
   let data = req.body.param;
-      console.log('asdfsadfasdfsad')
-      console.log(data);
+  console.log('asdfsadfasdfsad')
+  console.log(data);
   let pass = data.user_password
-      console.log('이건 유저 비번 : '+pass)
-  let encData = crypto.createHash('sha512') 
-  .update(pass) //update(원본데이터)
-  .digest('base64'); // digest : 64진수 - 표현방식 
-  
-      console.log('이건 암호화된 비번 : ' + encData);
+  console.log('이건 유저 비번 : ' + pass)
+  let encData = crypto.createHash('sha512')
+    .update(pass) //update(원본데이터)
+    .digest('base64'); // digest : 64진수 - 표현방식 
+
+  console.log('이건 암호화된 비번 : ' + encData);
   data.user_password = encData
 
 
-    try {
+  try {
     let result = await mysql.query("user", "joinIn", data);
-        console.log('이건 결과 값 : '+result)
+    console.log('이건 결과 값 : ' + result)
     res.send(result);
   } catch {
-        console.log(err);
+    console.log(err);
     res.status(500).send({
       err: 'Database query failed'
     });
@@ -876,35 +876,35 @@ app.get('/logout', async (req, res) => {
 //로그인 - 아이디비번 일치해야 로그인 (5회 오류시 보안프로그램실행)
 app.post("/dologin", async (req, res) => {
   let data = [req.body.param.user_id, req.body.param.user_password];
-    console.log(data)
+  console.log(data)
 
-//암호화
-  let encData = crypto.createHash('sha512') 
-  .update(data[1]) //update(원본데이터)
-  .digest('base64'); // digest : 64진수 - 표현방식 
+  //암호화
+  let encData = crypto.createHash('sha512')
+    .update(data[1]) //update(원본데이터)
+    .digest('base64'); // digest : 64진수 - 표현방식 
 
   data[1] = encData
   console.log(encData);
 
   let list = await mysql.query("user", "forLogin", data);
-      if (list.length != 0) {
-        req.session.user_id = req.body.param.user_id;
-        req.session.user_grade = list[0].user_grade;
-        // userGrade에 따라 role 설정
-        const role = (req.session.user_grade == 'i4') ? 'admin' : 'user';
-        // req.session.grade = 
-        const token = generateToken(req.body.param.user_id, role);
-        res.send({
-          auth: true,
-          token: token,
-          user: list
-        });
-      } else {
-        // 로그인 실패 응답 전송
-        res.send({
-          user: list
-        });
-      }
+  if (list.length != 0) {
+    req.session.user_id = req.body.param.user_id;
+    req.session.user_grade = list[0].user_grade;
+    // userGrade에 따라 role 설정
+    const role = (req.session.user_grade == 'i4') ? 'admin' : 'user';
+    // req.session.grade = 
+    const token = generateToken(req.body.param.user_id, role);
+    res.send({
+      auth: true,
+      token: token,
+      user: list
+    });
+  } else {
+    // 로그인 실패 응답 전송
+    res.send({
+      user: list
+    });
+  }
 })
 
 //카카오로그인 - 카카오아이디있는지 체크
@@ -918,27 +918,27 @@ app.get("/login/kakao", async (req, res) => {
 app.get("/putpass/:id", async (req, res) => {
   let uid = req.params.id;
   let pass = await mysql.query("user", "putPass", uid);
-    console.log(pass);
+  console.log(pass);
 
   res.send(pass);
 })
 
 //putPwd 
-app.get("/putpwd/:id/:pass", async(req, res) => {
+app.get("/putpwd/:id/:pass", async (req, res) => {
   let info = [req.params.id, req.params.pass]
   console.log(info);
-//암호화
-let encData = crypto.createHash('sha512') 
-.update(info[1]) //update(원본데이터)
-.digest('base64'); // digest : 64진수 - 표현방식 
+  //암호화
+  let encData = crypto.createHash('sha512')
+    .update(info[1]) //update(원본데이터)
+    .digest('base64'); // digest : 64진수 - 표현방식 
 
-info[1] = encData
-console.log('이게 암호와')
-console.log(encData);
+  info[1] = encData
+  console.log('이게 암호와')
+  console.log(encData);
 
   let putpass = await mysql.query("user", "putPwd", info);
   res.send(putpass);
-    console.log(putpass);
+  console.log(putpass);
 })
 
 //changePass
@@ -946,12 +946,12 @@ app.put("/changepass/:password/:id", async (req, res) => {
   let data = [req.params.password, req.params.id]
   console.log(data);
   //암호화
-  let encData = crypto.createHash('sha512') 
-                      .update(data[0]) //update(원본데이터)
-                      .digest('base64'); // digest : 64진수 - 표현방식 
+  let encData = crypto.createHash('sha512')
+    .update(data[0]) //update(원본데이터)
+    .digest('base64'); // digest : 64진수 - 표현방식 
   data[0] = encData
 
-  let result = await mysql.query('user','changePass', data);
+  let result = await mysql.query('user', 'changePass', data);
   res.send(result);
   console.log(result);
 
@@ -969,7 +969,7 @@ app.get("/find/findid/:name/:email", async (req, res) => {
 
 
 //비번찾기
-app.get("/find/findpass/:name/:email/:id", async(req, res) => {
+app.get("/find/findpass/:name/:email/:id", async (req, res) => {
   let data = [req.params.name, req.params.email, req.params.id]
   let list = await mysql.query("user", "findPass", data);
   console.log(list);
@@ -991,10 +991,10 @@ app.put('/join/:id', async (req, res) => {
   let data = [req.body.param, req.params.id];
 
   let pass = data[0].user_password;
-    console.log(pass);
-  let encData = crypto.createHash('sha512') 
-      .update(pass) //update(원본데이터)
-      .digest('base64'); // digest : 64진수 - 표현방식 
+  console.log(pass);
+  let encData = crypto.createHash('sha512')
+    .update(pass) //update(원본데이터)
+    .digest('base64'); // digest : 64진수 - 표현방식 
 
   data[0].user_password = encData
   console.log(data[0].user_password);
@@ -1358,7 +1358,7 @@ app.get("/new", async (req, res) => {
 
 app.get("/member/:id", async (req, res) => {
   let id = req.params.id;
-  console.log('파람아이디'+id)
+  console.log('파람아이디' + id)
   let memberInfo = (await mysql.query("member", "memberInfo", id))[0]; // 데이터 타입 :  객체  
   let pointInfo = (await mysql.query("point", "showNextMonth", id))[0]; // 데이터 타입 : 숫자
   memberInfo.showNextMonth = pointInfo;
@@ -1700,7 +1700,7 @@ app.get("/notice", async (req, res) => {
 })
 app.get("/notice/:nno", async (req, res) => {
   let nno = req.params.nno
-  res.send(await mysql.query("notice", "noticeInfo",nno))
+  res.send(await mysql.query("notice", "noticeInfo", nno))
 })
 app.get("/fnq", async (req, res) => {
   res.send(await mysql.query("fnq", "fnqList"))
