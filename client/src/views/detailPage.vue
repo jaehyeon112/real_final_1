@@ -161,8 +161,8 @@
                      <span v-else><v-btn class="ma-2" variant="text" icon="mdi-thumb-up" style="color: black;" @click="upCnt(review.review_no)"><span class="mdi mdi-thumb-up-outline"></span></v-btn>{{ review.like_cnt }}</span>
                                           </v-col>
                                           <v-col>
-                                             <span> <v-btn class="ma-2" variant="text" icon="mdi-thumb-down" color="red-lighten-2" @click="report(review.review_no)">신고</v-btn></span>
-                                          </v-col>
+                                             <span> <v-btn class="ma-2" variant="text" icon="mdi-thumb-down" color="red-lighten-2" @click="this.shoModal=true">신고</v-btn></span>
+                                          </v-col>report(review.review_no)
                                        </v-row>
                                     </v-col>
                                  </v-row>
@@ -270,7 +270,8 @@ export default {
             isSoldOut: false,
       isStock: false,
       cartList : []
-      ,Img : []
+      ,Img : [],
+      shoModal : false
         }
     },
     created(){ 
@@ -312,7 +313,8 @@ export default {
             review_no : rNo
          }
       }
-      let a = await axios.get('/api/reviewreport')
+      let a = await axios.get('/api/reviewreport').catch(err=>console.log(err));
+
     }
       ,
       cul(i){
