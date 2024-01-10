@@ -30,7 +30,8 @@
               <table class="table">
                 <tr>
                   <th>주문완료</th>
-                  <RouterLink to="/admin/orderList">{{counting.orderNo}}건</RouterLink>
+                  <td v-if="counting.orderNo>0" style="color: red;"><RouterLink to="/admin/orderList">{{counting.orderNo}}건</RouterLink></td>
+                  <td v-else-if="counting.orderNo = 0" style="color: black;"><RouterLink to="/admin/orderList">{{counting.orderNo}}건</RouterLink></td>
                 </tr>
                 <tr>
                   <th>배송 준비중</th>
