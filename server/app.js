@@ -1663,9 +1663,9 @@ app.post("/prodLike", async (req, res) => {
 
 
 //문의하기
-app.get("/inquire/:id", async (req, res) => {
+app.get("/myInquire/:id", async (req, res) => {
   let id = req.params.id;
-  res.send(await mysql.query("inquire", "inquireList", id))
+  res.send(await mysql.query("inquire", "myInquireList", id))
 })
 app.get("/inquire/:ino", async (req, res) => {
   let ino = Number(req.params.ino)

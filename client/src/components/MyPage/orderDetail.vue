@@ -20,27 +20,28 @@
             </label>
             <div>
                 <hr>
-                <p>결제정보</p>
                 
-                <div>
-                        <p class="d-block text-body-secondary text-center">금액:{{ oneproductLiss.total_payment }}</p>
-                        <p class="d-block text-body-secondary text-center">할인금액:{{ oneproductLiss.total_payment - oneproductLiss.real_payment }}</p>
-                        <p class="d-block text-body-secondary text-center">결제금액:{{ oneproductLiss.real_payment }}</p>
+                
+                <div class="info">
+                    <p style="font-size: 25px;">결제정보</p>
+                        <p class="d-block text-body-secondary ">금액:{{ oneproductLiss.total_payment }}</p>
+                        <p class="d-block text-body-secondary ">할인금액:{{ oneproductLiss.total_payment - oneproductLiss.real_payment }}</p>
+                        <p class="d-block text-body-secondary ">결제금액:{{ oneproductLiss.real_payment }}</p>
                         
-                        <p class="d-block text-body-secondary text-center">배송비:{{ oneproductLiss.delivery_charge }}</p>
-                        <p class="d-block text-body-secondary text-center">쿠폰할인:{{ oneproductLiss.coupon_discount_rate }}</p>
-                        <p class="d-block text-body-secondary text-center">포인트사용:{{ oneproductLiss.point_use }}</p>
-                        <p class="d-block text-body-secondary text-center">포인트적립률:{{ oneproductLiss.point_save_rate }}</p>
+                        <p class="d-block text-body-secondary ">배송비:{{ oneproductLiss.delivery_charge }}</p>
+                        <p class="d-block text-body-secondary ">쿠폰할인:{{ oneproductLiss.coupon_discount_rate }}</p>
+                        <p class="d-block text-body-secondary ">포인트사용:{{ oneproductLiss.point_use }}</p>
+                        <p class="d-block text-body-secondary ">포인트적립률:{{ oneproductLiss.point_save_rate }}</p>
                         
-                        <p class="d-block text-body-secondary text-center">결제방법:{{ oneproductLiss.payment_method }}</p>
-                        <p class="d-block text-body-secondary text-center">결제일시:{{ $dateFormat(oneproductLiss.order_date,'yyyy년MM월dd일') }}</p>
+                        <p class="d-block text-body-secondary">결제방법:{{ oneproductLiss.payment_method }}</p>
+                        <p class="d-block text-body-secondary ">결제일시:{{ $dateFormat(oneproductLiss.order_date,'yyyy년MM월dd일') }}</p>
                         <hr>
-                        <p>배송정보</p>
-                        <p class="d-block text-body-secondary text-center">보내는분:{{ oneproductLiss.user_id }}</p>
-                        <p class="d-block text-body-secondary text-center">받는분:{{ oneproductLiss.recipient }}</p>
-                        <p class="d-block text-body-secondary text-center">받는주소:{{ oneproductLiss.recipient_address }}</p>
-                        <p class="d-block text-body-secondary text-center">받는상세주소:{{ oneproductLiss.recipient_detail_address }}</p>
-                        <p class="d-block text-body-secondary text-center">배송 요청사항:{{ oneproductLiss.deliveyry_request }}</p>
+                        <p style="font-size: 25px;">배송정보</p>
+                        <p class="d-block text-body-secondary ">보내는분:{{ oneproductLiss.user_id }}</p>
+                        <p class="d-block text-body-secondary ">받는분:{{ oneproductLiss.recipient }}</p>
+                        <p class="d-block text-body-secondary ">받는주소:{{ oneproductLiss.recipient_address }}</p>
+                        <p class="d-block text-body-secondary ">받는상세주소:{{ oneproductLiss.recipient_detail_address }}</p>
+                        <p class="d-block text-body-secondary ">배송 요청사항:{{ oneproductLiss.deliveyry_request }}</p>
                         <br>
                         <br>
                     </div>
@@ -133,3 +134,9 @@ export default {
    
 
 </script>
+<style>
+.info{
+    font-size: 20px;
+    padding: 10px;
+}
+</style>

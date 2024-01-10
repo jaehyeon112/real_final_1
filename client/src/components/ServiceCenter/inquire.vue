@@ -1,10 +1,9 @@
 <template>
     <div>
-        <div class="container">
-        <table class="table table-hover">
+        <div >
+        <table class="table">
             <thead>
                 <tr>
-                    <th>No.</th>
                     <th>카테고리</th>
                     <th>제목</th>
                     <th>작성일</th>
@@ -17,15 +16,15 @@
                 <tr v-if="inquireList.length ==0" > <td>문의한 내역이 존재하지 않습니다</td></tr>
                 <tr  v-else :key="i" v-for="(inquire, i) in inquireList" @click="goToDetail(inquire.inquire_no)">
                     
-                    <td>{{ inquire.inquire_no }}</td>
+                    
                     <td v-if="inquire.inquire_category=='j1'">상품문의</td>
                     <td v-else-if="inquire.inquire_category=='j2'">배송문의</td>
                     <td v-else-if="inquire.inquire_category=='j3'">환불문의</td>
                     <td v-else>기타문의</td>
 
-                    <td>{{ inquire.inquire_title }}</td>
+                    <td>{{ formatText(inquire.inquire_title)}}</td>
                     <td>{{ getDateFormat(inquire.create_date) }}</td>
-                    <td>{{ inquire.inquire_content }}</td>
+                    <td>{{ formatText(inquire.inquire_content) }}</td>
                     <td v-if="inquire.answer_state==1">답변완료</td>
                     <td v-else>답변 대기</td>
                     <td><v-btn  @click.stop="deleteInquire(inquire.inquire_no)" >문의삭제</v-btn></td>
@@ -52,7 +51,7 @@ export default {
     },
     methods : {
         async getInquireList(){
-            this.inquireList = (await axios.get(`/api/inquire/${this.$store.state.user.user_id}`)
+            this.inquireList = (await axios.get(`/api/myInquire/${this.$store.state.user.user_id}`)
                                    .catch(err => console.log(err))).data;
                                    console.log(this.inquireList)
         },
@@ -71,6 +70,13 @@ export default {
                   }
                  
       },
+      formatText(text) {
+      const maxLength = 10;
+      if (text.length > maxLength) {
+        return text.substring(0, maxLength) + '...더보기';
+      }
+      return text;
+    }
              
     }
 }

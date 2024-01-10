@@ -430,10 +430,18 @@ let like = {
   likeInfo: `select* from likes where user_id=? and prod_no=?`,
   likeInsert: `insert into likes set?`,
   likeDel: `delete from likes where user_id=? and prod_no =?`,
-  likeList: `select * from product p right join likes l on p.prod_no = l.prod_no where user_id=?`
+  likeList: `SELECT *
+  FROM (
+    SELECT file_name, prod_no
+    FROM file
+    WHERE orders = 's0'
+  ) f
+  RIGHT JOIN product p ON p.prod_no = f.prod_no
+  RIGHT JOIN likes l ON p.prod_no = l.prod_no
+  WHERE user_id =`
 }
 let inquire = {
-  inquireList: `select * from inquire where user_id=?`,
+  myInquireList: `select * from inquire where user_id=?`,
   inquireListP: `select * from inquire i join order_detail o on i.order_detail_no=o.order_detail_no where prod_no=?`,
   inquireInfo: `select * from inquire where inquire_no=?`,
   inquireInsert: `insert into inquire set?`,

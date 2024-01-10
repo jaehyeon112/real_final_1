@@ -74,14 +74,14 @@
             <tbody> 
                     <tr >
                       <td> 기본배송지 </td>
-                      <td>주소 {{defaultDelivery.address }}{{ defaultDelivery.detail_address }}<hr style="color: aliceblue;">우편번호{{ defaultDelivery.postcode }}</td>
+                      <td>주소:  {{defaultDelivery.address }}{{ defaultDelivery.detail_address }}<hr style="color: aliceblue;">우편번호:  {{ defaultDelivery.postcode }}</td>
                       <td><v-btn @click="goToUpdated()" justify="center">수정버튼</v-btn></td>
                     </tr>
 
                     <tr :key="idx" v-for="(delivery, idx) in deliveryList">
                     <td style="display:none">{{delivery.delivery_no}}</td>
                     <td>{{ delivery.delivery_name }}</td>
-                    <td>주소{{delivery.delivery_address }}{{ delivery.delivery_detail_address }}<hr style="color: aliceblue;">우편번호{{ delivery.delivery_postcode }}</td> 
+                    <td>주소:  {{delivery.delivery_address }}{{ delivery.delivery_detail_address }}<hr style="color: aliceblue;">우편번호:  {{ delivery.delivery_postcode }}</td> 
                     <td><v-btn @click="deletedelivery(delivery.delivery_no)" justify="center">삭제버튼</v-btn></td>
                 </tr>
                 
@@ -232,6 +232,9 @@ export default {
 }
 </script>
 <style scoped>
+table{
+  text-align: center;
+}
 th{
     background-color: #FFA726;
 }
