@@ -19,7 +19,7 @@
                      <tr>
                         <th>냉장/냉동</th>
                         <td v-if="productInfo.refrigeration==g1">냉장</td>
-                        <td v-else=>냉동</td>
+                        <td v-else>냉동</td>
                      </tr>
                      <tr>
                         <th>알레르기 정보</th>
@@ -68,11 +68,8 @@
                   <v-btn
                      variant="text"
                      @click="sheet = !sheet"> x</v-btn>
-
                   <br>
                   <br>
-
-                  
                      <div class="d-flex">
                      <p>상품선택</p>
                         <v-btn @click="minusCount">-</v-btn>
@@ -90,9 +87,7 @@
                </v-card-text>
                </v-card>
             </v-bottom-sheet>
-         </div> -->
-
-
+         </div>-->
             <!--선택하는 바?-->
             <div class="container px-4 px-lg-5 my-5" style="text-align:center;">
                <a style="border: none; padding: 10px 50px; color: black; font-size: 18px"
@@ -106,42 +101,87 @@
                <hr>
             </div>
             <!--상세정보?-->
-            <a id="detail"></a>
-               <div class="container px-4 px-lg-5 my-5" style="text-align:center;" id="detail">
+               <div class=" px-4 px-lg-5 my-5" style="text-align:center;" id="detail">
                   
                </div>
-            <hr>
 
+            <span style="font-weight: bold;">상품리뷰</span> <span style="color:coral">{{ reviewList.length+"건" }}</span>
+            <hr>
             <!--리뷰게시판  부분 -->
             <a id="review"></a>
-            <div id="review" class="reviewTable">
-            <p> 베스트 리뷰</p>
-            <p>리뷰 베스트 5 나열할 곳</p>
-            <!--
-            <input :key="idx" v-for="(bestR, idx) in reviewList" type="file">-->
-            <table class="table" border="1">
-                  <tr>
-                     <th>작성자</th>
-                     <th>리뷰제목</th>
-                     <th>리뷰내용</th>
-                     <th>평점</th>
-                     <th>작성일자</th>
-                     <th>추천</th>
-                     <th>신고</th>
-                  </tr>
-                  <tr :key="idx" v-for="(review, idx) in reviewList">
-                     <!-- <td> {{ review.review_no }}</td> -->
-                     <td> {{ review.review_no }}</td>
-                     <td> {{ review.user_id }}</td>
-                     <td> {{ review.review_title }}</td>
-                     <td> {{ review.review_content }}</td>
-                     <td> {{ review.review_grade }}</td>
-                     <td> {{ $dateFormat(review.review_writedate,'yyyy년 MM월 dd일') }}</td>
-                     <td v-if="review.u=='y'"><v-btn class="ma-2" variant="text" icon="mdi-thumb-up" style="color: red;" @click="upCnt(review.review_no)">좋아요</v-btn>{{ review.like_cnt }}</td>
-                     <td v-else><v-btn class="ma-2" variant="text" icon="mdi-thumb-up" style="color: black;" @click="upCnt(review.review_no)">좋아요</v-btn>{{ review.like_cnt }}</td>
-                     <td> <v-btn class="ma-2" variant="text" icon="mdi-thumb-down" color="red-lighten-2">신고</v-btn></td>
-                  </tr>
-            </table>
+            <div id="review">
+            <div :key="idx" v-for="(review, idx) in reviewList">
+               <hr>
+               <v-row>
+                  <div  style="cursor:pointer;" @click="toggleModal(review)">
+                  <span v-for="star in 5" :key="star">
+                                       <span class="mdi mdi-star" :style="{ color: star <= review.review_grade ? 'coral' : 'grey' }"></span>
+                                    </span>
+                                    <p><span style="width:100px; color:gray">{{ review.user_id.substring(0, 3) + '*'.repeat(review.user_id.length - 3) }} | {{ $dateFormat(review.review_writedate,'yyyy-MM-dd') }} </span> </p>
+                                    <p>{{formatText(review.review_content)}}</p>
+                                 </div>
+                     <v-col>
+                        <v-dialog v-model="review.showDialog" width="800">
+                           <v-card >
+                              <v-card-title style="margin:50px">
+                                 <v-row justify="center">
+                                    <span class="text-h5">{{ review.review_title }}</span>
+                                 </v-row>
+                                 <v-row justify="end">
+                                    <span style="font-size: 14px;">{{"작성자 : " +review.user_id.substring(0, 3) + '*'.repeat(review.user_id.length - 3)}} </span>
+                                 </v-row>
+                                 <v-row justify="end">
+                                       <span style="font-size: 14px;">{{  "작성일자 : " +$dateFormat(review.review_writedate,'yyyy-MM-dd') }}</span>
+                                 </v-row>
+                                 <v-row justify="end">
+                                    <span style="font-size: 14px;">별점 : </span>
+                                    <span v-for="star in 5" :key="star">
+                     <span class="mdi mdi-star" :style="{ color: star <= review.review_grade ? 'coral' : 'grey' }"></span>
+                  </span>
+                                 </v-row>
+                              </v-card-title>
+                              <v-card-text>
+                                 <v-row justify="center">
+                                    <span style="font-size: 20px;">
+
+                                       {{ review.review_content }}
+                                    </span>
+                                 </v-row>
+                                 <v-row justify="center" >
+                                    <v-col cols="8" style="width:500px">
+                                       <v-img v-if="review.file_name != null" :src="`/api/test/`+ review.file_name"></v-img>
+                                    </v-col>
+                                    <v-col>
+                                       <v-row>
+                                          <v-col>
+                                             <span v-if="review.u=='y'"><v-btn class="ma-2" variant="text" icon="mdi-thumb-up" style="color: blue;" @click="upCnt(review.review_no)"><span class="mdi mdi-thumb-up-outline"></span></v-btn>{{ review.like_cnt }}</span>
+                     <span v-else><v-btn class="ma-2" variant="text" icon="mdi-thumb-up" style="color: black;" @click="upCnt(review.review_no)"><span class="mdi mdi-thumb-up-outline"></span></v-btn>{{ review.like_cnt }}</span>
+                                          </v-col>
+                                          <v-col>
+                                             <span> <v-btn class="ma-2" variant="text" icon="mdi-thumb-down" color="red-lighten-2" @click="report(review.review_no)">신고</v-btn></span>
+                                          </v-col>
+                                       </v-row>
+                                    </v-col>
+                                 </v-row>
+                                 <v-row>
+                                 </v-row>
+        </v-card-text>
+        <v-card-actions>
+      </v-card-actions>
+   </v-card>
+</v-dialog>
+</v-col>
+
+
+<v-col cols="2">
+   <v-img width="100" v-if="review.file_name" :src="`/api/test/`+review.file_name"></v-img>
+                  </v-col>
+
+<span v-if="review.u=='y'"><v-btn class="ma-2" variant="text" icon="mdi-thumb-up" style="color: blue;" @click="upCnt(review.review_no)"><span class="mdi mdi-thumb-up-outline"></span></v-btn>{{ review.like_cnt }}</span>
+<span v-else><v-btn class="ma-2" variant="text" icon="mdi-thumb-up" style="color: black;" @click="upCnt(review.review_no)"><span class="mdi mdi-thumb-up-outline"></span></v-btn>{{ review.like_cnt }}</span>
+<span> <v-btn class="ma-2" variant="text" icon="mdi-thumb-down" color="red-lighten-2">신고</v-btn></span>
+                </v-row>
+                  </div>
             </div>
             <hr>
             <!-- 문의게시판 건드린 부분 -->
@@ -200,6 +240,7 @@ import axios from'axios';
 export default {
     data(){
         return{
+          dialog: false,
          user : this.$store.state.user.user_id,
          list : [],
             pno:'',
@@ -249,6 +290,29 @@ export default {
     },
 
     methods:{
+      formatText(text) {
+      const maxLength = 40;
+      if (text.length > maxLength) {
+        return text.substring(0, maxLength) + '...더보기';
+      }
+      return text;
+    }
+    ,
+    async report(rNo){
+      if(this.$store.state.user.user_id == null){
+         alert('로그인 후 이용할 수 있습니다.')
+         return
+      }
+      let obj = {
+         param : {
+            report_status : 'p1',
+            report_reason : 'q1',
+            review_no : rNo
+         }
+      }
+      let a = await axios.get('/api/reviewreport')
+    }
+      ,
       cul(i){
          return this.list[i].u 
       },
@@ -262,7 +326,8 @@ export default {
                                   
         },
         async getLikes(){
-        let list = await axios.get(`/api/prodLike/${this.$store.state.user.user_id}/${this.pno}`)
+       
+        let list = await axios.get(`/api/prodLike/${this.pno}`)
                                   .catch(err=>console.log(err));
             this.likeList =list.data
             console.log(this.likeList)
@@ -277,12 +342,14 @@ export default {
             let list = await axios.get(`/api/reviewList/${this.pno}`).catch(err=>console.log(err));
             for(let i=0;i<list.data.length;i++){
                let search = await axios.get(`/api/rLikeCnt/${this.user}/${list.data[i].review_no}`).catch(err=>console.log(err));
+               list.data[i].showDialog = false;
                let resu = 'y'
                if(search.data==''){
                   resu = 'n'
                }
                list.data[i].u=resu;
             }
+            console.log(list.data)
             this.reviewList =list.data;
         },
         async getInquireList() {
@@ -291,24 +358,33 @@ export default {
             this.inquireList =list.data
         },
         async upCnt(rno){
-            let search = await axios.get(`/api/rLikeCnt/${this.user}/${rno}`).catch(err=>console.log(err));
+           if(this.$store.state.user.user_id==null){
+            console.log(this.$store.state.user)
+            alert('로그인 이후 사용할 수 있습니다.')
+            return;
+         }
+            let search = await axios.get(`/api/rLikeCnt/${this.$store.state.user.user_id}/${rno}`).catch(err=>console.log(err));
             if(search.data.length==0){
                //좋아요 증가
                let list = await axios.put(`/api/likeUp/${rno}`).catch(err=>console.log(err));
                let inse = await axios.post(`/api/reviewLike/${rno}/${this.user}`).catch(err=>console.log(err));
+               console.log(inse.data)
                if(list.data.affectedRows==1&&inse.data.affectedRows==1){
                   alert('좋아여 추가');
                   this.getRivewList();
                }
             }else{
                let list2 = await axios.put(`/api/likeDown/${rno}`).catch(err=>console.log(err));
-               let result3 = await axios.delete(`/api/reviewLike/${rno}/${this.user}`).catch(err=>console.log(err))
+               let result3 = await axios.delete(`/api/reviewLike/${rno}/${this.$store.state.user.user_id}`).catch(err=>console.log(err))
                if(list2.data.affectedRows>0&&result3.data.affectedRows>0){
                   alert('좋아요 취소~~');
                   this.getRivewList();
                }      
             }
         },
+        toggleModal(review) {
+  review.showDialog = !review.showDialog;
+},
 
         
       //     async getLikeCount(no, writer, cnt){

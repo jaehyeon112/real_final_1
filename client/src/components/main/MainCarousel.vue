@@ -1,12 +1,10 @@
 <template>
   <v-carousel cycle height="400" hide-delimiter-background show-arrows="hover">
-    <v-carousel-item v-for="(slide, i) in slides" :key="i">
-      <v-sheet :color="colors[i]" height="100%">
-        <div class="d-flex fill-height justify-center align-center">
-          <div class="text-h2">{{ slide }} Slide</div>
-        </div>
-      </v-sheet>
-    </v-carousel-item>
+    <v-carousel-item
+        v-for="(item,i) in items"
+        :key="i"
+        :src="item.src"
+      ></v-carousel-item>
   </v-carousel>
 </template>
 
@@ -15,6 +13,24 @@ export default {
   name: "carousel",
   data() {
     return {
+      items: [
+        {
+          src: '/IMG1696NwG493745980.jpg'
+        },
+        {
+          src: '/IMG1696rCR919391000.jpg'
+        },
+        {
+          src: '/IMG1696uuh917780793.jpg'
+        },
+        {
+          src: '/main.jpg'
+        }
+      ],
+
+
+
+
       colors: [
         "indigo",
         "warning",

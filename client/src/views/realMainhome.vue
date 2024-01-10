@@ -2,15 +2,14 @@
   <div>
     <carousel />
     <v-container justify="center">
-      <h1>실시간 베스트</h1>
+      <h1 style="margin-bottom: 20px;  margin-top: 100px; font-weight: 700;">생생한 리뷰</h1>
+      <review />
+      <h1 style="margin-bottom: 20px; margin-top: 100px; font-weight: 700;">실시간 베스트</h1>
       <v-row>
-        <v-col v-for="count in 6" :key="count" cols="4">
-          <!--  <menulist /> -->
+        <v-col cols="4" v-for="test in list" :key="test">
+            <menulist :prodList="test" /> 
         </v-col>
       </v-row>
-      <h1>생생한 리뷰</h1>
-      <review />
-      <upload />
     </v-container>
   </div>
 </template>
@@ -20,6 +19,7 @@ import carousel from "@/components/main/MainCarousel.vue";
 import menulist from "@/components/menu/MenuList.vue";
 import review from "@/components/main/review.vue";
 import upload from "@/components/menu/upload.vue";
+import axios from "axios"
 export default {
   components: {
     carousel,
@@ -27,8 +27,21 @@ export default {
     review,
     upload,
   },
-  methods: {
+  data(){
+    return{
+      list : []
+    }
   },
+  methods: {
+    async productList(){
+      let proList = await axios.get("/api/show/" + 0);
+      this.list = proList.data;
+    }
+    
+  },
+  created(){
+    this.productList();
+  }
 };
 </script>
 

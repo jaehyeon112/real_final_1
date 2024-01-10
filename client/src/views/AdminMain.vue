@@ -1,10 +1,11 @@
 <template>
 
   <div class="container-fluid">
-    <v-btn @click="tt" >asdf</v-btn>
+    <!-- <v-btn @click="tt" >asdf</v-btn> -->
     <div class="row">
       <side/>
-      <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+      <main class="col-md-9 col-lg-10 px-md-4">
+        <!-- <v-btn @click="play('http://soundbible.com/mp3/Air Plane Ding-SoundBible.com-496729130.mp3')">???</v-btn> -->
         <v-row class="toDo">
         <v-dialog
           v-model="dialog"
@@ -13,15 +14,17 @@
         >
           <template v-slot:activator="{ props }">
             <v-btn
-              color="black"
+              color="rgb(248, 173, 123)"
               v-bind="props"
+              @click="this.play()"
             >
-              오늘 해야 할 일
+            <v-icon>fas fa-list</v-icon>  
+            오늘 해야 할 일
             </v-btn>
           </template>
-          <v-card>
+          <v-card class="mods">
             <v-card-title class="text-h5">
-              새로 들어온 내역
+              새로운 내역이 있습니다
             </v-card-title>
             <v-card-text>
               <table class="table">
@@ -62,10 +65,12 @@
       </v-row>
         <v-card class="chars">
           <div class="chart" style="width: 550px;float: left;">
-              <Bar style="width: 100%;height: 350px;"/>
+            <h3>월간 매출액</h3>
+              <Bar style="width: 100%;height: 300px;"/>
           </div>
           <div class="chart" style="width: 550px;float: right;">
-            <Line style="width: 100%;height: 350px;"/>
+            <h3>주간 매출액</h3>
+            <Line style="width: 100%;height: 300px;"/>
           </div>
         </v-card>
       <v-card title="주문관리-주문내역(최근 주문내역)">
@@ -319,6 +324,8 @@ import icon from '../components/admin/icon.vue';
         dialog : true
       }
     },
+
+    
     components : {
       side,
       list,
@@ -334,13 +341,13 @@ import icon from '../components/admin/icon.vue';
         this.$store.commit('logout');
         this.$router.push({path : "/login"});
       }
+      this.$socket.emit('joinRoom', 'ADMIN');
+      this.play();
       this.getOrderList();
       this.getReviewList();
       this.getInquireList();
       this.getCounting();
-      if(this.$store.state.user.user_grade=='i4'){
-        this.$socket.emit('joinRoom', 'ADMIN');
-      }
+      
       this.$socket.on('test', (m)=>{
         this.showNotification(m);
       })
@@ -390,13 +397,7 @@ import icon from '../components/admin/icon.vue';
         }
        },
 
-       
-       async tt(){
-        await this.$socket.emit('joinRoom', 'ADMIN');
-          await axios.get('/api/sockettest')
-       
-       }
-       ,
+      
        showNotification(message) {
       // 사용자가 알림을 허용했는지 확인
       if (Notification.permission == 'granted') {
@@ -475,6 +476,11 @@ import icon from '../components/admin/icon.vue';
                     }
                 }
             },
+            play() {
+              let sound = 'https://soundbible.com/mp3/Air%20Plane%20Ding-SoundBible.com-496729130.mp3'
+              var audio = new Audio(sound);
+              audio.play();
+            },
       }
 }
 </script>
@@ -514,7 +520,7 @@ import icon from '../components/admin/icon.vue';
     transform: translate(-50%, -50%);
     width: 1200px;
     height: 400px;
-    background: #fff;
+    background: #ffffff;
     border-radius: 10px;
     padding: 10px;
     box-sizing: border-box;
@@ -532,20 +538,13 @@ import icon from '../components/admin/icon.vue';
 .table{
   width: 250px;
   text-align: center;
-  font-size: 18px;
-    /* border: 1px solid;
-    background-color: rgb(255, 255, 255); */
-    /* position: fixed;
-    z-index: 10;
-    bottom: 0;
-    right: 0; */
+  font-size: 25px;
+  margin: auto;
 }
 .toDo{
-  float: right;
-  background-color: black;
   position: fixed;
-  top: 30px;
-  right: 20px;
+  top: 50px;
+  right: 50px;
   text-align: center;
   z-index: 10;
 }
@@ -559,4 +558,14 @@ import icon from '../components/admin/icon.vue';
   width: 1200px;
   height: 400px;
 }
+.col-md-9 {
+  margin: auto;
+  padding: 10px;
+}
+.mods{
+  width: 400px;
+  height: 350px;
+  text-align: center;
+}
+
 </style>

@@ -1,33 +1,79 @@
 <template>
-  <v-card style="position: relative;">
-    <v-row>
-      <v-col>
-        <span><p>상품명</p></span>
-        <span><p>리뷰내용(2줄넘으면...)</p></span>
-        <span><p>별점</p></span>
-      </v-col>
-      <v-img style="position:relative;margin:100px"
-        class="align-end text-white"
-        height="500"
+  <div>
+    <v-card class="my-card" style="position: relative; padding:30px;"  >
+      <v-row justify="start" class="hi">
+        <v-col style=" font-size:20px">
+          <span style="color:gray;">{{review.user_id}}</span><span> 님께서 남기신 리뷰 입니다.</span>
+        </v-col>
+      </v-row>
+      <v-row  style="cursor: pointer;"  @click="$router.push({path:'/detailPage', query:{pno : review.prod_no}})">
+        <v-col align-self="center">
+          <span><p style="font-size:30px; font-weight: 700;">{{  review.review_title}}</p></span>  
+          <span><p style="font-size:24px">{{  review.review_content}}</p></span>
+          
+          <span style="font-size: 40px;" v-for="star in 5" :key="star">
+          <span class="mdi mdi-star" :style="{ color: star <= review.review_grade ? 'coral' : 'grey' }"></span>
+          </span>
+    
+        </v-col>
+        <v-img style="position:relative;margin:100px;"
+        class="align-end text-white test"
+       
+        :src="`/api/test/`+review.reviewfile"
+        ></v-img
+        ><v-img
+
         
-        src="https://cdn.vuetifyjs.com/images/cards/docks.jpg"
-        >리뷰사진</v-img
-      ><v-img
-          class="align-center text-white"
-          height="250"
+        class="align-center text-white"
+        height="250"
           width="250"
           style="border-radius: 50%; position:absolute; bottom:10px;
     right: 100px;"
-          src="https://cdn.vuetifyjs.com/images/cards/docks.jpg"
+        :src="`/api/test/`+review.prodfile"
           cover
-          >원본사진</v-img
-        >
-    </v-row>
-  </v-card>
-</template>
+          ></v-img
+          >
+        </v-row>
+      </v-card>
+    </div>
+    </template>
 
 <script>
-export default {};
+import axios from "axios"
+export default {
+  data(){
+    return{
+      review : {}
+    }
+  },
+  created(){
+    this.getReview();
+  },
+  methods:{
+  
+     async getReview(){
+      const response = await axios.get('/api/mainreview');
+      this.review = response.data[0]
+      console.log(this.review);
+      if(this.review.review_content.length > 25){
+        this.review.review_content = this.review.review_content.substring(0, 25) + ' ...더보기'
+      }
+     this.review.user_id = this.review.user_id.substring(0, 3) + '*'.repeat(this.review.user_id.length - 3)
+    }
+  }
+};
 </script>
 
-<style></style>
+<style scoped>
+.my-card {
+  height: 700px; /* 또는 원하는 값으로 조정 */
+}
+.hi{
+  height: 100px; /* 또는 원하는 값으로 조정 */
+  
+}
+
+.test{
+  width:400px;  
+}
+</style>

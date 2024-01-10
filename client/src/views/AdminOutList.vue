@@ -2,12 +2,9 @@
     <div class="container-fluid" style:width="50px">
     <div class="row">
         <side/>
-    <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-    <v-card
-      flat
-      title="탈퇴한 회원"
-    >
-      <!-- <div style="float: right;"><a @click="this.order='review_writedate'">기본순 | </a><a @click="this.order='review_grade'">별점 높은순 | </a><a @click="this.order='desc'">별점 낮은순 | </a><a @click="this.order='like_cnt'">좋아요 많은 순</a></div><br> -->
+    <main class="col-md-9 col-lg-10 px-md-4">
+    <v-card flat title="탈퇴한 회원목록">
+      <div style="float: right;"><a @click="this.order='review_writedate'">기본순 | </a><a @click="this.order='review_grade'">별점 높은순 | </a><a @click="this.order='desc'">별점 낮은순 | </a><a @click="this.order='like_cnt'">좋아요 많은 순</a></div><br>
       
       <v-data-table
         :headers="headers"
@@ -75,3 +72,9 @@
     },
 }
 </script>
+<style scoped>
+.col-md-9 {
+  margin: 0 auto;
+  padding: 10px;
+}
+</style>

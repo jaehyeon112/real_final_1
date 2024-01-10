@@ -94,7 +94,9 @@ export default{
           
             this.member = (await axios.get(`/api/member/${this.$store.state.user.user_id}`)
                                       .catch(err=>console.log(err))).data
-           
+            if(this.$store.state.user.user_grade=='i4'){
+                this.$router.push('/admin')
+            }
                
                                                           
         },
