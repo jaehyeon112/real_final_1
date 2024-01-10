@@ -33,7 +33,7 @@ import noticeInfo from "@/components/ServiceCenter/noticeInfo.vue";
 import reviewForm from "../views/ReviewForm.vue";
 import inquireForm from "../views/inquireForm.vue";
 import search from '@/components/menu/search.vue';
-import replyList from'@/components/common/replyList.vue'
+import replyList from '@/components/common/replyList.vue'
 
 
 
@@ -161,8 +161,9 @@ export default {
           path: "noticeInfo",
           name: "noticeInfo",
           component: noticeInfo
-        },]
-      },   
+        },
+      ]
+    },
     {
       path: "myPage",
       name: "myPage",
@@ -203,17 +204,17 @@ export default {
           component: point
         },
         {
-          path:"myInquire",
-          name:"myInquire",
-          component:myInquire
-         },
-         {
-          path:"myInquireInfo",
-          name:"myInquireInfo",
-          component:myInquireInfo
-         },
-         
-         {
+          path: "myInquire",
+          name: "myInquire",
+          component: myInquire
+        },
+        {
+          path: "myInquireInfo",
+          name: "myInquireInfo",
+          component: myInquireInfo
+        },
+
+        {
 
           path: "coupon",
           name: "coupon",
@@ -233,14 +234,14 @@ export default {
       component: reviewForm
     },
     {
-      path:"inquireForm",
-      name:"inquireForm",
-      component:inquireForm
-     },
+      path: "inquireForm",
+      name: "inquireForm",
+      component: inquireForm
+    },
     {
-      path:"replyList",
-      name:"replyList",
-      component:replyList
+      path: "replyList",
+      name: "replyList",
+      component: replyList
     },
 
   ],

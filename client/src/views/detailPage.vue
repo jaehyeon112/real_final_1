@@ -16,7 +16,13 @@
             <span class="mdi mdi-star" :style="{ color: star <= productInfo.star ? 'coral' : 'grey' }"></span>
             </span><span style="font-size: 25px; font-weight: 700;">{{ productInfo.star > 0.0 ? productInfo.star : "0.0" }}</span>
             <span style="color: gray; font-size:25px">{{ " | "+productInfo.total }}</span>
-                  <h1 class="display-7 fw-bolder">{{ productInfo.price }}</h1>
+                  <div>
+                     <span v-if="productInfo.discount_rate" style=" margin-right: 18px; font-size:40px; font-weight: 700; color:coral">{{ productInfo.discount_rate+'%'}}</span>
+                     <span style="margin-right: 18px; font-size:36px; font-weight: 700;" > {{ $wonComma(productInfo.discount_price) }}<span style="font-size:24px" >원</span></span>
+                     
+                     <span v-if="productInfo.price" style="text-decoration: line-through; color:gray; font-size:24px; font-weight: 700;"> {{ productInfo.price }}<span style="font-size:16px">원</span> </span>
+                     
+                  </div>
                   <div class="fs-5 mb-5">
                      <br>
                   <table class="table" border="1">
@@ -342,7 +348,9 @@ export default {
                user_id:'',
                prod_no:''
             },
-            productInfo:{},                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+            productInfo:{
+               discount_price:''
+            },                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
             likeList:{},
             reviewList:[],
             inquireList:[],
@@ -413,16 +421,18 @@ export default {
          return this.list[i].u 
       },
         async getProductInfo(){
+            this.$showLoading();
             let info = await axios.get(`/api/detailPro/${this.pno}`)
-                                    .catch(err=>console.log(err));
+            .catch(err=>console.log(err));
             this.productInfo = info.data[0]
             console.log('=======================')
             console.log(info.data[0])
             this.productInfo.price=this.$wonComma(this.productInfo.price)
             this.calculateTotalPrice()
-
+            
             this.Img = info.data
             this.Img.shift();
+            this.$hideLoading();
                                   
         },
         async getLikes(){
