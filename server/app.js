@@ -1420,7 +1420,7 @@ app.get("/member/:id", async (req, res) => {
 
   res.send(memberInfo);
 })
-app.get("/userGrade", async (req,res)=>{
+app.get("/userGrade", async (req, res) => {
   let grade = (await mysql.query("member", "memberState"))
   res.send(grade)
 })
