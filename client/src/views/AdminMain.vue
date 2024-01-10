@@ -278,7 +278,7 @@
           <td>{{ inquire.inquire_title }}</td>
           <td v-if="inquire.inquire_category=='j1'">상품문의</td>
           <td v-else-if="inquire.inquire_category=='j2'">배송문의</td>
-          <td v-else-if="inquire.inquire_category=='j1'">환불문의</td>
+          <td v-else-if="inquire.inquire_category=='j3'">환불문의</td>
           <td v-else>기타문의</td>
           <td>{{ $dateFormat(inquire.create_date,'yyyy년 MM월 dd일') }}</td>
           <td v-if="inquire.answer_state==0">{{this.inquires='답변 대기 중'}}</td>

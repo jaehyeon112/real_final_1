@@ -707,6 +707,7 @@ app.post("/dologin", async (req, res) => {
   } else {
     // 로그인 실패 응답 전송
     res.send({
+
       user: list
     });
   }
@@ -1016,7 +1017,7 @@ app.get('/order', async (req, res) => {
 
 app.get('/review/:order', async (req, res) => {
   let data = req.params.order;
-  let result = await mysql.query("admin", "reviewList", data);
+  let result = await mysql.query("admin", "reviewList2", data);
   res.send(result);
 });
 
@@ -1228,10 +1229,10 @@ app.get("/new", async (req, res) => {
 //예빈
 //멤버정보
 
-app.get("/member", async (req, res) => {
-  //let id = req.session.user_id;
-  let memberInfo = (await mysql.query("member", "memberInfo", req.session.user_id))[0]; // 데이터 타입 :  객체  
-  let pointInfo = (await mysql.query("point", "showNextMonth", req.session.user_id))[0]; // 데이터 타입 : 숫자
+app.get("/member/:id", async (req, res) => {
+  let id = req.params.id;
+  let memberInfo = (await mysql.query("member", "memberInfo", id))[0]; // 데이터 타입 :  객체  
+  let pointInfo = (await mysql.query("point", "showNextMonth", id))[0]; // 데이터 타입 : 숫자
   memberInfo.showNextMonth = pointInfo;
 
   res.send(memberInfo);
@@ -1473,14 +1474,14 @@ app.delete("/deleteReview/:rno", async (req, res) => {
     res.send(result);
   }),
   app.get("/rLikeCnt/:user/:rno", async (req, res) => {
-    let datas = [req.params.user,req.params.rno]
+    let datas = [req.params.user, req.params.rno]
     let result = await mysql.query("reviews", "selectReviewLike", datas)
     res.send(result);
     console.log(result)
   })
 
 app.post("/reviewLike/:rno/:uid", async (req, res) => {
-  let data = [req.params.rno,req.params.uid]
+  let data = [Number(req.params.rno), req.params.uid]
   res.send(await mysql.query("reviews", "insertReviewLike", data))
 });
 
@@ -1752,3 +1753,8 @@ app.get('/sessiontest', (req, res) => {
   console.log(grade)
   console.log('=!=')
 })
+
+app.get('/mainreview',
+  async (req, res) => {
+    res.send(await mysql.query('test', 'mainReview'))
+  })

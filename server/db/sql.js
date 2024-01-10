@@ -77,6 +77,10 @@ ORDER BY hotItem DESC
 limit ?, 6;
 `,
 
+  mainReview: `select f.file_name as reviewfile ,f2.file_name as prodfile  , o.prod_no, r.* from review r left join (select * from file where orders='s0') f 
+on (r.review_no = f.review_no) left join order_detail o on r.detail_order_no = o.order_detail_no
+left join (select * from file where orders='s0') f2 on o.prod_no = f2.prod_no
+where review_grade = 5 and f.file_name is not null ORDER BY RAND()  LIMIT 1;`,
 
   cartList: `select distinct * 
              from cart c, product p, user u, (select file_name, prod_no from file where orders='s0') f
@@ -249,7 +253,7 @@ let admin = {
   reviewReportList: `select *,(select report_cnt from review where review_no=review_report.review_no) as cnt from review_report order by report_date desc limit ?,?`,
   reasonReportList: `select *,(select report_cnt from review where review_no=review_report.review_no) as cnt from review_report 
   where report_status=? order by report_date desc  limit ?,?`,
-  reviewList: `select prod_name,order_detail_no,user_id,review_title,review_content,review_writedate,review_grade,like_cnt from order_detail o,product p,review r 
+  reviewList2: `select prod_name,order_detail_no,user_id,review_title,review_content,review_writedate,review_grade,like_cnt from order_detail o,product p,review r 
   where o.prod_no=p.prod_no and o.order_detail_no=r.detail_order_no order by ?? desc`,
   //문의사항,공지사항,자주하는질문
   AllinquireList: `select * from inquire order by answer_state,create_date desc`,
@@ -296,7 +300,13 @@ let reviews = {
   reviewInfo: `select * from review where user_id=? and review_no=?`, //마이페이지 리뷰하나 보기
   orderNoReview: `select * from review where user_id=?`,
   //서영희
-  reviewList: `select  r.* from order_detail o,review r where o.order_detail_no=r.detail_order_no and prod_no = ? `,
+  reviewList: `select  file_name, r.* 
+  from review r 
+  left join (select * from file where orders='s0') f 
+  on (r.review_no = f.review_no) 
+  left join order_detail o on o.order_detail_no=r.detail_order_no 
+  where o.prod_no = ?;
+   `,
   likeUp: `update review set like_cnt = like_cnt+1 where review_no= ?`,
   likeDown: `update review set like_cnt = like_cnt-1 where review_no= ?`,
   insertReviewLike: `insert into review_like set review_no=(select review_no from review where review_no = ?), user_id = (select user_id from user where user_id = ?)`,
@@ -329,8 +339,8 @@ WHERE t3.prod_no = ?`, //상세페이지에서 그 상품에대한 리뷰 리스
   updateReview: `update review set ? where user_id= ? and review_no= ?`,
   insertReviewImage: `insert into image set?`,
   deleteReview: `delete from review where review_no=?`,
-  selectReviewLike: `select user_id as u from review_like where user_id=? and review_no=?`,
-  //insertReviewLike: `insert into review_like set ?`,
+  selectReviewLike: `select * from review_like where user_id=? and review_no=?`,
+  insertReviewLike: `insert into review_like set review_no = ? , user_id = ?`,
   deleteReviewLike: `delete from review_like where review_no=? and user_id=?`
 
 };
@@ -392,7 +402,7 @@ let like = {
   likeInfo: `select* from likes where user_id=? and prod_no=?`,
   likeInsert: `insert into likes set?`,
   likeDel: `delete from likes where user_id=? and prod_no =?`,
-  likeList: `select * from likes where user_id=?`
+  likeList: `select * from select * from product p right join likes l on p.prod_no = l.prod_no where user_id=?`
 }
 let inquire = {
   inquireList: `select * from inquire where user_id=?`,
