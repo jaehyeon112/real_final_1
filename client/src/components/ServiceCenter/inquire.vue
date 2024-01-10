@@ -1,6 +1,8 @@
 <template>
     <div>
         <div >
+            <br>
+            <br>
         <table class="table">
             <thead>
                 <tr>
