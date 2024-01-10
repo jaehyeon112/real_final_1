@@ -13,21 +13,22 @@
                       </v-col>
                     </v-row>
                     <table class="rwd-table" :key="idx" v-for="(list, idx) in cartList">
-                      <tr :class="{'stock': list.stock == 0}">
+                      <tr :class="{'stock': list.stock == 0 || list.soldout == 1 }">
                         <td>
                           <v-checkbox v-model="list.cart_checkbox" true-value="1" false-value="0" @click="updateCheckbox(list)"></v-checkbox>
                         </td>
                         <td><v-img width="80" height="80" :src="`api/test/`+ list.file_name"></v-img></td>
                         <td style="cursor: pointer; font-weight: bold;" @click="goTodetailForm(list.prod_no)">{{ list.prod_name }}</td>
                           <td>
-                            <v-btn @click="quantityMinus(list)">
+                            <v-btn v-if="list.stock != 0 && list.soldout != 1" @click="quantityMinus(list)">
                               <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAiIGhlaWdodD0iMzAiIHZpZXdCb3g9IjAgMCAzMCAzMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICAgIDxwYXRoIGQ9Ik0yMCAxNHYySDEwdi0yeiIgZmlsbD0iIzMzMyIgZmlsbC1ydWxlPSJub256ZXJvIi8+Cjwvc3ZnPgo=" alt="">
                             </v-btn>
                           </td>
-                          <td v-if="list.stock != 0">{{ list.quantity }}개</td>
+                          <td v-if="list.stock != 0 && list.soldout != 1">{{ list.quantity }}개</td>
+                          <td v-else-if="list.soldout == 1">품절</td>
                           <td v-else>상품 준비중</td>
                           <td>
-                            <v-btn  @click="quantityPlus(list)">
+                            <v-btn v-if="list.stock != 0 && list.soldout != 1" @click="quantityPlus(list)">
                               <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAiIGhlaWdodD0iMzAiIHZpZXdCb3g9IjAgMCAzMCAzMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICAgIDxwYXRoIGQ9Ik0xNiAxMHY0aDR2MmgtNHY0aC0ydi00aC00di0yaDR2LTRoMnoiIGZpbGw9IiMzMzMiIGZpbGwtcnVsZT0ibm9uemVybyIvPgo8L3N2Zz4K" alt="">
                             </v-btn>
                           </td>
@@ -143,7 +144,6 @@ export default {
   data() {
     return {
       cartList: [],
-      Checkbox : 0,
       total : 0,
       discount : 0,
       delivery : 0,
@@ -151,6 +151,11 @@ export default {
       cartno : 0,
       isSoldOut : false,
       isStock : false,
+      checkbox : 0,
+      prodStock: 0,
+      cartQuantity: 0,
+      cartNo : 0,
+      soldout : 0
     }
   },
   created(){
@@ -376,33 +381,37 @@ export default {
         }
       },
       async moveOrderForm(){
-      this.prodStock = 0;
-      this.cartQuantity = 0;
-      this.cartNo = 0;
-      for(let i=0; i<this.cartList.length; i++) {
-        this.prodStock = this.cartList[i].stock
-        this.cartQuantity = this.cartList[i].quantity
-        this.cartNo = this.cartList[i].cart_no
-        this.Checkbox = this.cartList[i].cart_checkbox
-      }
-              if(this.Checkbox == 1){
+        for (let i = 0; i < this.cartList.length; i++) {
+            this.prodStock = this.cartList[i].stock;
+            this.cartQuantity = this.cartList[i].quantity;
+            this.cartNo = this.cartList[i].cart_no;
+            this.checkbox = this.cartList[i].cart_checkbox;
+            this.soldout = this.cartList[i].soldout;
 
-                if(this.prodStock < this.cartQuantity) {
-                  console.log(this.prodStock,'상품재고')
-                  alert('재고가 부족한 상품이 있어 상품 수량이 변경됩니다.')
-                  console.log(this.cartNo,'상품번호')
-                  await axios.put(`/api/Cartquantity/${this.prodStock}/${this.cartNo}`,)
-                  .catch(err => console.log(err));
-                  console.log('수량변경완료')
-                }else{
-                  this.$router.push('/orderForm');
-                }
-            }else{
-              alert('선택된 상품이 없습니다!')
+            if(this.checkbox == 1){
+
+              if (this.prodStock < this.cartQuantity) {
+                console.log(this.prodStock, '상품재고');
+                alert('재고가 부족한 상품이 있어 상품 수량이 변경됩니다.');
+              console.log(this.cartNo, '상품번호');
+              await axios
+              .put(`/api/Cartquantity/${this.prodStock}/${this.cartNo}`)
+              .catch((err) => console.log(err));
+              console.log('수량변경완료');
             }
-      },
-  }
-}
+            
+            if (this.soldout == 1 || this.prodStock == 0) {
+              alert('품절이거나 상품준비중인 상품이 있습니다.')
+              this.$router.push('/cartList');
+              return;
+            }
+            this.$router.push('/orderForm');
+          }
+        }
+        }
+
+          },
+        }
 </script>
 <style scoped>
 * {
@@ -465,7 +474,7 @@ h1 {
 }
 
 .rwd-table td:nth-child(5) {
-  width: 10%; 
+  width: 20%; 
 }
 
 .rwd-table td:nth-child(6) {
@@ -534,6 +543,5 @@ button{
 
 .stock {
   opacity: 0.5; /* 불투명도 조절 */
-
 }
 </style>
