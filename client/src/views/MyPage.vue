@@ -10,7 +10,7 @@
                             <strong class="d-inline-block mb-2 text-body-secondary text-success-emphasis" v-if="member.user_grade=='i1'"> 일반</strong>
                             <strong class="d-inline-block mb-2 text-body-secondary text-success-emphasis" v-else-if="member.user_grade=='i2'">  실버</strong>
                             <strong class="d-inline-block mb-2 text-body-secondary text-success-emphasis" v-else> 골드</strong></div>
-                            <h3 class="mb-0">{{ member.user_id}}님</h3>
+                            <h3 class="mb-0">{{ member.user_id}}님</h3><v-btn  fav small id="withdrawl"   color="#FFB300" @click="goTodelete">탈퇴하기</v-btn>
                             <p class="mb-auto"></p>
                             <a href="#" class="icon-link gap-1 icon-link-hover ">
                                 <div class="text-center">
@@ -30,19 +30,19 @@
                             </a>
                         </div>
             </div>
-                <div class="col-sm-3 " style="background-color: #FFAB40; margin:10px">
+                <div class="col-sm-3 " style="background-color: #FFB300; margin:10px">
                     <div class="col p-4 d-flex flex-column position-static">
-                        <strong class="d-inline-block mb-2 text-success-emphasis">잔여포인트</strong>
+                        <strong class="d-inline-block mb-2 text-success-emphasis  text-center">잔여포인트</strong>
                         <h3 class="mb-0">{{ member.point }} p</h3>
                         <p class="mb-auto"></p>
                     </div>
                 </div>
            
-                <div class="col-sm-3"  style="background-color: #FFAB40; margin:10px">
+                <div class="col-sm-3"  style="background-color: #FFB300; margin:10px">
                     <div class="col p-4 d-flex flex-column position-static">
-                        <strong class="d-inline-block mb-2 text-success-emphasis">잔여쿠폰</strong>
+                        <strong class="d-inline-block mb-2 text-success-emphasis  text-center">잔여쿠폰</strong>
                         
-                        <router-link to="/myPage/coupon"><h3 class="mb-0" >{{ member.couponCnt }} 개</h3></router-link>
+                        <router-link to="/myPage/coupon"><h3 class="mb-0">{{ member.couponCnt }} 개</h3></router-link>
                          
                            
                     </div>
@@ -98,6 +98,9 @@ export default{
                
                                                           
         },
+        goTodelete(){
+            this.$router.push('/withdrawal')
+        }
         
     }
 }
@@ -142,6 +145,11 @@ export default{
   vertical-align: text-bottom;
   text-align:center;
 
+}
+#withdrawl{
+    width: 50px;
+    height: 50px;
+    
 }
 
 </style>

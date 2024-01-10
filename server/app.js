@@ -1549,6 +1549,11 @@ app.delete('/deleteInquire/:ino', async (req, res) => {
   let result = await mysql.query("inquire", "deleteInquire", ino)
   res.send(result)
 })
+app.get("/inquireP/:pno", async (req, res) => {
+  let pno = Number(req.params.pno)
+  res.send(await mysql.query("inquire", "inquireListP", pno))
+})
+
 //답변
 app.get("/inquireAnswer/:ino", async (req, res) => {
   let ino = Number(req.params.ino);
@@ -1560,7 +1565,21 @@ app.get("/photoInq/:ino", async (req, res) => {
   res.send(await mysql.query("inquire", "photoListInq", ino))
 })
 
-
+//공지사항, fnq
+app.get("/notice", async (req, res) => {
+  res.send(await mysql.query("notice", "noticeList"))
+})
+app.get("/notice/:nno", async (req, res) => {
+  let nno = req.params.nno
+  res.send(await mysql.query("notice", "noticeInfo",nno))
+})
+app.get("/fnq", async (req, res) => {
+  res.send(await mysql.query("fnq", "fnqList"))
+})
+app.get("/fnq/:fno", async (req, res) => {
+  let fno = req.params.fno
+  res.send(await mysql.query("fnq", "fnqInfo"))
+})
 
 
 

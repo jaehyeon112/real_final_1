@@ -6,7 +6,7 @@
             <span>
                 <p>주문번호: {{ detail.order_no }}</p>
                 <p>주문상세번호: {{ detail.order_detail_no }}</p>
-                여기 사진 넣는다 치고
+                <img :src="`/api/test/`+detail.file_name" alt="상품이미지" width="200px" height="200px">
                 <small class="d-block text-body-secondary">상품명:{{ detail.prod_name }}</small>
                 <hr>
                 <small class="d-block text-body-secondary">원래가격:{{ detail.price }}</small>
@@ -19,26 +19,30 @@
                 <v-btn @click="orderCancel">주문취소</v-btn>
             </label>
             <div>
+                <hr>
                 <p>결제정보</p>
                 
-                <div v-for="(item,idx) in productList" :key="idx">
-                        <small class="d-block text-body-secondary">금액:{{ item.total_payment }}</small>
-                        <small class="d-block text-body-secondary">할인금액:{{ item.total_payment - item.real_payment }}</small>
-                        <small class="d-block text-body-secondary">결제금액:{{ item.real_payment }}</small>
+                <div>
+                        <p class="d-block text-body-secondary text-center">금액:{{ oneproductLiss.total_payment }}</p>
+                        <p class="d-block text-body-secondary text-center">할인금액:{{ oneproductLiss.total_payment - oneproductLiss.real_payment }}</p>
+                        <p class="d-block text-body-secondary text-center">결제금액:{{ oneproductLiss.real_payment }}</p>
                         
-                        <small class="d-block text-body-secondary">배송비:{{ item.delivery_charge }}</small>
-                        <small class="d-block text-body-secondary">쿠폰할인:{{ item.coupon_discount_rate }}</small>
-                        <small class="d-block text-body-secondary">포인트사용:{{ item.point_use }}</small>
-                        <small class="d-block text-body-secondary">포인트적립률:{{ item.point_save_rate }}</small>
+                        <p class="d-block text-body-secondary text-center">배송비:{{ oneproductLiss.delivery_charge }}</p>
+                        <p class="d-block text-body-secondary text-center">쿠폰할인:{{ oneproductLiss.coupon_discount_rate }}</p>
+                        <p class="d-block text-body-secondary text-center">포인트사용:{{ oneproductLiss.point_use }}</p>
+                        <p class="d-block text-body-secondary text-center">포인트적립률:{{ oneproductLiss.point_save_rate }}</p>
                         
-                        <small class="d-block text-body-secondary">결제방법:{{ item.payment_method }}</small>
-                        <small class="d-block text-body-secondary">결제일시:{{ item.order_date }}</small>
+                        <p class="d-block text-body-secondary text-center">결제방법:{{ oneproductLiss.payment_method }}</p>
+                        <p class="d-block text-body-secondary text-center">결제일시:{{ $dateFormat(oneproductLiss.order_date,'yyyy년MM월dd일') }}</p>
+                        <hr>
                         <p>배송정보</p>
-                        <small class="d-block text-body-secondary">보내는분:{{ item.user_id }}</small>
-                        <small class="d-block text-body-secondary">받는분:{{ item.recipient }}</small>
-                        <small class="d-block text-body-secondary">받는주소:{{ item.recipient_address }}</small>
-                        <small class="d-block text-body-secondary">받는상세주소:{{ item.recipient_detail_address }}</small>
-                        <small class="d-block text-body-secondary">배송 요청사항:{{ item.deliveyry_request }}</small>
+                        <p class="d-block text-body-secondary text-center">보내는분:{{ oneproductLiss.user_id }}</p>
+                        <p class="d-block text-body-secondary text-center">받는분:{{ oneproductLiss.recipient }}</p>
+                        <p class="d-block text-body-secondary text-center">받는주소:{{ oneproductLiss.recipient_address }}</p>
+                        <p class="d-block text-body-secondary text-center">받는상세주소:{{ oneproductLiss.recipient_detail_address }}</p>
+                        <p class="d-block text-body-secondary text-center">배송 요청사항:{{ oneproductLiss.deliveyry_request }}</p>
+                        <br>
+                        <br>
                     </div>
             </div>
         </div>   
@@ -51,10 +55,12 @@ export default {
    data(){
     return{
         productList:[],
+        oneproductLiss:[],
         reviewList:[],
         orderNo:'',
         test:false
     }
+    prpops:[]
    },
    created(){
     
@@ -82,7 +88,8 @@ export default {
                 a[i].test = true
             }
         }
-            this.productList = a
+            this.productList = a;
+            this.oneproductLiss = a[0];
             console.log( '배송비랑 멕시멈..'+this.productList)
         }    
     },

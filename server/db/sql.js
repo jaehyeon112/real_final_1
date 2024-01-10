@@ -354,7 +354,7 @@ let coupon = {
   myCoupon: `select c1.coupon_no, c1.user_id, c1.start_coupon, c1.end_coupon, c1.coupon_able, c2.coupon_name, c2.coupon_content, c2.coupon_discount_rate ,c1.coupon_able 
             from coupon c1 left join couponinfo c2 
             on (c1.couponinfo_no = c2.couponinfo_no)
-            where c1.user_id=?;` //마이페이지 보유 쿠폰
+            where c1.user_id=?` //마이페이지 보유 쿠폰
 };
 let orders = {
   savingCart: `insert into cart set ?`,
@@ -365,19 +365,21 @@ let orders = {
 
 
   //detailOrderLists:`select * from order_detail o1 left join orders o2 on o1.order_no = o2.order_no where o1.order_no =? and user_id = ?`,//주문창에서 상세주문내역으로 이동시 불러올 값
-  orderList: `select ord.order_date, dord.order_detail_no, ord.delivery_charge, ord.total_payment, ord.real_payment, ord.payment_no, ord.order_no, group_concat(prod_name) prod_name_list, ord.order_status, ord.point_use , dord.order_quantity, dord.prod_no
-              from orders ord  join order_detail dord on ord.order_no = dord.order_no
+  orderList: `select fi.file_name,ord.order_date, dord.order_detail_no, ord.delivery_charge, ord.total_payment, ord.real_payment, ord.payment_no, ord.order_no, group_concat(prod_name) prod_name_list, ord.order_status, ord.point_use , dord.order_quantity, dord.prod_no
+  from orders ord  join order_detail dord on ord.order_no = dord.order_no
 
-                               join product pro on pro.prod_no = dord.prod_no
-                               where ord.user_id=?
-                               group by ord.order_no
-                               order by ord.order_no`,
+                   join product pro on pro.prod_no = dord.prod_no
+    join file fi on pro.prod_no = fi.prod_no
+                   where ord.user_id=?
+                   group by ord.order_no
+                   order by ord.order_no;`,
   orderCancle: `update orders set order_status=m3 where order_no=? and user_id=?`, //주문전체취소
 
   detailOrderLists: `select * from order_detail od join product pr on od.prod_no = pr.prod_no	
-                                                  join orders ods on ods.order_no = od.order_no
-                     where od.order_no=?
-                     and ods.user_id=?` //주문창에서 상세주문내역으로 이동시 불러올 값
+  join orders ods on ods.order_no = od.order_no
+  join (select * from file where orders='s0') fi on pr.prod_no = fi.prod_no
+where od.order_no=?
+and ods.user_id=?;` //주문창에서 상세주문내역으로 이동시 불러올 값
 }
 let delivery = {
   addDelivery: `insert into add_delivery set?`,
@@ -394,10 +396,11 @@ let like = {
   likeInfo: `select* from likes where user_id=? and prod_no=?`,
   likeInsert: `insert into likes set?`,
   likeDel: `delete from likes where user_id=? and prod_no =?`,
-  likeList: `select * from select * from product p right join likes l on p.prod_no = l.prod_no where user_id=?`
+  likeList: ` select * from product p right join likes l on p.prod_no = l.prod_no where user_id=?`
 }
 let inquire={
   inquireList:`select * from inquire where user_id=?`,
+  inquireListP:`select * from inquire i join order_detail o on i.order_detail_no=o.order_detail_no where prod_no=?`,
   inquireInfo:`select * from inquire where inquire_no=?`,
   inquireInsert:`insert into inquire set?`,
   inquireUpdate:`update inquire set? where user_id=? and inquire_no=?`,
@@ -408,6 +411,14 @@ let inquire={
 let member = {
   memberInfo: `select t1.*, count(case when coupon_able=0 then 1 end) as couponCnt from user t1 join coupon t2  on t1.user_id = t2.user_id where t1.user_id= ?`
 }
+let notice = {
+  noticeList:`select * from notice order by importance`,
+  noticeInfo:`select * from notice where notcie_no=?;`
+  }
+  let fnq = {
+    fnqList:`select * from fnq `,
+    fnqInfo:`select * from fnq where qno=?;`
+  }
 
 module.exports = {
   user,
@@ -420,5 +431,7 @@ module.exports = {
   like,
   member,
   admin,
-  inquire
+  inquire,
+  notice,
+  fnq
 };
