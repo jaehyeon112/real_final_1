@@ -4,7 +4,7 @@
 
       <section class="py-5" id="top">
          <div class="container px-4 px-lg-5 my-5">
-            <div class="row gx-4 gx-lg-5 align-items-center">
+            <div class="row gx-4 gx-lg-5">
                <div class="col-md-4">
                   <v-img style="width:600px"  :src="`/api/test/`+ productInfo.file_name"></v-img>
                   <v-img style="float:left; margin:10px" v-for="(item,idx) in Img" :key="idx" width=100 :src="`/api/test/`+item.file_name"></v-img>
@@ -25,39 +25,41 @@
                   </div>
                   <div class="fs-5 mb-5">
                      <br>
-                  <table class="table" border="1">
-                     <tr>
-                        <th>냉장/냉동</th>
-                        <td v-if="productInfo.refrigeration=='g1'">냉장</td>
-                        <td v-else>냉동</td>
-                     </tr>
-                     <tr>
-                        <th>알레르기 정보</th>
-                        <td>알레르기 정보 {{ productInfo.allergy }}</td>
-                     </tr>
-                  </table>
+                     <v-row>
+                        <v-col cols="3" style="font-weight: 700;">알레르기 정보</v-col>
+                        <v-col cols="9" style="font-size: 16px;">{{ productInfo.allergy }}</v-col>
+
+                     </v-row>
                   </div>
                   
                   <div class="d-flex">
-                     <p>상품선택</p>
-                        <v-btn @click="decreaseQuantity">-</v-btn>
-                        <span >{{ counter }} </span>
-                        <v-btn @click="increaseQuantity(productInfo.prod_no)">+</v-btn>
+                     <br>
+                     <v-btn density="compact" @click="decreaseQuantity" icon="mdi-minus"></v-btn>
+                     <span style="margin: 0 14px 14px; " >{{ counter }} </span>
+                     <v-btn @click="increaseQuantity(productInfo.prod_no)" density="compact" icon="mdi-plus"></v-btn>
                   </div>
                   <div>
-                     <p class="lead">할인률{{ productInfo.discount_rate }}</p>
-                     <p class="lead">할인률 적용된 가격{{  productInfo.discount_price }}</p>
                   <br>
-                  <br>
-                  
-                     <p class="lead">총 가격: {{ $wonComma(productInfo.discount_price*counter) + '원'}}</p>
-                     <p style="margin-left:20px;margin-bottom:0;color:black">무료배송 (40,000원 이상 구매 시)</p>
+                     <p class="lead" style="font-size:28px">총 가격 : <span style="font-weight: 700;">{{ $wonComma(productInfo.discount_price*counter)}}</span><span style="font-size:20px; font-weight: 700;">원</span></p>
+                     <p > 배송비 : <span style="color:black; font-size:22px; font-weight:700;">3,000</span> 원 <span style="color:gray"> (40,000원 이상 구매 시 무료배송)</span></p>
                      <br>
                   </div>
                   <div>
-                     {{ productInfo.prod_no +' 번' }}
-                     <v-btn @click="goToCart(productInfo.prod_no)">장바구니 담기</v-btn>
-                     <v-btn  @click="liked" :color="isShow ? 'red' : 'orange'"> ♡ </v-btn>                                           
+                     <v-row align="center" justify="center">
+                        <v-col cols="auto">
+                           <v-btn class="btn" elevation="6" size="x-large" @click="goToCart(productInfo.prod_no)"><span style="font-weight: 700;">장바구니</span><span class="mdi mdi-cart-minus"></span></v-btn>
+                           
+                        </v-col>
+                        <v-col cols="auto">
+                           <v-btn class="btn" size="x-large" elevation="6" @click="liked"  :color="isShow ? 'red' : 'white'" ><span style="color:black;font-size: 24px;" class="mdi mdi-heart"></span> </v-btn>                                           
+                           
+                        </v-col>
+                     </v-row >
+                     <v-row align="center" justify="center">
+                        <v-col cols="auto">
+                           <v-btn class="btn2" size="x-large" elevation="6" ><span style="font-weight: 700;">바로구매</span></v-btn>                                           
+                        </v-col>
+                     </v-row>
                   </div>
                </div>
             </div>
@@ -371,11 +373,11 @@ export default {
     created(){ 
       this.pno = this.$route.query.pno; 
       this.getProductInfo();
-      // this.getLikes();
+      this.getLikes();
       // this.getRivewList();
       this.soldout();
       this.getUserCartInfo()
-      //this.getLikes();
+      // this.getLikes();
       this.getRivewList();
       this.getInquireList();
         
@@ -406,7 +408,6 @@ export default {
       }
       let a = (await axios.get(`/api/reviewreport/${rNo}`)).data
       console.log(a)
-      console.log('asdfasdfsfda')
       
       if(a.length == 0){
          let b = (await axios.post(`/api/reviewreport`,obj)).data
@@ -444,10 +445,13 @@ export default {
                                   
         },
         async getLikes(){
-       
+         if(this.$store.state.user.user_id ==null){
+            return;
+         }
         let list = await axios.get(`/api/prodLike/${this.pno}`)
                                   .catch(err=>console.log(err));
             this.likeList =list.data
+            console.log(list.data + "?")
             console.log(this.likeList)
             if(list.data.length == 0 ){
                console.log('찜안한상태'+list.data)
@@ -674,11 +678,15 @@ export default {
     }
   }
   },
+
       async liked(){
       //찜하기눌러서 저장하는 곳
-      
+      if(this.$store.state.user.user_id ==null){
+         alert('로그인 이후 사용할 수 있습니다.')
+            return;
+         }
             if(this.isShow == true ){ //찜한상태라는 말
-               let dellike = await axios.delete(`/api/prodDisike/${this.$store.state.user.user_id}/${this.pno}`)
+               let dellike = await axios.delete(`/api//DelprodLike/${this.$store.state.user.user_id}/${this.pno}`)
                                        .catch(err=>console.log(err));
                   if(dellike.data.affectedRows>0){                        
                      alert('삭제성공')
@@ -809,4 +817,16 @@ export default {
    color: #fff;
 }
    
+   .btn{
+      width:200px;
+   }
+   .btn2{
+      width:425px;
+      background-color: coral;
+      color:white;
+      font-size : 20px;
+      margin-bottom: 30px;
+      font-weight: 700px;
+
+   }
 </style>

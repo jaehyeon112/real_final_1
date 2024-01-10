@@ -1204,7 +1204,7 @@ app.get('/reports/:status', async (req, res) => {
 });
 
 app.get('/reports/:status/:sno', async (req, res) => {
-  let datas = [req.params.status, Number(req.params.sno)*10]
+  let datas = [req.params.status, Number(req.params.sno) * 10]
   let result = await mysql.query("admin", "reasonReportList", datas);
   res.send(result);
 });
@@ -1222,7 +1222,7 @@ app.get('/refund/:sno', async (req, res) => {
 });
 
 app.get('/refunds/:state/:sno', async (req, res) => {
-  let data = [req.params.state, Number(req.params.sno)*10];
+  let data = [req.params.state, Number(req.params.sno) * 10];
   let result = await mysql.query("admin", "refundState", data);
   res.send(result);
 });
@@ -1639,9 +1639,9 @@ app.get("/orderNoReview", async (req, res) => {
 
 
 //찜하기
-app.delete("/DelprodLike/:pno", async (req, res) => {
+app.delete("/DelprodLike/:id/:pno", async (req, res) => {
   console.log('????');
-  let datas = [req.session.user_id, req.params.pno]
+  let datas = [req.params.id, req.params.pno]
   console.log(datas);
   res.send(await mysql.query("like", "likeDel", datas))
 });
@@ -1920,8 +1920,8 @@ app.post('/reviewreport', async (req, res) => {
   let query = `insert into review_report set ?`
   let result = await mysql.query2(query, data)
 
-  res.send(result);
   io.to('ADMIN').emit('report', '새로운 신고요청건이 있습니다.')
+  res.send(result);
 
 })
 app.put('/reviewreport/:rno', async (req, res) => {
