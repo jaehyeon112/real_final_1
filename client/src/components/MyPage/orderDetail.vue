@@ -14,7 +14,7 @@
                 <small class="d-block text-body-secondary">수량:{{ detail.order_quantity }}</small>
             </span>
             <p>{{ detail.delivery_status }}</p>
-                <v-btn @click="goToReview(detail.order_detail_no)" :disabled="detail.test">리뷰작성</v-btn>
+                <v-btn @click="goToReview(detail.order_detail_no)" :disabled="detail.test|| disablestate" >리뷰작성</v-btn>
                 <v-btn  @click="goToInquire(detail.order_detail_no)" >문의하기</v-btn>
                 <v-btn @click="orderCancel">주문취소</v-btn>
             </label>
@@ -41,7 +41,7 @@
                         <p class="d-block text-body-secondary ">받는분:{{ oneproductLiss.recipient }}</p>
                         <p class="d-block text-body-secondary ">받는주소:{{ oneproductLiss.recipient_address }}</p>
                         <p class="d-block text-body-secondary ">받는상세주소:{{ oneproductLiss.recipient_detail_address }}</p>
-                        <p class="d-block text-body-secondary ">배송 요청사항:{{ oneproductLiss.deliveyry_request }}</p>
+                        <p class="d-block text-body-secondary ">배송 요청사항:{{ oneproductLiss.delivery_request }}</p>
                         <br>
                         <br>
                     </div>
@@ -59,9 +59,10 @@ export default {
         oneproductLiss:[],
         reviewList:[],
         orderNo:'',
-        test:false
+        test:false,
+        userGrade:''
     }
-    prpops:[]
+    props:[]
    },
    created(){
     
@@ -103,8 +104,17 @@ export default {
         this.$router.push({path:'/inquireForm', query:{detailNo : detailNo}})
         console.log(detailNo)
     },
-
-        },
+    // async userGrade(){
+    //     this.userGrade=(await axios.get(`/api/userGrade`)
+    //                                     .catch(err=>console.log(err))).data // 상세의 데이터
+    //                                     console.log('등급'+this.userGrade)
+                                        
+    // },
+    // disablestate(){
+    // if(this.userGrade == 'i1'){
+    // return false;
+    //     }
+    // },
 
     orderCancel() {
         try {
@@ -132,7 +142,7 @@ export default {
         }
    }
    
-
+}
 </script>
 <style>
 .info{

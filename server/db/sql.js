@@ -438,7 +438,7 @@ let like = {
   ) f
   RIGHT JOIN product p ON p.prod_no = f.prod_no
   RIGHT JOIN likes l ON p.prod_no = l.prod_no
-  WHERE user_id =`
+  WHERE user_id =?`
 }
 let inquire = {
   myInquireList: `select * from inquire where user_id=?`,
@@ -452,6 +452,7 @@ let inquire = {
 }
 let member = {
   memberInfo: `select t1.*, count(case when coupon_able=0 then 1 end) as couponCnt from user t1 join coupon t2  on t1.user_id = t2.user_id where t1.user_id= ?`
+, memberState:`select user_grade from user where user_id=?`
 }
 let notice = {
   noticeList: `select * from notice order by importance`,

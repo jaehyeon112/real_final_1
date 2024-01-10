@@ -1371,7 +1371,10 @@ app.get("/member/:id", async (req, res) => {
 
   res.send(memberInfo);
 })
-
+app.get("/userGrade", async (req,res)=>{
+  let grade = (await mysql.query("member", "memberState"))
+  res.send(grade)
+})
 // //다음달 소멸 포인트
 // app.get("/nextMonthPoint/:id", async(req,res)=>{
 //   let id = req.params.id;
