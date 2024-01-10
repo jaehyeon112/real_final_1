@@ -4,7 +4,6 @@
         <side/>
     <main class="col-md-9 col-lg-10 px-md-4">
     <v-card flat title="탈퇴한 회원목록">
-      <div style="float: right;"><a @click="this.order='review_writedate'">기본순 | </a><a @click="this.order='review_grade'">별점 높은순 | </a><a @click="this.order='desc'">별점 낮은순 | </a><a @click="this.order='like_cnt'">좋아요 많은 순</a></div><br>
       
       <v-data-table
         :headers="headers"
@@ -51,6 +50,18 @@
             });
             for(let i=total.data.length-1;i>=0;i--){
               total.data[i].withdrawal_date = this.dateFormat(total.data[i].withdrawal_date,'yyyy년 MM월 dd일');
+              if(total.data[i].withdrawal_reason=='w1'){
+                total.data[i].withdrawal_reason = '사고싶은 제품이 없어서'
+              }else if(total.data[i].withdrawal_reason=='w2'){
+                total.data[i].withdrawal_reason = '더 좋은 사이트를 발견해서'
+              }else if(total.data[i].withdrawal_reason=='w3'){
+                total.data[i].withdrawal_reason = '가격이 너무 비싸서'
+              }else{
+                if(total.data[i].withdrawal_detail_reason==null){
+                  total.data[i].withdrawal_detail_reason = '사유없음'
+                }
+                total.data[i].withdrawal_reason = '기타 : '+ total.data[i].withdrawal_detail_reason
+              }
             }
             this.outList = total.data;
         },

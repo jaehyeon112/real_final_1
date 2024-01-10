@@ -1215,15 +1215,21 @@ app.get('/refund', async (req, res) => {
   res.send(result);
 });
 
-app.get('/refund/:state/:sno', async (req, res) => {
+app.get('/refund/:sno', async (req, res) => {
+  let datas = Number(req.params.sno) * 10
+  let result = await mysql.query("admin", "refundOrderList", datas);
+  res.send(result);
+});
+
+app.get('/refunds/:state/:sno', async (req, res) => {
   let data = [req.params.state, Number(req.params.sno)*10];
   let result = await mysql.query("admin", "refundState", data);
   res.send(result);
 });
 
-app.get('/refund/:sno', async (req, res) => {
-  let datas = Number(req.params.sno) * 10
-  let result = await mysql.query("admin", "refundOrderList", datas);
+app.get('/refunds/:state', async (req, res) => {
+  let data = req.params.state;
+  let result = await mysql.query("admin", "AllrefundState", data);
   res.send(result);
 });
 
@@ -1913,13 +1919,28 @@ app.post('/reviewreport', async (req, res) => {
   let data = req.body.param
   let query = `insert into review_report set ?`
   let result = await mysql.query2(query, data)
+
   res.send(result);
   io.to('ADMIN').emit('report', '새로운 신고요청건이 있습니다.')
 
+})
+app.put('/reviewreport/:rno', async (req, res) => {
+  let query = `update review set report_cnt = report_cnt + 1 where review_no = ?`
+  let data = req.params.rno;
+  let result = await mysql.query2(query, data)
+  res.send(result)
 })
 
 app.get('/reviewreport/:rno', async (req, res) => {
   let query = `select * from review_report where user_id = ? and review_no = ?`
   let data = [req.session.user_id, Number(req.params.rno)]
   res.send(await mysql.query2(query, data))
+})
+
+app.get('/mainbest', async (req, res) => {
+  res.send(await mysql.query2(`select file_name, p.*, format(avg(review_grade),1) AS 'star' from product p 
+  left join order_detail d on p.prod_no = d.prod_no
+  left join review r  on r.detail_order_no = d.order_detail_no 
+  left join (select file_name,prod_no from file where orders='s0') f on(p.prod_no = f.prod_no) 
+  where p.stock > 0 group by p.prod_no order by count(d.prod_no) desc limit 0 , 6;`))
 })

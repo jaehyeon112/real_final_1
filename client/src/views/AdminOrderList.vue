@@ -319,15 +319,20 @@
                 }else{
                     let total = await axios.get(`/api/orders/${this.startNo}/${this.lastNo}`).catch((err) => {console.log(err);});
                     let list = await axios.get(`/api/orders/${this.startNo}/${this.lastNo}/${no}`).catch((err) => {console.log(err);});
-                    if(total.data.length==0||list.data.length==0){
-                      this.totalList = [];
-                      this.orderList = [];
+
+                    this.totalList = total.data;
+                    this.orderList = list.data;
+                    if(this.totalList.length==0||this.orderList.length==0){
+                        alert('존재하는 데이터가 없습니다!');
+                        this.startNo = '2000-01-01',
+                        this.lastNo = this.dateFormat('','yyyy-MM-dd'),
+                        this.getOrderList(no);
                     }else{
-                      this.orderList = list.data;
-                      this.totalList = total.data;
+                        this.totalList = total.data;
+                        this.orderList = list.data;
+                        this.$refs.pagination1.currentPage2(no);
                     }
-                }
-                this.$refs.pagination1.currentPage2(no);
+                  }
             },
             async orderGetOne(ono){
                 let result = await axios.get(`/api/Oneorder/${ono}`).catch(err=>console.log(err));
@@ -381,9 +386,19 @@
                 }
                 let total = await axios.get(`/api/orders/${od}`).catch(err=>console.log(err));
                 let result = await axios.get(`/api/order/${od}/${no}`).catch(err=>console.log(err));
-                this.orderList = result.data;
+                
                 this.totalList = total.data;
-                this.$refs.pagination1.currentPage2(no);
+                this.orderList = result.data;
+                if(this.totalList.length==0||this.orderList.length==0){
+                    alert('존재하는 데이터가 없습니다!');
+                    this.startNo = '2000-01-01',
+                    this.lastNo = this.dateFormat('','yyyy-MM-dd'),
+                    this.getOrderList(no);
+                }else{
+                    this.totalList = total.data;
+                    this.orderList = result.data;
+                    this.$refs.pagination1.currentPage2(no);
+                }
             },
             goto(){
               this.$router.push({path : "refundList"})

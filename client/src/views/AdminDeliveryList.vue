@@ -113,19 +113,22 @@
                 }else if(this.startDate==''||this.lastDate==''){
                     alert('날짜가 비어있습니다.')
                 }else{
-                    console.log('현재 startNo ' + no)
                     let total = await axios.get(`/api/deliverys/${this.startDate}/${this.lastDate}`).catch((err) => {console.log(err);});
                     let list = await axios.get(`/api/deliverys/${this.startDate}/${this.lastDate}/${no}`).catch((err) => {console.log(err);});
-                    if(total.data.length==0||list.data.length==0){
-                        this.totalList = [];
-                        this.deliveryList = [];
+                    
+                    this.totalList = total.data;
+                    this.deliveryList = list.data;
+                    if(this.totalList.length==0||this.deliveryList.length==0){
+                        alert('존재하는 데이터가 없습니다!');
+                        this.startDate = '2000-01-01',
+                        this.lastDate = this.dateFormat('','yyyy-MM-dd'),
+                        this.delList(no);
                     }else{
-                        this.deliveryList = list.data;
                         this.totalList = total.data;
-
+                        this.deliveryList = list.data;
+                        this.$refs.pagination1.currentPage2(no);
                     }
                 }
-                this.$refs.pagination1.currentPage2(no);
             },
             async orderState(od,no){
                 if(od=='배송중'){
@@ -135,12 +138,16 @@
                 }
                 let total = await axios.get(`/api/deliveryf/${od}`).catch(err=>console.log(err));
                 let result = await axios.get(`/api/deliveryf/${od}/${no}`).catch(err=>console.log(err));
-                if(total.data.length==0||result.data.length==0){
-                    this.totalList = [];
-                    this.deliveryList = [];
+
+                this.totalList = total.data;
+                this.deliveryList = result.data;
+                if(this.totalList.length==0||this.deliveryList.length==0){
+                    alert('존재하는 데이터가 없습니다!');
+                    this.orders = '';
+                    this.delList(no);
                 }else{
-                    this.deliveryList = result.data;
                     this.totalList = total.data;
+                    this.deliveryList = result.data;
                     this.$refs.pagination1.currentPage2(no);
                 }
             },

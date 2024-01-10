@@ -14,7 +14,7 @@
       
     </ul>
     
-    <div class="container " style="margin-bottom: 20px; margin-left: 450px;">
+    <div class="container justify-content-end" style="margin-bottom: 20px;">
       <div class="row">
         <div class="col-4">
           <router-link
@@ -141,6 +141,7 @@ methods: {
       this.$router.push("/join")
     }else{
       this.logout();
+      this.$router.push("/main")
     }
 
 
@@ -168,10 +169,10 @@ what(){
   }
   alert(total)
 },
-  handleScroll() {
+  handleScroll() { 
     const windowScroll = window.scrollY;
 
-      if (this.lnbOffsetTop <= windowScroll) {
+      if (this.lnbOffsetTop < windowScroll) {
         this.isLnbFixed = true;
       } else {
         this.isLnbFixed = false;

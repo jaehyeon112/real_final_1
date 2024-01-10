@@ -1,42 +1,48 @@
 <template>
   <div>
-    <v-card class="my-card" style="position: relative; padding:30px;"  >
+    <v-card class="my-card" style="padding:30px;"  >
       <v-row justify="start" class="hi">
         <v-col style=" font-size:20px">
           <span style="color:gray;">{{review.user_id}}</span><span> 님께서 남기신 리뷰 입니다.</span>
         </v-col>
       </v-row>
-      <v-row  style="cursor: pointer;"  @click="$router.push({path:'/detailPage', query:{pno : review.prod_no}})">
-        <v-col align-self="center">
+      <v-row justify="space-between"  style="cursor: pointer;"  @click="$router.push({path:'/detailPage', query:{pno : review.prod_no}})">
+        <v-col cols="4">
           <span><p style="font-size:30px; font-weight: 700;">{{  review.review_title}}</p></span>  
           <span><p style="font-size:24px">{{  review.review_content}}</p></span>
           
           <span style="font-size: 40px;" v-for="star in 5" :key="star">
+            
           <span class="mdi mdi-star" :style="{ color: star <= review.review_grade ? 'coral' : 'grey' }"></span>
           </span>
-    
+          
+          <p style="font-size: 25px; margin-top:150px;">{{ review.prod_name + '에 관한 내용입니다.' }}</p>
+          <p style="color:gray" >클릭시 상품 페이지로 이동합니다.</p>
         </v-col>
-        <v-img style="position:relative;margin:100px;"
-        class="align-end text-white test"
+        <v-col cols="5" >
+
+          <v-img style="position:relative;
+        "
+        height="500"
+        width="700"
        
         :src="`/api/test/`+review.reviewfile"
         ></v-img
         ><v-img
-
-        
         class="align-center text-white"
         height="250"
           width="250"
           style="border-radius: 50%; position:absolute; bottom:10px;
-    right: 100px;"
+    right: 500px;"
         :src="`/api/test/`+review.prodfile"
           cover
           ></v-img
           >
+        </v-col>
         </v-row>
       </v-card>
     </div>
-    </template>
+  </template>
 
 <script>
 import axios from "axios"
@@ -73,7 +79,5 @@ export default {
   
 }
 
-.test{
-  width:400px;  
-}
+
 </style>

@@ -13,9 +13,7 @@ export default {
       return result;
     },
     $wonComma(number) {
-      if(number==''){
-        return number;
-      }
+
       if (number < 1000) {
         return number
       }

@@ -90,7 +90,7 @@ export default{
         //this.resize()
     }
 }
-</script>
+</script >
 <style scoped>
 .nav-link.active{
  color:orange

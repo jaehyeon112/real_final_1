@@ -46,7 +46,7 @@
         }
     }
     </script>
-    <style >
+    <style scoped>
         #side-bar{
             position: sticky;
             top: 10;

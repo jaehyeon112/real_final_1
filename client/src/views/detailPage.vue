@@ -11,8 +11,18 @@
                </div>
                <div class="col-md-2"></div>
                <div class="col-md-6">
-                  <h1 class="display-5 fw-bolder">{{ productInfo.prod_name }}</h1>
-                  <h1 class="display-7 fw-bolder">{{ productInfo.price }}</h1>
+                  <h1 class="display-5 fw-bolder">{{ productInfo.prod_name }}</h1>                  
+                  <span style="font-size: 40px;" v-for="star in 5" :key="star">
+            <span class="mdi mdi-star" :style="{ color: star <= productInfo.star ? 'coral' : 'grey' }"></span>
+            </span><span style="font-size: 25px; font-weight: 700;">{{ productInfo.star > 0.0 ? productInfo.star : "0.0" }}</span>
+            <span style="color: gray; font-size:25px">{{ " | "+productInfo.total }}</span>
+                  <div>
+                     <span v-if="productInfo.discount_rate" style=" margin-right: 18px; font-size:40px; font-weight: 700; color:coral">{{ productInfo.discount_rate+'%'}}</span>
+                     <span style="margin-right: 18px; font-size:36px; font-weight: 700;" > {{ $wonComma(productInfo.discount_price) }}<span style="font-size:24px" >원</span></span>
+                     
+                     <span v-if="productInfo.same" style="text-decoration: line-through; color:gray; font-size:24px; font-weight: 700;"> {{ productInfo.price }}<span style="font-size:16px">원</span> </span>
+                     
+                  </div>
                   <div class="fs-5 mb-5">
                      <br>
                   <table class="table" border="1">
@@ -40,7 +50,7 @@
                   <br>
                   <br>
                   
-                     <p class="lead">총 가격: {{  totalPrice}}</p>
+                     <p class="lead">총 가격: {{ $wonComma(productInfo.discount_price*counter) + '원'}}</p>
                      <p style="margin-left:20px;margin-bottom:0;color:black">무료배송 (40,000원 이상 구매 시)</p>
                      <br>
                   </div>
@@ -338,7 +348,11 @@ export default {
                user_id:'',
                prod_no:''
             },
-            productInfo:{},                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+            productInfo:{
+               discount_price:'',
+               price: '',
+               same: false,
+            },                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
             likeList:{},
             reviewList:[],
             inquireList:[],
@@ -366,13 +380,7 @@ export default {
       this.getInquireList();
         
     },
-    watch:{
-      reviewList(){},
-      totalPrice(){
-       return  this.$wonComma(this.counter*this.productInfo.discount_price)         
-      },
     
-    },
 
     methods:{
       formatText(text) {
@@ -403,6 +411,7 @@ export default {
       if(a.length == 0){
          let b = (await axios.post(`/api/reviewreport`,obj)).data
          if (b.affectedRows != 0){
+            await axios.put(`/api/reviewreport/${rNo}`)
             alert('신고 요청이 처리되었습니다.')
          }
       }else{
@@ -415,16 +424,23 @@ export default {
          return this.list[i].u 
       },
         async getProductInfo(){
+            this.$showLoading();
             let info = await axios.get(`/api/detailPro/${this.pno}`)
-                                    .catch(err=>console.log(err));
+            .catch(err=>console.log(err));
             this.productInfo = info.data[0]
+            if(this.productInfo.discount_price == this.productInfo.price){
+               this.productInfo.same = false;
+            }else{
+               this.productInfo.same = true;
+            }
             console.log('=======================')
             console.log(info.data[0])
             this.productInfo.price=this.$wonComma(this.productInfo.price)
             this.calculateTotalPrice()
-
+            
             this.Img = info.data
             this.Img.shift();
+            this.$hideLoading();
                                   
         },
         async getLikes(){
@@ -459,7 +475,7 @@ export default {
         async getInquireList() {
          let list = await axios.get(`/api/inquireP/${this.pno}`)
                                   .catch(err=>console.log(err));
-            this.inquireList =list.data
+            this.inquireList = list.data
         },
         async upCnt(rno){
            if(this.$store.state.user.user_id==null){
@@ -635,10 +651,10 @@ export default {
       if(this.$store.state.user.user_id != null){ //로그인 했다
        
 
-        if(this.cartList.length == 0 && this.productInfo.stock > this.quantity){
+        if(this.cartList.length == 0 && this.productInfo.stock > this.counter){
           this.counter++;
           return;
-        }else if(this.productInfo.stock > this.cartList.quantity + this.quantity) {
+        }else if(this.productInfo.stock > this.cartList.quantity + this.counter) {
           this.counter++;
           }else{
             alert('보유 재고를 초과하였습니다.')  
