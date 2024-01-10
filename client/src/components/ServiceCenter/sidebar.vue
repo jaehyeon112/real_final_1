@@ -7,19 +7,19 @@
         <hr>
         <ul class="nav nav-pills flex-column mb-auto">
           <li class="nav-item">
-            <router-link to ="/ServiceCenter/qna" class="nav-link active" aria-current="page">
+            <router-link to ="/ServiceCenter/qnaList" class="nav-link active" aria-current="page">
              
               자주하는질문
             </router-link>
           </li>
           <li>
-            <router-link to="/ServiceCenter/inquire" class="nav-link active text-white">
+            <router-link to="/myPage/myInquire" class="nav-link active text-white">
              
               1:1문의
             </router-link>
           </li>
           <li>
-            <router-link to="/ServiceCenter/notice" class="nav-link active text-white">
+            <router-link to="/ServiceCenter/noticeList" class="nav-link active text-white">
              
               공지사항
             </router-link>

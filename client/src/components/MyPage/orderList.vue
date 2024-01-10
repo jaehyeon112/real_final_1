@@ -9,14 +9,14 @@
             </div>
             <div>
               <hr>
-              <img src="/api/test" alt="상품이미지">
+              <img :src=" `/api/test/`+order.file_name " alt="상품이미지">
               <dl>주문번호: {{ order.order_no }}</dl>
               <dl>상품명: {{ order.prod_name_list}}</dl>
               <dl>총 가격: {{ order.total_payment }}</dl>
               <dl>실 결제 가격: {{ order.real_payment }}</dl>
               <dl>배송비: {{ order.delivery_charge }}</dl>
               <dl>결제방법: {{ order.payment_no }}</dl>
-              <dl><v-btn v-model="order.order_status" color="primary" class="custom-button" @click="showMenu(order.order_no)" :disabled="order.order_status != 'c1'">주문취소</v-btn></dl>
+              <dl><v-btn v-model="order.order_status" color="#FFB300" class="custom-button" @click="showMenu(order.order_no)" :disabled="order.order_status != 'c1'">주문취소</v-btn></dl>
               {{ order.order_quantity }} 수량
               <dl v-if="order.delivery == null">
                 <dl v-if="order.order_status =='c1'">진행상태: 주문완료</dl>

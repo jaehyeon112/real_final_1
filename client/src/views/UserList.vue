@@ -114,7 +114,8 @@ export default {
         },
         //페이지네이션
         async changePage(no) {
-            this.startNum = no;
+            console.log(no+' 번호는?')
+
             try {
                 let page = await axios.get(`/api/user/${this.word}/${this.word}/${this.order}/${no}/${this.nums}`);
                 console.log(page.data)
@@ -243,7 +244,7 @@ export default {
         nums(){
             if(this.grade==''&&this.word==''){
                 this.uList();
-            }else if(this.grade!=''){
+            }else if(this.grade!=''||this.days==''){
                 this.filterData(this.grade,this.days);
             }else if(this.word!=''){
                 this.search(this.word)
