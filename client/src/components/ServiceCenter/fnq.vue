@@ -38,8 +38,8 @@ export default {
     },
     methods : {
         async getFnqList(){
-            this.inquireList = (await axios.get('/api/fnq')
-                                   .catch(err => console.log(err))).data;
+            this.fnqList = (await axios.get(`/api/fnq`)
+                                   .catch(err => console.log(err))).data;       
         },
         goToDetail(fnqNo){
             this.$router.push({path :'/serviceCenter/fnqInfo', query : {fnqNo : fnqNo}});
