@@ -15,7 +15,7 @@
             <v-text-field label="우편번호" hide-details="auto" v-model="zip" style="width: 200px;" :rules="[required]" clearable maxlength="5"></v-text-field>
             <v-text-field label="주소" v-model="addr1" hide-details="auto" :rules="[required]" clearable></v-text-field>
             <v-text-field label="상세주소" v-model="addr2" hide-details="auto" clearable></v-text-field>
-            <v-text-field label="요청사항을 입력해주세요" v-model="deliveryrequest" hide-details="auto" clearable></v-text-field>
+            <v-text-field label="배송요청사항을 입력해주세요" v-model="deliveryrequest" hide-details="auto" clearable></v-text-field>
         </v-form>
       </div>
     </v-container>

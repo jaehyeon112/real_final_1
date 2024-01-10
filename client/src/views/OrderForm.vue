@@ -42,8 +42,6 @@
         :final="final"/>
       </v-col>
     </v-row>
-    {{ zip }}
-    {{ addr1 }}
     </v-container>
 </template>
 <script>

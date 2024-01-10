@@ -46,7 +46,7 @@
                     :discount="discount"
                     :delivery="delivery"
                     :final="final"/>
-                    <v-btn v-model="check" @click="showMenu" :disabled="box == 1" class="css-fwelhw e4nu7ef3" >주문하기</v-btn>
+                    <v-btn v-model="check" @click="showMenu" :disabled="box == 1" class="css-fwelhw e4nu7ef3" color="primary">주문하기</v-btn>
                   </v-col>
                 </v-row>
               </v-card> 
@@ -103,7 +103,7 @@
                       :discount="discount"
                       :delivery="delivery"
                       :final="final"/>
-                      <v-btn @click="goTologinForm" class="css-fwelhw e4nu7ef3" height="72">로그인</v-btn>
+                      <v-btn @click="goTologinForm" class="css-fwelhw e4nu7ef3" height="72" color="primary">로그인</v-btn>
                     </v-col>
                   </v-row>
                 </v-card> 
@@ -123,8 +123,8 @@
               :discount="discount"
               :delivery="delivery"
               :final="final"/>
-              <v-btn v-if="this.$store.state.user.user_id != null" @click="showMenu" class="css-fwelhw e4nu7ef3" >주문하기</v-btn>
-              <v-btn v-else @click="goTologinForm" class="css-fwelhw e4nu7ef3" >로그인</v-btn>
+              <v-btn v-if="this.$store.state.user.user_id != null" @click="showMenu" class="css-fwelhw e4nu7ef3" color="primary">주문하기</v-btn>
+              <v-btn v-else @click="goTologinForm" class="css-fwelhw e4nu7ef3" color="primary">로그인</v-btn>
             </v-col>
           </v-row>
         </v-card> 
@@ -497,7 +497,6 @@ h1 {
     width: 330px;
     height: 72px;
     border-radius: 3px;
-    background-color: coral;
     font-size: 24px;
     margin-left: 15px;
   }
