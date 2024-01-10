@@ -12,7 +12,7 @@
                <div class="col-md-2"></div>
                <div class="col-md-6">
                   <h1 class="display-5 fw-bolder">{{ productInfo.prod_name }}</h1>
-                  <h1 class="display-7 fw-bolder">{{ productInfo.price }}</h1>
+                  <h1 class="display-7 fw-bolder">{{ $wonComma(productInfo.price) }}</h1>
                   <div class="fs-5 mb-5">
                      <br>
                   <table class="table" border="1">
@@ -39,7 +39,7 @@
                   </div>
                   <div>
                      <p class="lead">할인률{{ productInfo.discount_rate }}</p>
-                     <p class="lead">할인률 적용된 가격{{  productInfo.discount_price }}</p>
+                     <p class="lead">할인률 적용된 가격{{  $wonComma(productInfo.discount_price) }}</p>
                   <br>
                   <br>
                      <p class="lead">총 가격: {{  productInfo.discount_price*counter }}</p>
