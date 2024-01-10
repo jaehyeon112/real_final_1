@@ -7,7 +7,7 @@
                     <p style="font-size:25px; font-weight:bold">고객님, <span style="color:red;">주문이 완료</span>되었습니다.</p>
                 </div>
                 <p>{{ this.$store.state.user.user_name }} 님이 주문하신<br>주문번호는 
-                <span style="color:red; font-size:25px;">  {{ $store.state.orderNo }}  </span> 입니다. 
+                <span style="color:red; font-size:25px; font-weight:bold;" >  {{ $store.state.orderNo }}  </span> 입니다. 
                 </p>
                 <br>
                 <p style="font-size:25px; font-weight:bold">주문 내역 확인은 배송/마이페이지의<br>
@@ -17,16 +17,16 @@
             </v-col>
         </v-row>
       <hr>
-      <div v-if="orderList.length > 0" style="padding: 100px; margin: ; font-size: 20px;">
-        <p>상품 이미지
-            <v-img width="400" height="300" :src="`api/test/`+ orderList[0].file_name"></v-img>
-        </p>
-            <p>상품 명 
-            <span>{{ prodName }}</span>
-            </p>
-            <p style="text-align:right">총 결제 가격 
-            <span style="font-size:25px; font-weight:bold; color:red;">{{ $wonComma(orderList[0].real_payment) }}원</span>
-            </p>
+      <div v-if="orderList.length > 0" style="padding: 60px; margin: ; font-size: 20px;">
+        <ul>
+            <li><v-img width="400" height="300" :src="`api/test/`+ orderList[0].file_name"></v-img></li>
+            <li>
+                <h4>{{ prodName }}</h4>
+                <br>
+                <h4 class="label">결제 금액</h4> 
+                <span style="font-size:25px; font-weight:bold; color:red;">{{ $wonComma(orderList[0].real_payment) }}원</span>
+            </li>
+        </ul>    
         </div>
     </v-container>
 </template>
@@ -71,4 +71,13 @@ export default {
 .h{
     background-color:lightgreen;
 }
+.label {
+    display: inline-block;
+    width: 40%;
+}
+ul {
+  display: flex;
+  list-style: none;
+}
+
 </style>
