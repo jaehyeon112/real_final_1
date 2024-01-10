@@ -9,7 +9,7 @@
                         <v-btn class="right-aligned-button" @click="selectAll">전체선택</v-btn>
                       </v-col>
                       <v-col cols="auto" class="button-col">
-                        <v-btn class="right-aligned-button" @click="deleteSelected">선택삭제</v-btn>
+                        <v-btn class="right-aligned-button2" @click="deleteSelected">선택삭제</v-btn>
                       </v-col>
                     </v-row>
                     <table class="rwd-table" :key="idx" v-for="(list, idx) in cartList">
@@ -63,7 +63,7 @@
                           <v-btn class="right-aligned-button" @click="selectAll">전체선택</v-btn>
                         </v-col>
                         <v-col cols="auto" class="button-col">
-                          <v-btn class="right-aligned-button" @click="deleteSelected">선택삭제</v-btn>
+                          <v-btn class="right-aligned-button2" @click="deleteSelected">선택삭제</v-btn>
                         </v-col>
                       </v-row>
                       <table class="rwd-table" :key="idx" v-for="(list, idx) in cartList">
@@ -426,6 +426,11 @@ h1 {
 .right-aligned-button {
   margin-left: auto;
   background-color: #000000;
+}
+.right-aligned-button2 {
+  margin-left: auto;
+  background-color: #ffffff;
+  color: #000000;
 }
 .rwd-table {
   width: 100%;

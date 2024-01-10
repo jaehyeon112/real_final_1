@@ -125,7 +125,7 @@
             let couponStart = this.getDateFormat(this.couponList[i].start_coupon);
             let couponEnd = this.getDateFormat(this.couponList[i].end_coupon);
             let couponrate = this.couponList[i].coupon_discount_rate;
-            let couponInfo = `[${couponName}] 쿠폰할인율 ${couponrate}% 발급일자 ${couponStart} 만료일자 ${couponEnd}`;
+            let couponInfo = `[${couponName}] 쿠폰할인율: ${couponrate}%   사용기한: ${couponStart} ~ ${couponEnd}`;
             coupons.push(couponInfo);
           // }
         }
