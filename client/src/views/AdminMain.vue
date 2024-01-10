@@ -288,8 +288,8 @@
           <td>{{ $dateFormat(inquire.create_date,'yyyy년 MM월 dd일') }}</td>
           <td v-if="inquire.answer_state==0">{{this.inquires='답변 대기 중'}}</td>
           <td v-else-if="inquire.answer_state==1">답변완료</td>
-          <td v-if="inquire.answer_state==0" @click="replyInsert(inquire.inquire_no)">답변하기</td>
-          <td v-else-if="inquire.answer_state==1" @click="replyInsert(inquire.inquire_no)">답변보기</td>
+          <td class="cur" v-if="inquire.answer_state==0" @click="replyInsert(inquire.inquire_no)">답변하기</td>
+          <td class="cur" v-else-if="inquire.answer_state==1" @click="replyInsert(inquire.inquire_no)">답변보기</td>
         </tr>
       </tbody>
     </v-table>
@@ -547,5 +547,7 @@ import icon from '../components/admin/icon.vue';
   height: 350px;
   text-align: center;
 }
-
+.cur{
+  cursor: pointer;
+}
 </style>
