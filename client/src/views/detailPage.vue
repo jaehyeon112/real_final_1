@@ -12,13 +12,13 @@
                <div class="col-md-2"></div>
                <div class="col-md-6">
                   <h1 class="display-5 fw-bolder">{{ productInfo.prod_name }}</h1>
-                  <h1 class="display-7 fw-bolder">{{ $wonComma(productInfo.price) }}</h1>
+                  <h1 class="display-7 fw-bolder">{{ productInfo.price }}</h1>
                   <div class="fs-5 mb-5">
                      <br>
                   <table class="table" border="1">
                      <tr>
                         <th>냉장/냉동</th>
-                        <td v-if="productInfo.refrigeration==g1">냉장</td>
+                        <td v-if="productInfo.refrigeration=='g1'">냉장</td>
                         <td v-else>냉동</td>
                      </tr>
                      <tr>
@@ -36,17 +36,18 @@
                   </div>
                   <div>
                      <p class="lead">할인률{{ productInfo.discount_rate }}</p>
-                     <p class="lead">할인률 적용된 가격{{  getWonFormat(productInfo.discount_price) }}</p>
+                     <p class="lead">할인률 적용된 가격{{  productInfo.discount_price }}</p>
                   <br>
                   <br>
-                     <p class="lead">총 가격: {{  getWonFormat(productInfo.discount_price*counter) }}</p>
+                  
+                     <p class="lead">총 가격: {{  totalPrice}}</p>
                      <p style="margin-left:20px;margin-bottom:0;color:black">무료배송 (40,000원 이상 구매 시)</p>
                      <br>
                   </div>
                   <div>
                      {{ productInfo.prod_no +' 번' }}
                      <v-btn @click="goToCart(productInfo.prod_no)">장바구니 담기</v-btn>
-                     <v-btn  @click="liked" :color="isShow ? 'red' : 'blue'"> ♡ </v-btn>                                           
+                     <v-btn  @click="liked" :color="isShow ? 'red' : 'orange'"> ♡ </v-btn>                                           
                   </div>
                </div>
             </div>
@@ -278,7 +279,7 @@
                   
                      <td> {{ inquire.inquire_title }}</td>
                      <td> {{ inquire.inquire_content }}</td>
-                     <td> {{ $dateFormat(inquire.create_date)}}</td>
+                     <td> {{ $dateFormat(inquire.create_date, 'yyyy년MM월dd일')}}</td>
                      
                   </tr>
             </table>
@@ -365,8 +366,9 @@ export default {
         
     },
     watch:{
-      reviewList(){
-         
+      reviewList(){},
+      totalPrice(){
+       return  this.$wonComma(this.counter*this.productInfo.discount_price)         
       }
     },
 
@@ -414,7 +416,10 @@ export default {
             let info = await axios.get(`/api/detailPro/${this.pno}`)
                                     .catch(err=>console.log(err));
             this.productInfo = info.data[0]
-            console.log(info.data)
+            console.log('=======================')
+            console.log(info.data[0])
+            this.productInfo.price=this.$wonComma(this.productInfo.price)
+
             this.Img = info.data
             this.Img.shift();
                                   

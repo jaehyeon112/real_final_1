@@ -159,7 +159,9 @@ if(this.$store.state.user.user_id !== null){
       this.$router.push("/withdrawal")
     }
 },
-
+serviceCenter(){
+  this.$router.push("/serviceCenter")
+},
 
 what(){
   const cartItems = this.$store.state.cart;

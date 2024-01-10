@@ -310,7 +310,7 @@ let admin = {
 
 let reviews = {
   myReview: `select * from review where user_id=? `, //마이페이지에서 내가 작성한 리뷰 리스트
-  reviewInfo: `select * from review where user_id=? and review_no=?`, //마이페이지 리뷰하나 보기
+  reviewInfo:`select * from review r left join file f on r.review_no = f.review_no where r.user_id=? and r.review_no=?`, //마이페이지 리뷰하나 보기
   //orderNoReview: `select * from review where user_id=?`,
   //서영희
   reviewList: `select  file_name, r.* 
@@ -411,8 +411,8 @@ let delivery = {
   deliveryInfo: `select * from add_delivery where user_id=? and delivery_no=?`,
   updateDelivery: `update add_delivery set? where delivery_no=? and user_id=?`,
   deleteDelivery: `delete from add_delivery where delivery_no=?`,
-  deliveryList: `select *, (select address from user where user_id=?) as joinaddress, (select detail_address from user where user_id=?) as joinDetail, (select postcode from user where user_id=?) as joinPost from add_delivery where user_id=?`,
-  deliveryUser: `select address, detail_address, postcode, user_id from user`
+  deliveryList: `select * from add_delivery where user_id=?`,
+  deliveryUser: `select address, detail_address, postcode from user where user_id=?`
 
 }
 //찜테이블

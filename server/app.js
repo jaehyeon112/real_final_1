@@ -1386,7 +1386,7 @@ app.delete('/orders/:ono', async (req, res) => {
 
 //추가 배송지 관련
 app.get('/addDelivery', async (req, res) => {
-  let id = [req.session.user_id, req.session.user_id, req.session.user_id, req.session.user_id]
+  let id = [req.session.user_id]
   const list = await mysql.query('delivery', 'deliveryList', id);
   res.send(list);
 })

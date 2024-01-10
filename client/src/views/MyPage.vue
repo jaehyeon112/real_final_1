@@ -97,7 +97,8 @@ export default{
             this.member = (await axios.get(`/api/member/${this.$store.state.user.user_id}`)
                                       .catch(err=>console.log(err))).data
          
-               
+               console.log(`${this.$store.state.user.user_id}`)
+               console.log(this.member)
                                                           
         },
         goTodelete(){

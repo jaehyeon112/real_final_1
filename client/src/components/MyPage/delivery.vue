@@ -127,7 +127,7 @@ export default {
 
     methods:{
         async getDeliveryList() {
-         this.deliveryList = (await axios.get(`/api/addDelivery`)
+         this.deliveryList = (await axios.get(`/api/addDelivery/`)
                                             .catch(err=>console.log(err))).data
         },
         async getDefaultDeliList(){
