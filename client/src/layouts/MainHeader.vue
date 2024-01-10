@@ -6,10 +6,7 @@
         <span class="nav-link login" @click="loginOrMypage"  >{{ $store.state.user.user_id != null ? $store.state.user.user_name + '님' : '로그인' }}</span>
       </li>
       <li class="nav-item">
-        <span class="nav-link login" @click="logoutOrJoin" >{{ $store.state.user.user_id != null ? '로그아웃' : "회원가입"}}</span>
-      </li>
-      <li class="nav-item">
-        <span class="nav-link login" @click="withdrawal" >{{ $store.state.user.user_id != null ? '회원탈퇴' : "회원가입"}}</span>
+        <span class="nav-link login" @click="logoutOrJoin" >{{ $store.state.user.user_id != null ? '로그아웃' : '회원가입'}}</span>
       </li>
       <li class="nav-item">
         <span class="nav-link login" @click="serviceCenter" >고객센터</span>
@@ -159,7 +156,9 @@ if(this.$store.state.user.user_id !== null){
       this.$router.push("/withdrawal")
     }
 },
-
+serviceCenter(){
+  this.$router.push("/serviceCenter")
+},
 
 what(){
   const cartItems = this.$store.state.cart;

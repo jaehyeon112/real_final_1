@@ -4,6 +4,7 @@
     <hr>
     <div>
       <v-radio-group v-model="selectedAddressType" inline>
+        <v-radio label="기본 배송지" :value="[this.$store.state.user.address, this.$store.state.user.deteail_address, this.$store.state.user.postcode ]"></v-radio>
         <v-radio v-for="(delivery) in deliveryList" :key="delivery.delivery_no" :label="delivery.delivery_name" :value="[delivery.delivery_address, delivery.delivery_detail_address, delivery.delivery_postcode]">
         </v-radio>
       </v-radio-group>
@@ -93,7 +94,7 @@ export default {
       .then(response => {
         this.deliveryList = response.data;
         // 초기 선택값 
-        this.selectedAddressType = [this.deliveryList[0].delivery_address, this.deliveryList[0].delivery_detail_address, this.deliveryList[0].delivery_postcode];
+        this.selectedAddressType = [this.$store.state.user.address, this.$store.state.user.deteail_address, this.$store.state.user.postcode ];
           })
           .catch(error => {
             console.log(error)
