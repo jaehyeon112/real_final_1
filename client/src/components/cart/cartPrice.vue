@@ -1,30 +1,51 @@
 <template>
-    <v-container justify="end">
-      <v-card>
-        <div class="pricecontainer">
-          <p>주문금액 <span class="price">{{ $wonComma(discount) }}원</span></p>
-          <div class="discount">
-            <svg width="16" height="20" viewBox="0 0 16 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path fill-rule="evenodd" clip-rule="evenodd" d="M1 5H0V10V11H1H6V10H1V5Z" fill="#ddd"></path>
-            </svg>
-            <span>상품 전체금액 <span class="price">{{ $wonComma(total) }} 원</span></span>
-            <br>
-            <svg width="16" height="20" viewBox="0 0 16 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path fill-rule="evenodd" clip-rule="evenodd" d="M1 5H0V10V11H1H6V10H1V5Z" fill="#ddd"></path>
-            </svg>
-            <span>상품 할인금액 <span class="price">{{ $wonComma(total - discount) }}</span>원</span>
-          </div>
-          <br>
-          <p>배송비 <span class="price">{{ $wonComma(delivery) }} 원</span></p>
-          <p>쿠폰 할인 <span class="price">{{ $wonComma(coupon) }} 원</span></p>
-          <p>포인트 <span class="price">{{ $wonComma(pointInput) }} 원</span></p>
-          <hr>
-          <p>최종 결제금액<span style="color: red; font-size: 40px; font-weight: bold;">  {{ $wonComma(final) }} 원</span></p>
-          <span class="css-5lws00">적립 </span><span>구매 시 </span><span>{{ $wonComma(savePoint) }} 원 </span>
+  <v-container justify="end">
+    <v-card>
+      <div class="pricecontainer">
+        <div class="label-container">
+          <p class="label">주문금액</p>
+          <span class="price">{{ $wonComma(discount) }} 원</span>
         </div>
-      </v-card>
-    </v-container>
-  </template>
+        <div class="label-container">
+          <p class="label2">
+            <svg width="16" height="20" viewBox="0 0 16 20" fill="none" xmlns="http://www.w3.org/2000/svg"> <path fill-rule="evenodd" clip-rule="evenodd" d="M1 5H0V10V11H1H6V10H1V5Z" fill="#ddd"></path> </svg>
+            상품 금액
+          </p>
+          <span class="price">{{ $wonComma(total) }} 원</span>
+        </div>
+        <div class="label-container">
+          <p class="label2">
+            <svg width="16" height="20" viewBox="0 0 16 20" fill="none" xmlns="http://www.w3.org/2000/svg"> <path fill-rule="evenodd" clip-rule="evenodd" d="M1 5H0V10V11H1H6V10H1V5Z" fill="#ddd"></path> </svg>
+            상품 할인금액
+          </p>
+          <span class="price">{{ $wonComma(total - discount) }} 원</span>
+        </div>
+        <div class="label-container">
+          <p class="label">배송비</p>
+          <span class="price">{{ $wonComma(delivery) }} 원</span>
+        </div>
+        <div class="label-container">
+          <p class="label">쿠폰 할인</p>
+          <span class="price">{{ $wonComma(coupon) }} 원</span>
+        </div>
+        <div class="label-container">
+          <p class="label">포인트</p>
+          <span class="price">{{ $wonComma(pointInput) }} 원</span>
+        </div>
+        <hr>
+        <div class="label-container">
+          <p class="label">최종 결제금액</p>
+          <span style="color: red; font-size: 40px; font-weight: bold;">  {{ $wonComma(final) }} 원</span>
+        </div>
+        <div class="label">
+          <p class="css-5lws00">적립</p>
+          <span>구매 시 {{ $wonComma(savePoint) }} 원</span>
+        </div>
+      </div>
+    </v-card>
+  </v-container>
+</template>
+
   
   <script>
   export default {
@@ -76,49 +97,52 @@
   * {
     list-style: none;
   }
-  .discount {
-    color: rgb(153, 153, 153);
-    font-size: 14px;
-    padding-left: 8px;
-  }
   .v-card { 
     margin-top: 40px;
   }
-  .pricecontainer{
-    margin: 50px;
-  }
-
-  .css-1hvttuk {
-    display: flex;
-    -webkit-box-pack: justify;
-    justify-content: space-between;
-    margin-top: 16px;
-    font-size: 16px;
-    color: rgb(51, 51, 51);
-    padding-bottom: 4px;
-}
-.css-sk644d {
-    display: flex;
-    margin-top: 8px;
-    -webkit-box-pack: justify;
-    justify-content: space-between;
-    -webkit-box-align: center;
-    align-items: center;
-    font-size: 14px;
-    color: rgb(153, 153, 153);
+  .pricecontainer {
+  margin: 40px;
 }
 
+.label-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 8px;
+  font-size: 14px;
+}
+
+.label {
+  display: inline-block;
+  width: 40%;
+}
+.label2 { 
+  display: inline-block;
+  width: 60%;
+  color : gray;
+}
+
+.price {
+  display: inline-block;
+  width: 40%;
+  text-align: right;
+}
 
 .css-5lws00 {
-    display: inline-block;
-    margin-right: 4px;
-    padding: 0px 7px;
-    border-radius: 9px;
-    background-color: rgb(255, 191, 0);
-    font-size: 10px;
-    line-height: 18px;
-    height: 18px;
-    color: rgb(255, 255, 255);
-    font-weight: 500;
+  display: inline-block;
+  margin-right: 4px;
+  padding: 0px 7px;
+  border-radius: 9px;
+  background-color: rgb(255, 191, 0);
+  font-size: 10px;
+  line-height: 18px;
+  height: 18px;
+  color: rgb(255, 255, 255);
+  font-weight: 500;
+}
+
+hr {
+  margin-top: 16px;
+  margin-bottom: 16px;
 }
   </style>
