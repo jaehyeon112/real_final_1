@@ -37,7 +37,8 @@
             <td v-if="order.cancel_status=='o1'">취소신청</td>
             <td v-else-if="order.cancel_status=='o2'">취소/환불 처리중</td>
             <td v-else-if="order.cancel_status=='o3'">완료</td>
-            <td v-if="order.cancel_status=='o1'"><v-btn type="button" @click="changeStatus(order.order_no)">취소/환불처리</v-btn></td>
+            <td v-if="order.cancel_status=='o1'"><v-btn type="button" @click="changeStatus(order.order_no,'o2')">취소/환불처리</v-btn></td>
+            <td v-else-if="order.cancel_status=='o2'"><v-btn type="button" @click="changeStatus(order.order_no,'o3')">처리완료하기</v-btn></td>
             <td v-else><v-btn type="button" @click="modalCheck=true,oneOrder(order.order_no)">상세보기</v-btn></td>  <!--상세영수증보기-->
         </tr>
         </tbody>
@@ -97,7 +98,7 @@
                 orderNo : '',
                 oneList : '',
                 accessToken : '',
-
+                today : this.$dateFormat('','yyyy-MM-dd')
             }
         },
         components : {
@@ -174,18 +175,32 @@
                 }
 
             },
-            async changeStatus(ono){
-                if(confirm('취소/환불을 진행할까요?')){
-                    let result = await axios.put(`/api/refund/o2/${ono}`).catch(err=>console.log(err));
-                    if(result.data.affectedRows==1){
-                        alert(' 취소/환불이 진행 중입니다~ ');
-                        this.cancelPayment(ono);
-                        this.getOrderList(this.startNum);
+            async changeStatus(ono,state){
+                if(state=='o2'){
+                    if(confirm('취소/환불을 진행할까요?')){
+                        let result = await axios.put(`/api/refund/o2/'0000-00-00'/${ono}`).catch(err=>console.log(err));
+                        if(result.data.affectedRows==1){
+                            alert(' 취소/환불이 진행 중입니다~ ');
+                            this.cancelPayment(ono);
+                            this.getOrderList(this.startNum);
+                        }else{
+                            alert('오류가 났습니다.\n다시 확인을 해주세요.');
+                        }
                     }else{
-                        alert('오류가 남');
+                        alert('취소되었습니다')
                     }
                 }else{
-                    alert('취소되었습니다')
+                    if(confirm('취소/환불을 완료할까요?')){
+                        let result = await axios.put(`/api/refund/o3/${this.today}/${ono}`).catch(err=>console.log(err));
+                        if(result.data.affectedRows==1){
+                            alert(' 취소/환불이 완료되었습니다.');
+                            this.getOrderList(this.startNum);
+                        }else{
+                            alert('오류가 났습니다.\n다시 확인을 해주세요.');
+                        }
+                    }else{
+                        alert('취소되었습니다')
+                    }
                 }
             },
             async orderState(od,no){

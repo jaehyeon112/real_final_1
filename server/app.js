@@ -819,6 +819,42 @@ app.get('/deliverys/:sday/:eday', async (req, res) => {
   let result = await mysql.query("admin", "AllDatedeliveryList", datas);
   res.send(result);
 });
+
+app.put('/delivery/:ono', async (req, res) => {
+  let datas = req.params.ono;
+  let result = await mysql.query("admin", "updateDelivery", datas);
+  res.send(result);
+});
+
+app.post('/delivery/:ono/:uid/:ono/:save', async (req, res) => {
+  let datas = [req.params.ono,req.params.uid,req.params.ono,Number(req.params.save)];
+  let result = await mysql.query("admin", "insertPoint", datas);
+  res.send(result);
+});
+
+app.put('/deliveryPoint/:point', async (req, res) => {
+  let datas = Number(req.params.point);
+  let result = await mysql.query("admin", "updatePoint", datas);
+  res.send(result);
+});
+
+app.get('/getPoint/:ono', async (req, res) => {
+  let datas = req.params.ono;
+  let result = await mysql.query("admin", "selectPoint", datas);
+  res.send(result);
+});
+
+app.get('/userInfo/:uid', async (req, res) => {
+  let datas = req.params.uid;
+  let result = await mysql.query("admin", "userInfo", datas);
+  res.send(result);
+});
+
+app.post('/delivery/:ono/:uid/:ono/:save', async (req, res) => {
+  let datas = [req.params.ono,req.params.uid,req.params.ono,Number(req.params.save)];
+  let result = await mysql.query("admin", "insertPoint", datas);
+  res.send(result);
+});
 //서영희-배송관련 여기까지
 
 //여기 박현아
@@ -1209,6 +1245,18 @@ app.get('/reports/:status/:sno', async (req, res) => {
   res.send(result);
 });
 
+app.get('/Onereview/:rno', async (req, res) => {
+  let datas = req.params.rno
+  let result = await mysql.query("admin", "reviewInfo", datas);
+  res.send(result);
+})
+
+app.put('/report/:state/:rno', async (req, res) => {
+  let datas = [req.params.state,req.params.rno];
+  let result = await mysql.query("admin", "updateReport", datas);
+  res.send(result);
+});
+
 //서영희-환불관련
 app.get('/refund', async (req, res) => {
   let result = await mysql.query("admin", "AllrefundOrderList");
@@ -1233,8 +1281,8 @@ app.get('/refunds/:state', async (req, res) => {
   res.send(result);
 });
 
-app.put('/refund/:state/:ono', async (req, res) => {
-  let datas = [req.params.state, req.params.ono];
+app.put('/refund/:state/:date/:ono', async (req, res) => {
+  let datas = [req.params.state,req.params.date,req.params.ono];
   let result = await mysql.query("admin", "updateRefund", datas);
   res.send(result);
 });
