@@ -194,15 +194,29 @@
                 }else if(od=='취소/환불 진행중'){
                     od='o2'
                 }else if(od=='완료'){
-                    od='c3'
+                    od='o3'
                 }
-                let result = await axios.get(`/api/refund/${od}/${no}`).catch(err=>console.log(err));
-                console.log(result)
+                let total = await axios.get(`/api/refunds/${od}`).catch(err=>console.log(err));
+                let result = await axios.get(`/api/refunds/${od}/${no}`).catch(err=>console.log(err));
+                console.log(total)
+                this.totalList = total.data;
                 this.orderList = result.data;
+                if(this.totalList.length==0||this.orderList.length==0){
+                    alert('존재하는 데이터가 없습니다!');
+                    this.orders = '';
+                    this.getOrderList(no);
+                }else{
+                    this.totalList = total.data;
+                    this.orderList = result.data;
+                    this.$refs.pagination1.currentPage2(no);
+                }
             }
         },
         watch : {
             orders(){
+                if(this.orders==''){
+                    return;
+                }
                 this.orderState(this.orders,this.startNum);
             }
     }

@@ -57,7 +57,7 @@
                   <h4 v-else="photo.length>0">첨부된 사진이 없습니다</h4>
                 </div>
               <div class="col-12" v-if="this.cnt>0">
-                <v-textarea v-model = "reply.reply_content" type="text" label="답변내용" variant="outlined"></v-textarea>
+                <v-textarea v-model = "reply.reply_content" type="text" label="답변내용" variant="outlined" readonly=""></v-textarea>
                 <label for="discount_price" class="form-label">답변일시</label>
                 <input type="text" v-model="reply.reply_date" class="form-control" id="reply_date" readonly>
               </div>
@@ -100,6 +100,7 @@ export default {
       }
     },
     created(){
+        window.scrollTo(0, 0);
         this.inquireNo = this.$route.query.ino;
         this.inquireInfo();
         this.replyInfo();

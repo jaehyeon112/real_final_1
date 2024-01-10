@@ -151,11 +151,21 @@
                 }
                 
                 let AllList = await axios.get(`/api/prod/${cont}/${cont}`).catch(err=>console.log(err));
-                this.totalList = AllList.data;
                 let list = await axios.get(`/api/prod/${cont}/${cont}/${this.order}/${no}`).catch(err=>console.log(err));
-                let result = list.data;
-                this.productList = result;
-                this.$refs.pagination1.currentPage2(no);
+                this.totalList = AllList.data;
+                this.productList = list.data;
+                if(this.totalList.length==0||this.productList.length==0){
+                    alert('존재하는 데이터가 없습니다!');
+                    this.category = '';
+                    this.word = '';
+                    this.prodList(no);
+                }else{
+                    this.totalList = AllList.data;
+                    this.productList = list.data;
+                    this.$refs.pagination1.currentPage2(no);
+                }
+
+
             },
             refresh(){
                 this.category = '';

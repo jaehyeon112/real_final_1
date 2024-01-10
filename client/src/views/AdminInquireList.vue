@@ -47,14 +47,14 @@
           <td>{{ $dateFormat(inquire.create_date,'yyyy년 MM월 dd일') }}</td>
           <td v-if="inquire.answer_state==0">답변대기중</td>
           <td v-else-if="inquire.answer_state==1">답변완료</td>
-          <td v-if="inquire.answer_state==0" @click="replyInsert(inquire.inquire_no)">답변하기</td>
-          <td v-else-if="inquire.answer_state==1" @click="replyInsert(inquire.inquire_no)">답변보기</td>
+          <td class=cur v-if="inquire.answer_state==0" @click="replyInsert(inquire.inquire_no)">답변하기</td>
+          <td class=cur v-else-if="inquire.answer_state==1" @click="replyInsert(inquire.inquire_no)">답변보기</td>
         </tr>
       </tbody>
       <tbody v-if="inquireList.length==0" style="text-align: center;">
             <tr><td></td><td></td><td><h3>존재하는 문의사항이 없습니다</h3></td></tr>
         </tbody>
-        <v-container>
+        <v-container v-if="inquireList.length!=0">
           <page ref="pagination1" @changePage="changePage" :list="totalList" :totals="10"></page>
         </v-container>
         </template>

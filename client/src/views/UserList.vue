@@ -81,7 +81,6 @@ export default {
             word : '',
             days : this.dateFormat('','yyyy-MM-dd'),
             userList : [],
-            filterList : [],
             modalCheck: false,
             userId : '',
             nums : 10,
@@ -180,37 +179,51 @@ export default {
                 this.uList(this.startNum);
             }else{
                 let AllList = await axios.get(`/api/searchuser/${cont}/${cont}`).catch(err=>console.log(err));
-                this.totalList = AllList.data;
                 let list = await axios.get(`/api/searchuser/${cont}/${cont}/${this.order}/${no}`).catch(err=>console.log(err));
-                let result = list.data;
-                this.userList = result;
-                this.$refs.pagination1.currentPage2(no);
+                this.totalList = AllList.data;
+                this.userList = list.data;
+                if(this.totalList.length==0||this.userList.length==0){
+                    alert('존재하는 데이터가 없습니다!');
+                    this.word = '';
+                    this.uList(no);
+                }else{
+                    this.totalList = AllList.data;
+                    this.userList = list.data;
+                    this.$refs.pagination1.currentPage2(no);
+                }
             }
         },
         async filterData(grade,no){
-                if(grade=='일반회원'){
-                    grade = 'i1'
-                }else if(grade=='실버회원'){
-                    grade = 'i2'
-                }
-                else if(grade=='골드회원'){
-                    grade = 'i3'
-                }
-                else if(grade=='정지회원'){
+            if(grade=='일반회원'){
+                grade = 'i1'
+            }else if(grade=='실버회원'){
+                grade = 'i2'
+            }
+            else if(grade=='골드회원'){
+                grade = 'i3'
+            }
+            else if(grade=='정지회원'){
                     grade = 'i6'
-                }
+            }
                 this.word = '';
                 let AllList = await axios.get(`/api/user/${grade}`).catch(err=>console.log(err));
                 let list = await axios.get(`/api/user/${grade}/${this.order}/${no}`).catch(err=>console.log(err));
                 this.totalList = AllList.data;
                 this.userList = list.data;
-                this.$refs.pagination1.currentPage2(no)
+                if(this.totalList.length==0||this.userList.length==0){
+                    alert('존재하는 데이터가 없습니다!');
+                    this.grade = '';
+                    this.uList(no);
+                }else{
+                    this.totalList = AllList.data;
+                    this.userList = list.data;
+                    this.$refs.pagination1.currentPage2(no);
+                }
         },
         refresh(){
             this.word ='';
             this.grade = '';
             this.uList(this.startNum);
-            this.filterList = [];
         },
     },
     components : {

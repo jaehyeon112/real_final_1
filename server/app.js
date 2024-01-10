@@ -1215,15 +1215,21 @@ app.get('/refund', async (req, res) => {
   res.send(result);
 });
 
-app.get('/refund/:state/:sno', async (req, res) => {
+app.get('/refund/:sno', async (req, res) => {
+  let datas = Number(req.params.sno) * 10
+  let result = await mysql.query("admin", "refundOrderList", datas);
+  res.send(result);
+});
+
+app.get('/refunds/:state/:sno', async (req, res) => {
   let data = [req.params.state, Number(req.params.sno)*10];
   let result = await mysql.query("admin", "refundState", data);
   res.send(result);
 });
 
-app.get('/refund/:sno', async (req, res) => {
-  let datas = Number(req.params.sno) * 10
-  let result = await mysql.query("admin", "refundOrderList", datas);
+app.get('/refunds/:state', async (req, res) => {
+  let data = req.params.state;
+  let result = await mysql.query("admin", "AllrefundState", data);
   res.send(result);
 });
 

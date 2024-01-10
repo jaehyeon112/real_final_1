@@ -298,8 +298,9 @@ let admin = {
   return_point=(select point_use from orders where order_no=refund_cancel.order_no),cancel_status='o2',cancel_request=current_date(),cancel_date=current_date()`,
   AllrefundOrderList: `select * from refund_cancel order by cancel_request desc`,
   refundOrderList: `select * from refund_cancel order by cancel_request desc limit ?,10`,
-  updateRefund: `update refund_cancel set cancel_status = ?, cancel_date = curdate() where order_no= ?`,
   refundState: `select * from refund_cancel where cancel_status = ? order by cancel_request desc limit ?,10`,
+  AllrefundState: `select * from refund_cancel where cancel_status = ? order by cancel_request desc`,
+  updateRefund: `update refund_cancel set cancel_status = ?, cancel_date = curdate() where order_no= ?`,
   //첨부파일
   insertFile: `insert into file set ?`,
   photoList: `select file_name,types from file where ?? = ?`,
