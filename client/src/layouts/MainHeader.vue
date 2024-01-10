@@ -195,10 +195,10 @@ font-size: 12px;
 color:gray
 }
 .login {
-color: #bbb;
-font-size: 12px;
-font-weight: 600;
-cursor: pointer;
+  color: #bbb;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
 }
 
 input {

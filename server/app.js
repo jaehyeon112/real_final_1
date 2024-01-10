@@ -447,6 +447,12 @@ app.post("/cancel", async (req, res, next) => {
     res.status(400).send(error);
   }
 })
+
+app.get("/adddeliveryList", async (req, res) => { // 추가배송지
+  let list = await mysql.query("test", "adddeliveryList", req.session.user_id);
+  res.send(list);
+});
+
 app.get("/isolatedRegionList", async (req, res) => { // 배송불가 지역리스트
   let list = await mysql.query("test", "isolatedRegionList");
   res.send(list);
@@ -509,6 +515,7 @@ app.put("/CheckAllUpdate/:check", async (req, res) => { // 체크박스 전체�
 
 //   res.send(list);
 // });
+
 
 app.put("/Cartquantity/:no/:cno", async (req, res) => { // 장바구니에 담긴 상품의 재고가 빠져서 장바구니재고수정이필요한경우
   let data = [req.params.no, req.params.cno];

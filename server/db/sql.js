@@ -76,12 +76,15 @@ HAVING hotItem > 1 and avg_grade > 4
 ORDER BY hotItem DESC
 limit ?, 6;
 `,
-
+  // 추가 배송지 
+  adddeliveryList : `select * from add_delivery where user_id =?`,
+  
   mainReview: `select f.file_name as reviewfile ,f2.file_name as prodfile  , o.prod_no, r.* from review r left join (select * from file where orders='s0') f 
-on (r.review_no = f.review_no) left join order_detail o on r.detail_order_no = o.order_detail_no
-left join (select * from file where orders='s0') f2 on o.prod_no = f2.prod_no
-where review_grade = 5 and f.file_name is not null ORDER BY RAND()  LIMIT 1;`,
-
+  on (r.review_no = f.review_no) left join order_detail o on r.detail_order_no = o.order_detail_no
+  left join (select * from file where orders='s0') f2 on o.prod_no = f2.prod_no
+  where review_grade = 5 and f.file_name is not null ORDER BY RAND()  LIMIT 1;`,
+  
+  // 장바구니 리스트
   cartList: `select distinct * 
              from cart c, product p, user u, (select file_name, prod_no from file where orders='s0') f
              where c.user_id = u.user_id AND p.prod_no = c.prod_no AND c.user_id = ? AND c.prod_no = f.prod_no`,

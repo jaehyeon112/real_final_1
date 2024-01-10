@@ -2,7 +2,7 @@
     <v-container>
         <v-row justify="center">
             <v-col style="text-align:center">
-                <p> 1조 짱 을 이용해주셔서 감사합니다.</p>
+                <p> <img src="/joymeal.jpg" style="width:100px"> 을(를) 이용해주셔서 감사합니다.</p>
                 <div class="h">
                     <p style="font-size:25px; font-weight:bold">고객님, <span style="color:red;">주문이 완료</span>되었습니다.</p>
                 </div>
@@ -17,7 +17,7 @@
             </v-col>
         </v-row>
       <hr>
-      <div v-if="orderList.length > 0" style="padding: 100px; margin: ;">
+      <div v-if="orderList.length > 0" style="padding: 100px; margin: ; font-size: 20px;">
         <p>상품 이미지
             <v-img width="400" height="300" :src="`api/test/`+ orderList[0].file_name"></v-img>
         </p>

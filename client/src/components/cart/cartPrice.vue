@@ -1,26 +1,27 @@
 <template>
-    <v-container>
-      <v-card class="container">
-        <p>주문 금액 <span>{{ $wonComma(discount) }} 원</span></p>
-        <div class="discount">
-          <svg width="16" height="20" viewBox="0 0 16 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path fill-rule="evenodd" clip-rule="evenodd" d="M1 5H0V10V11H1H6V10H1V5Z" fill="#ddd"></path>
-          </svg>
-          <span>상품 전체금액 <span>{{ $wonComma(total) }} 원</span></span>
+    <v-container justify="end">
+      <v-card>
+        <div class="pricecontainer">
+          <p>주문금액 <span class="price">{{ $wonComma(discount) }}원</span></p>
+          <div class="discount">
+            <svg width="16" height="20" viewBox="0 0 16 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path fill-rule="evenodd" clip-rule="evenodd" d="M1 5H0V10V11H1H6V10H1V5Z" fill="#ddd"></path>
+            </svg>
+            <span>상품 전체금액 <span class="price">{{ $wonComma(total) }} 원</span></span>
+            <br>
+            <svg width="16" height="20" viewBox="0 0 16 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path fill-rule="evenodd" clip-rule="evenodd" d="M1 5H0V10V11H1H6V10H1V5Z" fill="#ddd"></path>
+            </svg>
+            <span>상품 할인금액 <span class="price">{{ $wonComma(total - discount) }}</span>원</span>
+          </div>
           <br>
-          <svg width="16" height="20" viewBox="0 0 16 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path fill-rule="evenodd" clip-rule="evenodd" d="M1 5H0V10V11H1H6V10H1V5Z" fill="#ddd"></path>
-          </svg>
-          <span>상품 할인금액 <span>{{ $wonComma(total - discount) }}</span>원</span>
+          <p>배송비 <span class="price">{{ $wonComma(delivery) }} 원</span></p>
+          <p>쿠폰 할인 <span class="price">{{ $wonComma(coupon) }} 원</span></p>
+          <p>포인트 <span class="price">{{ $wonComma(pointInput) }} 원</span></p>
+          <hr>
+          <p>최종 결제금액<span style="color: red; font-size: 40px; font-weight: bold;">  {{ $wonComma(final) }} 원</span></p>
+          <span class="css-5lws00">적립 </span><span>구매 시 </span><span>{{ $wonComma(savePoint) }} 원 </span>
         </div>
-        <br>
-        <p>배송비 <span>{{ $wonComma(delivery) }} 원</span></p>
-        <p>쿠폰 할인 <span>{{ $wonComma(coupon) }} 원</span></p>
-        <p>포인트 <span>{{ $wonComma(pointInput) }} 원</span></p>
-        <hr>
-        <p>최종 결제금액<span style="color: red; font-size: 40px;">{{ $wonComma(final) }} 원</span></p>
-        <span class="a">적립 </span><span class="b">구매 시 </span><span class="b">{{ $wonComma(savePoint) }} 원 </span>
-        <p></p>
       </v-card>
     </v-container>
   </template>
@@ -75,21 +76,40 @@
   * {
     list-style: none;
   }
-  
-  .container {
-    margin: auto 0;
-    padding: 19px 18px 18px 20px;
-    border: 1px solid rgb(242, 242, 242);
-    background-color: rgb(250, 250, 250);
-  }
-  
   .discount {
     color: rgb(153, 153, 153);
     font-size: 14px;
     padding-left: 8px;
   }
-  
-  .a {
+  .v-card { 
+    margin-top: 40px;
+  }
+  .pricecontainer{
+    margin: 50px;
+  }
+
+  .css-1hvttuk {
+    display: flex;
+    -webkit-box-pack: justify;
+    justify-content: space-between;
+    margin-top: 16px;
+    font-size: 16px;
+    color: rgb(51, 51, 51);
+    padding-bottom: 4px;
+}
+.css-sk644d {
+    display: flex;
+    margin-top: 8px;
+    -webkit-box-pack: justify;
+    justify-content: space-between;
+    -webkit-box-align: center;
+    align-items: center;
+    font-size: 14px;
+    color: rgb(153, 153, 153);
+}
+
+
+.css-5lws00 {
     display: inline-block;
     margin-right: 4px;
     padding: 0px 7px;
@@ -99,12 +119,6 @@
     line-height: 18px;
     height: 18px;
     color: rgb(255, 255, 255);
-  }
-  .b{
-      justify-content: flex-end;
-      align-items: center;
-      margin-top: 15px;
-      font-size: 12px;
-      color: rgb(102, 102, 102);
-  }
+    font-weight: 500;
+}
   </style>
