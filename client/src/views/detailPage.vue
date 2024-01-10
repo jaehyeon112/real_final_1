@@ -17,12 +17,9 @@
                      <br>
                   <table class="table" border="1">
                      <tr>
-                        <th>판매자</th>
-                        <td>최고다최고</td>
-                     </tr>
-                     <tr>
                         <th>냉장/냉동</th>
-                        <td>정보{{ productInfo.refrigeration }}</td>
+                        <td v-if="productInfo.refrigeration==g1">냉장</td>
+                        <td v-else>냉동</td>
                      </tr>
                      <tr>
                         <th>알레르기 정보</th>
@@ -39,10 +36,10 @@
                   </div>
                   <div>
                      <p class="lead">할인률{{ productInfo.discount_rate }}</p>
-                     <p class="lead">할인률 적용된 가격{{  productInfo.discount_price }}</p>
+                     <p class="lead">할인률 적용된 가격{{  $wonComma(productInfo.discount_price) }}</p>
                   <br>
                   <br>
-                     <p class="lead">총 가격: {{  productInfo.discount_price*counter }}</p>
+                     <p class="lead">총 가격: {{  $wonComma(productInfo.discount_price*counter) }}</p>
                      <p style="margin-left:20px;margin-bottom:0;color:black">무료배송 (40,000원 이상 구매 시)</p>
                      <br>
                   </div>
@@ -55,7 +52,7 @@
             </div>
             
 
-            <div class="text-center">
+            <!-- <div class="text-center">
             <v-btn
                size="large"
                text="Click"
@@ -90,7 +87,7 @@
                </v-card-text>
                </v-card>
             </v-bottom-sheet>
-         </div>
+         </div>-->
             <!--선택하는 바?-->
             <div class="container px-4 px-lg-5 my-5" style="text-align:center;">
                <a style="border: none; padding: 10px 50px; color: black; font-size: 18px"
@@ -346,7 +343,8 @@ export default {
             sheet:false,
             isSoldOut: false,
       isStock: false,
-      cartList : []
+      cartList : [],
+      inquireList:[]
       ,Img : []
         }
     },
@@ -359,7 +357,7 @@ export default {
       this.getUserCartInfo()
       //this.getLikes();
       this.getRivewList();
-      
+      this.getInquireList();
         
     },
     watch:{
@@ -445,6 +443,11 @@ export default {
             }
             console.log(list.data)
             this.reviewList =list.data;
+        },
+        async getInquireList() {
+         let list = await axios.get(`/api/inquireP/${this.pno}`)
+                                  .catch(err=>console.log(err));
+            this.inquireList =list.data
         },
         async upCnt(rno){
            if(this.$store.state.user.user_id==null){

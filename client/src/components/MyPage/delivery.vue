@@ -27,13 +27,13 @@
             <v-row>
                 <label>
                     <p>배송지 이름</p>
-                    <input type="text"  v-model="delivery.delivery_name" >
+                    <input type="text"  style="background-color:#FFB300 ;" v-model="delivery.delivery_name" >
                     </label>
-                    <v-input type="text"  placeholder="우편번호" v-model="delivery.delivery_postcode" />
+                    <v-input type="text"  placeholder="우편번호" style="background-color:#FFB300" v-model="delivery.delivery_postcode" />
                     <v-btn @click="search()">우편번호 찾기</v-btn><br>
-                    <v-input type="text" id="roadAddress" placeholder="도로명주소" v-model="delivery.delivery_address"/>
+                    <v-input type="text"  id="roadAddress" placeholder="도로명주소" style="background-color:#FFB300" v-model="delivery.delivery_address"/>
                     <span id="guide" style="color:#000;display:none"></span>
-                    <v-input type="text" id="detailAddress" placeholder="상세주소" v-model="delivery.delivery_detail_address"/>
+                    <v-input type="text" id="detailAddress" placeholder="상세주소" style="background-color:#FFB300" v-model="delivery.delivery_detail_address"/>
                     <!-- <v-btn  @click="isUpdated? UpdateDelivery() :InsertDelivery()">저장</v-btn> -->
             </v-row>
           </v-container>
@@ -151,6 +151,7 @@ export default {
             alert('등록완료');
                 this.delivery.delivery_no = result.data.insertId; 
                 //리로드...?
+                this.getDeliveryList()
             }                
      
         },
@@ -160,6 +161,7 @@ export default {
                               .catch(err=>console.log(err));
                   if(data.data.affectedRows>0){                        
                      alert('배송지 삭제')
+                     this.getDeliveryList()
                   }
       }, 
       goToUpdated(){
