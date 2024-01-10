@@ -3,7 +3,10 @@
               <v-card style="padding: 20px;">
                 <v-row>
                   <v-col cols="9">
-                    <h1>장바구니</h1>
+                    <h1>
+                      <span class="mdi mdi-cart-minus" style="font-size: 40px"></span>
+                      장바구니
+                    </h1>
                     <v-row class="button-row">
                       <v-col cols="auto" class="button-col">
                         <v-btn class="right-aligned-button" @click="selectAll">전체선택</v-btn>
@@ -18,7 +21,8 @@
                           <v-checkbox v-model="list.cart_checkbox" true-value="1" false-value="0" @click="updateCheckbox(list)"></v-checkbox>
                         </td>
                         <td><v-img width="80" height="80" :src="`api/test/`+ list.file_name"></v-img></td>
-                        <td style="cursor: pointer; font-weight: bold;" @click="goTodetailForm(list.prod_no)">{{ list.prod_name }}</td>
+                        <td v-if="list.stock != 0 && list.soldout != 1" style="cursor: pointer; font-weight: bold;" @click="goTodetailForm(list.prod_no)">{{ list.prod_name }}</td>
+                        <td v-else style="font-weight: bold;">{{ list.prod_name }}</td>
                           <td>
                             <v-btn v-if="list.stock != 0 && list.soldout != 1" @click="quantityMinus(list)">
                               <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAiIGhlaWdodD0iMzAiIHZpZXdCb3g9IjAgMCAzMCAzMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICAgIDxwYXRoIGQ9Ik0yMCAxNHYySDEwdi0yeiIgZmlsbD0iIzMzMyIgZmlsbC1ydWxlPSJub256ZXJvIi8+Cjwvc3ZnPgo=" alt="">
