@@ -5,7 +5,7 @@
             <div class="datatable-input" style="width: 20%;float: right;text-align: left;">
                 ==날짜별 주문내역==<br>
                 <input v-model="startNo" type="date"> ~ <input v-model="lastNo" type="date"><br><br>
-                <div  style="width: 60%;float: right;"><v-btn @click="orderDate">검색하기</v-btn><v-btn @click="refresh" style="float: right;">초기화</v-btn></div></div>
+                <div  style="width: 60%;float: right;"><v-btn @click="orderDates">검색하기</v-btn><v-btn @click="refresh" style="float: right;">초기화</v-btn></div></div>
         </template>
         <template #filterSearch>
           <v-select
@@ -308,7 +308,7 @@
             changeChildData(childData){
                 this.nums = childData;
             },
-            async orderDate(){
+            async orderDates(){
               this.orders = '';
                 if(this.startNo>this.lastNo){
                     alert('날짜를 다시 확인해주세요');
