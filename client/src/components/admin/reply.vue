@@ -129,7 +129,7 @@ export default {
             return result;
         },
         async inquireInfo(){
-          let result = await axios.get(`/api/inquire/${this.inquireNo}`).catch(err=>console.log(err));
+          let result = await axios.get(`/api/inquires/${this.inquireNo}`).catch(err=>console.log(err));
           for(let i=0;i<result.data.length;i++){
             result.data[i].create_date = this.dateFormat(result.data[i].create_date,'yyyy년 MM월 dd일');
             if(result.data[i].inquire_category=='j1'){

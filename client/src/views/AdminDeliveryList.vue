@@ -1,9 +1,9 @@
 <template>
-    <list @changeemit="changeChildData">
+    <list>
         <template #title>배송목록</template>
         <template #searchData>
             <div>날짜별 배송목록 : <input v-model="startDate" type="date"> ~ <input v-model="lastDate" type="date">
-                <br><br><v-btn @click="orderDate">검색하기</v-btn>  <v-btn @click="refresh">초기화</v-btn>
+                <br><br><v-btn @click="orderDate(this.startNum)">검색하기</v-btn>  <v-btn @click="refresh">초기화</v-btn>
             </div>
         </template>
         <template #filterSearch>
@@ -43,7 +43,7 @@
             <tr><td></td><td></td><td><h3>존재하는 데이터가 없습니다</h3></td></tr>
         </tbody>
         <v-container>
-          <page @changePage="changePage" :list="totalList" :totals="this.nums"></page>
+          <page ref="pagination1" @changePage="changePage" :list="totalList" :totals="10"></page>
         </v-container>
         </template>
     </list>
@@ -57,7 +57,6 @@
         data(){
             return{
                 deliveryList : [],
-                nums : 0,
                 startDate : '2000-01-01',
                 lastDate : this.dateFormat('','yyyy-MM-dd'),
                 startNum : 0,
@@ -72,7 +71,7 @@
         },
         created(){
             window.scrollTo(0, 0);
-            //this.prodList();
+            this.delList(this.startNum);
             this.total();
         },
         methods : {
@@ -82,16 +81,20 @@
                 });
                 this.totalList = total.data;
             },
-            async delList(pno){
-                let list = await axios.get(`/api/delivery/${this.startNum}/${pno}`).catch(err=>console.log(err));
+            async delList(no){
+                let list = await axios.get(`/api/delivery/${no}`).catch(err=>console.log(err));
                 let result = list.data;
                 this.deliveryList = result;
                 this.total();
             },
-            async changePage(no) {
-                let list = await axios.get(`/api/delivery/${no}/${this.nums}`).catch(err=>console.log(err));
-                let result = list.data;
-                this.deliveryList = result;
+            async changePage(no,) {
+                if(this.startDate==''&&this.lastDate==''&&this.orders==''){
+                    this.delList(no)
+                }else if(this.startDate!=''&&this.lastDate!=''&&this.orders==''){
+                    this.orderDate(no);
+                }else if(this.startDate==''&&this.lastDate==''&&this.orders!=''){
+                    this.orderState(this.orders,no);
+                }
             },
             dateFormat(value,format){
             let date = value == '' ? new Date() : new Date(value);
@@ -101,56 +104,61 @@
             let result = format.replace('yyyy',year).replace('MM',month).replace('dd',day);
             return result;
             },
-            changeChildData(childData){
-                console.log('받음'+childData);
-                this.nums = childData;
-                this.totals = childData;
-            },
-            async orderDate(){
+            async orderDate(no){
                 this.orders = ''
-                if(this.startNo>this.lastNo){
+                if(this.startDate>this.lastDate){
                     alert('날짜를 다시 확인해주세요');
-                    this.startNo = '2000-01-01';
-                    this.lastNo = this.dateFormat('','yyyy-MM-dd');
-                }else if(this.startNo==''||this.lastNo==''){
+                    this.startDate = '2000-01-01';
+                    this.lastDate = this.dateFormat('','yyyy-MM-dd');
+                }else if(this.startDate==''||this.lastDate==''){
                     alert('날짜가 비어있습니다.')
                 }else{
+                    console.log('현재 startNo ' + no)
                     let total = await axios.get(`/api/deliverys/${this.startDate}/${this.lastDate}`).catch((err) => {console.log(err);});
-                    let list = await axios.get(`/api/deliverys/${this.startDate}/${this.lastDate}/${this.startNum}/${this.nums}`).catch((err) => {console.log(err);});
-                    this.deliveryList = list.data;
-                    this.totalList = total.data;
+                    let list = await axios.get(`/api/deliverys/${this.startDate}/${this.lastDate}/${no}`).catch((err) => {console.log(err);});
+                    if(total.data.length==0||list.data.length==0){
+                        this.totalList = [];
+                        this.deliveryList = [];
+                    }else{
+                        this.deliveryList = list.data;
+                        this.totalList = total.data;
+
+                    }
                 }
+                this.$refs.pagination1.currentPage2(no);
             },
-            async orderState(od){
+            async orderState(od,no){
                 if(od=='배송중'){
                     od='d4'
                 }else if(od=='배송완료'){
                     od='d5'
                 }
-                let total = await axios.get(`/api/delivery/${od}`).catch(err=>console.log(err));
-                let result = await axios.get(`/api/delivery/${od}/${this.startNum}/${this.nums}`).catch(err=>console.log(err));
-                console.log(result)
-                this.deliveryList = result.data;
-                this.totalList = total.data;
+                let total = await axios.get(`/api/deliveryf/${od}`).catch(err=>console.log(err));
+                let result = await axios.get(`/api/deliveryf/${od}/${no}`).catch(err=>console.log(err));
+                if(total.data.length==0||result.data.length==0){
+                    this.totalList = [];
+                    this.deliveryList = [];
+                }else{
+                    this.deliveryList = result.data;
+                    this.totalList = total.data;
+                    this.$refs.pagination1.currentPage2(no);
+                }
             },
             refresh(){
-                this.delList(this.nums);
+                this.delList(this.startNum);
                 this.startDate = '2000-01-01';
                 this.lastDate = this.dateFormat('','yyyy-MM-dd');
                 this.orders = '';
             }
         },
         watch : {
-            nums(){
-                this.delList(this.nums);
-            },
             orders(){
                 if(this.orders==''){
                     return;
                 }
                 this.startDate = '2000-01-01';
                 this.lastDate = this.dateFormat('','yyyy-MM-dd');
-                this.orderState(this.orders);
+                this.orderState(this.orders,this.startNum);
             }
     }
         

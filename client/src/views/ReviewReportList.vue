@@ -1,5 +1,5 @@
 <template>
-    <list @changeemit="changeChildData">
+    <list>
         <template #title>신고된 리뷰목록</template>
         <template #searchData>
             <div style="width: 250px;float: right;"><v-select
@@ -59,7 +59,7 @@
       </div>
     </div>
         <v-container>
-          <page @changePage="changePage" :list="totalList" :totals="this.nums"></page>
+          <page ref="pagination1" @changePage="changePage" :list="totalList" :totals="10"></page>
         </v-container>
         </template>
     </list>
@@ -76,11 +76,8 @@
                 reason : '',
                 reasons : '',
                 modalCheck: false,
-                nums : 0,
                 startNum : 0,
                 totalList: "",
-                totals :'',
-                orders : ''
             }
         },
         components : {
@@ -90,6 +87,7 @@
         created(){
             window.scrollTo(0, 0);
             this.total();
+            this.getReportList(this.startNum)
         },
         methods : {
             async sendMessage(){
@@ -122,24 +120,21 @@
                 });
                 this.totalList = total.data;
             },
-            async getReportList(){
-                let result = await axios.get(`/api/review/${this.startNum}/${this.nums}`).catch(err=>console.log(err));
+            async getReportList(no){
+                let result = await axios.get(`/api/report/${no}`).catch(err=>console.log(err));
                 this.reportList = result.data;
             },
             async changePage(no) {
-                let list = await axios.get(`/api/review/${no}/${this.nums}`).catch(err=>console.log(err));
-                let result = list.data;
-                this.reportList = result;
+                if(this.reason==''){
+                    this.getReportList(no)
+                }else if(this.reason!=''){
+                    this.reasonList(this.reason,no);
+                }
             },
             refresh(){
                 this.reason = '';
             },
-            changeChildData(childData){
-                console.log('받음'+childData);
-                this.nums = childData;
-                this.totals = childData;
-            },
-            async reasonList(re){
+            async reasonList(re,no){
                 if(re=='신고처리중'){
                     re='p1'
                 }else if(re=='신고처리완료'){
@@ -149,24 +144,18 @@
                 }
                 console.log(re)
                 if(re==''){
-                    this.getReportList();
+                    this.getReportList(this.startNum);
                 }else{
-                    let list = await axios.get(`/api/review/${re}/${this.startNum}/${this.nums}`).catch(err=>console.log(err));
-                    let result = list.data;
-                    console.log(result)
-                    this.reportList = result;
+                    let total = await axios.get(`/api/reports/${re}`).catch(err=>console.log(err));
+                    let list = await axios.get(`/api/reports/${re}/${no}`).catch(err=>console.log(err));
+                    this.totalList = total.data;
+                    this.reportList = list.data;
                 }
             }
         },
         watch : {
-            nums(){
-                this.getReportList();
-            },
-            orders(){
-                this.orderState(this.orders);
-            },
             reason(){
-                this.reasonList(this.reason);
+                this.reasonList(this.reason,this.startNum);
             }
     }
         

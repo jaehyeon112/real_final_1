@@ -336,7 +336,7 @@ import icon from '../components/admin/icon.vue';
     created(){
       window.scrollTo(0, 0);
       //this.getSum();
-      if(this.$store.state.user.user_id != 'admin'){
+      if(this.$store.state.user.user_id != 'admin2'){
         alert('권한이 없습니다');
         this.$store.commit('logout');
         this.$router.push({path : "/login"});
