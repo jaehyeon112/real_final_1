@@ -1,5 +1,6 @@
 <template>
     <list @changeemit="changeChildData">
+        <template #title>공지사항 목록</template>
         <template #searchData>
             <div style="width: 250px;float: right;"><v-select
             label="중요도"
@@ -33,11 +34,11 @@
           <td>{{ notice.notice_no }}</td>
           <td>{{ $dateFormat(notice.notice_writedate,'yyyy년 MM월 dd일') }}</td>
           <td>{{ notice.notice_title }}</td>
-          <td>{{ notice.notice_content }}</td>
+          <td @click="modNotice(notice.notice_no)" class="cur">{{ notice.notice_content }}</td>
           <td>{{ notice.notice_views }}</td>
           <td v-if="notice.importance=='l1'">중요</td>
           <td v-else-if="notice.importance=='l2'">일반</td>
-          <td><v-btn>수정</v-btn>   <v-btn>삭제</v-btn></td>
+          <td><v-btn @click="modNotice(notice.notice_no)">수정</v-btn>   <v-btn>삭제</v-btn></td>
         </tr>
       </tbody>
       <tbody v-if="noticeList.length==0" style="text-align: center;">
@@ -86,12 +87,21 @@
             },
             async getInquireList(){
                 let result = await axios.get(`/api/notice/${this.order}/${this.startNum}/${this.nums}`).catch(err=>console.log(err));
+                for(let i=0;i<result.data.length;i++){
+                    if(result.data[i].notice_content.length>10){
+                        result.data[i].notice_content = result.data[i].notice_content.substring(0,10)+' ... 더보기';
+                    }
+                }
                 this.noticeList = result.data;
             },
             async changePage(no) {
                 let list = await axios.get(`/api/notice/${this.order}/${no}/${this.nums}`).catch(err=>console.log(err));
-                let result = list.data;
-                this.noticeList = result;
+                for(let i=0;i<result.data.length;i++){
+                    if(list.data[i].notice_content.length>10){
+                        list.data[i].notice_content = list.data[i].notice_content.substring(0,10)+' ... 더보기';
+                    }
+                }
+                this.noticeList = list.data;
             },
             insertNotice(){
                 this.$router.push({path : "insertNotice"})
@@ -123,6 +133,9 @@
             console.log(result)
             this.noticeList = result;
             },
+            modNotice(no){
+               this.$router.push({path : "insertNotice", query : {no : no}}) 
+            }
         },
         watch : {
             nums(){
@@ -170,5 +183,8 @@
   }
   v-btn{
     border-radius: 10px;
+  }
+  .cur{
+    cursor: pointer;
   }
 </style>

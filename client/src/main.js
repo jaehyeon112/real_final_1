@@ -1,4 +1,3 @@
-
 import {
   createApp
 } from "vue";
@@ -38,4 +37,3 @@ app
   .use(overlay)
   .mixin(mixin)
   .mount('#app')
-
