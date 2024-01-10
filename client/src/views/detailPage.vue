@@ -364,7 +364,8 @@ export default {
             if(search.data.length==0){
                //좋아요 증가
                let list = await axios.put(`/api/likeUp/${rno}`).catch(err=>console.log(err));
-               let inse = await axios.post(`/api/reviewLike/${rno}/${this.$store.state.user.user_id}`).catch(err=>console.log(err));
+               let inse = await axios.post(`/api/reviewLike/${rno}/${this.user}`).catch(err=>console.log(err));
+               console.log(inse.data)
                if(list.data.affectedRows==1&&inse.data.affectedRows==1){
                   alert('좋아여 추가');
                   this.getRivewList();
