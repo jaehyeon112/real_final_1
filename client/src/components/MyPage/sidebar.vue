@@ -52,7 +52,7 @@
         <router-link to="/putpass" class="nav-link ">
           <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#people-circle"/></svg>
           개인정보수정
-        <!-- </router-link> -->
+        </router-link>
       </li>
     </ul>
     <hr>
