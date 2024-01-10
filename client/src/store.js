@@ -55,9 +55,11 @@ const store = createStore({
           state.user.user_name = a.data[0].user_id;
           // state.kakaoId = a;
           // console.log(id + '/')
-          state.kakaoId = state.user.user_name;
+          state.kakaoId = `hyuna ${state.user.user_name}` ;
           // state.user.user_name = state.kakaoId
-         }              
+         } else {
+          state.kakaoId = id;
+         }            
         console.log('카카오 axios')                 
         console.log(a);
         console.log(a.data[0].user_id)

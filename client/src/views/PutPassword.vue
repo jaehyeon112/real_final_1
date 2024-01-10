@@ -58,7 +58,7 @@
   }
 </script>
 
-<style>
+<style scoped>
 .custom-form {
   width: 400px;
   height : auto;

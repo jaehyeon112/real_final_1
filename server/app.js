@@ -869,6 +869,14 @@ app.post("/join/joinIn", async (req, res) => {
 
 });
 
+//회원가입 > 가입축하쿠폰 지급하기 (z1)
+app.post("/joincoupon", async(req, res) => {
+  let data = req.body.param;
+  let result = await mysql.query("user", "joinCoupon", data);
+  res.send(result);
+    console.log(result);
+})
+
 
 app.get('/logout', async (req, res) => {
   req.session.destroy();
