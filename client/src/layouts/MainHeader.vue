@@ -168,7 +168,7 @@ what(){
   }
   alert(total)
 },
-  handleScroll() {
+  handleScroll() { 
     const windowScroll = window.scrollY;
 
       if (this.lnbOffsetTop <= windowScroll) {
