@@ -21,9 +21,9 @@
                 <tbody>
                     <tr  :key="i" v-for="(review, i) in reviewList" @click="goToDetail(review.review_no)">
                         <td>{{ review.review_no}}</td>
-                        <td>{{ review.review_title  }}</td>
+                        <td>{{ formatText(review.review_title ) }}</td>
                         <td>{{ review.detail_order_no}}</td>
-                        <td>{{ review.review_content }}</td>
+                        <td>{{ formatText(review.review_content) }}</td>
                         <td>{{ review.review_grade }}</td>
                         <td>{{ $dateFormat(review.review_writedate,'yyyy년MM월dd일') }}</td>
                         <td>{{ review.like_cnt}}</td>
@@ -64,7 +64,14 @@ export default {
         //           }
       },goToDetail(reviewNo){
             this.$router.push({path :'myReviewInfo', query : {reviewNo : reviewNo}});
-        },          
+        },   
+        formatText(text) {
+      const maxLength = 10;
+      if (text.length > maxLength) {
+        return text.substring(0, maxLength) + '...더보기';
+      }
+      return text;
+    }       
     }
 }
 </script>

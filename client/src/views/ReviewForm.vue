@@ -10,7 +10,7 @@
             <input type="text" id="title"  v-model="reviewInfo.review_title">
 
              <label for="grade">평점</label>
-            <div> <v-rating  hover :length="5" :size="67" v-model="reviewInfo.review_grade" color="deep-purple-lighten-1" active-color="deep-purple-lighten-1"  label="별점(5점 만점)"/></div>
+            <div> <v-rating  hover :length="5" :size="67" v-model="reviewInfo.review_grade" color=" #FFA726" active-color=" #FFA726"  label="별점(5점 만점)"/></div>
                
 
             <label for="content">내용</label>

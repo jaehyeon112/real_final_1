@@ -154,7 +154,7 @@ export default {
         {
           path: "noticeList",
           name: "noticeList",
-          component: noticeList
+          component:noticeList
         },
         {
           path: "qnaInfo", //  
