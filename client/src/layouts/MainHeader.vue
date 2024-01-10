@@ -32,7 +32,7 @@
   <span class="text-end" @click="moveCartList">
     <!-- 장바구니 갯수 조절해야함 -->
     <v-badge color="error" :content='$store.state.user.user_id == null ? $store.state.cartCount : $store.state.loginCartCount'>
-            <span class="mdi mdi-cart-minus" style="font-size: 30px"></span>
+            <span class="mdi mdi-cart-minus" style="font-size: 30px; cursor: pointer; "></span>
           </v-badge>
         </span>
       </div>

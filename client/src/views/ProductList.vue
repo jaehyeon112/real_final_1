@@ -36,15 +36,16 @@
                 <td>{{ prod.prod_name }}</td>
                 <td>{{ prod.price }}</td>
                 <td>{{ prod.discount_price }}</td>
-                <td v-if="prod.stock==0" style="color: rgb(242, 104, 104);">상품준비중</td>
-                <td v-else-if="prod.soldout==1" style="color: red;">품절상품</td>
+                <td v-if="prod.soldout==1">-</td>
+                <td v-else-if="prod.stock==0" style="color: rgb(242, 104, 104);">상품준비중</td>
                 <td v-else>{{ prod.stock }}</td>
                 <td v-if="prod.main_category=='e1'">한식</td>
                 <td v-else-if="prod.main_category=='e2'">중식</td>
                 <td v-else-if="prod.main_category=='e3'">양식</td>
                 <td v-else-if="prod.main_category=='e4'">일식</td>
                 <td v-else-if="prod.main_category=='e5'">분식</td>
-                <td><v-btn style="border-radius: 10px;" @click="modProd(prod.prod_no)">수정</v-btn>       <v-btn style="border-radius: 10px;" @click="delProd(prod.prod_no)">삭제</v-btn></td>
+                <td v-if="prod.soldout!=1"><v-btn style="border-radius: 10px;" @click="modProd(prod.prod_no)">수정</v-btn>       <v-btn style="border-radius: 10px;" @click="delProd(prod.prod_no)">삭제</v-btn></td>
+                <td v-else-if="prod.soldout==1" style="color: red;">===품절된 상품입니다===</td>
             </tr>
         </tbody>
         <tbody v-if="productList.length==0" style="text-align: center;">

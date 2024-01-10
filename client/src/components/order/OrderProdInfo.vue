@@ -10,8 +10,8 @@
                 <span style="color:red; font-size:25px; font-weight:bold;" >  {{ $store.state.orderNo }}  </span> 입니다. 
                 </p>
                 <br>
-                <p style="font-size:25px; font-weight:bold">주문 내역 확인은 배송/마이페이지의<br>
-                "주문/배송조회" 에서 확인하실수 있습니다.
+                <p style="font-size:25px; font-weight:bold">주문 내역 확인은 마이페이지의<br>
+                "주문내역/진행상태" 에서 확인하실수 있습니다.
                 </p>
                 <h1 style="text-align:left">주문정보</h1>
             </v-col>
@@ -47,6 +47,9 @@ export default {
     created(){
         this.getOrderList();
     },
+    mounted(){
+        this.getOrderList();
+    },
     watch : {
       orderList(){
         this.getOrderList();
@@ -58,7 +61,7 @@ export default {
                 this.prodName = this.orderList[0].prod_name;
             }
                 if(this.orderList.length > 1){
-                    this.prodName = this.prodName + '외 ' + (this.orderList.length - 1) + '건';
+                    this.prodName = this.prodName + ' 외 ' + (this.orderList.length - 1) + '건';
                 }else{
                     this.prodName = this.prodName
             }
@@ -73,7 +76,7 @@ export default {
 }
 .label {
     display: inline-block;
-    width: 40%;
+    width: 50%;
 }
 ul {
   display: flex;
