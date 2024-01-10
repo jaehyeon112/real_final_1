@@ -73,8 +73,12 @@ export default {
     },
     currentPage1(){
       this.currentPage = 1;
+    },
+    currentPage2(num){
+      this.currentPage = num+1;
     }
   },
+  
 };
 </script>
 

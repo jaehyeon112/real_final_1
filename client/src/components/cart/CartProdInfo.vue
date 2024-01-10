@@ -5,9 +5,9 @@
       <table class="rwd-table" :key="idx" v-for="(list, idx) in cartList">
         <tr>
           <td>
-            <v-img width="100" height="100" :src="`api/test/`+ list.file_name"></v-img>
+            <v-img width="80" height="80" :src="`api/test/`+ list.file_name"></v-img>
           </td>
-          <td>{{ list.prod_name }}</td>
+          <td style="font-size: 18px; font-weight: bold;">{{ list.prod_name }}</td>
           <td>{{ list.quantity }} 개</td>
           <td>
             <ul>
@@ -56,11 +56,11 @@ export default {
 }
 
 .rwd-table td:nth-child(3) {
-  width: 5%; 
+  width: 10%; 
 }
 
 .rwd-table td:nth-child(4) {
-  width: 10%; 
+  width: 15%; 
 }
 .discount {
     display: block;

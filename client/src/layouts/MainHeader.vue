@@ -6,10 +6,7 @@
         <span class="nav-link login" @click="loginOrMypage"  >{{ $store.state.user.user_id != null ? $store.state.user.user_name + '님' : '로그인' }}</span>
       </li>
       <li class="nav-item">
-        <span class="nav-link login" @click="logoutOrJoin" >{{ $store.state.user.user_id != null ? '로그아웃' : "회원가입"}}</span>
-      </li>
-      <li class="nav-item">
-        <span class="nav-link login" @click="withdrawal" >{{ $store.state.user.user_id != null ? '회원탈퇴' : "회원가입"}}</span>
+        <span class="nav-link login" @click="logoutOrJoin" >{{ $store.state.user.user_id != null ? '로그아웃' : '회원가입'}}</span>
       </li>
       <li class="nav-item">
         <span class="nav-link login" @click="serviceCenter" >고객센터</span>
@@ -17,7 +14,7 @@
       
     </ul>
     
-    <div class="container " style="margin-bottom: 20px; margin-left: 450px;">
+    <div class="container justify-content-end" style="margin-bottom: 20px;">
       <div class="row">
         <div class="col-4">
           <router-link
@@ -35,7 +32,7 @@
   <span class="text-end" @click="moveCartList">
     <!-- 장바구니 갯수 조절해야함 -->
     <v-badge color="error" :content='$store.state.user.user_id == null ? $store.state.cartCount : $store.state.loginCartCount'>
-            <span class="mdi mdi-cart-minus" style="font-size: 30px"></span>
+            <span class="mdi mdi-cart-minus" style="font-size: 30px; cursor: pointer; "></span>
           </v-badge>
         </span>
       </div>
@@ -64,7 +61,7 @@
       
     </div>
     <div class="col">
-      <router-link class="nav-custom" to="/">소개</router-link>
+      <router-link class="nav-custom" to="/intro">소개</router-link>
     </div>
     <div class="col">
       <router-link class="nav-custom" to="/menu/new">신제품</router-link>
@@ -144,6 +141,7 @@ methods: {
       this.$router.push("/join")
     }else{
       this.logout();
+      this.$router.push("/main")
     }
 
 
@@ -160,7 +158,9 @@ if(this.$store.state.user.user_id !== null){
       this.$router.push("/withdrawal")
     }
 },
-
+serviceCenter(){
+  this.$router.push("/serviceCenter")
+},
 
 what(){
   const cartItems = this.$store.state.cart;
@@ -170,10 +170,10 @@ what(){
   }
   alert(total)
 },
-  handleScroll() {
+  handleScroll() { 
     const windowScroll = window.scrollY;
 
-      if (this.lnbOffsetTop <= windowScroll) {
+      if (this.lnbOffsetTop < windowScroll) {
         this.isLnbFixed = true;
       } else {
         this.isLnbFixed = false;

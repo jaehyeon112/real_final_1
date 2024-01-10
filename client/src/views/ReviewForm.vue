@@ -10,7 +10,7 @@
             <input type="text" id="title"  v-model="reviewInfo.review_title">
 
              <label for="grade">평점</label>
-            <div> <v-rating  hover :length="5" :size="67" v-model="reviewInfo.review_grade" color="deep-purple-lighten-1" active-color="deep-purple-lighten-1"  label="별점(5점 만점)"/></div>
+            <div> <v-rating  hover :length="5" :size="67" v-model="reviewInfo.review_grade" color=" #FFA726" active-color=" #FFA726"  label="별점(5점 만점)"/></div>
                
 
             <label for="content">내용</label>
@@ -33,7 +33,7 @@
                   <div :key=idx v-show="open==true" v-for="idx in photo"><img id="ima" :src="getPath(idx)" style="position: relative;height=300"><p @click="delPhoto(idx)">삭제</p></div>
                   <v-btn @click="showing" v-show="photo.length>0">사진보기</v-btn> <!-- <v-btn @click="uploadPhoto">저장완료</v-btn> -->
                 </div>
-            <button type="button" class="btn btn-xs btn-info" @click="isUpdated? reviewUpdate() :reviewInsert()" >저장</button>
+            <button type="button" class="btn btn-xs btn-info" @click="isUpdated? reviewUpdate() :reviewInsert()" style="color: #FF8F00;" >저장</button>
 
         </form>
     </div>

@@ -9,14 +9,15 @@
             </div>
             <div>
               <hr>
-              <img :src=" `/api/test/`+order.file_name " alt="상품이미지">
+              
+              <img :src=" `/api/test/`+order.file_name " alt="상품이미지"   >
               <dl>주문번호: {{ order.order_no }}</dl>
-              <dl>상품명: {{ order.prod_name_list}}</dl>
+              <dl>상품명: {{ order.prod_name_list }}</dl>
               <dl>총 가격: {{ order.total_payment }}</dl>
               <dl>실 결제 가격: {{ order.real_payment }}</dl>
               <dl>배송비: {{ order.delivery_charge }}</dl>
               <dl>결제방법: {{ order.payment_no }}</dl>
-              <dl><v-btn v-model="order.order_status" color="#FFB300" class="custom-button" @click="showMenu(order.order_no)" :disabled="order.order_status != 'c1'">주문취소</v-btn></dl>
+              
               {{ order.order_quantity }} 수량
               <dl v-if="order.delivery == null">
                 <dl v-if="order.order_status =='c1'">진행상태: 주문완료</dl>
@@ -28,6 +29,7 @@
                 <dl v-if="order.delivery == 'd1'">진행상태: 배송중</dl>
                 <dl v-else>진행상태: 배송완료</dl>
               </dl>
+              <dl><v-btn v-model="order.order_status" color="#FFB300" class="custom-button" @click="showMenu(order.order_no)" :disabled="order.order_status != 'c1'">주문취소</v-btn></dl>
             </div>
           </div>
         </div>
@@ -125,23 +127,12 @@ export default {
     let Option = confirm("주문을 취소하시겠습니까?");
     if (Option) {
         
-        alert('취소되었습니다.');
-        this.cancelPayment(orderno);
-        this.orderUpdate(orderno);
+        alert('취소신청 됬습니다.');
         this.refundInsert(orderno);
+        this.orderUpdate(orderno);
 
     }
 
-    },
-    async orderUpdate(orderno){ //상품 주문 취소되었을때 주문상태 변경
-
-         await axios.put(`/api/orderUpdate/${orderno}`)
-         .catch(err => console.log(err));
-
-         for(let i=0;i<this.orderList.length;i++){  // 
-          this.orderList[i].order_status = "c4"; // vue 에서도 c4 상태업데이트 해준다!
-        }
-         
     },
     getday(){
         let date = new Date();
@@ -149,14 +140,21 @@ export default {
 
         this.day = date
     },
+    async orderUpdate(orderno){ //상품 주문 취소되었을때 주문상태 변경
+
+      await axios.put(`/api/orderUpdate/${orderno}`)
+      .catch(err => console.log(err));
+
+      for(let i=0;i<this.orderList.length;i++){  // 
+      this.orderList[i].order_status = "c4"; // vue 에서도 c4 상태업데이트 해준다!
+      }
+
+      },
     async refundInsert(orderno){ // 주문취소되었을때 환불/취소되었을때 테이블등록
 
       for(let i=0;i<this.orderList.length;i++){  // 
         this.point = this.orderList[i].point_use;
       }
-      console.log(orderno,'확인')
-      console.log(this.point,'확인')
-      debugger;
 
         await axios.get(`/api/couponUseList/${orderno}`, {
             })
@@ -174,7 +172,7 @@ export default {
                     user_id: this.$store.state.user.user_id,
                     return_point : this.point,
                     coupon_no : this.couponList.length > 0 ? this.couponList[0].coupon_no : null,  // coupon 리스트 길이가 0보다 크면  coupon_no 를 불러오고 아니면 null 을 넣는다
-                    cancel_status : 'o2',
+                    cancel_status : 'o1',
                     cancel_request : this.day
                     }
                 }   
@@ -201,10 +199,17 @@ export default {
 .showdetail{
     float: right;
 }
+.showdetail:hover{
+  cursor : pointer;
+}
 .orderdate{
     float:left;
 }
 .orderscan{
     float:left;
+}
+dl{
+  font-size: 15px;
+  font-weight: bolder;
 }
 </style>

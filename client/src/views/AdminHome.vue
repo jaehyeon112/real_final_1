@@ -23,10 +23,12 @@ export default {
         })}}
   },
   created() {
-    if(this.$store.state.user.user_id == 'admin'){
+    if(this.$store.state.user.user_id == 'admin2'){
+      this.$socket.emit('joinRoom', 'ADMIN');
       this.$router.push({path : "/admin/Main"})
     }else{
-      this.$router.push({path : "/admin/Adminlogin"})
+      this.$router.push({path : "/admin/Adminlogin"});
+      this.$store.commit('logout');
     }
     this.$socket.on('test', (m)=>{
         this.showNotification(m);
@@ -46,7 +48,7 @@ export default {
       if (Notification.permission !== 'granted') {
       Notification.requestPermission();
     }
-    this.$socket.emit('joinRoom', 'ADMIN');
+    
   },
 
 }

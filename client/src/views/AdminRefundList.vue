@@ -1,8 +1,8 @@
 <template>
-    <list @changeemit="changeChildData">
+    <list>
         <template #title>주문 취소/환불 목록</template>
         <template #searchData>
-            <div>
+            <div style="width: 200px;">
             <v-select
             label="취소상태"
             :items="['취소신청','취소/환불 진행중','완료']"
@@ -32,12 +32,13 @@
             <td v-else>{{ order.coupon_no }}</td>
             <td>{{ order.return_point }}</td>
             <td>{{ $dateFormat(order.cancel_request,'yyyy년 MM월 dd일') }}</td>
-            <td v-if="order.cancel_date==null">취소가 완료되지 않았습니다</td>
+            <td v-if="order.cancel_date=='0000-00-00'||order.cancel_date==null">취소가 완료되지 않았습니다</td>
             <td v-else>{{ $dateFormat(order.cancel_date,'yyyy년 MM월 dd일') }}</td>
             <td v-if="order.cancel_status=='o1'">취소신청</td>
             <td v-else-if="order.cancel_status=='o2'">취소/환불 처리중</td>
             <td v-else-if="order.cancel_status=='o3'">완료</td>
-            <td v-if="order.cancel_status=='o1'"><v-btn type="button" @click="changeStatus(order.order_no)">취소/환불처리</v-btn></td>
+            <td v-if="order.cancel_status=='o1'"><v-btn type="button" @click="changeStatus(order.order_no,'o2')">취소/환불처리</v-btn></td>
+            <td v-else-if="order.cancel_status=='o2'"><v-btn type="button" @click="changeStatus(order.order_no,'o3')">처리완료하기</v-btn></td>
             <td v-else><v-btn type="button" @click="modalCheck=true,oneOrder(order.order_no)">상세보기</v-btn></td>  <!--상세영수증보기-->
         </tr>
         </tbody>
@@ -72,7 +73,7 @@
 
 
         <v-container>
-          <page @changePage="changePage" :list="totalList" :totals="this.nums"></page>
+          <page ref="pagination1" @changePage="changePage" :list="totalList" :totals="10"></page>
         </v-container>
         </template>
     </list>
@@ -91,14 +92,13 @@
                 orders : '',
                 orderStatus : '',
                 orderList : [],
-                nums : 0,
                 startNum : 0,
                 totalList: "",
                 totals :'',
                 orderNo : '',
                 oneList : '',
                 accessToken : '',
-
+                today : this.$dateFormat('','yyyy-MM-dd')
             }
         },
         components : {
@@ -107,6 +107,7 @@
         },
         created(){
             window.scrollTo(0, 0);
+            this.getOrderList(this.startNum);
             this.total();
             this.getAccessToken();
 
@@ -118,12 +119,14 @@
                 });
                 this.totalList = total.data;
             },
-            async getOrderList(){
-                let result = await axios.get(`/api/refund/${this.startNum}/${this.nums}`).catch(err=>console.log(err));
+            async getOrderList(no){
+                let result = await axios.get(`/api/refund/${no}`).catch(err=>console.log(err));
                 this.orderList = result.data;
+                this.total();
             },
             async oneOrder(ono){
-                let result = await axios.get(`/api/order/${ono}`).catch(err=>console.log(err));
+                console.log(ono)
+                let result = await axios.get(`/api/Oneorder/${ono}`).catch(err=>console.log(err));
                 if(result.data[0].payment_method=='h1'){
                     result.data[0].payment_method = '신용카드(이니시스)'
                 }else if(result.data[0].payment_method=='h2'){
@@ -134,17 +137,14 @@
                 this.oneList = result.data[0];
             },
             async changePage(no) {
-                let list = await axios.get(`/api/refund/${no}/${this.nums}`).catch(err=>console.log(err));
-                let result = list.data;
-                this.orderList = result;
-            },
-            changeChildData(childData){
-                console.log('받음'+childData);
-                this.nums = childData;
-                this.totals = childData;
+                if(this.orders==''){
+                    this.getOrderList(no);
+                }else if(this.orders!=''){
+                    this.orderState(this.orders,no);
+                }
             },
             refresh(){
-                this.getOrderList();
+                this.getOrderList(this.startNum);
                 this.orders = ''
             },
             getAccessToken() {
@@ -159,7 +159,7 @@
                 });
             },
             async cancelPayment(ono) { // 눌렀을때 주문취소
-                let result = await axios.get(`/api/order/${ono}`).catch(err=>console.log(err));
+                let result = await axios.get(`/api/Oneorder/${ono}`).catch(err=>console.log(err));
                 console.log(result.data[0],result.data)
                 let cancel = await axios.post(`/api/cancel`, {
                             merchant_uid: ono,
@@ -175,42 +175,64 @@
                 }
 
             },
-            async changeStatus(ono){
-                if(confirm('취소/환불을 진행할까요?')){
-                    let result = await axios.put(`/api/refund/o2/${ono}`).catch(err=>console.log(err));
-                    if(result.data.affectedRows==1){
-                        alert(' 취소/환불이 진행 중입니다~ ');
-                        this.cancelPayment(ono);
-                        this.getOrderList();
+            async changeStatus(ono,state){
+                if(state=='o2'){
+                    if(confirm('취소/환불을 진행할까요?')){
+                        let result = await axios.put(`/api/refund/o2/'0000-00-00'/${ono}`).catch(err=>console.log(err));
+                        if(result.data.affectedRows==1){
+                            alert(' 취소/환불이 진행 중입니다~ ');
+                            this.cancelPayment(ono);
+                            this.getOrderList(this.startNum);
+                        }else{
+                            alert('오류가 났습니다.\n다시 확인을 해주세요.');
+                        }
                     }else{
-                        alert('오류가 남');
+                        alert('취소되었습니다')
                     }
                 }else{
-                    alert('취소되었습니다')
+                    if(confirm('취소/환불을 완료할까요?')){
+                        let result = await axios.put(`/api/refund/o3/${this.today}/${ono}`).catch(err=>console.log(err));
+                        if(result.data.affectedRows==1){
+                            alert(' 취소/환불이 완료되었습니다.');
+                            this.getOrderList(this.startNum);
+                        }else{
+                            alert('오류가 났습니다.\n다시 확인을 해주세요.');
+                        }
+                    }else{
+                        alert('취소되었습니다')
+                    }
                 }
             },
-            async orderState(od){
+            async orderState(od,no){
                 if(od=='취소신청'){
                     od='o1'
                 }else if(od=='취소/환불 진행중'){
                     od='o2'
                 }else if(od=='완료'){
-                    od='c3'
+                    od='o3'
                 }
-                let result = await axios.get(`/api/refund/${od}/${this.startNum}/${this.nums}`).catch(err=>console.log(err));
-                console.log(result)
+                let total = await axios.get(`/api/refunds/${od}`).catch(err=>console.log(err));
+                let result = await axios.get(`/api/refunds/${od}/${no}`).catch(err=>console.log(err));
+                console.log(total)
+                this.totalList = total.data;
                 this.orderList = result.data;
+                if(this.totalList.length==0||this.orderList.length==0){
+                    alert('존재하는 데이터가 없습니다!');
+                    this.orders = '';
+                    this.getOrderList(no);
+                }else{
+                    this.totalList = total.data;
+                    this.orderList = result.data;
+                    this.$refs.pagination1.currentPage2(no);
+                }
             }
         },
         watch : {
-            nums(){
-                this.getOrderList();
-            },
-            content(){
-                this.searchList(this.content);
-            },
             orders(){
-                this.orderState(this.orders);
+                if(this.orders==''){
+                    return;
+                }
+                this.orderState(this.orders,this.startNum);
             }
     }
         

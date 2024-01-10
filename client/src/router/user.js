@@ -8,13 +8,11 @@ import join from "../views/Join.vue";
 import login from "../views/LoginForm.vue";
 import finding from "../views/Finding.vue";
 import withdrawal from "../views/Withdrawal.vue";
-
+import intro from '@/views/intro.vue';
 import putpass from "../views/PutPassword.vue";
 import message from "../views/Message.vue";
 import changePass from "../views/ChangePass.vue"
 import test from "../views/test.vue";
-
-
 import serviceCenter from "@/views/ServiceCenter.vue";
 import myPage from "@/views/MyPage.vue";
 import detailPage from "@/views/detailPage.vue";
@@ -24,20 +22,18 @@ import like from "@/components/MyPage/likeBasket.vue";
 import delivery from "@/components/MyPage/delivery.vue";
 import coupon from "@/components/MyPage/couponList.vue";
 import point from "@/components/MyPage/point.vue";
-
 import myReview from "@/components/MyPage/myReview.vue";
 import myReviewInfo from "@/components/MyPage/myReviewInfo.vue";
 import myInquire from "@/components/ServiceCenter/inquire.vue";
 import myInquireInfo from "@/components/ServiceCenter/inquireInfo.vue";
-import qnaList from "@/components/ServiceCenter/qna.vue";
-import qnaInfo from "@/components/ServiceCenter/qnaInfo.vue";
+import qnaList from "@/components/ServiceCenter/fnq.vue";
+import qnaInfo from "@/components/ServiceCenter/fnqInfo.vue";
 import noticeList from "@/components/ServiceCenter/notice.vue";
 import noticeInfo from "@/components/ServiceCenter/noticeInfo.vue";
 import reviewForm from "../views/ReviewForm.vue";
 import inquireForm from "../views/inquireForm.vue";
 import search from '@/components/menu/search.vue';
-import replyList from'@/components/common/replyList.vue'
-
+import replyList from '@/components/common/replyList.vue'
 
 
 export default {
@@ -50,6 +46,11 @@ export default {
       name: "realmain",
       component: realmain,
       bread: '홈'
+    },
+    {
+      path: "intro",
+      name: "intro",
+      component: intro,
     },
     {
       path: "menu/search/:word",
@@ -106,7 +107,7 @@ export default {
       component: login,
     },
     {
-      path: "join",
+      path: "join/:id/:name",
       name: "join",
       component: join
     },
@@ -164,8 +165,9 @@ export default {
           path: "noticeInfo",
           name: "noticeInfo",
           component: noticeInfo
-        },]
-      },   
+        },
+      ]
+    },
     {
       path: "myPage",
       name: "myPage",
@@ -206,17 +208,17 @@ export default {
           component: point
         },
         {
-          path:"myInquire",
-          name:"myInquire",
-          component:myInquire
-         },
-         {
-          path:"myInquireInfo",
-          name:"myInquireInfo",
-          component:myInquireInfo
-         },
-         
-         {
+          path: "myInquire",
+          name: "myInquire",
+          component: myInquire
+        },
+        {
+          path: "myInquireInfo",
+          name: "myInquireInfo",
+          component: myInquireInfo
+        },
+
+        {
 
           path: "coupon",
           name: "coupon",
@@ -236,14 +238,14 @@ export default {
       component: reviewForm
     },
     {
-      path:"inquireForm",
-      name:"inquireForm",
-      component:inquireForm
-     },
+      path: "inquireForm",
+      name: "inquireForm",
+      component: inquireForm
+    },
     {
-      path:"replyList",
-      name:"replyList",
-      component:replyList
+      path: "replyList",
+      name: "replyList",
+      component: replyList
     },
 
   ],

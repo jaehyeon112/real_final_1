@@ -1,5 +1,5 @@
 <template>
-    <list @changeemit="changeChildData">
+    <list>
         <template #title>고객 문의목록</template>
         <template #searchData>
             <div style="width: 250px;float: right;"><v-select
@@ -47,15 +47,15 @@
           <td>{{ $dateFormat(inquire.create_date,'yyyy년 MM월 dd일') }}</td>
           <td v-if="inquire.answer_state==0">답변대기중</td>
           <td v-else-if="inquire.answer_state==1">답변완료</td>
-          <td v-if="inquire.answer_state==0" @click="replyInsert(inquire.inquire_no)">답변하기</td>
-          <td v-else-if="inquire.answer_state==1" @click="replyInsert(inquire.inquire_no)">답변보기</td>
+          <td class=cur v-if="inquire.answer_state==0" @click="replyInsert(inquire.inquire_no)">답변하기</td>
+          <td class=cur v-else-if="inquire.answer_state==1" @click="replyInsert(inquire.inquire_no)">답변보기</td>
         </tr>
       </tbody>
       <tbody v-if="inquireList.length==0" style="text-align: center;">
             <tr><td></td><td></td><td><h3>존재하는 문의사항이 없습니다</h3></td></tr>
         </tbody>
-        <v-container>
-          <page @changePage="changePage" :list="totalList" :totals="this.nums"></page>
+        <v-container v-if="inquireList.length!=0">
+          <page ref="pagination1" @changePage="changePage" :list="totalList" :totals="10"></page>
         </v-container>
         </template>
     </list>
@@ -72,11 +72,9 @@
                 reason : '',
                 reason2 : '',
                 modalCheck: false,
-                nums : 0,
                 startNum : 0,
                 totalList: "",
                 totals :'',
-                orders : '',
             }
         },
         components : {
@@ -86,6 +84,7 @@
         created(){
             window.scrollTo(0, 0);
             this.total();
+            this.getInquireList(this.startNum);
         },
         methods : {
             async total() {
@@ -94,8 +93,8 @@
                 });
                 this.totalList = total.data;
             },
-            async getInquireList(){
-                let result = await axios.get(`/api/inquire/${this.startNum}/${this.nums}`).catch(err=>console.log(err));
+            async getInquireList(no){
+                let result = await axios.get(`/api/inquire/${no}`).catch(err=>console.log(err));
                 for(let i=0;i<result.data.length;i++){
                     console.log(result.data[i].inquire_content)
                     if(result.data[i].inquire_content.length>10){
@@ -103,26 +102,24 @@
                     }
                 }
                 this.inquireList = result.data;
+                this.total();
             },
             async changePage(no) {
-                let list = await axios.get(`/api/inquire/${no}/${this.nums}`).catch(err=>console.log(err));
-                let result = list.data;
-                this.inquireList = result;
+                if(this.reason==''&&this.reason2==''){
+                    this.getInquireList(no)
+                }else if(this.reason!=''||this.reason2!=''){
+                    this.reasonList(this.reason,this.reason2,no);
+                }
             },
             refresh(){
-                this.getInquireList();
+                this.getInquireList(this.startNum);
                 this.reason = '';
                 this.reason2 = '';
             },
-            changeChildData(childData){
-                console.log('받음'+childData);
-                this.nums = childData;
-                this.totals = childData;
-            },
             search(re,re2){
-                this.reasonList(re,re2);
+                this.reasonList(re,re2,this.startNum);
             },
-            async reasonList(re,re2){
+            async reasonList(re,re2,no){
                 if(re=='답변대기중'){
                     re='0'
                 }else if(re=='답변완료'){
@@ -144,12 +141,12 @@
                 }
                 console.log('답변상태 : '+re,'카테고리'+re2)
                 if(re==null||re2==null){
-                    let list = await axios.get(`/api/inquire/${re2}/${re}/''/''/${this.startNum}/${this.nums}`).catch(err=>console.log(err));
+                    let list = await axios.get(`/api/inquire/${re2}/${re}/''/''/${no}`).catch(err=>console.log(err));
                     let result = list.data;
                     console.log(result)
                     this.inquireList = result;
                 }else if(re!=null&&re2!=null){
-                    let list = await axios.get(`/api/inquire/''/''/${re2}/${re}/${this.startNum}/${this.nums}`).catch(err=>console.log(err));
+                    let list = await axios.get(`/api/inquire/''/''/${re2}/${re}/${no}`).catch(err=>console.log(err));
                     let result = list.data;
                     console.log(result)
                     this.inquireList = result;
@@ -158,48 +155,10 @@
             replyInsert(ino){
                 this.$router.push({path : "reply",query : {ino:ino}})
             }
-        },
-        watch : {
-            nums(){
-                this.getInquireList();
-            },
-            orders(){
-                this.orderState(this.orders);
-            },
-    }
-        
+        },        
     }
     </script>
 <style scoped>
-.modal-wrap {
-    position: fixed;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.4);
-  }
-  /* modal or popup */
-  .modal-container {
-    position: relative;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 550px;
-    background: #fff;
-    border-radius: 10px;
-    padding: 20px;
-    box-sizing: border-box;
-  }
-  .modalPop{
-    border: 1px solid;
-  }
-
-  .modal-btn button{
-    margin: 10px;
-    padding : 5px;
-
-  }
   v-btn{
     border-radius: 10px;
   }

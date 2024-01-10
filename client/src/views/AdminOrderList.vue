@@ -1,11 +1,11 @@
 <template>
-    <list @changeemit="changeChildData" @search="search">
+    <list>
       <template #title>고객 주문목록</template>
         <template #searchData>
             <div class="datatable-input" style="width: 20%;float: right;text-align: left;">
                 ==날짜별 주문내역==<br>
                 <input v-model="startNo" type="date"> ~ <input v-model="lastNo" type="date"><br><br>
-                <div  style="width: 60%;float: right;"><v-btn @click="orderDates">검색하기</v-btn><v-btn @click="refresh" style="float: right;">초기화</v-btn></div></div>
+                <div  style="width: 60%;float: right;"><v-btn @click="orderDates(this.startNum)">검색하기</v-btn><v-btn @click="refresh" style="float: right;">초기화</v-btn></div></div>
         </template>
         <template #filterSearch>
           <v-select
@@ -32,7 +32,7 @@
             </tr>
         </thead>
         <tbody>
-        <tr v-for="order in orderList">
+        <tr :key="idx" v-for="(order,idx) in orderList">
             <td>{{ $dateFormat(order.order_date,'yyyy년 MM월 dd일') }}</td>
             <td>{{ order.order_no }}</td>
           <td>{{ order.user_id }}</td>
@@ -43,10 +43,10 @@
           <td v-if="order.order_status=='c1'">{{this.alarm='주문완료'}}</td>
           <td v-else-if="order.order_status=='c2'">상품준비중</td>
           <td v-else-if="order.order_status=='c3'">출고완료</td>
-          <td v-else-if="order.order_status=='c4'" style="color: red;">취소된 주문</td>
-          <td v-if="order.order_status=='c1'"><v-btn type="button" @click="this.orderStatus='c2',this.orderGetOne(order.order_no),modalCheck2=true">주문상세보기</v-btn>   <v-btn type="button" @click="modalCheck=true,cancelPayment(order.order_no),this.orderNo=order.order_no,this.phoneNo=order.phone">주문취소 신청</v-btn></td>
-          <td v-else-if="order.order_status=='c2'"><v-btn type="button" @click="delNo=true">상품 출고하기</v-btn><p v-show="delNo">운송장번호 : <input type="number" v-model="deliveryNum"><v-btn @click="this.orderStatus='c3',changeStatus(order.order_no)">배송출발</v-btn></p></td>
-          <td v-else-if="order.order_status=='c3'"><v-btn type="button">배송 조회</v-btn></td>
+          <td v-else-if="order.order_status=='c4'" style="color: red;">취소신청</td>
+          <td v-if="order.order_status=='c1'"><v-btn type="button" @click="this.orderStatus='c2',this.orderGetOne(order.order_no),modalCheck2=true">주문상세보기</v-btn>   <v-btn type="button" @click="modalCheck=true,this.orderNo=order.order_no,this.phoneNo=order.phone">주문취소 신청</v-btn></td>
+          <td v-else-if="order.order_status=='c2'"><v-btn type="button" @click="this.num=idx">상품 출고하기</v-btn><p v-if="idx==this.num">운송장번호 : <input type="number" v-model="deliveryNum"><v-btn @click="this.orderStatus='c3',changeStatus(order.order_no)">배송출발</v-btn></p></td>
+          <td v-else-if="order.order_status=='c3'"><v-btn @click="goto2">배송목록 가기</v-btn></td>
           <td v-else-if="order.order_status=='c4'"><v-btn @click="goto">취소목록 가기</v-btn></td>
         </tr>
       </tbody>
@@ -137,7 +137,7 @@
           <td v-if="this.orderOne.order_status=='c1'">주문완료</td>
           <td v-else-if="this.orderOne.order_status=='c2'">상품준비중</td>
           <td v-else-if="this.orderOne.order_status=='c3'">출고완료</td>
-          <td v-else-if="this.orderOne.order_status=='c4'">취소된 주문건</td>
+          <td v-else-if="this.orderOne.order_status=='c4'">취소신청 주문건</td>
         </tr>
       </tbody>
       </v-table>
@@ -150,7 +150,7 @@
       </div>
     </div>
         <v-container>
-          <page @changePage="changePage" :list="totalList" :totals="this.nums"></page>
+          <page ref="pagination1" @changePage="changePage" :list="totalList" :totals="10"></page>
         </v-container>
         </template>
     </list>
@@ -171,7 +171,6 @@
                 startNo : '2000-01-01',
                 lastNo : this.dateFormat('','yyyy-MM-dd'),
                 orderList : [],
-                nums : 0,
                 startNum : 0,
                 totalList: "",
                 orderNo : '',
@@ -181,7 +180,7 @@
                 deliveryNum : '',
                 phoneNo : '',
                 accessToken : '',
-
+              num : ''
             }
         },
         components : {
@@ -193,7 +192,7 @@
             //this.prodList();
             this.total();
             this.getAccessToken();
-            //this.getOrderList();
+            this.getOrderList(this.startNum);
         },
         methods : {
           dateFormat(value,format){
@@ -209,17 +208,18 @@
                     alert('기타 사유를 적어주세요')
                 }else{
                     if(confirm('정말 취소하시겠습니까?')){
-                        let result = await axios.put(`/api/refund/${this.orderNo}`).catch(err=>console.log(err));
+                        let result = await axios.put(`/api/order/c4/${this.orderNo}`).catch(err=>console.log(err)); //주문테이블에서 상태변경
                         let result2 = await axios.post(`/api/refund/${this.orderNo}`).catch(err=>console.log(err));
                         if(result.data.affectedRows==1&&result2.data.affectedRows==1){
                           alert('회원님에게 알림을 보냈습니다'+this.reason);
                           this.sendVerificationPhone();
+                          this.cancelPayment(this.orderNo);
                           if(this.reason='기타'){
                               this.$socket.emit('report', `${this.reasons}으로 인한 주문취소!`)
                             }else{
                               this.$socket.emit('report', `${this.reason}으로 인한 주문취소!`)
                             }
-                            this.getOrderList();
+                            this.getOrderList(this.startNo);
                             this.modalCheck = false;
                             this.reason = '';
                             //스케쥴러 사용--한달동안 정지시킴
@@ -273,7 +273,7 @@
                 });
             },
             async cancelPayment(ono) { // 눌렀을때 주문취소
-                let result = await axios.get(`/api/order/${ono}`).catch(err=>console.log(err));
+                let result = await axios.get(`/api/Oneorder/${ono}`).catch(err=>console.log(err));
                 console.log(result.data[0],result.data)
                 let cancel = await axios.post(`/api/cancel`, {
                             merchant_uid: ono,
@@ -289,10 +289,9 @@
                 }
 
             },
-            async getOrderList(){
-                let result = await axios.get(`/api/order/${this.startNum}/${this.nums}`).catch(err=>console.log(err));
+            async getOrderList(no){
+                let result = await axios.get(`/api/order/${no}`).catch(err=>console.log(err));
                 this.orderList = result.data;
-                console.log(result.data)
                 for(let i=0;i<result.data.length;i++){
                     if(result.data[i].order_status=='c1'){
                         this.count = this.count+1;
@@ -301,14 +300,15 @@
                 this.total();
             },
             async changePage(no) {
-                let list = await axios.get(`/api/order/${no}/${this.nums}`).catch(err=>console.log(err));
-                let result = list.data;
-                this.orderList = result;
+              if(this.startNo==''&&this.lastNo==''&&this.orders==''){
+                this.getOrderList(no)
+              }else if(this.startNo!=''&&this.lastNo!=''&&this.orders==''){
+                this.orderDates(no);
+              }else if(this.startNo==''&&this.lastNo==''&&this.orders!=''){
+                this.orderState(this.orders,no);
+              }
             },
-            changeChildData(childData){
-                this.nums = childData;
-            },
-            async orderDates(){
+            async orderDates(no){
               this.orders = '';
                 if(this.startNo>this.lastNo){
                     alert('날짜를 다시 확인해주세요');
@@ -318,17 +318,28 @@
                     alert('날짜가 비어있습니다.')
                 }else{
                     let total = await axios.get(`/api/orders/${this.startNo}/${this.lastNo}`).catch((err) => {console.log(err);});
-                    let list = await axios.get(`/api/orders/${this.startNo}/${this.lastNo}/${this.startNum}/${this.nums}`).catch((err) => {console.log(err);});
-                    this.orderList = list.data;
+                    let list = await axios.get(`/api/orders/${this.startNo}/${this.lastNo}/${no}`).catch((err) => {console.log(err);});
+
                     this.totalList = total.data;
-                }
+                    this.orderList = list.data;
+                    if(this.totalList.length==0||this.orderList.length==0){
+                        alert('존재하는 데이터가 없습니다!');
+                        this.startNo = '2000-01-01',
+                        this.lastNo = this.dateFormat('','yyyy-MM-dd'),
+                        this.getOrderList(no);
+                    }else{
+                        this.totalList = total.data;
+                        this.orderList = list.data;
+                        this.$refs.pagination1.currentPage2(no);
+                    }
+                  }
             },
             async orderGetOne(ono){
                 let result = await axios.get(`/api/Oneorder/${ono}`).catch(err=>console.log(err));
                 this.orderOne = result.data[0];
             },
             refresh(){
-                this.getOrderList();
+                this.getOrderList(this.startNum);
                 this.startNo = '2000-01-01',
                 this.lastNo = this.dateFormat('','yyyy-MM-dd'),
                 this.orders = ''
@@ -339,7 +350,7 @@
                         let result = await axios.put(`/api/order/${this.orderStatus}/${ono}`).catch(err=>console.log(err));
                         if(result.data.affectedRows==1){
                             alert('상품준비중으로 변경되었습니다! ');
-                            this.getOrderList();
+                            this.getOrderList(this.startNum);
                             this.modalCheck2=false;
                         }else{
                             alert('오류가 남');
@@ -354,7 +365,7 @@
                         let result2 = await axios.post(`/api/order/${ono}/${this.deliveryNum}/${ono}/${ono}`)
                         if(result.data.affectedRows==1&&result2.data.affectedRows==1){
                             alert('출고완료되었습니다!\n배송리스트에서 확인해주세요.');
-                            this.getOrderList();
+                            this.getOrderList(this.startNum);
                         }else{
                             alert('오류가 남');
                         }
@@ -363,7 +374,7 @@
                     }
                 }
             },
-            async orderState(od){
+            async orderState(od,no){
                 if(od=='주문완료'){
                     od='c1'
                 }else if(od=='상품준비중'){
@@ -373,26 +384,37 @@
                 }else if(od=='취소된 주문'){
                     od='c4'
                 }
-                let total = await axios.get(`/api/order/${od}`).catch(err=>console.log(err));
-                let result = await axios.get(`/api/order/${od}/${this.startNum}/${this.nums}`).catch(err=>console.log(err));
-                this.orderList = result.data;
+                let total = await axios.get(`/api/orders/${od}`).catch(err=>console.log(err));
+                let result = await axios.get(`/api/order/${od}/${no}`).catch(err=>console.log(err));
+                
                 this.totalList = total.data;
+                this.orderList = result.data;
+                if(this.totalList.length==0||this.orderList.length==0){
+                    alert('존재하는 데이터가 없습니다!');
+                    this.startNo = '2000-01-01',
+                    this.lastNo = this.dateFormat('','yyyy-MM-dd'),
+                    this.getOrderList(no);
+                }else{
+                    this.totalList = total.data;
+                    this.orderList = result.data;
+                    this.$refs.pagination1.currentPage2(no);
+                }
             },
             goto(){
               this.$router.push({path : "refundList"})
+            },
+            goto2(){
+              this.$router.push({path : "deliveryList"})
             }
         },
         watch : {
-            nums(){
-                this.getOrderList();
-            },
             orders(){
               if(this.orders==''){
                 return;
               }
               this.startNo = '2000-01-01',
               this.lastNo = this.dateFormat('','yyyy-MM-dd'),
-              this.orderState(this.orders);
+              this.orderState(this.orders,this.startNum);
             }
     }
         

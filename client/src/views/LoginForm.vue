@@ -275,13 +275,11 @@ this.$socket.emit('authenticate', token);
           alert("로그인 성공!");
           
           //db에 카카오 아이디 
-          let result = await axios.get(`/api/login/kakao`)
+          let result = await axios.get(`/api/login/kakao/${res.id}`)
                       .catch(err => console.log(err));
           
           console.log("카카오 악시오스 데이터 result ")
-          console.log(result); 
 
-           console.log(result.data);
 
   
 
@@ -289,12 +287,12 @@ this.$socket.emit('authenticate', token);
           console.log("myKakao");
           console.log(myKakao);
 
-
           if(result.data.length == 0){
             alert(this.$store.state.kakaoId+'db에 카카오 아이디 회원 없는상태')
-          this.$router.push({ name: 'join' });
-          } else {
-            this.$store.commit('kakaoLogin', res.id)
+
+          this.$router.push({ name: 'join' , params : { id : res.id , name : nickname } });
+        } else {
+          this.$store.commit('kakaoLogin', res.id)
             this.$store.state.user.user_name = res.id
            this.$router.push({name : 'realmain'})
           }

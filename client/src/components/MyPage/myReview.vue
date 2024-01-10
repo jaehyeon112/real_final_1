@@ -1,8 +1,11 @@
 <template>
-    <div class="container">
-       
+    <div >
+       <br>
+       <br>
+       <br>
+       <br>
         <div v-if="reviewList.length != 0">
-            <table class="table table-hover">
+            <table class="table ">
                 <thead>
                     <tr>
                         <th>No.</th>
@@ -12,14 +15,15 @@
                         <th>평점</th>
                         <th>작성일자</th>
                         <th>좋아요</th>
+                        <th>삭제</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr  :key="i" v-for="(review, i) in reviewList" @click="goToDetail(review.review_no)">
                         <td>{{ review.review_no}}</td>
-                        <td>{{ review.review_title  }}</td>
+                        <td>{{ formatText(review.review_title ) }}</td>
                         <td>{{ review.detail_order_no}}</td>
-                        <td>{{ review.review_content }}</td>
+                        <td>{{ formatText(review.review_content) }}</td>
                         <td>{{ review.review_grade }}</td>
                         <td>{{ $dateFormat(review.review_writedate,'yyyy년MM월dd일') }}</td>
                         <td>{{ review.like_cnt}}</td>
@@ -60,12 +64,25 @@ export default {
         //           }
       },goToDetail(reviewNo){
             this.$router.push({path :'myReviewInfo', query : {reviewNo : reviewNo}});
-        },          
+        },   
+        formatText(text) {
+      const maxLength = 10;
+      if (text.length > maxLength) {
+        return text.substring(0, maxLength) + '...더보기';
+      }
+      return text;
+    }       
     }
 }
 </script>
+
 <style scoped>
-    table *{
+table *{
         text-align: center;
-    }
+}
+   
+th{
+    background-color: #FFA726;
+}
+
 </style>

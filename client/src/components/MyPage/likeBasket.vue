@@ -2,6 +2,7 @@
     <div>
         <ul class="list-group" v-if ="likeList.length !=0">
             <li class="list-group-item" :key="idx" v-for="(like, idx) in likeList">
+                <img :src="`/api/test/`+like.file_name" alt="상품이미지" width="200px" height="200px">
                 <p style="font-size: 25px;">상품명:{{ like.prod_name }}</p>
                 <p style="font-size: 20px;">가격:{{ like.price }}</p>
                 <p style="font-size: 20px;">현재 판매가:{{ like.discount_price }}</p>

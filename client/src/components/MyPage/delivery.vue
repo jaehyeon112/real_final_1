@@ -25,16 +25,18 @@
         <v-card-text>
           <v-container>
             <v-row>
-                <label>
-                    <p>배송지 이름</p>
-                    <input type="text"  style="background-color:#FFB300 ;" v-model="delivery.delivery_name" >
-                    </label>
-                    <v-input type="text"  placeholder="우편번호" style="background-color:#FFB300" v-model="delivery.delivery_postcode" />
-                    <v-btn @click="search()">우편번호 찾기</v-btn><br>
-                    <v-input type="text"  id="roadAddress" placeholder="도로명주소" style="background-color:#FFB300" v-model="delivery.delivery_address"/>
-                    <span id="guide" style="color:#000;display:none"></span>
-                    <v-input type="text" id="detailAddress" placeholder="상세주소" style="background-color:#FFB300" v-model="delivery.delivery_detail_address"/>
-                    <!-- <v-btn  @click="isUpdated? UpdateDelivery() :InsertDelivery()">저장</v-btn> -->
+                
+                    <div><p>배송지 이름</p></div>
+                    <v-text-field  variant="outlined" style="background-color:antiquewhite ;" v-model="delivery.delivery_name" ></v-text-field>
+                
+                    <div><v-btn @click="search()">우편번호 찾기</v-btn></div>
+                    <hr>
+                    <v-text-field  variant="outlined" placeholder="우편번호" style="background-color:antiquewhite " v-model="delivery.delivery_postcode" />
+                    
+                    <v-text-field  variant="outlined" id="roadAddress" placeholder="도로명주소" style="background-color:antiquewhite " v-model="delivery.delivery_address"/>
+                    <!-- <span id="guide" style="color:#000;display:none"></span> -->
+                    <v-text-field variant="outlined" id="detailAddress" placeholder="상세주소" style="background-color:antiquewhite " v-model="delivery.delivery_detail_address"/>
+                    
             </v-row>
           </v-container>
       
@@ -46,14 +48,14 @@
             variant="text"
             @click="dialog = false"
           >
-            Close
+            닫기
           </v-btn>
           <v-btn
             color="blue-darken-1"
             variant="text"
             @click="dialog = false, InsertDelivery()"
           >
-            Save
+            배송지 저장
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -72,14 +74,14 @@
             <tbody> 
                     <tr >
                       <td> 기본배송지 </td>
-                      <td>  {{defaultDelivery.address }}{{ defaultDelivery.detail_address }}<hr style="color: aliceblue;">{{ defaultDelivery.postcode }}</td>
+                      <td>주소:  {{defaultDelivery.address }}{{ defaultDelivery.detail_address }}<hr style="color: aliceblue;">우편번호:  {{ defaultDelivery.postcode }}</td>
                       <td><v-btn @click="goToUpdated()" justify="center">수정버튼</v-btn></td>
                     </tr>
 
                     <tr :key="idx" v-for="(delivery, idx) in deliveryList">
                     <td style="display:none">{{delivery.delivery_no}}</td>
                     <td>{{ delivery.delivery_name }}</td>
-                    <td>{{delivery.delivery_address }}{{ delivery.delivery_detail_address }}<hr style="color: aliceblue;">{{ delivery.delivery_postcode }}</td> 
+                    <td>주소:  {{delivery.delivery_address }}{{ delivery.delivery_detail_address }}<hr style="color: aliceblue;">우편번호:  {{ delivery.delivery_postcode }}</td> 
                     <td><v-btn @click="deletedelivery(delivery.delivery_no)" justify="center">삭제버튼</v-btn></td>
                 </tr>
                 
@@ -127,7 +129,7 @@ export default {
 
     methods:{
         async getDeliveryList() {
-         this.deliveryList = (await axios.get(`/api/addDelivery`)
+         this.deliveryList = (await axios.get(`/api/addDelivery/`)
                                             .catch(err=>console.log(err))).data
         },
         async getDefaultDeliList(){
@@ -229,3 +231,11 @@ export default {
     }
 }
 </script>
+<style scoped>
+table{
+  text-align: center;
+}
+th{
+    background-color: #FFA726;
+}
+</style>

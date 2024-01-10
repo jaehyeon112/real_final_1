@@ -8,11 +8,12 @@
     <!-- <label for="tab-2" class="tab" >Sign Up</label> -->
     <div class="login-form">
       <div class="sign-up-htm">
+        <p>{{ $store.state.kakaoId != '' ? '카카오로로그인함' : '걍로그인함' }}</p> 
+        {{ $store.state.kakaoId }}
 
         <!-- 회원 수정 시 id랑 이름은 readonly로 수정못하게 해야함 -->
         <div class="group" v-if="!$store.state.kakaoId">
           <label for="user" class="label"> ID </label>
-          <!-- <p>{{ $store.state.kakaoId != '' ? '카카오로로그인함' : '걍로그인함' }}</p> -->
       
           <div>
           <input  id="user" type="text" class="input" v-model="userInfo.user_id" :readonly="mode =='edit'" autofocus placeholder="영문+숫자 조합 6자이상 11자 이하"  
@@ -291,7 +292,8 @@ export default {
 
   data() {
     return {
-
+      kakaoId : '',
+      kakaoName : '',
 
       mode: 'sign-up', //모드에 따라서 가입창, 수정창 바뀜
       isUpdated : false, // 수정?등록? => 수정일때 true
@@ -400,7 +402,7 @@ export default {
     console.log('userInfo in created hook:', this.userInfo);
     // $route.params.id로 전달된 파라미터에 접근
     this.oneUserId = this.$route.query.user_id;
-
+    
 
     // userId가 존재하면 회원 수정 모드로 변경
     if (this.oneUserId) {
@@ -412,14 +414,16 @@ export default {
      
       console.log('userInfo.ch1 after setting in created:', this.userInfo.ch1);
     }
+    console.log(this.$route.params.id)
 
    // 카카오 사용자 ID가 있을 때만 ID 입력란을 자동으로 채움
-  if(this.$store.state.kakaoId) {
+  if(this.$route.params.id) {
+      
       console.log('회원가입 created : 카톡로그인 회원가입폼')
       console.log(this.$store.state.kakaoId);
-    this.userInfo.user_id = this.$store.state.kakaoId;
-    this.$store.commit('kakaoLogin', 'kakao') 
-    //this.$store.commit('kakaoLogin', this.userInfo.user_name) 
+      this.$store.commit('kakaoLogin2', this.$route.params.id) 
+      this.userInfo.user_id = this.$store.state.kakaoId2
+      this.userInfo.user_name = this.$route.params.name;
   }
 
   

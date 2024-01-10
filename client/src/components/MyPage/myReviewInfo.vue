@@ -20,6 +20,7 @@
                 <tbody>
                     <tr>
                         <td colspan="6" class="text-left" valign="top" height="200">
+                            <img v-if="reviewInfo.file_name" :src="`/api/test/`+reviewInfo.file_name" alt="상품이미지" width="200px" height="200px">
                             <pre
                                 style="white-space: pre-wrap;border:none;background-color: white;">{{ reviewInfo.review_content }}</pre>
                         </td>
@@ -62,3 +63,8 @@ export default {
     }
 }
 </script>
+<style scoped>
+th{
+    background-color: #FFA726;
+}
+</style>
