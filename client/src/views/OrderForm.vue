@@ -42,6 +42,7 @@
         :final="final"/>
       </v-col>
     </v-row>
+    {{ zip }}
     </v-container>
 </template>
 <script>
@@ -115,7 +116,6 @@ export default {
       this.getBill();
     },
     addrInfo(){
-      this.getdelivery();
       this.getAddress();
     }
   },
@@ -161,8 +161,6 @@ export default {
       this.addr1 = addr1;
       this.addr2 = addr2;
       this.deliveryrequest = input;
-    },
-    getdelivery(input){
     },
     couponNo(couponNo){
       this.coupons = couponNo;
@@ -253,26 +251,23 @@ export default {
         };
 
         // 선택한 결제 방법에 따라 결제 정보 설정
-        if (paymentMethod === 'kakaopay') {
+        if (paymentMethod == 'kakaopay') {
           this.paymentMethod = 'h1'
           paymentInfo.pg = 'kakaopay';
           paymentInfo.pay_method = paymentMethod;
-        } else if (paymentMethod === 'toss') {
+        } else if (paymentMethod == 'toss') {
           this.paymentMethod = 'h2'
           paymentInfo.pg = 'tosspay';
           paymentInfo.pay_method = paymentMethod;
-        } else if (paymentMethod === 'kg') {
+        } else if (paymentMethod == 'kg') {
           this.paymentMethod = 'h3'
           paymentInfo.pg = 'html5_inicis';
           paymentInfo.pay_method = paymentMethod;
-        } else if (paymentMethod === '0') {
+        } else if (paymentMethod == '0') {
           this.orderInsert(this.Number); // 바로 주문 처리
           return; // 아임포트 응답 처리하지 않고 함수 종료
         }
         
-        if (this.zip == '' || this.addr1 == '') {
-            alert('주소를 입력해주세요.');
-          } else {
             let iamport = window.IMP;
             iamport.init('imp61344571'); // 아임포트에서 발급받은 가맹점 식별코드 입력
 
@@ -286,9 +281,7 @@ export default {
                 this.$router.replace("/cartList");
               }
             });
-          }
   },
-
   async orderInsert(orderNo){ // orders 테이블 등록
         this.orderNumber();
             let obj = {

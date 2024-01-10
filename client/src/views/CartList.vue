@@ -13,23 +13,24 @@
                       </v-col>
                     </v-row>
                     <table class="rwd-table" :key="idx" v-for="(list, idx) in cartList">
-                      <tr>
+                      <tr :class="{'stock': list.stock == 0}">
                         <td>
                           <v-checkbox v-model="list.cart_checkbox" true-value="1" false-value="0" @click="updateCheckbox(list)"></v-checkbox>
                         </td>
                         <td><v-img width="100" height="100" :src="`api/test/`+ list.file_name"></v-img></td>
-                        <td>{{ list.prod_name }}</td>
-                        <td>
-                          <v-btn @click="quantityMinus(list)">
-                            <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAiIGhlaWdodD0iMzAiIHZpZXdCb3g9IjAgMCAzMCAzMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICAgIDxwYXRoIGQ9Ik0yMCAxNHYySDEwdi0yeiIgZmlsbD0iIzMzMyIgZmlsbC1ydWxlPSJub256ZXJvIi8+Cjwvc3ZnPgo=" alt="">
-                          </v-btn>
-                        </td>
-                        <td>{{ list.quantity }}개</td>
-                        <td>
-                          <v-btn  @click="quantityPlus(list)">
-                            <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAiIGhlaWdodD0iMzAiIHZpZXdCb3g9IjAgMCAzMCAzMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICAgIDxwYXRoIGQ9Ik0xNiAxMHY0aDR2MmgtNHY0aC0ydi00aC00di0yaDR2LTRoMnoiIGZpbGw9IiMzMzMiIGZpbGwtcnVsZT0ibm9uemVybyIvPgo8L3N2Zz4K" alt="">
-                          </v-btn>
-                        </td>
+                        <td style="cursor: pointer;" @click="goTodetailForm(list.prod_no)">{{ list.prod_name }}</td>
+                          <td>
+                            <v-btn @click="quantityMinus(list)">
+                              <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAiIGhlaWdodD0iMzAiIHZpZXdCb3g9IjAgMCAzMCAzMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICAgIDxwYXRoIGQ9Ik0yMCAxNHYySDEwdi0yeiIgZmlsbD0iIzMzMyIgZmlsbC1ydWxlPSJub256ZXJvIi8+Cjwvc3ZnPgo=" alt="">
+                            </v-btn>
+                          </td>
+                          <td v-if="list.stock != 0">{{ list.quantity }}개</td>
+                          <td v-else>상품 준비중</td>
+                          <td>
+                            <v-btn  @click="quantityPlus(list)">
+                              <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAiIGhlaWdodD0iMzAiIHZpZXdCb3g9IjAgMCAzMCAzMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICAgIDxwYXRoIGQ9Ik0xNiAxMHY0aDR2MmgtNHY0aC0ydi00aC00di0yaDR2LTRoMnoiIGZpbGw9IiMzMzMiIGZpbGwtcnVsZT0ibm9uemVybyIvPgo8L3N2Zz4K" alt="">
+                            </v-btn>
+                          </td>
                         <td>
                           <ul>
                             <li>{{ $wonComma(list.discount_price * list.quantity) }} 원</li>
@@ -72,10 +73,8 @@
                           </td>
                           <div>
                           <td><v-img width="100" height="100" :src="`api/test/`+ list.file_name"></v-img></td>
-                          <div v-if="isSoldOut" class="soldout-overlay">품절</div>
-                          <div v-if="isStock" class="isStock-overlay">상품준비중</div>
                         </div>
-                            <td>{{ list.prod_name }}</td>
+                            <td style="cursor: pointer;" @click="goTodetailForm(list.prod_no)">{{ list.prod_name }}</td>
                             <td>
                           <v-btn @click="quantityMinus(list)">
                             <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAiIGhlaWdodD0iMzAiIHZpZXdCb3g9IjAgMCAzMCAzMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICAgIDxwYXRoIGQ9Ik0yMCAxNHYySDEwdi0yeiIgZmlsbD0iIzMzMyIgZmlsbC1ydWxlPSJub256ZXJvIi8+Cjwvc3ZnPgo=" alt="">
@@ -166,6 +165,9 @@ export default {
   //   }
   // },
   methods : {
+          goTodetailForm(no){
+            this.$router.push({path:'/detailPage', query:{pno : no}})
+          },
           ProdCheck() { // 상품 품절/상품준비중
             for(let i = 0; i < this.cartList.length; i++) {
               if (this.cartList[i].soldout == 1) {
@@ -383,21 +385,21 @@ export default {
         this.cartNo = this.cartList[i].cart_no
         this.Checkbox = this.cartList[i].cart_checkbox
       }
-        if(this.Checkbox == 1) {
+              if(this.Checkbox == 1){
 
-          if(this.prodStock < this.cartQuantity) {
-            console.log(this.prodStock,'상품재고')
-            alert('재고가 부족한 상품이 있어 상품 수량이 변경됩니다.')
-            console.log(this.cartNo,'상품번호')
-                      await axios.put(`/api/Cartquantity/${this.prodStock}/${this.cartNo}`,)
-                                        .catch(err => console.log(err));
-            console.log('수량변경완료')
-          }else{
-            this.$router.push('/orderForm');
-          }
-        }else{
-          alert('선택된 상품이 없습니다.')
-        }
+                if(this.prodStock < this.cartQuantity) {
+                  console.log(this.prodStock,'상품재고')
+                  alert('재고가 부족한 상품이 있어 상품 수량이 변경됩니다.')
+                  console.log(this.cartNo,'상품번호')
+                  await axios.put(`/api/Cartquantity/${this.prodStock}/${this.cartNo}`,)
+                  .catch(err => console.log(err));
+                  console.log('수량변경완료')
+                }else{
+                  this.$router.push('/orderForm');
+                }
+            }else{
+              alert('선택된 상품이 없습니다!')
+            }
       },
   }
 }
@@ -450,7 +452,7 @@ h1 {
 }
 
 .rwd-table td:nth-child(3) {
-  width: 50%; 
+  width: 40%; 
 }
 
 .rwd-table td:nth-child(4) {
@@ -458,7 +460,7 @@ h1 {
 }
 
 .rwd-table td:nth-child(5) {
-  width: 10%; 
+  width: 20%; 
 }
 
 .rwd-table td:nth-child(6) {
@@ -523,5 +525,10 @@ button{
   right: 0;
   bottom: 0;
   position: absolute;
+}
+
+.stock {
+  opacity: 0.5; /* 불투명도 조절 */
+
 }
 </style>

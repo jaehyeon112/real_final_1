@@ -1,8 +1,8 @@
 <template>
     <v-container>
-        <v-row>
-            <v-col col="12">
-                <v-card>
+        <v-row >
+            <v-col style="padding-left: 400px;" >
+                <v-card width="1000">
                     <h1 style="text-align: center;">주문완료</h1>
                     <OrderProdInfo
                     :orderList="orderList"/>

@@ -13,7 +13,7 @@
         </v-btn>
     </v-col>
     <v-col cols="12" sm="4" md="6" v-if="final !== 0" >
-        <v-btn block rounded="sm" size="x-large" @click="selectPaymentMethod('kg')" :style="{ backgroundColor: selectedPaymentMethod === 'kg' ? 'red' : 'gray' }">
+        <v-btn block rounded="sm" size="x-large" @click="selectPaymentMethod('kg')" :style="{ backgroundColor: selectedPaymentMethod === 'kg' ? 'salmon' : 'gray' }">
           카드결제
         </v-btn>
     </v-col>
@@ -21,10 +21,12 @@
       <v-btn block rounded="sm" size="x-large" @click="selectPaymentMethod('0')" color="primary">주문하기</v-btn>
     </v-col>
     <v-col cols="12" sm="4" md="4" v-if="final !== 0" >
-      <v-btn block rounded="sm" size="x-large" @click="clickOrder" :disabled="!selectedPaymentMethod" color="primary">주문하기</v-btn>
+      <v-btn block rounded="sm" size="x-large" @click="showMenu" :disabled="!selectedPaymentMethod" color="primary">주문하기</v-btn>
     </v-col>
     <p v-if="paymentUrl">결제창 URL: {{ paymentUrl }}</p>
     <p v-if="errorMessage">에러 메시지: {{ errorMessage }}</p>
+    {{ zip }}
+    {{ addr1 }}
   </v-container>
 </template>
 
@@ -45,8 +47,24 @@ export default {
             required: true,
         },
         final : 0,
+        zip : '',
+        addr1 : ''
   },
   methods: {
+    showMenu() {
+        let Option = confirm("이대로 결제하시겠습니까?");
+        if (Option) {
+          if (!this.zip || !this.addr1) {
+            alert('주소를 입력해주세요.');
+          } else {
+            if (this.selectedPaymentMethod) {
+              this.$emit('selectedPayMethod', this.selectedPaymentMethod);
+            } else {
+              console.log('결제 방법을 선택해주세요.');
+            }
+          }
+        }
+    },
     selectPaymentMethod(paymentMethod) {
       console.log(paymentMethod)
       this.selectedPaymentMethod = paymentMethod;
@@ -55,13 +73,6 @@ export default {
         this.$emit('selectedPayMethod', this.selectedPaymentMethod);
       }
     },
-    clickOrder(){
-      if (this.selectedPaymentMethod) {
-        this.$emit('selectedPayMethod', this.selectedPaymentMethod);
-      } else {
-        console.log('결제 방법을 선택해주세요.');
-      }
-    }
   },
 };
 </script>
