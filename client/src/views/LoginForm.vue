@@ -23,8 +23,8 @@
         </v-row> 
       </div>
 
-          <div class="group" style="line-height:130%">
-            <input type="submit" class="button" @click="doLogin()" value="SIGN UP">
+          <div class="group" style="line-height:130%;  margin-top: 10px;">
+            <input type="submit" class="button" color="orange" @click="doLogin()" value="SIGN UP">
             <!-- 추가: 남은 차단 시간 표시 -->
           <div v-if="isBlocked">남은 차단 시간: {{ remainingBlockTime }}초</div>
 
@@ -38,12 +38,12 @@
           <v-col class="text-center">
             <div
               id="custom-login-btn" @click="kakaoLogin()">
-              <a><img src="https://cdn.imweb.me/thumbnail/20220403/a8e484f2dfe39.png" width="35" alt="카카오 로그인 버튼"></a>
+              <a><img src="https://cdn.imweb.me/thumbnail/20220403/a8e484f2dfe39.png" width="30" alt="카카오 로그인 버튼"></a>
             </div>
           </v-col>
           
           <v-col class="text-right">
-            <v-btn color="green" class="headline" block a href="join">Join</v-btn>
+            <v-btn color="green" class="headline"  block a href="join">Join</v-btn>
           </v-col>
         </v-row>
 
@@ -350,7 +350,9 @@ this.$socket.emit('authenticate', token);
   .clearfix:after{clear:both;display:block}
   a{color:inherit;text-decoration:none}
   
-  
+  #custom-login-btn{
+    cursor: pointer;
+  }
     .login-wrap{
       width:100%;
       margin:auto;
