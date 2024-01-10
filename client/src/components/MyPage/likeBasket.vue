@@ -2,7 +2,11 @@
     <div>
         <ul class="list-group" v-if ="likeList.length !=0">
             <li class="list-group-item" :key="idx" v-for="(like, idx) in likeList">
-                {{ like.prod_no }}
+                <p>상품명{{ likeList.prod_name }}</p>
+                <p>가격{{ likeList.price }}</p>
+                <p>현재 판매가{{ likeList.discount_price }}</p>
+                <p>준비중...{{ likeList.soldout }}</p>
+                <p>알러지 정보{{ likeList.allergy }}</p>
                 <button @click="goToCart">장바구니에 담기</button>
             </li>
         </ul>

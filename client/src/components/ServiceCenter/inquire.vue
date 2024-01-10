@@ -10,6 +10,7 @@
                     <th>작성일</th>
                     <th>내용</th>
                     <th>답변상태</th>
+                    <th>삭제</th>
                 </tr>
             </thead>
             <tbody>
@@ -25,6 +26,7 @@
                     <td>{{ inquire.inquire_content }}</td>
                     <td v-if="inquire.answer_state==1">답변완료</td>
                     <td v-else>답변 대기</td>
+                    <td><v-btn  @click.stop="deleteInquire(inquire.inquire_no)" >문의삭제</v-btn></td>
                 </tr>
             </tbody>
         </table>
@@ -43,6 +45,9 @@ export default {
     created(){
         this.getInquireList();
     },
+    watch(){
+        
+    },
     methods : {
         async getInquireList(){
             this.inquireList = (await axios.get('/api/inquire')
@@ -53,7 +58,17 @@ export default {
         },
         getDateFormat(date){
             return this.$dateFormat(date,'yyyy년MM월dd일');
-        }
+        },
+        async deleteInquire(no){
+        let data = await axios.delete(`/api/deleteInquire/${no}`)
+                              .catch(err=>console.log(err));
+                  if(data.data.affectedRows>0){                        
+                     alert('문의가 삭제되었습니다')
+                     this.getInquireList()
+                  }
+                 
+      },
+             
     }
 }
 </script>

@@ -42,15 +42,21 @@ const store = createStore({
     kakaoLogin(state, id) {
 
       let a = id;
-      state.user = {};
-      state.user.user_id = a
-      state.user.user_name = a;
-      state.kakaoId = a;
-      console.log(id + '/')
+      // state.user = {};
+      state.user.user_id = a;
+      state.user.user_name = state.user.user_id
+      // state.kakaoId = a;
+      // console.log(id + '/')
+      //state.kakaoId = id;
+      state.user.user_name = state.kakaoId
     },
+
     kakaoLogout(state) {
-      state.user.user_name = ''
+      state.kakaoId = ''
     },
+    // kakaoLogout(state) {
+    //   state.user.user_name = ''
+    // },
 
     async login(state, userInfo) {
       state.user = userInfo;
@@ -111,7 +117,7 @@ const store = createStore({
 
   plugins: [
     createPersistedState({
-      paths: ['cart', 'cartCount', 'loginCartCount', 'orderNo', ],
+      paths: ['cart', 'cartCount', 'loginCartCount', 'orderNo', 'kakaoId'],
       storage: window.localStorage,
     }),
     createPersistedState({

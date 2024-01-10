@@ -20,6 +20,26 @@
             </label>
             <div>
                 <p>결제정보</p>
+                
+                <div v-for="(item,idx) in productList" :key="idx">
+                        <small class="d-block text-body-secondary">금액:{{ item.total_payment }}</small>
+                        <small class="d-block text-body-secondary">할인금액:{{ item.total_payment - item.real_payment }}</small>
+                        <small class="d-block text-body-secondary">결제금액:{{ item.real_payment }}</small>
+                        
+                        <small class="d-block text-body-secondary">배송비:{{ item.delivery_charge }}</small>
+                        <small class="d-block text-body-secondary">쿠폰할인:{{ item.coupon_discount_rate }}</small>
+                        <small class="d-block text-body-secondary">포인트사용:{{ item.point_use }}</small>
+                        <small class="d-block text-body-secondary">포인트적립률:{{ item.point_save_rate }}</small>
+                        
+                        <small class="d-block text-body-secondary">결제방법:{{ item.payment_method }}</small>
+                        <small class="d-block text-body-secondary">결제일시:{{ item.order_date }}</small>
+                        <p>배송정보</p>
+                        <small class="d-block text-body-secondary">보내는분:{{ item.user_id }}</small>
+                        <small class="d-block text-body-secondary">받는분:{{ item.recipient }}</small>
+                        <small class="d-block text-body-secondary">받는주소:{{ item.recipient_address }}</small>
+                        <small class="d-block text-body-secondary">받는상세주소:{{ item.recipient_detail_address }}</small>
+                        <small class="d-block text-body-secondary">배송 요청사항:{{ item.deliveyry_request }}</small>
+                    </div>
             </div>
         </div>   
     </div>
@@ -46,11 +66,11 @@ export default {
         
         async getDetailList(){
         this.orderNo = this.$route.query.orderNo;
-        let member_id = this.$store.state.user.user_id;
-        let a = (await axios.get(`/api/myDetailOrders/${this.orderNo}/${member_id}`)
+        
+        let a = (await axios.get(`/api/myDetailOrders/${this.orderNo}`)
                                         .catch(err=>console.log(err))).data // 상세의 데이터
                                         
-        let b = (await axios.get(`/api/orderNoReview/${member_id}`)
+        let b = (await axios.get(`/api/orderNoReview`)
                                    .catch(err => console.log(err))).data;  // 리뷰의 데이터 
          console.log('a의 값')
          console.log(a)                           
@@ -63,6 +83,7 @@ export default {
             }
         }
             this.productList = a
+            console.log( '배송비랑 멕시멈..'+this.productList)
         }    
     },
     

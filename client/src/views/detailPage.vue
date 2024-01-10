@@ -47,6 +47,7 @@
                      <br>
                   </div>
                   <div>
+                     {{ productInfo.prod_no +' 번' }}
                      <v-btn @click="goToCart(productInfo.prod_no)">장바구니 담기</v-btn>
                      <v-btn  @click="liked" :color="isShow ? 'red' : 'blue'"> ♡ </v-btn>                                           
                   </div>
@@ -70,11 +71,8 @@
                   <v-btn
                      variant="text"
                      @click="sheet = !sheet"> x</v-btn>
-
                   <br>
                   <br>
-
-                  
                      <div class="d-flex">
                      <p>상품선택</p>
                         <v-btn @click="minusCount">-</v-btn>
@@ -93,8 +91,6 @@
                </v-card>
             </v-bottom-sheet>
          </div>
-
-
             <!--선택하는 바?-->
             <div class="container px-4 px-lg-5 my-5" style="text-align:center;">
                <a style="border: none; padding: 10px 50px; color: black; font-size: 18px"
@@ -108,41 +104,87 @@
                <hr>
             </div>
             <!--상세정보?-->
-            <a id="detail"></a>
-               <div class="container px-4 px-lg-5 my-5" style="text-align:center;" id="detail">
+               <div class=" px-4 px-lg-5 my-5" style="text-align:center;" id="detail">
                   
                </div>
-            <hr>
 
+            <span style="font-weight: bold;">상품리뷰</span> <span style="color:coral">{{ reviewList.length+"건" }}</span>
+            <hr>
             <!--리뷰게시판  부분 -->
             <a id="review"></a>
-            <div id="review" class="reviewTable">
-            <p> 베스트 리뷰</p>
-            <p>리뷰 베스트 5 나열할 곳</p>
-            <!--
-            <input :key="idx" v-for="(bestR, idx) in reviewList" type="file">-->
-            <table class="table" border="1">
-                  <tr>
-                     <th>작성자</th>
-                     <th>리뷰제목</th>
-                     <th>리뷰내용</th>
-                     <th>평점</th>
-                     <th>작성일자</th>
-                     <th>추천</th>
-                     <th>신고</th>
-                  </tr>
-                  <tr :key="idx" v-for="(review, idx) in reviewList">
-                     <!-- <td> {{ review.review_no }}</td> -->
-                     <td> {{ review.user_id }}</td>
-                     <td> {{ review.review_title }}</td>
-                     <td> {{ review.review_content }}</td>
-                     <td> {{ review.review_grade }}</td>
-                     <td> {{ review.review_writedate }}</td>
-                     {{ review }}
-                     <!-- <td> <v-btn class="ma-2" variant="text" icon="mdi-thumb-up" :color=" likeState1 ? 'blue-lighten-2':'black'" @click="getLikeCount(review.review_no, review.user_id, review.like_cnt)"></v-btn>{{ review.like_cnt }}</td> -->
-                     <td> <v-btn class="ma-2" variant="text" icon="mdi-thumb-down" color="red-lighten-2"></v-btn></td>
-                  </tr>
-            </table>
+            <div id="review">
+            <div :key="idx" v-for="(review, idx) in reviewList">
+               <hr>
+               <v-row>
+                  <div  style="cursor:pointer;" @click="toggleModal(review)">
+                  <span v-for="star in 5" :key="star">
+                                       <span class="mdi mdi-star" :style="{ color: star <= review.review_grade ? 'coral' : 'grey' }"></span>
+                                    </span>
+                                    <p><span style="width:100px; color:gray">{{ review.user_id.substring(0, 3) + '*'.repeat(review.user_id.length - 3) }} | {{ $dateFormat(review.review_writedate,'yyyy-MM-dd') }} </span> </p>
+                                    <p>{{formatText(review.review_content)}}</p>
+                                 </div>
+                     <v-col>
+                        <v-dialog v-model="review.showDialog" width="800">
+                           <v-card >
+                              <v-card-title style="margin:50px">
+                                 <v-row justify="center">
+                                    <span class="text-h5">{{ review.review_title }}</span>
+                                 </v-row>
+                                 <v-row justify="end">
+                                    <span style="font-size: 14px;">{{"작성자 : " +review.user_id.substring(0, 3) + '*'.repeat(review.user_id.length - 3)}} </span>
+                                 </v-row>
+                                 <v-row justify="end">
+                                       <span style="font-size: 14px;">{{  "작성일자 : " +$dateFormat(review.review_writedate,'yyyy-MM-dd') }}</span>
+                                 </v-row>
+                                 <v-row justify="end">
+                                    <span style="font-size: 14px;">별점 : </span>
+                                    <span v-for="star in 5" :key="star">
+                     <span class="mdi mdi-star" :style="{ color: star <= review.review_grade ? 'coral' : 'grey' }"></span>
+                  </span>
+                                 </v-row>
+                              </v-card-title>
+                              <v-card-text>
+                                 <v-row justify="center">
+                                    <span style="font-size: 20px;">
+
+                                       {{ review.review_content }}
+                                    </span>
+                                 </v-row>
+                                 <v-row justify="center" >
+                                    <v-col cols="8" style="width:500px">
+                                       <v-img v-if="review.file_name != null" :src="`/api/test/`+ review.file_name"></v-img>
+                                    </v-col>
+                                    <v-col>
+                                       <v-row>
+                                          <v-col>
+                                             <span v-if="review.u=='y'"><v-btn class="ma-2" variant="text" icon="mdi-thumb-up" style="color: blue;" @click="upCnt(review.review_no)"><span class="mdi mdi-thumb-up-outline"></span></v-btn>{{ review.like_cnt }}</span>
+                     <span v-else><v-btn class="ma-2" variant="text" icon="mdi-thumb-up" style="color: black;" @click="upCnt(review.review_no)"><span class="mdi mdi-thumb-up-outline"></span></v-btn>{{ review.like_cnt }}</span>
+                                          </v-col>
+                                          <v-col>
+                                             <span> <v-btn class="ma-2" variant="text" icon="mdi-thumb-down" color="red-lighten-2" @click="report(review.review_no)">신고</v-btn></span>
+                                          </v-col>
+                                       </v-row>
+                                    </v-col>
+                                 </v-row>
+                                 <v-row>
+                                 </v-row>
+        </v-card-text>
+        <v-card-actions>
+      </v-card-actions>
+   </v-card>
+</v-dialog>
+</v-col>
+
+
+<v-col cols="2">
+   <v-img width="100" v-if="review.file_name" :src="`/api/test/`+review.file_name"></v-img>
+                  </v-col>
+
+<span v-if="review.u=='y'"><v-btn class="ma-2" variant="text" icon="mdi-thumb-up" style="color: blue;" @click="upCnt(review.review_no)"><span class="mdi mdi-thumb-up-outline"></span></v-btn>{{ review.like_cnt }}</span>
+<span v-else><v-btn class="ma-2" variant="text" icon="mdi-thumb-up" style="color: black;" @click="upCnt(review.review_no)"><span class="mdi mdi-thumb-up-outline"></span></v-btn>{{ review.like_cnt }}</span>
+<span> <v-btn class="ma-2" variant="text" icon="mdi-thumb-down" color="red-lighten-2">신고</v-btn></span>
+                </v-row>
+                  </div>
             </div>
             <hr>
             <!-- 문의게시판 건드린 부분 -->
@@ -201,6 +243,9 @@ import axios from'axios';
 export default {
     data(){
         return{
+          dialog: false,
+         user : this.$store.state.user.user_id,
+         list : [],
             pno:'',
             cart:{
                cart_no:'',
@@ -234,13 +279,45 @@ export default {
       // this.getLikes();
       // this.getRivewList();
       this.soldout();
-    this.getUserCartInfo()
+      this.getUserCartInfo()
+      //this.getLikes();
+      this.getRivewList();
+      
         
     },
     watch:{
-      
+      reviewList(){
+         
+      }
     },
+
     methods:{
+      formatText(text) {
+      const maxLength = 40;
+      if (text.length > maxLength) {
+        return text.substring(0, maxLength) + '...더보기';
+      }
+      return text;
+    }
+    ,
+    async report(rNo){
+      if(this.$store.state.user.user_id == null){
+         alert('로그인 후 이용할 수 있습니다.')
+         return
+      }
+      let obj = {
+         param : {
+            report_status : 'p1',
+            report_reason : 'q1',
+            review_no : rNo
+         }
+      }
+      let a = await axios.get('/api/reviewreport')
+    }
+      ,
+      cul(i){
+         return this.list[i].u 
+      },
         async getProductInfo(){
             let info = await axios.get(`/api/detailPro/${this.pno}`)
                                     .catch(err=>console.log(err));
@@ -251,7 +328,8 @@ export default {
                                   
         },
         async getLikes(){
-        let list = await axios.get(`/api/prodLike/${this.$store.state.user.user_id}/${this.pno}`)
+       
+        let list = await axios.get(`/api/prodLike/${this.pno}`)
                                   .catch(err=>console.log(err));
             this.likeList =list.data
             console.log(this.likeList)
@@ -262,68 +340,103 @@ export default {
                this.isShow= true;
             }
          },
-        async getRivewList() { //여기 조인해라
-            let list = await axios.get(`/api/detailReview/${this.pno}`)
-                                  .catch(err=>console.log(err));
+        async getRivewList() {
+            let list = await axios.get(`/api/reviewList/${this.pno}`).catch(err=>console.log(err));
+            for(let i=0;i<list.data.length;i++){
+               let search = await axios.get(`/api/rLikeCnt/${this.user}/${list.data[i].review_no}`).catch(err=>console.log(err));
+               list.data[i].showDialog = false;
+               let resu = 'y'
+               if(search.data==''){
+                  resu = 'n'
+               }
+               list.data[i].u=resu;
+            }
+            console.log(list.data)
             this.reviewList =list.data;
-            console.log
-            console.log(this.reviewList)    
-            console.log(this.likeR)    
         },
-        
-          async getLikeCount(no, writer, cnt){
-            let likestate = await axios.get(`/api/rLikeCnt/${this.$store.state.user.user_id}/${no}`)
-                                       .catch(err=>console.log(err));                 
-            let k=0;
-            console.log("==============================")
-            console.log(no)
-            console.log(writer)
-            console.log(likestate.data)
-            console.log('엄지' +this.likeState)
-            if(likestate.data.length == 1){
-               k=-1
+        async upCnt(rno){
+           if(this.$store.state.user.user_id==null){
+            console.log(this.$store.state.user)
+            alert('로그인 이후 사용할 수 있습니다.')
+            return;
+         }
+            let search = await axios.get(`/api/rLikeCnt/${this.$store.state.user.user_id}/${rno}`).catch(err=>console.log(err));
+            if(search.data.length==0){
+               //좋아요 증가
+               let list = await axios.put(`/api/likeUp/${rno}`).catch(err=>console.log(err));
+               let inse = await axios.post(`/api/reviewLike/${rno}/${this.user}`).catch(err=>console.log(err));
+               console.log(inse.data)
+               if(list.data.affectedRows==1&&inse.data.affectedRows==1){
+                  alert('좋아여 추가');
+                  this.getRivewList();
+               }
             }else{
-               k=+1
+               let list2 = await axios.put(`/api/likeDown/${rno}`).catch(err=>console.log(err));
+               let result3 = await axios.delete(`/api/reviewLike/${rno}/${this.$store.state.user.user_id}`).catch(err=>console.log(err))
+               if(list2.data.affectedRows>0&&result3.data.affectedRows>0){
+                  alert('좋아요 취소~~');
+                  this.getRivewList();
+               }      
             }
-            let obj ={
-                param: {
-                  like_cnt : cnt + k
-                }
-            }
-            let obj2={
-               param: { 
-                  review_no : no,
-                  user_id : this.$store.state.user.user_id
-               }
-            }
-            console.log(writer+ no + obj)
-            let result = await axios.put(`/api/reviewUpdate/${writer}/${no}`, obj) 
-                                    .catch((err=>console.log(err)))
-                                    console.log('좋아요 수 업데이트'+result.data)
-                                    console.log('현재k'+k)
+        },
+        toggleModal(review) {
+  review.showDialog = !review.showDialog;
+},
+
+        
+      //     async getLikeCount(no, writer, cnt){
+      //       let likestate = await axios.get(`/api/rLikeCnt/${this.$store.state.user.user_id}/${no}`)
+      //                                  .catch(err=>console.log(err));                 
+      //       let k=0;
+      //       console.log("==============================")
+      //       console.log(no)
+      //       console.log(writer)
+      //       console.log(likestate.data)
+      //       console.log('엄지' +this.likeState)
+      //       if(likestate.data.length == 1){
+      //          k=-1
+      //       }else{
+      //          k=+1
+      //       }
+      //       let obj ={
+      //           param: {
+      //             like_cnt : cnt + k
+      //           }
+      //       }
+      //       let obj2={
+      //          param: { 
+      //             review_no : no,
+      //             user_id : this.$store.state.user.user_id
+      //          }
+      //       }
+      //       console.log(writer+ no + obj)
+      //       let result = await axios.put(`/api/reviewUpdate/${writer}/${no}`, obj) 
+      //                               .catch((err=>console.log(err)))
+      //                               console.log('좋아요 수 업데이트'+result.data)
+      //                               console.log('현재k'+k)
 
 
-            if(likestate.data.length == 0){        
-            let result2 = await axios.post(`/api/reviewLike`,obj2)   
-                                    .catch(err=>console.log(err)) 
-                                    console.log('좋아요 한 사람 추가' + result2)
+      //       if(likestate.data.length == 0){        
+      //       let result2 = await axios.post(`/api/reviewLike`,obj2)   
+      //                               .catch(err=>console.log(err)) 
+      //                               console.log('좋아요 한 사람 추가' + result2)
                                     
-                     alert(result2.data)
-               if( result2.data.affectedRows > 0){
-                     alert('좋아요 성공~~');
-                     this.likeState1=true 
+      //                alert(result2.data)
+      //          if( result2.data.affectedRows > 0){
+      //                alert('좋아요 성공~~');
+      //                this.likeState1=true 
                                  
-               }
-            }else{                       
-            let result3 = await axios.delete(`/api/reviewLike/${no}/${this.$store.state.user.user_id}`)         
-                                    .catch(err=>console.log(err))
-                                    console.log('result3'+result3)
-            if(result3.data.affectedRows >0){
-             this.likeState1=false  
-             alert('좋아요 취소~~')
-            }      
-         }                                                            
-      },
+      //          }
+      //       }else{                       
+      //       let result3 = await axios.delete(`/api/reviewLike/${no}/${this.$store.state.user.user_id}`)         
+      //                               .catch(err=>console.log(err))
+      //                               console.log('result3'+result3)
+      //       if(result3.data.affectedRows >0){
+      //        this.likeState1=false  
+      //        alert('좋아요 취소~~')
+      //       }      
+      //    }                                                            
+      // },
 
       async goToCart(no){
       let cartQuantity = 0;

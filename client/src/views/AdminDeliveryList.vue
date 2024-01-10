@@ -1,5 +1,6 @@
 <template>
     <list @changeemit="changeChildData">
+        <template #title>배송목록</template>
         <template #searchData>
             <div>날짜별 배송목록 : <input v-model="startDate" type="date"> ~ <input v-model="lastDate" type="date">
                 <br><br><v-btn @click="orderDate">검색하기</v-btn>  <v-btn @click="refresh">초기화</v-btn>
@@ -70,6 +71,7 @@
         page
         },
         created(){
+            window.scrollTo(0, 0);
             //this.prodList();
             this.total();
         },
@@ -78,13 +80,13 @@
                 let total = await axios.get(`/api/delivery`).catch((err) => {
                     console.log(err);
                 });
-
                 this.totalList = total.data;
             },
             async delList(pno){
                 let list = await axios.get(`/api/delivery/${this.startNum}/${pno}`).catch(err=>console.log(err));
                 let result = list.data;
                 this.deliveryList = result;
+                this.total();
             },
             async changePage(no) {
                 let list = await axios.get(`/api/delivery/${no}/${this.nums}`).catch(err=>console.log(err));
@@ -113,9 +115,10 @@
                 }else if(this.startNo==''||this.lastNo==''){
                     alert('날짜가 비어있습니다.')
                 }else{
-                    let total = await axios.get(`/api/delivery/${this.startDate}/${this.lastDate}/${this.startNum}/${this.nums}`).catch((err) => {console.log(err);});
-                    console.log(total.data)
-                    this.deliveryList = total.data;
+                    let total = await axios.get(`/api/deliverys/${this.startDate}/${this.lastDate}`).catch((err) => {console.log(err);});
+                    let list = await axios.get(`/api/deliverys/${this.startDate}/${this.lastDate}/${this.startNum}/${this.nums}`).catch((err) => {console.log(err);});
+                    this.deliveryList = list.data;
+                    this.totalList = total.data;
                 }
             },
             async orderState(od){
@@ -124,9 +127,11 @@
                 }else if(od=='배송완료'){
                     od='d5'
                 }
+                let total = await axios.get(`/api/delivery/${od}`).catch(err=>console.log(err));
                 let result = await axios.get(`/api/delivery/${od}/${this.startNum}/${this.nums}`).catch(err=>console.log(err));
                 console.log(result)
                 this.deliveryList = result.data;
+                this.totalList = total.data;
             },
             refresh(){
                 this.delList(this.nums);

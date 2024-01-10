@@ -15,7 +15,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr  :key="i" v-for="(review, i) in reviewList">
+                    <tr  :key="i" v-for="(review, i) in reviewList" @click="goToDetail(review.review_no)">
                         <td>{{ review.review_no}}</td>
                         <td>{{ review.review_title  }}</td>
                         <td>{{ review.detail_order_no}}</td>
@@ -23,7 +23,7 @@
                         <td>{{ review.review_grade }}</td>
                         <td>{{ $dateFormat(review.review_writedate,'yyyy년MM월dd일') }}</td>
                         <td>{{ review.like_cnt}}</td>
-                        <td><v-btn  @click="deleteReview" >리뷰삭제</v-btn></td>
+                        <td><v-btn  @click.stop="deleteReview(review.review_no)" >리뷰삭제</v-btn></td>
                     </tr>
                 </tbody>
             </table>
@@ -50,13 +50,17 @@ export default {
                                    .catch(err => console.log(err))).data;
         },
         
-        async deleteReview(){
-        let data = await axios.delete(`/api/delReview/${this.review_no}`)
+        async deleteReview(no){
+        let data = await axios.delete(`/api/deleteReview/${no}`)
                               .catch(err=>console.log(err));
-                  if(data.data.affectedRows>0){                        
-                     alert('리뷰가 삭제되었습니다')
-                  }
-      },          
+        // let point = await axios.post(`/api/deleteRPoint/`)                      
+        //           if(data.data.affectedRows>0){                        
+        //              alert('리뷰가 삭제되었습니다')
+        //              this.getReviewList();
+        //           }
+      },goToDetail(reviewNo){
+            this.$router.push({path :'myReviewInfo', query : {reviewNo : reviewNo}});
+        },          
     }
 }
 </script>

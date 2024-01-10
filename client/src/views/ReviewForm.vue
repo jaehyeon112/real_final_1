@@ -26,7 +26,7 @@
             <div class="col-12">
                   <label for="stock" class="form-label">첨부파일</label>
                   <div :key="i" v-for="i in nums" style="width: 500px;">
-                    <upload :numbers=this.nums @info="info" @text="text"/>
+                    <uploads :numbers=this.nums @info="info" @text="text"/>
                     <v-btn v-show="this.nums==i" @click="this.nums=this.nums+1">+</v-btn><v-btn v-show="this.nums==i&&this.nums!=1" @click="this.nums=this.nums-1">-</v-btn>
                   </div>
                   <div :key= idx v-for="idx in file">첨부파일 : {{ idx }}<p @click="delMultiple(idx)">삭제</p></div>
@@ -57,8 +57,14 @@ export default {
                 review_updatedate:'',
                 like_cnt:''
             },
+            point: {
+                point_no : '',
+                order_detail_no:'',
+                user_id:'',
+                
+            },
             isUpdated : false,
-            point_no : '',
+           
             photo : [],
         file : [],
         open : false,
@@ -85,8 +91,8 @@ export default {
     },
     methods: {
         async getReviewInfo() {
-           let result = (await axios.get(`/api/myReview/${this.reviewNo}`) //sql.js 단건조회 경로 그대로 가져오기 api붙여주는 이유 proxy와 관련
-                                    .catch(err=>{console.log(err)}))
+           let result = await axios.get(`/api/myReview/${this.reviewNo}`) //sql.js 단건조회 경로 그대로 가져오기 api붙여주는 이유 proxy와 관련
+                                    .catch(err=>{console.log(err)})
                                     
             
             this.reviewInfo=result.data[0]     
@@ -131,8 +137,12 @@ export default {
              let points = await axios.put(`/api/reviewPointUp`)
                                      .catch(err=>console.log("업데오류"+err))                                                                
             if(result.data.insertId>0){ //글번호는 자동으로 부여되니까 obj에서 주는게 아니라 따로 빼서 
-                alert('등록완료' + '=>리뷰 500포인트 적립' +points.data);
-                this.reviewInfo.no = result.data.insertId; //여기에 data가 있고 없고 차이는..?
+                alert('등록완료' + '=>리뷰 500포인트 적립');
+
+                console
+                this.reviewInfo.review_no = result.data.insertId;
+                console.log('등록번호' +result.data.insertId) //여기에 data가 있고 없고 차이는..?
+
                 this.point_no = point.data.insertId;
                 this.$router.push({path:'myPage/myReview'})
             }
@@ -140,10 +150,10 @@ export default {
                   this.ods = 's'+i
                   let ph = {
                     param : {
-                      "file_category" : 'r3',
+                      "file_category" : 'r2',
                       "file_name" : this.photo[i],
                       "orders" : this.ods,
-                      "notice_no" : result.insertId,
+                      "review_no" : this.reviewInfo.review_no,
                       "path" : 'uploads\\'+this.photo[i]
                     }
                   }
@@ -151,7 +161,9 @@ export default {
                   console.log(result1)
                   alert('테이블ㅇㅔ 추가');
                 }
-                this.$router.push({path : "noticeList"})
+
+                this.$router.push({path : "myPage/myReview"})
+
             },
             info(data){
             for(let i=0;i<data.length;i++){
@@ -228,7 +240,7 @@ input[type=text], select, textarea {
 
 /* Style the submit button with a specific background color etc */
 button[type=button] {
-  background-color: #04AA6D;
+  background-color: #FF9100;
   color: white;
   padding: 12px 20px;
   border: none;
@@ -238,7 +250,7 @@ button[type=button] {
 
 /* When moving the mouse over the submit button, add a darker green color */
 button[type=button]:hover {
-  background-color: #45a049;
+  background-color: #FF9100;
 }
 
 /* Add a background color and some padding around the form */

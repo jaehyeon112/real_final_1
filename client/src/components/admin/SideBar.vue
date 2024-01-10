@@ -29,7 +29,7 @@
     </symbol>
   </svg>
   
-  <div class="sidebar border border-right col-md-3 col-lg-2 p-0 bg-body-tertiary">
+  <div class="sidebar border border-right col-md-3 col-lg-2 p-0 ">
     <div class="offcanvas-md offcanvas-end bg-body-tertiary" tabindex="-1" id="sidebarMenu" aria-labelledby="sidebarMenuLabel">
       
       <div class="offcanvas-body d-md-flex flex-column p-0 pt-lg-3 overflow-y-auto">
@@ -46,8 +46,8 @@
               회원관리
           </button>
           <ul class="centers" v-if="isUser">
-            <li @click="userList">회원 목록</li>
-            <li @click="outList">탈퇴 회원</li>
+            <li class="curs" @click="userList">회원 목록</li>
+            <li class="curs" @click="outList">탈퇴 회원</li>
           </ul>
         </li>
         <li class="nav-item">
@@ -56,8 +56,8 @@
             상품관리
           </button>
           <ul class="centers" v-if="isOk">
-            <li @click="prodList">상품 목록</li>
-            <li @click="prodReg">상품 등록</li>
+            <li class="curs" @click="prodList">상품 목록</li>
+            <li class="curs" @click="prodReg">상품 등록</li>
           </ul>
         </li>
         <li class="nav-item">
@@ -66,41 +66,37 @@
             주문관리
           </button>
           <ul v-if="isorder">
-            <li @click="orderList">주문 목록</li>
-            <li @click="delList">배송 목록</li>
-            <li @click="refundList">취소된 주문 목록</li>
+            <li class="curs" @click="orderList">주문 목록</li>
+            <li class="curs" @click="delList">배송 목록</li>
+            <li class="curs" @click="refundList">취소된 주문 목록</li>
           </ul>
         </li>
         <li class="nav-item">
           <button class="nav-link d-flex align-items-center gap-2 active" @click="review">
             <svg class="bi"><use xlink:href="#puzzle"/></svg>
-            리뷰/문의사항
+            리뷰/문의
           </button>
           <ul v-if="isreview">
-            <li @click="reviewList">리뷰 목록</li>
-            <li @click="reviewReport">신고된 리뷰</li>
-            <li @click="inquireList">문의사항</li>
+            <li class="curs" @click="reviewList">리뷰 목록</li>
+            <li class="curs" @click="reviewReport">신고된 리뷰</li>
+            <li class="curs" @click="inquireList">문의사항</li>
           </ul>
         </li>
         <li class="nav-item">
-          <a class="nav-link d-flex align-items-center gap-2"  @click="notice">
+          <button class="nav-link d-flex align-items-center gap-2 active"  @click="notice">
             <svg class="bi"><use xlink:href="#gear-wide-connected"/></svg>
             공지사항/자주하는 질문
-          </a>
+          </button>
           <ul v-if="isnotice">
-            <li @click="noticeList">공지사항</li>
-            <li @click="fnaList">자주하는 질문</li>
+            <li class="curs" @click="noticeList">공지사항</li>
+            <li class="curs" @click="fnaList">자주하는 질문</li>
           </ul>
         </li>
         <li class="nav-item">
-          <button class="nav-link d-flex align-items-center gap-2 active" @click="chart">
+          <button class="nav-link d-flex align-items-center gap-2 active" @click="sumChart">
             <svg class="bi"><use xlink:href="#graph-up"/></svg>
             통계
           </button>
-          <ul v-if="isChart">
-            <li @click="sumChart">매출통계</li>
-            <li @click="userChart">회원통계</li>
-          </ul>
         </li>
       </ul>
       
@@ -127,7 +123,6 @@ export default {
       isreview : false,
       isnotice : false,
       isUser : false,
-      isChart : false
     }
   }, 
   methods : {
@@ -139,6 +134,11 @@ export default {
         this.isOk = false;
       }else{
         this.isOk = true;
+
+        this.isorder = false;
+        this.isreview = false;
+        this.isnotice = false;
+        this.isUser = false;
       }
     },
     order(){
@@ -146,6 +146,11 @@ export default {
         this.isorder = false;
       }else{
         this.isorder = true;
+
+        this.isOk = false;
+        this.isreview = false;
+        this.isnotice = false;
+        this.isUser = false;
       }
     },
     review(){
@@ -153,6 +158,11 @@ export default {
         this.isreview = false;
       }else{
         this.isreview = true;
+
+        this.isorder = false;
+        this.isOk = false;
+        this.isnotice = false;
+        this.isUser = false;
       }
     },
     notice(){
@@ -160,6 +170,10 @@ export default {
         this.isnotice = false;
       }else{
         this.isnotice = true;
+        this.isorder = false;
+        this.isOk = false;
+        this.isreview = false;
+        this.isUser = false;
       }
     },
     user(){
@@ -167,13 +181,10 @@ export default {
         this.isUser = false;
       }else{
         this.isUser = true;
-      }
-    },
-    chart(){
-      if(this.isChart==true){
-        this.isChart = false;
-      }else{
-        this.isChart = true;
+        this.isorder = false;
+        this.isOk = false;
+        this.isreview = false;
+        this.isnotice = false;
       }
     },
     prodList(){
@@ -243,7 +254,11 @@ export default {
         fill: currentColor;
         width: 50px;
       }
-
+      .sidebar{
+        width: 230px;
+        height: 100%;
+        top : 0;
+      }
       .nav-scroller .nav {
         display: flex;
         flex-wrap: nowrap;
@@ -262,7 +277,9 @@ export default {
       .centers{
         text-align: left;
       }
-
+      .curs {
+        cursor: pointer;
+      }
       li{
         list-style: none;
         font-size: 20px;

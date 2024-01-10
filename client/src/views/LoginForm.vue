@@ -108,12 +108,13 @@
     try {
         let ipList = await axios.post(`/api/dologin/`, obj);
         
+
+        
         let users = ipList.data.user;
       if(ipList.data.auth){
       localStorage.setItem('token', ipList.data.token);
       console.log(localStorage.getItem('token')+' 이게 토큰 값')
       }   
-        alert(users[0].user_id)
         if (users.length === 0) {
           this.failedAttempts++;
 
@@ -198,7 +199,6 @@ if (users.length > 0) {
    
       this.$socket.disconnect();
       const token = localStorage.getItem('token'); // localStorage에서 토큰 가져오기
-      alert(localStorage.getItem('token'))
         const serverUrl = 'http://localhost:3000'; // 여러분의 실제 소켓 서버 주소로 변경해주세요.
 // 새 토큰으로 소켓 재연결
 this.$socket = io(serverUrl, {
@@ -271,8 +271,8 @@ this.$socket.emit('authenticate', token);
           console.log(myKakao);
 
 
-          if(res.length == 1){
-            alert(this.$store.state.kakaoId+'로그인실패야너')
+          if(result.data.length == 0){
+            alert(this.$store.state.kakaoId+'db에 카카오 아이디 회원 없는상태')
           this.$router.push({ name: 'join' });
           } else {
             this.$store.commit('kakaoLogin', res.id)
@@ -280,8 +280,6 @@ this.$socket.emit('authenticate', token);
            this.$router.push({name : 'realmain'})
           }
 
-
-        
         },
         fail: (error) => {
           console.log(error);
@@ -297,7 +295,7 @@ this.$socket.emit('authenticate', token);
       // Vuex 스토어에 카카오 사용자 ID 업데이트
       this.$store.commit('kakaoLogin', kakaoId);
 
-      // 다른 로직들...
+      
     } catch (error) {
       console.error('카카오 로그인 중 에러:', error);
     }

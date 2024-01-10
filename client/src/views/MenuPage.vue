@@ -285,7 +285,7 @@ export default {
   this.list = proList.data;
   this.$hideLoading();
   this.loading = false;
-      }else if(this.category == 'main' || this.category == 'sub'){
+      }else if(this.category == 'main' || this.category == 'sub' ){
         let proList = await axios.get(`/api/show/${this.mainCategory}/${this.type}/${this.pageNo}`)
         this.list = proList.data;
       }else if(this.category == 'new'){
