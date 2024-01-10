@@ -1770,6 +1770,7 @@ app.post('/reviewreport', async (req, res) => {
 })
 
 app.get('/reviewreport', async (req, res) => {
-  let query = `select * from review_report where uwer_id = ?`
+  let query = `select * from review_report where uwer_id = ? and review_no = ?`
+  let data = []
   res.send(await mysql.query2(query, req.session.user_id))
 })

@@ -110,7 +110,8 @@ export default {
             this.userList = result;
         },
         async changePage(no) {
-            console.log(this.word,no)
+            console.log(no+' 번호는?')
+
             try {
                 let page = await axios.get(`/api/user/${this.word}/${this.word}/${this.order}/${no}`);
                 console.log(page.data)
