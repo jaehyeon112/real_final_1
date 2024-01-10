@@ -4,7 +4,7 @@
         <br>
         <br>
         <v-card>
-            <v-tabs  v-model="tab" fixed-tabs bg-color="#FFB300">
+            <v-tabs  v-model="tab" fixed-tabs bg-color="#FFA726">
                 <v-tab value="save">포인트 적립 내역</v-tab>
                 <v-tab value="use">포인트 사용 내역</v-tab>
             </v-tabs>

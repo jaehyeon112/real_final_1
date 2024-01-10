@@ -294,7 +294,7 @@ let admin = {
 let reviews = {
   myReview: `select * from review where user_id=? `, //마이페이지에서 내가 작성한 리뷰 리스트
   reviewInfo: `select * from review where user_id=? and review_no=?`, //마이페이지 리뷰하나 보기
-  orderNoReview: `select * from review where user_id=?`,
+  //orderNoReview: `select * from review where user_id=?`,
   //서영희
   reviewList : `select  r.* from order_detail o,review r where o.order_detail_no=r.detail_order_no and prod_no = ? `,
   likeUp : `update review set like_cnt = like_cnt+1 where review_no= ?`,

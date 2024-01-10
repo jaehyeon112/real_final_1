@@ -36,10 +36,10 @@
                   </div>
                   <div>
                      <p class="lead">할인률{{ productInfo.discount_rate }}</p>
-                     <p class="lead">할인률 적용된 가격{{  $wonComma(productInfo.discount_price) }}</p>
+                     <p class="lead">할인률 적용된 가격{{  getWonFormat(productInfo.discount_price) }}</p>
                   <br>
                   <br>
-                     <p class="lead">총 가격: {{  $wonComma(productInfo.discount_price*counter) }}</p>
+                     <p class="lead">총 가격: {{  getWonFormat(productInfo.discount_price*counter) }}</p>
                      <p style="margin-left:20px;margin-bottom:0;color:black">무료배송 (40,000원 이상 구매 시)</p>
                      <br>
                   </div>
@@ -131,7 +131,7 @@
                   </tr>
                   <tr :key="idx" v-for="(review, idx) in reviewList">
                      <!-- <td> {{ review.review_no }}</td> -->
-                     <td> {{ review.review_no }}</td>
+                    
                      <td> {{ review.user_id }}</td>
                      <td> {{ review.review_title }}</td>
                      <td> {{ review.review_content }}</td>
@@ -157,10 +157,14 @@
                   </tr>
                   <tr :key="idx" v-for="(inquire, idx) in inquireList">
                      <td> {{ inquire.inquire_no }}</td>
-                     <td> {{ inquire.inquire_category }}</td>
+                     <td  class="text-center " v-if="inquire.inquire_category=='j1'">상품문의</td>
+                     <td  class="text-center "  v-else-if="inquire.inquire_category=='j2'">배송문의</td>
+                     <td   class="text-center " v-else-if="inquire.inquire_category=='j3'">환불문의</td>
+                     <td   class="text-center " v-else>기타문의</td>
+                  
                      <td> {{ inquire.inquire_title }}</td>
                      <td> {{ inquire.inquire_content }}</td>
-                     <td> {{ inquire.inquire_writedate }}</td>
+                     <td> {{ $dateFormat(inquire.create_date)}}</td>
                      
                   </tr>
             </table>
@@ -309,6 +313,7 @@ export default {
                }      
             }
         },
+      
 
         
       //     async getLikeCount(no, writer, cnt){
@@ -506,9 +511,9 @@ export default {
              }      
          
      },
-
-    }
    }
+    }
+   
      
      
     
