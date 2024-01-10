@@ -812,10 +812,26 @@ if (!this.$store.state.kakaoId) {
     };
 
     let result = await axios.post(`/api/join/joinIn`, data);
+
+
+          let obj = {
+            param : {
+              couponinfo_no : 1,
+              user_id : this.userInfo.user_id,
+              start_coupon :  new Date(),
+              end_coupon : new Date()
+
+            }
+          }
+          // end_coupon에 1달을 더하는 방법
+          obj.param.end_coupon.setMonth(obj.param.end_coupon.getMonth() + 1);
+
+                await axios.post(`/api/joinCouponInsert`,obj)
+                .catch(err => {err}) 
+    
     if(result.data.affectedRows > 0 ){
       alert('가입 성공');
-       
-     
+      
       this.$router.push({ name: 'message', params: { message: '회원가입이 완료되었습니다.' } });
       return;
     }else{

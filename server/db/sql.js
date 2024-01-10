@@ -76,6 +76,9 @@ HAVING hotItem > 1 and avg_grade > 4
 ORDER BY hotItem DESC
 limit ?, 6;
 `,
+
+  // 회원가입과 동시에 가입축하쿠폰 지급
+  joinCouponInsert : `INSERT INTO coupon set ?`,
   // 추가 배송지 
   adddeliveryList: `select * from add_delivery where user_id =?`,
 
