@@ -14,7 +14,6 @@
                 </tr>
             </thead>
             <tbody>
-                
                 <tr :key="idx" v-for="(coupon, idx) in couponList" >
                     <td>{{ coupon.coupon_no }}</td>
                     <td v-if="coupon.coupon_name=='q1'">회원가입쿠폰</td>

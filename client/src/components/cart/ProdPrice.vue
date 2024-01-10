@@ -5,10 +5,10 @@
         <div>
           <p>상품 할인금액 <span>{{ $wonComma(discount) }}</span>원</p>
           <p>배송비 <span>{{ $wonComma(delivery) }} 원</span></p>
+          <br>
           <hr>
           <p>결제예정금액 <span style="font-size: 24px; font-weight: bold;">{{ $wonComma(final) }} 원</span></p>
         </div>
-        <br>
       </v-card>
     </v-container>
   </template>
@@ -59,8 +59,9 @@
       color: rgb(102, 102, 102);
   }
   .c{
-    padding: 19px 18px 18px 20px;
+    padding: 35px 35px 35px 35px;
     border: 1px solid rgb(242, 242, 242);
     background-color: rgb(250, 250, 250);
+    width : 330px;
   }
   </style>

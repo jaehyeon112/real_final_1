@@ -7,49 +7,49 @@
     <hr>
     <ul class="nav nav-pills flex-column mb-auto">
       <li class="nav-item">
-        <router-link to ="/myPage/myOrderList" class="nav-link text-white active" aria-current="page">
+        <router-link to ="/myPage/myOrderList" class="nav-link" aria-current="page">
          
           주문내역
         </router-link>
       </li>
       <li>
-        <router-link to="/myPage/like" class="nav-link text-white active">
+        <router-link to="/myPage/like" class="nav-link">
          
           찜한상품
         </router-link>
       </li>
       <li>
-        <router-link to="/myPage/delivery" class="nav-link text-white">
+        <router-link to="/myPage/delivery" class="nav-link ">
          
           배송지관리
         </router-link>
       </li>
       <li>
-        <router-link to="/myPage/myReview" class="nav-link text-white">
+        <router-link to="/myPage/myReview" class="nav-link ">
           <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#grid"/></svg>
           상품후기
         </router-link>
       </li>
       <li>
-        <router-link to ="/myPage/myInquire" class="nav-link text-white">
+        <router-link to ="/myPage/myInquire" class="nav-link ">
           <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#people-circle"/></svg>
           상품문의
         </router-link>
       </li>
       <li>
-        <router-link to="/myPage/point" class="nav-link text-white ">
+        <router-link to="/myPage/point" class="nav-link ">
           <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#people-circle"/></svg>
           포인트
         </router-link>
       </li>
       <li>
-        <router-link to="/myPage/coupon" class="nav-link text-white">
+        <router-link to="/myPage/coupon" class="nav-link ">
           <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#people-circle"/></svg>
           쿠폰
         </router-link>
       </li>
       <li>
-        <router-link to="/putpass" class="nav-link text-white">
+        <router-link to="/putpass" class="nav-link ">
           <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#people-circle"/></svg>
           개인정보수정
         </router-link>

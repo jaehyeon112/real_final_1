@@ -15,6 +15,7 @@ import changePass from "../views/ChangePass.vue"
 import test from "../views/test.vue";
 
 
+import serviceCenter from "@/views/ServiceCenter.vue";
 import myPage from "@/views/MyPage.vue";
 import detailPage from "@/views/detailPage.vue";
 import MyorderList from "@/components/MyPage/orderList.vue";
@@ -28,6 +29,10 @@ import myReview from "@/components/MyPage/myReview.vue";
 import myReviewInfo from "@/components/MyPage/myReviewInfo.vue";
 import myInquire from "@/components/ServiceCenter/inquire.vue";
 import myInquireInfo from "@/components/ServiceCenter/inquireInfo.vue";
+import qnaList from "@/components/ServiceCenter/qna.vue";
+import qnaInfo from "@/components/ServiceCenter/qnaInfo.vue";
+import noticeList from "@/components/ServiceCenter/notice.vue";
+import noticeInfo from "@/components/ServiceCenter/noticeInfo.vue";
 import reviewForm from "../views/ReviewForm.vue";
 import inquireForm from "../views/inquireForm.vue";
 import search from '@/components/menu/search.vue';
@@ -136,6 +141,31 @@ export default {
       name: "test",
       component: test
     },
+    {
+      path: "serviceCenter",
+      name: "serviceCenter",
+      component: serviceCenter,
+      children: [{
+          path: "qnaList", // 
+          name: "qnaList",
+          component: qnaList
+        },
+        {
+          path: "noticeList",
+          name: "noticeList",
+          component: noticeList
+        },
+        {
+          path: "qnaInfo", //  
+          name: "qnaInfo",
+          component: qnaInfo
+        },
+        {
+          path: "noticeInfo",
+          name: "noticeInfo",
+          component: noticeInfo
+        },]
+      },   
     {
       path: "myPage",
       name: "myPage",
