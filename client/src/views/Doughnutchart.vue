@@ -48,13 +48,13 @@ methods : {
         let list = result.data;
         for(let i=0;i<list.length;i++){
             this.chartData.datasets[0].data.push(list[i].nums);
-            if(list[i].reason=='r1'){
+            if(list[i].reason=='w1'){
                 list[i].reason = '사고싶은 제품이 없어서'
-            }else if(list[i].reason=='r2'){
+            }else if(list[i].reason=='w2'){
                 list[i].reason = '더 좋은 사이트를 발견해서'
-            }else if(list[i].reason=='r3'){
+            }else if(list[i].reason=='w3'){
                 list[i].reason = '가격이 너무 비싸서'
-            }else if(list[i].reason=='r4'){
+            }else if(list[i].reason=='w4'){
                 list[i].reason = '기타'
             }
             this.chartData.labels.push(list[i].reason);

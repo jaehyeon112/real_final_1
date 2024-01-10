@@ -43,7 +43,6 @@
             <td v-else-if="user.user_grade=='i1'">일반 회원</td>
             <td v-else-if="user.user_grade=='i2'">실버 회원</td>
             <td v-else-if="user.user_grade=='i3'">골드 회원</td>
-            <td v-else-if="user.user_grade=='i4'">관리자</td>
             <td v-if="user.user_grade=='i6'"><v-btn style="border-radius: 10px;" type="button" @click="NonStop(user.user_id)">정지풀기</v-btn></td>
             <td v-else-if="user.user_grade=='i4'||user.user_grade=='i5'"></td>
             <td v-else><v-btn style="border-radius: 10px;" type="button" @click="modalCheck=true,this.userId=user.user_id">정지하기</v-btn></td>
@@ -115,7 +114,7 @@ export default {
         },
         //페이지네이션
         async changePage(no) {
-            console.log(this.word,no)
+            this.startNum = no;
             try {
                 let page = await axios.get(`/api/user/${this.word}/${this.word}/${this.order}/${no}/${this.nums}`);
                 console.log(page.data)
@@ -193,8 +192,7 @@ export default {
                 let AllList = await axios.get(`/api/user/${day}`).catch(err=>console.log(err));
                 this.totalList = AllList.data;
                 let list = await axios.get(`/api/user/${day}/${this.order}/${this.startNum}/${this.nums}`).catch(err=>console.log(err));
-                let result = list.data;
-                this.userList = result;
+                this.userList = list.data;
             }else{
                 if(grade=='일반회원'){
                     grade = 'i1'
@@ -205,22 +203,20 @@ export default {
                     grade = 'i3'
                 }
                 else if(grade=='정지회원'){
-                    grade = 'i5'
+                    grade = 'i6'
                 }
+
                 let AllList = await axios.get(`/api/user/${day}`).catch(err=>console.log(err));
                 this.totalList = []
+                let list = await axios.get(`/api/user/${day}/${this.order}/${this.startNum}/${this.nums}`).catch(err=>console.log(err));
+                for(let i=0;i<list.data.length;i++){
+                    if(list.data[i].user_grade==grade){
+                        this.filterList.push(list.data[i]);
+                    }
+                }
                 for(let i=0;i<AllList.data.length;i++){
                     if(AllList.data[i].user_grade==grade){
                         this.totalList.push(AllList.data[i]);
-                        // console.log(i+'번째'+AllList.data[i].user_id)
-                    }
-                }
-                let list = await axios.get(`/api/user/${day}/${this.order}/${this.startNum}/${this.nums}`).catch(err=>console.log(err));
-                let result = list.data;
-                for(let i=0;i<result.length;i++){
-                    console.log(i+'번째'+result[i].user_id)
-                    if(result[i].user_grade==grade){
-                        this.filterList.push(result[i]);
                     }
                 }
                 this.userList = this.filterList;
@@ -233,6 +229,7 @@ export default {
             this.days = this.dateFormat('','yyyy-MM-dd');
             this.uList();
             this.filterList = [];
+            this.startNum = 0;
         },
     },
     components : {
@@ -240,14 +237,17 @@ export default {
         page
     },
     watch : {
-        content(){
-            this.searchList(this.content,this.days);
-        },
         order(){
             this.uList();
         },
         nums(){
-            this.uList();
+            if(this.grade==''&&this.word==''){
+                this.uList();
+            }else if(this.grade!=''){
+                this.filterData(this.grade,this.days);
+            }else if(this.word!=''){
+                this.search(this.word)
+            }
         }
     }
 }

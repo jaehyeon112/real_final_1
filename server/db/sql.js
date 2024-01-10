@@ -237,17 +237,21 @@ let admin = {
   //주문관리
   AllOrderList: `select * from orders order by order_status`,
   orderList: `select *,(select user_tel from user where user_id = orders.user_id) as phone from orders order by order_date desc limit ?,?`,
+  AllorderDate: `select * from orders where order_date between ? and ? order by order_date desc`,
   orderDate: `select * from orders where order_date between ? and ? order by order_date desc limit ?,?`,
-  updateOrder: `update orders set order_status = ? where order_no= ?`,
+  AllorderStatus: `select * from orders where order_status = ? order by order_date desc`,
   orderStatus: `select * from orders where order_status = ? order by order_date desc limit ?,?`,
+  updateOrder: `update orders set order_status = ? where order_no= ?`,
   oneOrder: `select * from orders where order_no = ?`,
   insertDelivery: `insert into delivery set order_no=(select order_no from orders where order_no=?),tracking_no = ?,
   user_id=(select user_id from orders where order_no=?),delivery_request=(select delivery_request from orders where order_no=?),released_date=current_date(),delivery_status='d4'`,
   //배송관리
+  AlldeliveryList: `select * from delivery`,
   deliveryList: `select * from delivery limit ?,?`,
+  AllDatedeliveryList: `select * from delivery where released_date between ? and ?`,
   DatedeliveryList: `select * from delivery where released_date between ? and ? limit ?,?`,
+  AllStatedeliveryList: `select * from delivery where delivery_status = ?`,
   StatedeliveryList: `select * from delivery where delivery_status = ? limit ?,?`,
-  Alldelivery: `select * from delivery`,
   //리뷰
   AllreviewReportList: `select *,(select report_cnt from review where review_no=review_report.review_no) as cnt from review_report order by report_date desc`,
   reviewReportList: `select *,(select report_cnt from review where review_no=review_report.review_no) as cnt from review_report order by report_date desc limit ?,?`,

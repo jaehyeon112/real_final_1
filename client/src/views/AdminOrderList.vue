@@ -2,10 +2,10 @@
     <list @changeemit="changeChildData" @search="search">
       <template #title>고객 주문목록</template>
         <template #searchData>
-            <div class="datatable-input" style="width: 30%;float: right;">
-                날짜별 주문내역<br>
+            <div class="datatable-input" style="width: 20%;float: right;text-align: left;">
+                ==날짜별 주문내역==<br>
                 <input v-model="startNo" type="date"> ~ <input v-model="lastNo" type="date"><br><br>
-                <div  style="width: 50%;float: right;"><v-btn @click="orderDate">검색하기</v-btn><v-btn @click="refresh" style="float: right;">초기화</v-btn></div></div>
+                <div  style="width: 60%;float: right;"><v-btn @click="orderDate">검색하기</v-btn><v-btn @click="refresh" style="float: right;">초기화</v-btn></div></div>
         </template>
         <template #filterSearch>
           <v-select
@@ -174,8 +174,6 @@
                 nums : 0,
                 startNum : 0,
                 totalList: "",
-                totals :'',
-                content:'',
                 orderNo : '',
                 orderOne : [],
                 modalCheck2 : false,
@@ -205,7 +203,7 @@
             let day = ('0'+date.getDate()).slice(-2);
             let result = format.replace('yyyy',year).replace('MM',month).replace('dd',day);
             return result;
-        },
+          },
             async sendMessage(){
                 if(this.reason=='기타'&&this.reasons==''){
                     alert('기타 사유를 적어주세요')
@@ -300,6 +298,7 @@
                         this.count = this.count+1;
                     }
                 }
+                this.total();
             },
             async changePage(no) {
                 let list = await axios.get(`/api/order/${no}/${this.nums}`).catch(err=>console.log(err));
@@ -307,19 +306,7 @@
                 this.orderList = result;
             },
             changeChildData(childData){
-                console.log('받음'+childData);
                 this.nums = childData;
-            },
-            search(searchData){
-                this.content = searchData;
-                this.searchList(this.content);
-            },
-            async searchList(cont){
-                let list = await axios.get(`/api/order/${cont}/${this.startNum}/${this.nums}`).catch(err=>console.log(err));
-                let result = list.data;
-                console.log('리스트 : '+result)
-                this.productList = result;
-                this.totalList = result;
             },
             async orderDate(){
               this.orders = '';
@@ -330,18 +317,18 @@
                 }else if(this.startNo==''||this.lastNo==''){
                     alert('날짜가 비어있습니다.')
                 }else{
-                    let total = await axios.get(`/api/orders/${this.startNo}/${this.lastNo}/${this.startNum}/${this.nums}`).catch((err) => {console.log(err);});
-                    this.orderList = total.data;
+                    let total = await axios.get(`/api/orders/${this.startNo}/${this.lastNo}`).catch((err) => {console.log(err);});
+                    let list = await axios.get(`/api/orders/${this.startNo}/${this.lastNo}/${this.startNum}/${this.nums}`).catch((err) => {console.log(err);});
+                    this.orderList = list.data;
                     this.totalList = total.data;
                 }
             },
             async orderGetOne(ono){
-                let result = await axios.get(`/api/order/${ono}`).catch(err=>console.log(err));
+                let result = await axios.get(`/api/Oneorder/${ono}`).catch(err=>console.log(err));
                 this.orderOne = result.data[0];
             },
             refresh(){
                 this.getOrderList();
-                this.total();
                 this.startNo = '2000-01-01',
                 this.lastNo = this.dateFormat('','yyyy-MM-dd'),
                 this.orders = ''
@@ -386,9 +373,10 @@
                 }else if(od=='취소된 주문'){
                     od='c4'
                 }
+                let total = await axios.get(`/api/order/${od}`).catch(err=>console.log(err));
                 let result = await axios.get(`/api/order/${od}/${this.startNum}/${this.nums}`).catch(err=>console.log(err));
-                console.log(result)
                 this.orderList = result.data;
+                this.totalList = total.data;
             },
             goto(){
               this.$router.push({path : "refundList"})
@@ -397,9 +385,6 @@
         watch : {
             nums(){
                 this.getOrderList();
-            },
-            content(){
-                this.searchList(this.content);
             },
             orders(){
               if(this.orders==''){
