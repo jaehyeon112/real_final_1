@@ -1436,6 +1436,13 @@ app.get("/detailPro/:pno", async (req, res) => {
   let info = await mysql.query('orders', 'detailInfo', pno);
   res.send(info);
 })
+app.get("/detailProd/:pno", async (req, res) => {
+  let pno = req.params.pno;
+  let info = await mysql.query('orders', 'detailInfoImage', pno);
+  res.send(info);
+})
+
+
 //상세페이지-> 장바구니
 app.post("/savingCart", async (req, res) => {
   let data = req.body.param;
