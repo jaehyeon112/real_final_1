@@ -5,7 +5,7 @@
                 <thead>
                     <tr>
                         <th scope="col" class="text-center table-warning">카테고리</th>
-                        <td scope="col" class="text-center " v-if="inquireInfo.inquire_category=='j1'"></td>
+                        <td scope="col" class="text-center " v-if="inquireInfo.inquire_category=='j1'">상품문의</td>
                         <td  scope="col" class="text-center " v-else-if="inquireInfo.inquire_category=='j2'">배송문의</td>
                         <td  scope="col" class="text-center " v-else-if="inquireInfo.inquire_category=='j3'">환불문의</td>
                         <td  scope="col" class="text-center " v-else>기타문의</td>
@@ -90,3 +90,9 @@ export default {
     }
 }
 </script>
+
+<style>
+th{
+    background-color: #FFA726;
+}
+</style>
