@@ -52,9 +52,9 @@
               </div>
                 <div class="col-12">
                   <label for="stock" class="form-label">첨부 이미지</label>
-                  <div v-show="open==true" v-for="idx in photo"><img id="ima" :src="getPath(idx)" style="position: relative;height=300"></div>
+                  <div v-if="this.open==true" v-for="idx in photo"><img id="ima" :src="getPath(idx)" style="position: relative;height=300"></div>
                   <v-btn @click="showing" v-if="photo.length>0">사진보기</v-btn>
-                  <h4 v-else="photo.length>0">첨부된 사진이 없습니다</h4>
+                  <h4 v-else-if="photo.length==0">첨부된 사진이 없습니다</h4>
                 </div>
               <div class="col-12" v-if="this.cnt>0">
                 <v-textarea v-model = "reply.reply_content" type="text" label="답변내용" variant="outlined" readonly=""></v-textarea>
@@ -104,6 +104,7 @@ export default {
         this.inquireNo = this.$route.query.ino;
         this.inquireInfo();
         this.replyInfo();
+        this.photoList();
     },
     methods : {
         refresh(){
@@ -112,7 +113,7 @@ export default {
         async photoList(no){
             this.photo = [];
             console.log(no)
-            let list = await axios.get(`/api/photo/inquire_no/${this.$route.query.ino}`).catch(err=>console.log(err));
+            let list = await axios.get(`/api/photo/inquire_no/${this.inquireNo}`).catch(err=>console.log(err));
             for(let i=0;i<list.data.length;i++){
                 this.photo.push(list.data[i].file_name);
             }
@@ -146,10 +147,8 @@ export default {
           this.inquire = (result.data)[0];
         },
         async replyInfo(){
-          console.log('문의번호'+this.inquireNo)
           let result = await axios.get(`/api/reply/${this.inquireNo}`).catch(err=>console.log(err));
           for(let i=0;i<result.data.length;i++){
-            console.log('답변'+result.data[i])
             result.data[0].reply_date = this.dateFormat(result.data[0].reply_date,'yyyy년 MM월 dd일');
             this.reply = (result.data)[i];
             this.cnt = this.cnt+1;

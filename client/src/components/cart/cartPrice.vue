@@ -35,7 +35,7 @@
         <hr>
         <div class="label-container">
           <p class="label">최종 결제금액</p>
-          <span style="color: red; font-size: 40px; font-weight: bold;">  {{ $wonComma(final) }} 원</span>
+          <span style=" font-size: 30px; font-weight: bold;">  {{ $wonComma(final) }} 원</span>
         </div>
         <div class="label">
           <p class="css-5lws00">적립</p>

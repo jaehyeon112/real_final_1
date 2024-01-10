@@ -10,7 +10,7 @@
           <span>{{ orderList[0].recipient_tel }}</span>
         </p>
         <p><span class="label">받으실 주소</span>
-          <span>{{ '['+orderList[0].recipient_postcode + '] ' + orderList[0].recipient_address + orderList[0].recipient_detail_address  }}</span>
+          <span>{{ '['+orderList[0].recipient_postcode + '] ' + orderList[0].recipient_address + ' (' + orderList[0].recipient_detail_address + ')'  }}</span>
         </p>
         <p><span class="label">요청사항</span>
           <span>{{ orderList[0].delivery_request }}</span>
