@@ -125,23 +125,11 @@ export default {
     let Option = confirm("주문을 취소하시겠습니까?");
     if (Option) {
         
-        alert('취소되었습니다.');
-        this.cancelPayment(orderno);
-        this.orderUpdate(orderno);
+        alert('취소신청 됬습니다.');
         this.refundInsert(orderno);
 
     }
 
-    },
-    async orderUpdate(orderno){ //상품 주문 취소되었을때 주문상태 변경
-
-         await axios.put(`/api/orderUpdate/${orderno}`)
-         .catch(err => console.log(err));
-
-         for(let i=0;i<this.orderList.length;i++){  // 
-          this.orderList[i].order_status = "c4"; // vue 에서도 c4 상태업데이트 해준다!
-        }
-         
     },
     getday(){
         let date = new Date();
@@ -174,7 +162,7 @@ export default {
                     user_id: this.$store.state.user.user_id,
                     return_point : this.point,
                     coupon_no : this.couponList.length > 0 ? this.couponList[0].coupon_no : null,  // coupon 리스트 길이가 0보다 크면  coupon_no 를 불러오고 아니면 null 을 넣는다
-                    cancel_status : 'o2',
+                    cancel_status : 'o1',
                     cancel_request : this.day
                     }
                 }   
