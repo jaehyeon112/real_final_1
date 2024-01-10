@@ -12,7 +12,7 @@
                <div class="col-md-2"></div>
                <div class="col-md-6">
                   <h1 class="display-5 fw-bolder">{{ productInfo.prod_name }}</h1>
-                  <h1 class="display-7 fw-bolder">{{ productInfo.price }}</h1>
+                  <h1 class="display-7 fw-bolder">{{ $wonComma(productInfo.price) }}</h1>
                   <div class="fs-5 mb-5">
                      <br>
                   <table class="table" border="1">

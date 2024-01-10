@@ -1601,7 +1601,6 @@ app.get("/fnq/:fno", async (req, res) => {
 
 
 
-
 app.get("/frozen/:first/:last/:A/:B/:no", async (req, res) => {
   let base = `select file_name, p.*, FORMAT(avg(review_grade),1) AS 'star' from product p left join order_detail d on p.prod_no = d.prod_no
   left join review r  on r.detail_order_no = d.order_detail_no   left join (select file_name,prod_no from file where orders='s0') f on(p.prod_no = f.prod_no)  where refrigeration = 'g1' `

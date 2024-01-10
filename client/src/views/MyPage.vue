@@ -2,7 +2,7 @@
 <div>
         <main class="d-flex flex-nowrap">
         <sidebar class="sidebar"/>
-        <div >
+        
         <div class="row" style="width:900px;">
             <div class="col-sm-5">
                         <div class="col p-4 d-flex flex-column position-static">
@@ -38,11 +38,11 @@
                     </div>
                 </div>
            
+
                 <div class="col-sm-3"  style="background-color: #FFB300; margin:10px">
+
+                <div class="col-sm-3"  style="background-color:#FFE0B2; margin:10px">
                     <div class="col p-4 d-flex flex-column position-static">
-                        <strong class="d-inline-block mb-2 text-success-emphasis  text-center">잔여쿠폰</strong>
-                        
-                        <router-link to="/myPage/coupon"><h3 class="mb-0">{{ member.couponCnt }} 개</h3></router-link>
                          
                            
                     </div>
@@ -90,7 +90,10 @@ export default{
     methods: {
         //일단 멤버 정보를 셀렉트 해오는걸로 시험 중 나중에 로그인 세션그걸로 바꿔야 함
         async getMember(){
-            
+            if(this.$store.state.user.user_id==null){
+                this.$router.push({path : '/login'});
+                return
+            }
           
             this.member = (await axios.get(`/api/member/${this.$store.state.user.user_id}`)
                                       .catch(err=>console.log(err))).data

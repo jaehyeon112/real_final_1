@@ -1,5 +1,8 @@
 <template>
     <div>
+        <br>
+        <br>
+        <br>
         <v-card>
             <v-tabs  v-model="tab" fixed-tabs bg-color="#FFB300">
                 <v-tab value="save">포인트 적립 내역</v-tab>
