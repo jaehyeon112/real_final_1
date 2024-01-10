@@ -34,16 +34,19 @@
       async goToUpdate() {
 
         let uid = this.$store.state.user.user_id ;
-        let result = await axios.get(`/api/putpass/${uid}`)
+
+        let result = await axios.get(`/api/putpwd/${uid}/${this.user_password}`)
                                 .catch(err => console.log(err));
               console.log(result);
-              console.log(result.data[0])
+            
               
         // let info = result.data;           
         // console.log(info);             
 
-        if(this.user_password == result.data[0].user_password){
- 
+
+        if(result.data[0] != null) {
+              console.log(this.user_password);
+              console.log(result.data[0].user_password);
           this.$router.push({path: 'join', query: {user_id : this.$store.state.user.user_id}})
         
         }else{

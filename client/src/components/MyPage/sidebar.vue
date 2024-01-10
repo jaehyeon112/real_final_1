@@ -48,11 +48,11 @@
           쿠폰
         </router-link>
       </li>
-      <li>
-        <router-link to="/putpass" class="nav-link active">
+      <li @click="goupdate()">
+        <!-- <router-link to="/putpass" class="nav-link active"> -->
           <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#people-circle"/></svg>
           개인정보수정
-        </router-link>
+        <!-- </router-link> -->
       </li>
     </ul>
     <hr>
@@ -71,10 +71,13 @@ export default{
     
 
     goupdate() {
+      console.log(this.$store.state.kakaoId.id); 
+      
       if (this.$store.state.user.user_id) {
         // 로그인된 아이디가 있으면 회원 정보 수정 페이지로 이동
         this.$router.push({ name: 'putpass', params: { id: this.$store.state.user.user_id } });
       } else if(this.$store.state.kakaoId.id){
+
         this.$router.push({ name: 'join', params: { id: this.$store.state.kakaoId.id } });
       }else {
         // 로그인된 아이디가 없으면 회원 가입 페이지로 이동

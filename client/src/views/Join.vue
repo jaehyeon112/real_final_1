@@ -27,7 +27,7 @@
 
         </div>
 
-        <div class="group">
+        <div class="group" v-if="!$store.state.kakaoId">
           <!-- type 두개 password로 바꾸기 -->
           <label for="pass" class="label">Password</label>
           <input id="pass" type="text" class="input" data-type="text" maxlength=16 v-model="userInfo.user_password" @blur="passwordValid" v-bind:="isUpdated">
@@ -35,7 +35,7 @@
             유효하지 않은 비밀번호 입니다.
           </div>
         </div>
-        <div class="group">
+        <div class="group" v-if="!$store.state.kakaoId">
           <label for="pass" class="label"> Password CHECK</label>
           <input id="pass" type="text" class="input" data-type="text" maxlength=16 v-model="userInfo.userChPass" @blur="passwordCheckValid">
           
@@ -79,7 +79,7 @@
           <label for="email" class="label">인증번호입력하기</label>
           <input id="email" type="text" class="input" v-model="userInfo.verificationCode" placeholder="인증 코드를 입력하세요">
           <v-btn type="button" v-if="!validEmailNum" @click="verifyEmailNum()" >확인</v-btn>
-          <p v-if="validEmailNum" style="color: green;">인증이 완료되었습니다.</p>git 
+          <p v-if="validEmailNum" style="color: green;">인증이 완료되었습니다.</p>
         </div>
 
          <div class="group">
@@ -268,6 +268,7 @@
           <input type="submit" class="button" 
           :class="{ 'disabled-button': isAnyFieldEmpty || !isAgeValid }"
           :disabled="isAnyFieldEmpty || !isAgeValid" @click="isUpdated? joinUpdate(): joinInsert() " :value="isUpdated ? '수정하기' : 'Sign Up'">
+          
         </div>
     </div>
 
@@ -279,8 +280,7 @@
 
 <script>
 import axios from 'axios';
-//const bcrypt = require('bcrypt');
-//const saltRounds = 10;
+
 
 export default {
   
@@ -407,8 +407,8 @@ export default {
 
    // 카카오 사용자 ID가 있을 때만 ID 입력란을 자동으로 채움
   if(this.$store.state.kakaoId) {
-    console.log('카톡로그인 회원ㄱ입폼')
-    console.log(this.$store.state.kakaoId);
+      console.log('회원가입 created : 카톡로그인 회원가입폼')
+      console.log(this.$store.state.kakaoId);
     this.userInfo.user_id = this.$store.state.kakaoId;
     this.$store.commit('kakaoLogin', 'kakao') 
     //this.$store.commit('kakaoLogin', this.userInfo.user_name) 
@@ -671,7 +671,7 @@ passwordValid() {
   let data = {
        "param" : {
           to :  this.userInfo.user_tel,
-          from : "01063373744",
+          from : "01047443288",
           text : phoneNum
        }
       }
@@ -788,16 +788,18 @@ if (!this.$store.state.kakaoId) {
   }
 
   // 비밀번호 암호화
-      const hashedPassword = await bcrypt.hash(this.userInfo.user_password, saltRounds);
 
-    let info = this.userInfo;
+  
+
+    
+    
     let data = {
 
       param : {
         "user_id" : this.userInfo.user_id,
         "user_name" : this.userInfo.user_name,
         //"user_password" : this.userInfo.user_password,
-        "user_password" : hashedPassword, //비번암호화
+        "user_password" : this.userInfo.user_password,
         //"user_emailid" : this.userInfo.user_emailid,
        // "email_domain" : this.userInfo.email_domain,
         "user_email" : this.userInfo.user_email,
