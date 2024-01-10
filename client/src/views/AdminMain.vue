@@ -1,7 +1,6 @@
 <template>
 
   <div class="container-fluid">
-    <v-btn @click="tt" >asdf</v-btn>
     <div class="row">
       <side/>
       <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
@@ -319,6 +318,8 @@ import icon from '../components/admin/icon.vue';
         dialog : true
       }
     },
+
+    
     components : {
       side,
       list,
@@ -334,13 +335,12 @@ import icon from '../components/admin/icon.vue';
         this.$store.commit('logout');
         this.$router.push({path : "/login"});
       }
+      this.$socket.emit('joinRoom', 'ADMIN');
       this.getOrderList();
       this.getReviewList();
       this.getInquireList();
       this.getCounting();
-      if(this.$store.state.user.user_grade=='i4'){
-        this.$socket.emit('joinRoom', 'ADMIN');
-      }
+      
       this.$socket.on('test', (m)=>{
         this.showNotification(m);
       })
@@ -390,13 +390,7 @@ import icon from '../components/admin/icon.vue';
         }
        },
 
-       
-       async tt(){
-        await this.$socket.emit('joinRoom', 'ADMIN');
-          await axios.get('/api/sockettest')
-       
-       }
-       ,
+      
        showNotification(message) {
       // 사용자가 알림을 허용했는지 확인
       if (Notification.permission == 'granted') {
@@ -475,6 +469,7 @@ import icon from '../components/admin/icon.vue';
                     }
                 }
             },
+            
       }
 }
 </script>

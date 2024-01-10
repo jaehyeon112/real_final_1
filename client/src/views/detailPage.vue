@@ -104,8 +104,7 @@
                <hr>
             </div>
             <!--상세정보?-->
-            <a id="detail"></a>
-               <div class="container px-4 px-lg-5 my-5" style="text-align:center;" id="detail">
+               <div class=" px-4 px-lg-5 my-5" style="text-align:center;" id="detail">
                   
                </div>
 
@@ -113,7 +112,7 @@
             <hr>
             <!--리뷰게시판  부분 -->
             <a id="review"></a>
-            <div id="review" class="reviewTable">
+            <div id="review">
             <div :key="idx" v-for="(review, idx) in reviewList">
                <hr>
                <v-row>

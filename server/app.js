@@ -567,8 +567,6 @@ app.post("/orderInsert", async (request, res) => { // orders 등록
   let data = request.body.param;
   res.send((await mysql.query("test", "orderInsert", data)));
   io.to('ADMIN').emit('order', '새로운 결제가 있습니다.')
-  io.emit('test', '이건 테스트인데 이거 가나 보자;')
-  console.log('당신은~~~ x맨이~~')
 });
 
 app.post("/orderdetailInsert", async (request, res) => { // order_detail 등록
@@ -1633,7 +1631,6 @@ app.get('/sockettest', async (req, res) => {
 app.get("/searchHeader/:word", async (req, res) => {
   let data = req.params.word
   let list = await mysql.query('test', 'searchHeaderPage', data)
-  io.to('ADMIN').emit('alert', data);
   res.send(list)
 })
 

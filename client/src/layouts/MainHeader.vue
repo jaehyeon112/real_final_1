@@ -14,9 +14,9 @@
         
       </ul>
       
-      <div class="container text-center" style="margin-bottom: 20px">
+      <div class="container " style="margin-bottom: 20px; margin-left: 450px;">
         <div class="row">
-          <div class="col-2">
+          <div class="col-4">
             <router-link
             to="/main"
             >
@@ -27,58 +27,9 @@
         <div class="col-6">
             <input v-model='word'  @keyup.enter="search" type="search" placeholder="Search..." />
         </div>
-        <div class="col-1" style="width: 45px; padding-top: 15px">
-          <!-- 알람 갯수 조절해야함 -->
-          <v-menu>
-            <template v-slot:activator="{ props }">
-              <span
-              v-bind="props"
-              >
-              <v-badge color="error" content='0'>
-                <span class="mdi mdi-bell-outline" style="font-size: 30px"></span>
-              </v-badge>
-            </span>
-          </template>
-          <v-list 
-          style="padding:20px"
-          width="450"
-          height="600">
-          <v-row justify="end" style="margin-right: 30px; height: 50px;">
-            <router-link to="/"><span class="text-style" style="margin-right: 20px;">알람페이지로</span></router-link>
-          </v-row>
-          <v-row>
-            <v-col cols="3" >
-              <v-list-item-title style="font-size: 12px;">알람종류 </v-list-item-title>
-            </v-col>
-            <v-col cols="5">
-              <v-list-item-title style="font-size: 12px;">알람내용</v-list-item-title>
-            </v-col>
-            <v-col cols="3">
-              <v-list-item-title style="font-size: 12px;">상태</v-list-item-title>
-            </v-col>
-          </v-row>
-        <v-list-item
-        v-for="(item, index) in items"
-        :key="index"
-        :value="index"
-        >
-        <v-row>
-          <v-col cols="3">
-            <v-list-item-title style="font-size: 12px;">{{ item.title }}</v-list-item-title>
-          </v-col>
-            <v-col cols="5">
-              <v-list-item-title style="font-size: 12px;">{{ item.title }}</v-list-item-title>
-            </v-col >
-            <v-col cols="3">
-              <v-list-item-title style="font-size: 12px;">{{ item.title }}</v-list-item-title>
-            </v-col>
-          </v-row>
-        </v-list-item>
-      </v-list>
-    </v-menu>    
-  </div>
-  <div class="col-1" style="padding-top: 15px">
-    <span @click="moveCartList">
+       
+  <div class="col-2 text-end" style="padding-top: 15px ">
+    <span class="text-end" @click="moveCartList">
       <!-- 장바구니 갯수 조절해야함 -->
       <v-badge color="error" :content='$store.state.user.user_id == null ? $store.state.cartCount : $store.state.loginCartCount'>
               <span class="mdi mdi-cart-minus" style="font-size: 30px"></span>
