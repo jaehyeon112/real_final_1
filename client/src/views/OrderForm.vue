@@ -42,7 +42,6 @@
         :final="final"/>
       </v-col>
     </v-row>
-    {{ zip }}
     </v-container>
 </template>
 <script>

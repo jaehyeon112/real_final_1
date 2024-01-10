@@ -18,11 +18,12 @@
       </div>
       <br>
       <v-row>
-        <v-col cols="2">
-          <v-btn @click="moveMypage" style="background-color: bisque">마이페이지</v-btn>
-        </v-col>
+        <v-col cols="2" sm="7"></v-col>
         <v-col>
-          <v-btn @click="moveMain" style="background-color: lightgrey;">메인페이지</v-btn>
+          <v-btn width="150" height="60" @click="moveMypage" style="background-color: white; font-weight: 600; font-size: 20px" >마이페이지</v-btn>
+        </v-col>
+        <v-col cols="">
+          <v-btn width="150" height="60" @click="moveMain" style="background-color: lightgrey; color: white; font-weight: 600; font-size: 20px">메인페이지</v-btn>
         </v-col>
       </v-row>
     </v-container>
@@ -52,8 +53,13 @@
 </script>
 <style scoped>
 .label {
-  display: inline-block;
-  width : 20%;
-  font-weight: bold;
+    display: inline-block;
+    width: 20%;
+    font-size: large;
+    font-weight: 600;
+}
+ul {
+  display: flex;
+  list-style: none;
 }
 </style>

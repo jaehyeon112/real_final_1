@@ -8,7 +8,8 @@
     <v-select v-else label="사용가능한 쿠폰이 없습니다" disabled></v-select>
     <h1>포인트정보</h1>
     <hr />
-    <p>사용가능 포인트 <span v-if="Points">{{ pointList[0].point }} 원</span></p>
+    <p class="label">사용가능 포인트 </p>
+      <span v-if="Points">{{ pointList[0].point }}원</span>
     <v-row no-gutters>
   <v-col cols="6" style="display: flex;">
     <div style="width: 500px;">
@@ -23,7 +24,7 @@
       v-if="Points"
       @click="useAllPoints"
       :disabled="this.$store.state.user.point == 0 || (CheckCoupon && selectedCouponIndex !== 0)"
-      style="margin-left: auto; width: 200px; height: 57px;"
+      style="margin-left: auto; width: 200px; height: 57px; margin-left:10px;"
     >
       모두 사용
     </v-btn>
@@ -153,3 +154,9 @@
     }
   };
   </script>
+  <style scoped>
+.label {
+    display: inline-block;
+    width: 15%;
+}
+  </style>

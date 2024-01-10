@@ -17,8 +17,8 @@
                         <td>
                           <v-checkbox v-model="list.cart_checkbox" true-value="1" false-value="0" @click="updateCheckbox(list)"></v-checkbox>
                         </td>
-                        <td><v-img width="100" height="100" :src="`api/test/`+ list.file_name"></v-img></td>
-                        <td style="cursor: pointer;" @click="goTodetailForm(list.prod_no)">{{ list.prod_name }}</td>
+                        <td><v-img width="80" height="80" :src="`api/test/`+ list.file_name"></v-img></td>
+                        <td style="cursor: pointer; font-weight: bold;" @click="goTodetailForm(list.prod_no)">{{ list.prod_name }}</td>
                           <td>
                             <v-btn @click="quantityMinus(list)">
                               <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAiIGhlaWdodD0iMzAiIHZpZXdCb3g9IjAgMCAzMCAzMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICAgIDxwYXRoIGQ9Ik0yMCAxNHYySDEwdi0yeiIgZmlsbD0iIzMzMyIgZmlsbC1ydWxlPSJub256ZXJvIi8+Cjwvc3ZnPgo=" alt="">
@@ -47,7 +47,7 @@
                     :discount="discount"
                     :delivery="delivery"
                     :final="final"/>
-                    <v-btn v-model="check" @click="showMenu" :disabled="box == 1" class="css-fwelhw e4nu7ef3" color="primary">주문하기</v-btn>
+                    <v-btn width="385" v-model="check" @click="showMenu" :disabled="box == 1" class="css-fwelhw e4nu7ef3" color="primary">주문하기</v-btn>
                   </v-col>
                 </v-row>
               </v-card> 
@@ -72,9 +72,9 @@
                             <v-checkbox v-model="list.cart_checkbox" true-value="1" false-value="0" @click="updateCheckbox(list)"></v-checkbox>
                           </td>
                           <div>
-                          <td><v-img width="100" height="100" :src="`api/test/`+ list.file_name"></v-img></td>
+                          <td><v-img width="80" height="80" :src="`api/test/`+ list.file_name"></v-img></td>
                         </div>
-                            <td style="cursor: pointer;" @click="goTodetailForm(list.prod_no)">{{ list.prod_name }}</td>
+                            <td style="cursor: pointer; font-weight: bold;" @click="goTodetailForm(list.prod_no)">{{ list.prod_name }}</td>
                             <td>
                           <v-btn @click="quantityMinus(list)">
                             <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAiIGhlaWdodD0iMzAiIHZpZXdCb3g9IjAgMCAzMCAzMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICAgIDxwYXRoIGQ9Ik0yMCAxNHYySDEwdi0yeiIgZmlsbD0iIzMzMyIgZmlsbC1ydWxlPSJub256ZXJvIi8+Cjwvc3ZnPgo=" alt="">
@@ -102,7 +102,7 @@
                       :discount="discount"
                       :delivery="delivery"
                       :final="final"/>
-                      <v-btn @click="goTologinForm" class="css-fwelhw e4nu7ef3" height="72" color="primary">로그인</v-btn>
+                      <v-btn width="385" @click="goTologinForm" class="css-fwelhw e4nu7ef3" height="72" color="primary">로그인</v-btn>
                     </v-col>
                   </v-row>
                 </v-card> 
@@ -122,8 +122,8 @@
               :discount="discount"
               :delivery="delivery"
               :final="final"/>
-              <v-btn v-if="this.$store.state.user.user_id != null" @click="showMenu" class="css-fwelhw e4nu7ef3" color="primary">주문하기</v-btn>
-              <v-btn v-else @click="goTologinForm" class="css-fwelhw e4nu7ef3" color="primary">로그인</v-btn>
+              <v-btn width="385" v-if="this.$store.state.user.user_id != null" @click="showMenu" class="css-fwelhw e4nu7ef3" color="primary">주문하기</v-btn>
+              <v-btn width="385" v-else @click="goTologinForm" class="css-fwelhw e4nu7ef3" color="primary">로그인</v-btn>
             </v-col>
           </v-row>
         </v-card> 
@@ -465,7 +465,7 @@ h1 {
 }
 
 .rwd-table td:nth-child(5) {
-  width: 20%; 
+  width: 10%; 
 }
 
 .rwd-table td:nth-child(6) {

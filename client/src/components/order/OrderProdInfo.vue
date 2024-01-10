@@ -7,7 +7,7 @@
                     <p style="font-size:25px; font-weight:bold">고객님, <span style="color:red;">주문이 완료</span>되었습니다.</p>
                 </div>
                 <p>{{ this.$store.state.user.user_name }} 님이 주문하신<br>주문번호는 
-                <span style="color:red; font-size:25px;">  {{ $store.state.orderNo }}  </span> 입니다. 
+                <span style="color:red; font-size:25px; font-weight:bold;" >  {{ $store.state.orderNo }}  </span> 입니다. 
                 </p>
                 <br>
                 <p style="font-size:25px; font-weight:bold">주문 내역 확인은 배송/마이페이지의<br>
@@ -79,4 +79,5 @@ ul {
   display: flex;
   list-style: none;
 }
+
 </style>
