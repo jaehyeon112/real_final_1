@@ -465,8 +465,7 @@ export default {
             cartQuantity = this.$store.state.cart[i].quantity;
           }
         }
-        console.log( this.counter+cartQuantity)
-        console.log(this.productInfo.stock)
+        
       if(this.productInfo.stock > this.counter+cartQuantity) {
       this.counter++;
     }else{
