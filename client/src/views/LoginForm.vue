@@ -130,13 +130,14 @@
   
     try {
         let ipList = await axios.post(`/api/dologin/`, obj);
-        console.log(ipList.data.user);
-      let users = ipList.data.user;
-       console.log(users);
-        if(ipList.data.auth){
-        localStorage.setItem('token', ipList.data.token);
-        console.log(localStorage.getItem('token')+' 이게 토큰 값')
-        }   
+        
+
+        
+        let users = ipList.data.user;
+      if(ipList.data.auth){
+      localStorage.setItem('token', ipList.data.token);
+      console.log(localStorage.getItem('token')+' 이게 토큰 값')
+      }   
         if (users.length === 0) {
           this.failedAttempts++;
 
@@ -217,7 +218,6 @@ if (users.length > 0) {
    
       this.$socket.disconnect();
       const token = localStorage.getItem('token'); // localStorage에서 토큰 가져오기
-      alert(localStorage.getItem('token'))
         const serverUrl = 'http://localhost:3000'; // 여러분의 실제 소켓 서버 주소로 변경해주세요.
 // 새 토큰으로 소켓 재연결
 this.$socket = io(serverUrl, {

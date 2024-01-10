@@ -1,10 +1,11 @@
 <template>
 
   <div class="container-fluid">
-    <v-btn @click="tt" >asdf</v-btn>
+    <!-- <v-btn @click="tt" >asdf</v-btn> -->
     <div class="row">
       <side/>
-      <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+      <main class="col-md-9 col-lg-10 px-md-4">
+        <!-- <v-btn @click="play('http://soundbible.com/mp3/Air Plane Ding-SoundBible.com-496729130.mp3')">???</v-btn> -->
         <v-row class="toDo">
         <v-dialog
           v-model="dialog"
@@ -13,15 +14,17 @@
         >
           <template v-slot:activator="{ props }">
             <v-btn
-              color="black"
+              color="rgb(248, 173, 123)"
               v-bind="props"
+              @click="this.play()"
             >
-              오늘 해야 할 일
+            <v-icon>fas fa-list</v-icon>  
+            오늘 해야 할 일
             </v-btn>
           </template>
-          <v-card>
+          <v-card class="mods">
             <v-card-title class="text-h5">
-              새로 들어온 내역
+              새로운 내역이 있습니다
             </v-card-title>
             <v-card-text>
               <table class="table">
@@ -62,13 +65,15 @@
       </v-row>
         <v-card class="chars">
           <div class="chart" style="width: 550px;float: left;">
-              <Bar style="width: 100%;height: 350px;"/>
+            <h3>월간 매출액</h3>
+              <Bar style="width: 100%;height: 300px;"/>
           </div>
           <div class="chart" style="width: 550px;float: right;">
-            <Line style="width: 100%;height: 350px;"/>
+            <h3>주간 매출액</h3>
+            <Line style="width: 100%;height: 300px;"/>
           </div>
         </v-card>
-      <v-card title="최근 주문내역">
+      <v-card title="주문관리-주문내역(최근 주문내역)">
       <v-table class="vTable1">
       <thead>
         <tr>
@@ -198,7 +203,7 @@
       </div>
     </div>
     <br>
-    <v-card flat title="최근 리뷰 신고내역"></v-card>
+    <v-card flat title="리뷰관리(최근 리뷰 신고내역)"></v-card>
     <v-table fixed-header height="250px" class="vTable2">
       <thead>
         <tr>
@@ -238,7 +243,7 @@
       </tbody>
     </v-table>
     <br>
-    <v-card flat title="최근 문의내역"></v-card>
+    <v-card flat title="문의사항 관리(최근 문의내역)"></v-card>
     <v-table fixed-header height="250px" class="vTable3">
       <thead>
         <tr>
@@ -278,7 +283,7 @@
           <td>{{ inquire.inquire_title }}</td>
           <td v-if="inquire.inquire_category=='j1'">상품문의</td>
           <td v-else-if="inquire.inquire_category=='j2'">배송문의</td>
-          <td v-else-if="inquire.inquire_category=='j1'">환불문의</td>
+          <td v-else-if="inquire.inquire_category=='j3'">환불문의</td>
           <td v-else>기타문의</td>
           <td>{{ $dateFormat(inquire.create_date,'yyyy년 MM월 dd일') }}</td>
           <td v-if="inquire.answer_state==0">{{this.inquires='답변 대기 중'}}</td>
@@ -319,6 +324,8 @@ import icon from '../components/admin/icon.vue';
         dialog : true
       }
     },
+
+    
     components : {
       side,
       list,
@@ -327,34 +334,21 @@ import icon from '../components/admin/icon.vue';
       Line
     },
     created(){
+      window.scrollTo(0, 0);
       //this.getSum();
       if(this.$store.state.user.user_id != 'admin'){
         alert('권한이 없습니다');
-        this.$router.push({path : "/login"});
         this.$store.commit('logout');
+        this.$router.push({path : "/login"});
       }
+      
+      this.play();
       this.getOrderList();
       this.getReviewList();
       this.getInquireList();
       this.getCounting();
-      if(this.$store.state.user.user_grade=='i4'){
-        this.$socket.emit('joinRoom', 'ADMIN');
-      }
-      this.$socket.on('test', (m)=>{
-        this.showNotification(m);
-      })
-
-      this.$socket.on('order', (m)=>{
-      this.showNotification(m)
-      })
-
-      this.$socket.on('report', (m)=>{
-      this.showNotification(m)
-      })
-
-      if (Notification.permission !== 'granted') {
-      Notification.requestPermission();
-    }
+      
+     
     },
     methods : {
         dateFormat(){
@@ -380,6 +374,7 @@ import icon from '../components/admin/icon.vue';
           }
         }
         if(result.data.length>4){
+          this.orderList = [];
           for(let i=0;i<4;i++){
             this.orderList.push(result.data[i]);
           }
@@ -388,21 +383,9 @@ import icon from '../components/admin/icon.vue';
         }
        },
 
+      
+      
        
-       async tt(){
-        await this.$socket.emit('joinRoom', 'ADMIN');
-          await axios.get('/api/sockettest')
-       
-       }
-       ,
-       showNotification(message) {
-      // 사용자가 알림을 허용했는지 확인
-      if (Notification.permission == 'granted') {
-        // 알림 생성 및 표시
-        const notification = new Notification('새 알람', {
-          body: message, // 메시지 본문
-        })}}
-       ,
        async orderGetOne(ono){
         let result = await axios.get(`/api/order/${ono}`).catch(err=>console.log(err));
         this.orderOne = result.data[0];
@@ -416,6 +399,7 @@ import icon from '../components/admin/icon.vue';
           }
         }
         if(result.data.length>4){
+          this.reviewList = [];
           for(let i=0;i<4;i++){
             this.reviewList.push(result.data[i]);
           }
@@ -432,6 +416,7 @@ import icon from '../components/admin/icon.vue';
           }
         }
         if(result.data.length>4){
+          this.inquireList = [];
           for(let i=0;i<4;i++){
             this.inquireList.push(result.data[i]);
           }
@@ -448,6 +433,7 @@ import icon from '../components/admin/icon.vue';
                         let result = await axios.put(`/api/order/${this.orderStatus}/${ono}`).catch(err=>console.log(err));
                         if(result.data.affectedRows==1){
                             alert('상품준비중으로 변경되었습니다! ');
+                            this.modalCheck = false;
                             this.getOrderList();
                         }else{
                             alert('오류가 남');
@@ -460,6 +446,7 @@ import icon from '../components/admin/icon.vue';
                         let result = await axios.put(`/api/order/${this.orderStatus}/${ono}`).catch(err=>console.log(err));
                         if(result.data.affectedRows==1){
                             alert('출고완료로 변경되었습니다! ');
+                            this.modalCheck = false;
                             this.getOrderList();
                         }else{
                             alert('오류가 남');
@@ -468,6 +455,11 @@ import icon from '../components/admin/icon.vue';
                         alert('취소되었습니다')
                     }
                 }
+            },
+            play() {
+              let sound = 'https://soundbible.com/mp3/Air%20Plane%20Ding-SoundBible.com-496729130.mp3'
+              var audio = new Audio(sound);
+              audio.play();
             },
       }
 }
@@ -508,7 +500,7 @@ import icon from '../components/admin/icon.vue';
     transform: translate(-50%, -50%);
     width: 1200px;
     height: 400px;
-    background: #fff;
+    background: #ffffff;
     border-radius: 10px;
     padding: 10px;
     box-sizing: border-box;
@@ -526,20 +518,13 @@ import icon from '../components/admin/icon.vue';
 .table{
   width: 250px;
   text-align: center;
-  font-size: 18px;
-    /* border: 1px solid;
-    background-color: rgb(255, 255, 255); */
-    /* position: fixed;
-    z-index: 10;
-    bottom: 0;
-    right: 0; */
+  font-size: 25px;
+  margin: auto;
 }
 .toDo{
-  float: right;
-  background-color: black;
   position: fixed;
-  top: 30px;
-  right: 20px;
+  top: 50px;
+  right: 50px;
   text-align: center;
   z-index: 10;
 }
@@ -553,4 +538,14 @@ import icon from '../components/admin/icon.vue';
   width: 1200px;
   height: 400px;
 }
+.col-md-9 {
+  margin: auto;
+  padding: 10px;
+}
+.mods{
+  width: 400px;
+  height: 350px;
+  text-align: center;
+}
+
 </style>

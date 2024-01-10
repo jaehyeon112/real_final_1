@@ -56,18 +56,16 @@
                   <v-btn @click="showing" v-if="photo.length>0">사진보기</v-btn>
                   <h4 v-else="photo.length>0">첨부된 사진이 없습니다</h4>
                 </div>
-              <div class="col-12" v-if="reply.reply_content==''">
-                <label for="discount_price" class="form-label">답변하기</label>
-                <textarea type="text" v-model="reply.reply_content" class="form-control" id="reply_content"></textarea>
-              </div>
-              <div class="col-12" v-else>
-                <label for="discount_price" class="form-label">답변내용</label>
-                <textarea type="text" v-model="reply.reply_content" class="form-control" id="reply_content" readonly></textarea>
+              <div class="col-12" v-if="this.cnt>0">
+                <v-textarea v-model = "reply.reply_content" type="text" label="답변내용" variant="outlined"></v-textarea>
                 <label for="discount_price" class="form-label">답변일시</label>
                 <input type="text" v-model="reply.reply_date" class="form-control" id="reply_date" readonly>
               </div>
+              <div class="col-12" v-else>
+                <v-textarea v-model = "reply.reply_content" type="text" label="답변하기" variant="outlined"></v-textarea>
               </div>
-              <div id="buttonBox" v-if="reply.reply_content==''">
+              </div>
+              <div id="buttonBox" v-if="this.cnt==0">
                 <v-btn @click="refresh">초기화</v-btn>
                 <v-btn @click="saveProd">저장하기</v-btn>
               </div>
@@ -98,6 +96,7 @@ export default {
           inquire : {},
           open : true,
           nums : 1,
+          cnt : 0
       }
     },
     created(){
@@ -152,8 +151,8 @@ export default {
             console.log('답변'+result.data[i])
             result.data[0].reply_date = this.dateFormat(result.data[0].reply_date,'yyyy년 MM월 dd일');
             this.reply = (result.data)[i];
+            this.cnt = this.cnt+1;
           }
-          console.log(this.reply)
         },
         showing(){
             if(this.open == true){
@@ -169,6 +168,9 @@ export default {
           this.$router.push({path : "inquireList"});
         },
         async saveProd(){
+          if(this.reply.reply_content==''){
+            alert('답변을 달아주세요')
+          }else{
             let datas = {
                 param : this.reply
             }
@@ -180,6 +182,7 @@ export default {
             }else{
                 alert('실패')
             }
+          }
         }
     },
     components : {

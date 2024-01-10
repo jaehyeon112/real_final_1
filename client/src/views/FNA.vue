@@ -68,11 +68,11 @@
         <br>
         <hr>
         <div style="width: 300px;">
-            제목 : <v-textarea v-model = "title" type="text" label="Label" variant="outlined"></v-textarea>
+            <v-textarea v-model = "title" type="text" label="제목" variant="outlined"></v-textarea>
         </div>
         <br>
         <div style="width: 400px;">
-            내용 : <v-textarea v-model = "content" type="text" label="Label" variant="outlined"></v-textarea>
+            <v-textarea v-model = "content" type="text" label="내용" variant="outlined"></v-textarea>
         </div>
         <div class="modal-btn">
             <v-btn style="border-radius: 10px;" @click="modalCheck = false,this.category=''">닫기</v-btn>
@@ -232,6 +232,7 @@ import side from '../components/admin/SideBar.vue';
             }
         },
         created(){
+            window.scrollTo(0, 0);
             this.getdelList();
             this.getordList();
             this.getrefList();

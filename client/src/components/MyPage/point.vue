@@ -1,7 +1,7 @@
 <template>
     <div>
         <v-card>
-            <v-tabs  v-model="tab" fixed-tabs bg-color="primary">
+            <v-tabs  v-model="tab" fixed-tabs bg-color="#FFB300">
                 <v-tab value="save">포인트 적립 내역</v-tab>
                 <v-tab value="use">포인트 사용 내역</v-tab>
             </v-tabs>
@@ -19,7 +19,11 @@
                             </thead>
                             <tbody>
                                 <tr :key="idx" v-for="(point, idx) in pointSaveList">
-                                    <td>{{ point.point_history }}</td>
+                                    <td v-if="point.point_history=='p1'">구매후 적립</td>
+                                    <td v-if="point.point_history=='p2'">리뷰적립</td>
+                                    <td v-if="point.point_history=='p3'">포인트사용</td>
+                                    <td v-if="point.point_history=='p4'">기간만료</td>
+                                    
                                     <td>{{ point.point_save }}</td>
                                     <td>{{  $dateFormat(point.point_date,'yyyy년MM월dd일') }}</td>
                                     <td>{{ $dateFormat(point.end_point_date,'yyyy년MM월dd일') }}</td>
@@ -41,7 +45,10 @@
                             </thead>
                             <tbody>
                                 <tr :key="idx" v-for="(point, idx) in pointUseList">
-                                    <td>{{ point.point_history }}</td>
+                                    <td v-if="point.point_history=='p1'">구매후 적립</td>
+                                    <td v-if="point.point_history=='p2'">리뷰적립</td>
+                                    <td v-if="point.point_history=='p3'">포인트사용</td>
+                                    <td v-if="point.point_history=='p4'">기간만료</td>
                                     <td>-{{ point.point_use }}</td>
                                     <td>{{ $dateFormat(point.point_date,'yyyy년MM월dd일') }}</td>
                                     <td>{{  $dateFormat(point.end_point_date,'yyyy년MM월dd일') }}</td>

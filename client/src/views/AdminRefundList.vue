@@ -1,5 +1,6 @@
 <template>
     <list @changeemit="changeChildData">
+        <template #title>주문 취소/환불 목록</template>
         <template #searchData>
             <div>
             <v-select
@@ -105,6 +106,7 @@
         page
         },
         created(){
+            window.scrollTo(0, 0);
             this.total();
             this.getAccessToken();
 

@@ -48,7 +48,7 @@
     >
       <ul>
         <li class="test">
-          <router-link class="nav-custom" to="/menu/main/all"
+          <router-link class="nav-custom" to="/menu"
             ><span style="width: 300px">전체</span></router-link
           >
         </li>

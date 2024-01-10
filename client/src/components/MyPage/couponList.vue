@@ -14,7 +14,6 @@
                 </tr>
             </thead>
             <tbody>
-                
                 <tr :key="idx" v-for="(coupon, idx) in couponList" >
                     <td>{{ coupon.coupon_no }}</td>
                     <td v-if="coupon.coupon_name=='q1'">회원가입쿠폰</td>
@@ -23,8 +22,9 @@
                     <td >{{ coupon.coupon_discount_rate }} %</td>
                     <td>{{ $dateFormat(coupon.start_coupon,"yyyy년MM월dd일") }}</td>
                     <td>{{ $dateFormat(coupon.end_coupon,"yyyy년MM월dd일") }}</td>
-                    <td v-if=" coupon.coupon_able==0">사용 가능</td>
-                    <td v-else >사용 완료</td>
+                    <td v-if=" coupon.coupon_able==0" >사용 가능</td>
+                    <td v-else-if="coupon.coupon_able ==1 & coupon.end_coupon>today" style="color: gray;">기간만료</td>
+                    <td v-else style="color: gray;">사용 완료</td>
                         
                 </tr>
             </tbody>

@@ -1,68 +1,8 @@
 <template>
-  <v-container v-if="cartList.length > 0 && this.$store.state.user.user_id != null">
-            <v-card style="padding: 20px;" >
-              <v-row>
-                <v-col cols="8">
-                  <h1>장바구니</h1>
-                  <v-row class="button-row">
-                    <v-col cols="auto" class="button-col">
-                      <v-btn class="right-aligned-button" @click="selectAll">전체선택</v-btn>
-                    </v-col>
-                    <v-col cols="auto" class="button-col">
-                      <v-btn class="right-aligned-button" @click="deleteSelected">선택삭제</v-btn>
-                    </v-col>
-                  </v-row>
-                  <table class="rwd-table" :key="idx" v-for="(list, idx) in cartList">
-                    <tr>
-                      <td>
-                        <v-checkbox v-if="list.soldout == '0'" v-model="list.cart_checkbox" true-value="1" false-value="0" @click="updateCheckbox(list)"></v-checkbox>
-                        <v-btn v-else :disabled="list.soldout == '1'">품절로 선택불가</v-btn>
-                      </td>
-                      <td><v-img width="150" height="150" :src="`api/test/`+ list.file_name"></v-img></td>
-                      <td>{{ list.prod_name }}</td>
-                      <td>
-                        <v-btn v-if="list.soldout == '0'" @click="quantityPlus(list)">
-                          <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAiIGhlaWdodD0iMzAiIHZpZXdCb3g9IjAgMCAzMCAzMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICAgIDxwYXRoIGQ9Ik0xNiAxMHY0aDR2MmgtNHY0aC0ydi00aC00di0yaDR2LTRoMnoiIGZpbGw9IiMzMzMiIGZpbGwtcnVsZT0ibm9uemVybyIvPgo8L3N2Zz4K" alt="">
-                        </v-btn>
-                        <v-btn v-else  disabled="list.soldout == '1'" @click="quantityPlus(list)">
-                          <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAiIGhlaWdodD0iMzAiIHZpZXdCb3g9IjAgMCAzMCAzMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICAgIDxwYXRoIGQ9Ik0xNiAxMHY0aDR2MmgtNHY0aC0ydi00aC00di0yaDR2LTRoMnoiIGZpbGw9IiMzMzMiIGZpbGwtcnVsZT0ibm9uemVybyIvPgo8L3N2Zz4K" alt="">
-                        </v-btn>
-                      </td>
-                      <td>{{ list.quantity }}개</td>
-                      <td>
-                        <v-btn v-if="list.soldout == '0'" @click="quantityMinus(list)">
-                          <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAiIGhlaWdodD0iMzAiIHZpZXdCb3g9IjAgMCAzMCAzMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICAgIDxwYXRoIGQ9Ik0yMCAxNHYySDEwdi0yeiIgZmlsbD0iIzMzMyIgZmlsbC1ydWxlPSJub256ZXJvIi8+Cjwvc3ZnPgo=" alt="">
-                        </v-btn>
-                        <v-btn v-else  disabled="list.soldout == '1'" @click="quantityMinus(list)">
-                          <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAiIGhlaWdodD0iMzAiIHZpZXdCb3g9IjAgMCAzMCAzMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICAgIDxwYXRoIGQ9Ik0yMCAxNHYySDEwdi0yeiIgZmlsbD0iIzMzMyIgZmlsbC1ydWxlPSJub256ZXJvIi8+Cjwvc3ZnPgo=" alt="">
-                        </v-btn>
-                      </td>
-                      <td>
-                        <ul>
-                          <li>{{ $wonComma(list.discount_price * list.quantity) }} 원</li>
-                          <li v-if="list.discount_price !== list.price" class="discount">{{ $wonComma(list.price * list.quantity) }} 원</li>
-                        </ul>
-                      </td>
-                    </tr>
-                  </table>
-      </v-col>
-      <v-col style="position: sticky; top:100px;">
-        <ProdPrice 
-        :cartList="cartList"
-        :total="total"
-        :discount="discount"
-        :delivery="delivery"
-        :final="final"/>
-        <v-btn v-model="check" @click="showMenu" :disabled="box == 1" class="css-fwelhw e4nu7ef3" style="color: white;">주문하기</v-btn>
-      </v-col>
-    </v-row>
-  </v-card> 
-  </v-container>
-  <v-container v-else-if="cartList.length > 0 && this.$store.state.user.user_id == null">
-    <!-- 비회원일 때의 처리 -->
-      <v-card style="padding: 20px;" >
+    <v-container v-if="cartList.length > 0 && this.$store.state.user.user_id != null">
+              <v-card style="padding: 20px;">
                 <v-row>
-                  <v-col cols="8">
+                  <v-col cols="9">
                     <h1>장바구니</h1>
                     <v-row class="button-row">
                       <v-col cols="auto" class="button-col">
@@ -73,30 +13,24 @@
                       </v-col>
                     </v-row>
                     <table class="rwd-table" :key="idx" v-for="(list, idx) in cartList">
-                      <tr>
+                      <tr :class="{'stock': list.stock == 0}">
                         <td>
-                          <v-checkbox v-if="list.soldout == '0'" v-model="list.cart_checkbox" true-value="1" false-value="0" @click="updateCheckbox(list)"></v-checkbox>
-                          <v-btn v-else :disabled="list.soldout == '1'">품절로 선택불가</v-btn>
+                          <v-checkbox v-model="list.cart_checkbox" true-value="1" false-value="0" @click="updateCheckbox(list)"></v-checkbox>
                         </td>
-                        <td><v-img width="150" height="150" :src="`api/test/`+ list.file_name"></v-img></td>
-                        <td>{{ list.prod_name }}</td>
-                        <td>
-                          <v-btn v-if="list.soldout == '0'" @click="quantityPlus(list)">
-                            <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAiIGhlaWdodD0iMzAiIHZpZXdCb3g9IjAgMCAzMCAzMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICAgIDxwYXRoIGQ9Ik0xNiAxMHY0aDR2MmgtNHY0aC0ydi00aC00di0yaDR2LTRoMnoiIGZpbGw9IiMzMzMiIGZpbGwtcnVsZT0ibm9uemVybyIvPgo8L3N2Zz4K" alt="">
-                          </v-btn>
-                          <v-btn v-else  disabled="list.soldout == '1'" @click="quantityPlus(list)">
-                            <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAiIGhlaWdodD0iMzAiIHZpZXdCb3g9IjAgMCAzMCAzMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICAgIDxwYXRoIGQ9Ik0xNiAxMHY0aDR2MmgtNHY0aC0ydi00aC00di0yaDR2LTRoMnoiIGZpbGw9IiMzMzMiIGZpbGwtcnVsZT0ibm9uemVybyIvPgo8L3N2Zz4K" alt="">
-                          </v-btn>
-                        </td>
-                        <td>{{ list.quantity }}개</td>
-                        <td>
-                          <v-btn v-if="list.soldout == '0'" @click="quantityMinus(list)">
-                            <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAiIGhlaWdodD0iMzAiIHZpZXdCb3g9IjAgMCAzMCAzMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICAgIDxwYXRoIGQ9Ik0yMCAxNHYySDEwdi0yeiIgZmlsbD0iIzMzMyIgZmlsbC1ydWxlPSJub256ZXJvIi8+Cjwvc3ZnPgo=" alt="">
-                          </v-btn>
-                          <v-btn v-else  disabled="list.soldout == '1'" @click="quantityMinus(list)">
-                            <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAiIGhlaWdodD0iMzAiIHZpZXdCb3g9IjAgMCAzMCAzMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICAgIDxwYXRoIGQ9Ik0yMCAxNHYySDEwdi0yeiIgZmlsbD0iIzMzMyIgZmlsbC1ydWxlPSJub256ZXJvIi8+Cjwvc3ZnPgo=" alt="">
-                          </v-btn>
-                        </td>
+                        <td><v-img width="100" height="100" :src="`api/test/`+ list.file_name"></v-img></td>
+                        <td style="cursor: pointer;" @click="goTodetailForm(list.prod_no)">{{ list.prod_name }}</td>
+                          <td>
+                            <v-btn @click="quantityMinus(list)">
+                              <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAiIGhlaWdodD0iMzAiIHZpZXdCb3g9IjAgMCAzMCAzMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICAgIDxwYXRoIGQ9Ik0yMCAxNHYySDEwdi0yeiIgZmlsbD0iIzMzMyIgZmlsbC1ydWxlPSJub256ZXJvIi8+Cjwvc3ZnPgo=" alt="">
+                            </v-btn>
+                          </td>
+                          <td v-if="list.stock != 0">{{ list.quantity }}개</td>
+                          <td v-else>상품 준비중</td>
+                          <td>
+                            <v-btn  @click="quantityPlus(list)">
+                              <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAiIGhlaWdodD0iMzAiIHZpZXdCb3g9IjAgMCAzMCAzMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICAgIDxwYXRoIGQ9Ik0xNiAxMHY0aDR2MmgtNHY0aC0ydi00aC00di0yaDR2LTRoMnoiIGZpbGw9IiMzMzMiIGZpbGwtcnVsZT0ibm9uemVybyIvPgo8L3N2Zz4K" alt="">
+                            </v-btn>
+                          </td>
                         <td>
                           <ul>
                             <li>{{ $wonComma(list.discount_price * list.quantity) }} 원</li>
@@ -105,40 +39,95 @@
                         </td>
                       </tr>
                     </table>
-        </v-col>
-        <v-col style="position: sticky; top:100px;">
-          <ProdPrice 
-          :cartList="cartList"
-          :total="total"
-          :discount="discount"
-          :delivery="delivery"
-          :final="final"/>
-          <v-btn v-model="check" @click="goTologinForm" class="css-fwelhw e4nu7ef3" style="color: white;" height="72">로그인</v-btn>
-        </v-col>
-      </v-row>
-    </v-card> 
-  </v-container>
-  <v-container v-else>
-      <v-card style="padding: 20px;" >
-        <v-row>
-          <v-col cols="8">
-            <h1>장바구니</h1>
-            <br>
-            <p class="css-l1lu2l eqymnpn0">장바구니에 담긴 상품이 없습니다</p>
-          </v-col>
-          <v-col style="position: sticky; top:100px;">
+                  </v-col>
+                  <v-col style="position: sticky; top:100px;">
+                    <ProdPrice 
+                    :cartList="cartList"
+                    :total="total"
+                    :discount="discount"
+                    :delivery="delivery"
+                    :final="final"/>
+                    <v-btn v-model="check" @click="showMenu" :disabled="box == 1" class="css-fwelhw e4nu7ef3" color="primary">주문하기</v-btn>
+                  </v-col>
+                </v-row>
+              </v-card> 
+    </v-container>
+    <v-container v-else-if="cartList.length > 0 && this.$store.state.user.user_id == null">
+      <!-- 비회원일 때의 처리 -->
+        <v-card style="padding: 20px;" >
+                  <v-row>
+                    <v-col cols="9">
+                      <h1>장바구니</h1>
+                      <v-row class="button-row">
+                        <v-col cols="auto" class="button-col">
+                          <v-btn class="right-aligned-button" @click="selectAll">전체선택</v-btn>
+                        </v-col>
+                        <v-col cols="auto" class="button-col">
+                          <v-btn class="right-aligned-button" @click="deleteSelected">선택삭제</v-btn>
+                        </v-col>
+                      </v-row>
+                      <table class="rwd-table" :key="idx" v-for="(list, idx) in cartList">
+                        <tr>
+                          <td>
+                            <v-checkbox v-model="list.cart_checkbox" true-value="1" false-value="0" @click="updateCheckbox(list)"></v-checkbox>
+                          </td>
+                          <div>
+                          <td><v-img width="100" height="100" :src="`api/test/`+ list.file_name"></v-img></td>
+                        </div>
+                            <td style="cursor: pointer;" @click="goTodetailForm(list.prod_no)">{{ list.prod_name }}</td>
+                            <td>
+                          <v-btn @click="quantityMinus(list)">
+                            <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAiIGhlaWdodD0iMzAiIHZpZXdCb3g9IjAgMCAzMCAzMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICAgIDxwYXRoIGQ9Ik0yMCAxNHYySDEwdi0yeiIgZmlsbD0iIzMzMyIgZmlsbC1ydWxlPSJub256ZXJvIi8+Cjwvc3ZnPgo=" alt="">
+                          </v-btn>
+                          </td>
+                          <td>{{ list.quantity }}개</td>
+                          <td>
+                            <v-btn  @click="quantityPlus(list)">
+                              <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAiIGhlaWdodD0iMzAiIHZpZXdCb3g9IjAgMCAzMCAzMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICAgIDxwYXRoIGQ9Ik0xNiAxMHY0aDR2MmgtNHY0aC0ydi00aC00di0yaDR2LTRoMnoiIGZpbGw9IiMzMzMiIGZpbGwtcnVsZT0ibm9uemVybyIvPgo8L3N2Zz4K" alt="">
+                            </v-btn>
+                          </td>
+                            <td>
+                              <ul>
+                                <li>{{ $wonComma(list.discount_price * list.quantity) }} 원</li>
+                                <li v-if="list.discount_price !== list.price" class="discount">{{ $wonComma(list.price * list.quantity) }} 원</li>
+                              </ul>
+                            </td>
+                          </tr>
+                      </table>
+                    </v-col>
+                    <v-col style="position: sticky; top:100px;">
+                      <ProdPrice 
+                      :cartList="cartList"
+                      :total="total"
+                      :discount="discount"
+                      :delivery="delivery"
+                      :final="final"/>
+                      <v-btn @click="goTologinForm" class="css-fwelhw e4nu7ef3" height="72" color="primary">로그인</v-btn>
+                    </v-col>
+                  </v-row>
+                </v-card> 
+              </v-container>
+              <v-container v-else>
+        <v-card style="padding: 20px;" >
+          <v-row>
+            <v-col cols="9">
+              <h1>장바구니</h1>
+              <br>
+              <p class="css-l1lu2l eqymnpn0">장바구니에 담긴 상품이 없습니다</p>
+            </v-col>
+            <v-col style="position: sticky; top:100px;">
             <ProdPrice 
-            :cartList="cartList"
-            :total="total"
-            :discount="discount"
-            :delivery="delivery"
-            :final="final"/>
-            <v-btn v-if="this.$store.state.user.user_id != null" v-model="check" @click="showMenu" class="css-fwelhw e4nu7ef3" style="color: white;">주문하기</v-btn>
-            <v-btn v-else v-model="check" @click="goTologinForm" class="css-fwelhw e4nu7ef3" style="color: white;">로그인</v-btn>
-          </v-col>
-        </v-row>
-      </v-card> 
-  </v-container>
+              :cartList="cartList"
+              :total="total"
+              :discount="discount"
+              :delivery="delivery"
+              :final="final"/>
+              <v-btn v-if="this.$store.state.user.user_id != null" @click="showMenu" class="css-fwelhw e4nu7ef3" color="primary">주문하기</v-btn>
+              <v-btn v-else @click="goTologinForm" class="css-fwelhw e4nu7ef3" color="primary">로그인</v-btn>
+            </v-col>
+          </v-row>
+        </v-card> 
+      </v-container>
 </template>
 
 <script>
@@ -160,21 +149,13 @@ export default {
       delivery : 0,
       final : 0,
       cartno : 0,
+      isSoldOut : false,
+      isStock : false,
     }
   },
   created(){
     this.fetchCartList();
-  },
-  computed :{
-    // check() { // 장바구니 체크안되면 주문하기버튼 활성화가 안되게 설정
-    //       let checkbox = 0;
-    //       for (let i = 0; i < this.cartList.length; i++) {
-    //         if (this.cartList[i].cart_checkbox == 1) {
-    //           checkbox = 1;
-    //         }
-    //       }
-    //           this.box = checkbox
-    //     }
+    this.ProdCheck();
   },
   // watch : {
   //   cartList(){
@@ -184,6 +165,19 @@ export default {
   //   }
   // },
   methods : {
+          goTodetailForm(no){
+            this.$router.push({path:'/detailPage', query:{pno : no}})
+          },
+          ProdCheck() { // 상품 품절/상품준비중
+            for(let i = 0; i < this.cartList.length; i++) {
+              if (this.cartList[i].soldout == 1) {
+                this.isSoldOut = true;
+                return;
+              }else if(this.cartList[i].stock < 1){
+                this.isStock = true;
+              }
+            }
+          },
           quantityPlus(list) { // 수량 플러스
               if(list.stock > list.quantity ){
                 list.quantity++;
@@ -237,12 +231,12 @@ export default {
             let result = ''
             if(this.$store.state.user.user_id !=null){
               if(list.cart_checkbox == 1) {
-                  result = await axios.put(`/api/CheckboxUpdate/0/${list.cart_no}`, );
+                result = await axios.put(`/api/CheckboxUpdate/0/${list.cart_no}`, );
                 console.log(result.data,'0으로 바꾸기');
                 if(result.data.affectedRows> 0){
                 }
               }else {
-                  result =  await axios.put(`/api/CheckboxUpdate/1/${list.cart_no}`, );
+                result =  await axios.put(`/api/CheckboxUpdate/1/${list.cart_no}`, );
                 console.log(result,'1으로 바꾸기');
                 if(result.data.affectedRows > 0){
                 }
@@ -259,11 +253,14 @@ export default {
             this.delivery = 0;
             this.final = 0;
             this.getBill();
+
+            console.log(list,'확인')
+                // let selectItem =  ;
+                // this.discount = selectItem.length;
             },
             selectAll() {
               let allChecked = true;
               
-                
                 for (let i = 0; i < this.cartList.length; i++) {
                   if (this.cartList[i].cart_checkbox != "1") {
                     allChecked = false;
@@ -335,7 +332,7 @@ export default {
           this.finalPrice();
         },
         showMenu() {
-          let Option = confirm("주문하시겠습니까?");
+          let Option = confirm("이대로 주문하시겠습니까?");
           if (Option) {
             this.moveOrderForm();
           }
@@ -353,21 +350,17 @@ export default {
             }
           }
     },
-      discountPrice() {
-        this.discount = 0;
+    discountPrice() {
+          let totaldiscount = 0;
+
           for (let i = 0; i < this.cartList.length; i++) {
-            if (this.cartList[i].discount_price != null) {
-        for (let i = 0; i < this.cartList.length; i++) {
-            if(this.cartList[i].cart_checkbox == 1){
-              if (this.cartList[i].discount_price != null) {
-              this.discount = (this.cartList[i].discount_price * this.cartList[i].quantity) - (this.cartList[i].price * this.cartList[i].quantity);
-              }
-              console.log(this.discount,'상품할인ㄱ듬액')
+            if (this.cartList[i].cart_checkbox == "1") {
+                totaldiscount += (this.cartList[i].discount_price * this.cartList[i].quantity) - (this.cartList[i].price * this.cartList[i].quantity);
             }
           }
-        }
-      }
-    },
+
+          this.discount = totaldiscount;
+      },
       deliveryPrice() {
         for (let i = 0; i < this.cartList.length; i++) {
             if(this.cartList[i].cart_checkbox == 1){
@@ -392,28 +385,32 @@ export default {
         this.cartNo = this.cartList[i].cart_no
         this.Checkbox = this.cartList[i].cart_checkbox
       }
-        if(this.Checkbox == 1) {
+              if(this.Checkbox == 1){
 
-          if(this.prodStock < this.cartQuantity) {
-            console.log(this.prodStock,'상품재고')
-            alert('재고가 부족한 상품이 있어 상품 수량이 변경됩니다.')
-            console.log(this.cartNo,'상품번호')
-                      await axios.put(`/api/Cartquantity/${this.prodStock}/${this.cartNo}`,)
-                                        .catch(err => console.log(err));
-            console.log('수량변경완료')
-          }else{
-            this.$router.push('/orderForm');
-          }
-        }else{
-          alert('선택된 상품이 없습니다.')
-        }
+                if(this.prodStock < this.cartQuantity) {
+                  console.log(this.prodStock,'상품재고')
+                  alert('재고가 부족한 상품이 있어 상품 수량이 변경됩니다.')
+                  console.log(this.cartNo,'상품번호')
+                  await axios.put(`/api/Cartquantity/${this.prodStock}/${this.cartNo}`,)
+                  .catch(err => console.log(err));
+                  console.log('수량변경완료')
+                }else{
+                  this.$router.push('/orderForm');
+                }
+            }else{
+              alert('선택된 상품이 없습니다!')
+            }
       },
   }
 }
 </script>
-<style>
+<style scoped>
 * {
   list-style: none;
+}
+
+h1 {
+  text-align: center;
 }
 .button-row {
   display: flex;
@@ -422,16 +419,18 @@ export default {
 
 .button-col {
   display: flex;
-  margin-bottom: 10px;
+  margin-bottom: 20px;
+
 }
 
 .right-aligned-button {
   margin-left: auto;
+  background-color: #000000;
 }
 .rwd-table {
-  margin: auto;
   width: 100%;
   border-collapse: collapse;
+  font-size: 18px;
 }
 
 .rwd-table td {
@@ -453,7 +452,7 @@ export default {
 }
 
 .rwd-table td:nth-child(3) {
-  width: 50%; 
+  width: 40%; 
 }
 
 .rwd-table td:nth-child(4) {
@@ -461,7 +460,7 @@ export default {
 }
 
 .rwd-table td:nth-child(5) {
-  width: 10%; 
+  width: 20%; 
 }
 
 .rwd-table td:nth-child(6) {
@@ -488,7 +487,7 @@ export default {
 }
 
 .css-l1lu2l {
-    padding: 115px 0px;
+    padding: 185px 0px;
     border-top: 1px solid rgb(51, 51, 51);
     font-size: 16px;
     line-height: 24px;
@@ -497,9 +496,39 @@ export default {
 }
 
 .css-fwelhw {
-    width: 300px;
+    width: 330px;
+    height: 72px;
     border-radius: 3px;
-    background-color: rgb(207, 95, 245);
     font-size: 24px;
+    margin-left: 15px;
+  }
+
+button{
+          color : rgb(255, 255, 255);
+}
+
+.soldout-overlay {
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 2;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  position: absolute;
+
+}
+.isStock-overlay {
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 2;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  position: absolute;
+}
+
+.stock {
+  opacity: 0.5; /* 불투명도 조절 */
+
 }
 </style>

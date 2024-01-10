@@ -46,7 +46,7 @@ export default {
         this.getInquireList();
     },
     watch(){
-        this.getInqireList();
+        
     },
     methods : {
         async getInquireList(){
@@ -64,9 +64,11 @@ export default {
                               .catch(err=>console.log(err));
                   if(data.data.affectedRows>0){                        
                      alert('문의가 삭제되었습니다')
-                     
+                     this.getInquireList()
                   }
+                 
       },
+             
     }
 }
 </script>

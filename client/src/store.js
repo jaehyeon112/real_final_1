@@ -65,7 +65,7 @@ const store = createStore({
       
     },
 
-    kakaoLogout(state){
+    kakaoLogout(state) {
       state.kakaoId = ''
     },
     // kakaoLogout(state) {

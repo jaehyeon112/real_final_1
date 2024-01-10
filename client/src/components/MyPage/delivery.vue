@@ -27,13 +27,13 @@
             <v-row>
                 <label>
                     <p>배송지 이름</p>
-                    <input type="text"  v-model="delivery.delivery_name" >
+                    <input type="text"  style="background-color:#FFB300 ;" v-model="delivery.delivery_name" >
                     </label>
-                    <v-input type="text"  placeholder="우편번호" v-model="delivery.delivery_postcode" />
+                    <v-input type="text"  placeholder="우편번호" style="background-color:#FFB300" v-model="delivery.delivery_postcode" />
                     <v-btn @click="search()">우편번호 찾기</v-btn><br>
-                    <v-input type="text" id="roadAddress" placeholder="도로명주소" v-model="delivery.delivery_address"/>
+                    <v-input type="text"  id="roadAddress" placeholder="도로명주소" style="background-color:#FFB300" v-model="delivery.delivery_address"/>
                     <span id="guide" style="color:#000;display:none"></span>
-                    <v-input type="text" id="detailAddress" placeholder="상세주소" v-model="delivery.delivery_detail_address"/>
+                    <v-input type="text" id="detailAddress" placeholder="상세주소" style="background-color:#FFB300" v-model="delivery.delivery_detail_address"/>
                     <!-- <v-btn  @click="isUpdated? UpdateDelivery() :InsertDelivery()">저장</v-btn> -->
             </v-row>
           </v-container>
@@ -64,24 +64,22 @@
         <table class="table" border="1">
             <thead>
                 <tr>
-                    <th>선택</th>
-                    <th >주소</th>
+                    <th>주소</th>
+                    <th >수정</th>
                     <th >삭제</th>
                 </tr>
             </thead>
             <tbody> 
-                    <!-- <tr>
-                      <td> 기본배송지 <hr style="color: aliceblue;">{{deliveryList[0].joinaddress }}{{ deliveryList[0].joinDetail }}{{ deliveryList[0].joinPost }}</td>
-                      <td><v-btn>수정버튼</v-btn></td>
-                    </tr> -->
+                    <tr >
+                      <td> 기본배송지 </td>
+                      <td>  {{defaultDelivery.address }}{{ defaultDelivery.detail_address }}<hr style="color: aliceblue;">{{ defaultDelivery.postcode }}</td>
+                      <td><v-btn @click="goToUpdated()" justify="center">수정버튼</v-btn></td>
+                    </tr>
 
                     <tr :key="idx" v-for="(delivery, idx) in deliveryList">
                     <td style="display:none">{{delivery.delivery_no}}</td>
-                    <v-radio-group v-model="picked">
-                    <td><v-radio :label= "`${delivery.delivery_name}`" :value="idx"></v-radio></td>
-                    </v-radio-group> 
-                    <td>{{ delivery.delivery_name }}<hr style="color: aliceblue;">{{delivery.delivery_address }}{{ delivery.delivery_detail_address }}{{ delivery.delivery_postcode }}</td>
-                    
+                    <td>{{ delivery.delivery_name }}</td>
+                    <td>{{delivery.delivery_address }}{{ delivery.delivery_detail_address }}<hr style="color: aliceblue;">{{ delivery.delivery_postcode }}</td> 
                     <td><v-btn @click="deletedelivery(delivery.delivery_no)" justify="center">삭제버튼</v-btn></td>
                 </tr>
                 
@@ -100,6 +98,7 @@ export default {
     data(){
         return{
             deliveryList:[],
+            defaultDelivery:{},
             picked:'',
             dialog: false,
             delivery:{
@@ -117,13 +116,13 @@ export default {
     created(){
     
         this.getDeliveryList();
-        //this.getDelivery();
+        this.getDefaultDeliList();
         
       
     },
     mounted() {
     // radio data 초기 set
-    this.picked = this.deliveryList[0];
+    //this.picked = this.deliveryList[0];
     },
 
     methods:{
@@ -131,7 +130,10 @@ export default {
          this.deliveryList = (await axios.get(`/api/addDelivery`)
                                             .catch(err=>console.log(err))).data
         },
-        
+        async getDefaultDeliList(){
+          this.defaultDelivery = (await axios.get(`/api/deliveryBasic/${this.$store.state.user.user_id}`)
+                                                .catch(err=>console.log(err))).data[0]
+        },
         async InsertDelivery(){ //배송지 추가
             let obj ={
                 param:{
@@ -149,6 +151,7 @@ export default {
             alert('등록완료');
                 this.delivery.delivery_no = result.data.insertId; 
                 //리로드...?
+                this.getDeliveryList()
             }                
      
         },
@@ -158,8 +161,12 @@ export default {
                               .catch(err=>console.log(err));
                   if(data.data.affectedRows>0){                        
                      alert('배송지 삭제')
+                     this.getDeliveryList()
                   }
-      },              
+      }, 
+      goToUpdated(){
+        this.$router.push({path : '/putpass'})
+      } ,            
     //주소api
     search(){ //@click을 사용할 때 함수는 이렇게 작성해야 한다.
             const vueObj = this;

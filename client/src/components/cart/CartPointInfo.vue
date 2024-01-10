@@ -8,22 +8,27 @@
     <v-select v-else label="사용가능한 쿠폰이 없습니다" disabled></v-select>
     <h1>포인트정보</h1>
     <hr />
-    <p>포인트 <span v-if="Points">{{ pointList[0].point }} 원</span></p>
-    <input
-      style="border-bottom: 1px solid black; text-align: center;"
+    <p>사용가능 포인트 <span v-if="Points">{{ pointList[0].point }} 원</span></p>
+    <v-row no-gutters>
+  <v-col cols="6" style="display: flex;">
+    <div style="width: 500px;">
+      <v-text-field
       v-if="Points || CartItems"
-      type="number"
-      v-model="inputValue"
-      @input="updateInputValue"
-    /> 원
-
-  <v-btn
-    v-if="Points"
-    @click="useAllPoints"
-    :disabled="this.$store.state.user.point === 0 || (CheckCoupon && selectedCouponIndex !== 0)"
-  >
-    모두 사용
-  </v-btn>
+      label="사용하실 포인트를 입력해주세요"
+        v-model="inputValue"
+        @input="updateInputValue"
+      ></v-text-field>
+    </div>
+    <v-btn
+      v-if="Points"
+      @click="useAllPoints"
+      :disabled="this.$store.state.user.point == 0 || (CheckCoupon && selectedCouponIndex !== 0)"
+      style="margin-left: auto; width: 200px; height: 57px;"
+    >
+      모두 사용
+    </v-btn>
+  </v-col>
+</v-row>
   </v-container>
 </template>
   
@@ -81,12 +86,12 @@
       }
 },
     useAllPoints() {
-      let totalDiscountPrice = this.cartList.reduce(
+      let totaldiscountPrice = this.cartList.reduce(
         (total, item) =>
           total + (item.quantity * item.discount_price),
         0
       );
-      this.total = totalDiscountPrice + this.delivery - this.coupon;
+      this.total = totaldiscountPrice + this.delivery - this.coupon;
       if (this.$store.state.user.point > 0) {
         if (this.total  < this.$store.state.user.point) {
           this.inputValue = this.total;
