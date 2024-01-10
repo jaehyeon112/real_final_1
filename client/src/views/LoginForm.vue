@@ -64,14 +64,7 @@
       
           </div>
    -->
-        <!-- <div>
-        <router-link to="/finding" class="button"> 아이디비번찾기페이지로 </router-link> 
-        <router-link to="/test" class="button"> test 페이지로 </router-link> 
-        <router-link to="/putpass" class="button"> 비번입력창 </router-link> 
-        <router-link to="/withdrawal" class="button"> 탈퇴페이지 </router-link> 
-        
-        </div>   -->
-   <div> <v-btn @click="kakaoLogout()">카카오 로그아웃</v-btn></div>
+
         </div>
   
       </div>
