@@ -102,7 +102,7 @@ async function sendEmail(to, subject, body) {
     }
   });
   const mailOptions = {
-    from: `yedam1조 Hompage명 <${process.env.GMAIL_OAUTH_USER}>`,
+    from: `yedam1 JOYMEAL <${process.env.GMAIL_OAUTH_USER}>`,
     to,
     subject,
     text: body
@@ -166,8 +166,13 @@ app.post('/phonecheck', async (req, res) => {
   const coolsms = require('coolsms-node-sdk').default;
   async function printTokenResult(phone, token) {
 
+<<<<<<< HEAD
+    const messageService = new coolsms("NCSFCFI7TO43OVAC", "RIIYNSOEI8CXRA71EI47IOIV5YD9O6NC");
+    
+=======
     const messageService = new coolsms("NCSX69ZDDZ3AMPOA", "RTFTFKLPESGNPPFMBL0I88LTS2CHRNET");
 
+>>>>>>> develop
     const result = await messageService
       .sendOne({
         to,

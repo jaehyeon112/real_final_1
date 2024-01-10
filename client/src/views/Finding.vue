@@ -148,7 +148,7 @@ import axios from 'axios'
         }, //end findpass
 
             changeMessage (emailNum) {
-                    // data의 msg를 인자로 받은 새로운 value로 update
+                    // data의 msg를  받은 새로운 value로 update
                       this.no = emailNum;
                     }
       } 

@@ -43,7 +43,7 @@
           </v-col>
           
           <v-col class="text-right">
-            <v-btn color="green" class="headline"  block a href="join">Join</v-btn>
+           <v-btn color="green" class="headline"  block @click="goToJoin()"> Join</v-btn>
           </v-col>
         </v-row>
 
@@ -107,6 +107,11 @@
   
   
     methods: {
+
+      // 회원가입 버튼
+       goToJoin(){
+        this.$router.push({name : 'join'})
+       },
   
   //Login 버튼
 
