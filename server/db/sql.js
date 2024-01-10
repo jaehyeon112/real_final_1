@@ -310,10 +310,19 @@ let reviews = {
   reviewInfo: `select * from review where user_id=? and review_no=?`, //마이페이지 리뷰하나 보기
   orderNoReview: `select * from review where user_id=?`,
   //서영희
-  reviewList : `select  r.* from order_detail o,review r where o.order_detail_no=r.detail_order_no and prod_no = ? `,
-  likeUp : `update review set like_cnt = like_cnt+1 where review_no= ?`,
-  likeDown : `update review set like_cnt = like_cnt-1 where review_no= ?`,
-  insertReviewLike : `insert into review_like set review_no = (select review_no from review where review_no = ?), user_id = (select user_id from user where user_id = ?)`,
+  reviewList: `select  file_name, r.* 
+  from review r 
+  left join (select * from file where orders='s0') f 
+  on (r.review_no = f.review_no) 
+  left join order_detail o on o.order_detail_no=r.detail_order_no 
+  where o.prod_no = ?;
+   `,
+  likeUp: `update review set like_cnt = like_cnt+1 where review_no= ?`,
+  likeDown: `update review set like_cnt = like_cnt-1 where review_no= ?`,
+  insertReviewLike: `insert into review_like set review_no=(select review_no from review where review_no = ?), user_id = (select user_id from user where user_id = ?)`,
+  likeUp: `update review set like_cnt = like_cnt+1 where review_no= ?`,
+  likeDown: `update review set like_cnt = like_cnt-1 where review_no= ?`,
+  insertReviewLike: `insert into review_like set review_no = (select review_no from review where review_no = ?), user_id = (select user_id from user where user_id = ?)`,
 
   detailList: `SELECT 
   t1.review_no, 
@@ -398,7 +407,7 @@ let delivery = {
   updateDelivery: `update add_delivery set? where delivery_no=? and user_id=?`,
   deleteDelivery: `delete from add_delivery where delivery_no=?`,
   deliveryList: `select *, (select address from user where user_id=?) as joinaddress, (select detail_address from user where user_id=?) as joinDetail, (select postcode from user where user_id=?) as joinPost from add_delivery where user_id=?`,
-  deliveryUser:`select address, detail_address, postcode, user_id from user`
+  deliveryUser: `select address, detail_address, postcode, user_id from user`
 
 }
 //찜테이블

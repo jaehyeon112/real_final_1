@@ -169,7 +169,7 @@ withdrawal(){
     handleScroll() {
       const windowScroll = window.scrollY;
 
-      if (this.lnbOffsetTop < windowScroll) {
+      if (this.lnbOffsetTop <= windowScroll) {
         this.isLnbFixed = true;
       } else {
         this.isLnbFixed = false;

@@ -124,7 +124,7 @@
                                     <p>{{formatText(review.review_content)}}</p>
                                  </div>
                      <v-col>
-                        <v-dialog v-model="review.showDialog" width="800">
+                        <v-dialog retain-focus="false" v-model="review.showDialog" width="800">
                            <v-card >
                               <v-card-title style="margin:50px">
                                  <v-row justify="center">
@@ -161,7 +161,39 @@
                      <span v-else><v-btn class="ma-2" variant="text" icon="mdi-thumb-up" style="color: black;" @click="upCnt(review.review_no)"><span class="mdi mdi-thumb-up-outline"></span></v-btn>{{ review.like_cnt }}</span>
                                           </v-col>
                                           <v-col>
-                                             <span> <v-btn class="ma-2" variant="text" icon="mdi-thumb-down" color="red-lighten-2" @click="report(review.review_no)">신고</v-btn></span>
+                                             <v-dialog retain-focus="false" v-model="reportDialog"  width="auto">
+      <template v-slot:activator="{ props }">
+        <v-btn
+          v-bind="props"
+          class="ma-2"
+          variant="text"
+          icon="mdi-thumb-down"
+          color="red-lighten-2"
+          >신고</v-btn
+        >
+      </template>
+      <v-card>
+        <v-card-title>신고 사유</v-card-title>
+        <v-divider></v-divider>
+        <v-card-text style="height: 300px">
+          <v-radio-group v-model="selectedReportReason" column>
+            <v-radio label="욕설 및 비방" value="q1"></v-radio>
+            <v-radio label="광고성 리뷰" value="q2"></v-radio>
+            <v-radio label="기타" value="q3"></v-radio>
+          </v-radio-group>
+        </v-card-text>
+        <v-divider></v-divider>
+        <v-card-actions>
+          <v-btn color="black-darken-1" variant="text" @click="reportDialog = false">
+            닫기
+          </v-btn>
+          <v-btn color="red-darken-1" variant="text" @click="report(review.review_no)">
+            신고하기
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
                                           </v-col>
                                        </v-row>
                                     </v-col>
@@ -174,16 +206,58 @@
    </v-card>
 </v-dialog>
 </v-col>
-
-
 <v-col cols="2">
    <v-img width="100" v-if="review.file_name" :src="`/api/test/`+review.file_name"></v-img>
                   </v-col>
 
 <span v-if="review.u=='y'"><v-btn class="ma-2" variant="text" icon="mdi-thumb-up" style="color: blue;" @click="upCnt(review.review_no)"><span class="mdi mdi-thumb-up-outline"></span></v-btn>{{ review.like_cnt }}</span>
 <span v-else><v-btn class="ma-2" variant="text" icon="mdi-thumb-up" style="color: black;" @click="upCnt(review.review_no)"><span class="mdi mdi-thumb-up-outline"></span></v-btn>{{ review.like_cnt }}</span>
-<span> <v-btn class="ma-2" variant="text" icon="mdi-thumb-down" color="red-lighten-2">신고</v-btn></span>
-                </v-row>
+
+
+
+
+
+
+    <v-dialog retain-focus="false" v-model="reportDialog"  width="auto">
+      <template v-slot:activator="{ props }">
+        <v-btn
+          v-bind="props"
+          class="ma-2"
+          variant="text"
+          icon="mdi-thumb-down"
+          color="red-lighten-2"
+          >신고</v-btn
+        >
+      </template>
+      <v-card>
+        <v-card-title>신고 사유</v-card-title>
+        <v-divider></v-divider>
+        <v-card-text style="height: 300px">
+          <v-radio-group v-model="selectedReportReason" column>
+            <v-radio label="욕설 및 비방" value="q1"></v-radio>
+            <v-radio label="광고성 리뷰" value="q2"></v-radio>
+            <v-radio label="기타" value="q3"></v-radio>
+          </v-radio-group>
+        </v-card-text>
+        <v-divider></v-divider>
+        <v-card-actions>
+          <v-btn color="black-darken-1" variant="text" @click="reportDialog = false">
+            닫기
+          </v-btn>
+          <v-btn color="red-darken-1" variant="text" @click="report(review.review_no)">
+            신고하기
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+
+
+
+
+
+
+</v-row>
                   </div>
             </div>
             <hr>
@@ -243,6 +317,9 @@ import axios from'axios';
 export default {
     data(){
         return{
+         selectedReportReason : null
+         ,
+         reportDialog : false,
           dialog: false,
          user : this.$store.state.user.user_id,
          list : [],
@@ -308,11 +385,24 @@ export default {
       let obj = {
          param : {
             report_status : 'p1',
-            report_reason : 'q1',
-            review_no : rNo
+            report_reason : this.selectedReportReason,
+            review_no : rNo,
+            user_id : this.$store.state.user.user_id
          }
       }
-      let a = await axios.get('/api/reviewreport')
+      let a = (await axios.get(`/api/reviewreport/${rNo}`)).data
+      console.log(a)
+      console.log('asdfasdfsfda')
+      
+      if(a.length == 0){
+         let b = (await axios.post(`/api/reviewreport`,obj)).data
+         if (b.affectedRows != 0){
+            alert('신고 요청이 처리되었습니다.')
+         }
+      }else{
+         alert('이미 신고 요청 처리하신 댓글입니다.')
+      }
+      this.reportDialog = false;
     }
       ,
       cul(i){
@@ -345,6 +435,8 @@ export default {
             for(let i=0;i<list.data.length;i++){
                let search = await axios.get(`/api/rLikeCnt/${this.user}/${list.data[i].review_no}`).catch(err=>console.log(err));
                list.data[i].showDialog = false;
+               list.data[i].showReport = false;
+
                let resu = 'y'
                if(search.data==''){
                   resu = 'n'

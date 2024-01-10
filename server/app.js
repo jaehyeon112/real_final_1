@@ -612,13 +612,13 @@ app.get("/user", async (req, res) => {
 });
 
 app.get("/user/:order/:startNo/:lastNo", async (req, res) => {
-  let data = [req.params.order, Number(req.params.startNo) * Number(req.params.lastNo),Number(req.params.lastNo)];
+  let data = [req.params.order, Number(req.params.startNo) * Number(req.params.lastNo), Number(req.params.lastNo)];
   let list = await mysql.query("admin", "userList", data);
   res.send(list);
 });
 
 app.get("/user/:id/:name/:order/:startNo/:lastNo", async (req, res) => {
-  let list = [req.params.id, req.params.name, req.params.order, Number(req.params.startNo) * Number(req.params.lastNo),Number(req.params.lastNo)];
+  let list = [req.params.id, req.params.name, req.params.order, Number(req.params.startNo) * Number(req.params.lastNo), Number(req.params.lastNo)];
   let data = await mysql.query("admin", "searchUser", list);
   res.send(data);
 });
@@ -630,7 +630,7 @@ app.get("/user/:id/:name", async (req, res) => {
 });
 
 app.get("/user/:join/:order/:startNo/:lastNo", async (req, res) => {
-  let list = [req.params.join, req.params.order, Number(req.params.startNo) * Number(req.params.lastNo),Number(req.params.lastNo)];
+  let list = [req.params.join, req.params.order, Number(req.params.startNo) * Number(req.params.lastNo), Number(req.params.lastNo)];
   let data = await mysql.query("admin", "filterUser", list);
   res.send(data);
 });
@@ -639,7 +639,7 @@ app.get("/user/:join", async (req, res) => {
   let list = req.params.join;
   let data = await mysql.query("admin", "AllfilterUser", list);
   res.send(data);
-  console.log('현재 날짜 기준'+data)
+  console.log('현재 날짜 기준' + data)
 });
 
 app.get("/outUser", async (req, res) => {
@@ -717,13 +717,13 @@ app.get('/order', async (req, res) => {
 });
 
 app.get('/order/:sno/:lno', async (req, res) => {
-  let datas = [Number(req.params.sno)*Number(req.params.lno), Number(req.params.lno)]
+  let datas = [Number(req.params.sno) * Number(req.params.lno), Number(req.params.lno)]
   let result = await mysql.query("admin", "orderList", datas);
   res.send(result);
 });
 
 app.get('/orders/:sday/:eday/:startNo/:lastNo', async (req, res) => {
-  let datas = [req.params.sday, req.params.eday, Number(req.params.startNo)*Number(req.params.lastNo), Number(req.params.lastNo)];
+  let datas = [req.params.sday, req.params.eday, Number(req.params.startNo) * Number(req.params.lastNo), Number(req.params.lastNo)];
   let result = await mysql.query("admin", "orderDate", datas);
   res.send(result);
 });
@@ -735,7 +735,7 @@ app.get('/orders/:sday/:eday', async (req, res) => {
 });
 
 app.get('/order/:status/:sno/:lno', async (req, res) => {
-  let data = [req.params.status, Number(req.params.sno)*Number(req.params.lno), Number(req.params.lno)]
+  let data = [req.params.status, Number(req.params.sno) * Number(req.params.lno), Number(req.params.lno)]
   let result = await mysql.query("admin", "orderStatus", data);
   res.send(result);
 });
@@ -784,7 +784,7 @@ app.get('/delivery/:sno/:lno', async (req, res) => {
 });
 
 app.get('/delivery/:state/:startNo/:lastNo', async (req, res) => {
-  let datas = [req.params.state, Number(req.params.startNo)*Number(req.params.lastNo), Number(req.params.lastNo)];
+  let datas = [req.params.state, Number(req.params.startNo) * Number(req.params.lastNo), Number(req.params.lastNo)];
   let result = await mysql.query("admin", "StatedeliveryList", datas);
   res.send(result);
 });
@@ -796,7 +796,7 @@ app.get('/delivery/:state', async (req, res) => {
 });
 
 app.get('/deliverys/:sday/:eday/:startNo/:lastNo', async (req, res) => {
-  let datas = [req.params.sday, req.params.eday, Number(req.params.startNo)*Number(req.params.lastNo), Number(req.params.lastNo)];
+  let datas = [req.params.sday, req.params.eday, Number(req.params.startNo) * Number(req.params.lastNo), Number(req.params.lastNo)];
   let result = await mysql.query("admin", "DatedeliveryList", datas);
   res.send(result);
 });
@@ -1001,13 +1001,13 @@ app.get("/notice", async (req, res) => {
 
 app.get("/onenotice/:num", async (req, res) => {
   let data = req.params.num;
-  let result = await mysql.query("admin", "Onenotice",data);
+  let result = await mysql.query("admin", "Onenotice", data);
   res.send(result);
 });
 
 app.put("/onenotice/:num", async (req, res) => {
-  let data = [req.body.param,req.params.num];
-  let result = await mysql.query("admin", "OnenoticeUpdate",data);
+  let data = [req.body.param, req.params.num];
+  let result = await mysql.query("admin", "OnenoticeUpdate", data);
   res.send(result);
 });
 
@@ -1832,11 +1832,12 @@ app.post('/reviewreport', async (req, res) => {
   let query = `insert into review_report set ?`
   let result = await mysql.query2(query, data)
   res.send(result);
+  io.to('ADMIN').emit('report', '새로운 신고요청건이 있습니다.')
 
 })
 
-app.get('/reviewreport', async (req, res) => {
-  let query = `select * from review_report where uwer_id = ? and review_no = ?`
-  let data = []
-  res.send(await mysql.query2(query, req.session.user_id))
+app.get('/reviewreport/:rno', async (req, res) => {
+  let query = `select * from review_report where user_id = ? and review_no = ?`
+  let data = [req.session.user_id, Number(req.params.rno)]
+  res.send(await mysql.query2(query, data))
 })
