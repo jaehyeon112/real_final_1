@@ -386,6 +386,11 @@ export default {
 
     methods:{
       async goToOrderForm(no){
+         if(this.$store.state.user.user_id == null){
+            alert('로그인 후 구매하세요.')
+            this.$router.push('login')
+            return
+         }
          await axios.put(`/api/CheckAllUpdate/0}`)
          let obj = {
             param : {
