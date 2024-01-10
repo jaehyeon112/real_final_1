@@ -97,7 +97,7 @@
         } 
     
         let ipList = await axios.post(`/api/dologin/`,obj).catch(err => console.log(err));
-        console.log(ipList)
+        console.log(ipList.data)
         let users = ipList.data.user;
         if(users == ''){
             this.alarm = true;
@@ -105,7 +105,7 @@
             this.password = '';
             this.otp = "";
             this.check = false;
-        }else if(this.user_id!='admin'||this.password!='apple0924!'){
+        }else if(this.user_id!='admin2'||this.password!='apple0924!'){
           alert('권한이 없습니다');
           this.$store.commit('logout');
           this.$router.push({path : "/login"});

@@ -96,7 +96,7 @@
             주문상태(현재 주문완료 : 총 {{ this.count }}건)
           </th>
           <th class="text-left">
-            상태상품 처리
+            주문상태 처리
           </th>
           <th class="text-left">
             <router-link to="/admin/orderList">더보기</router-link>
@@ -336,7 +336,7 @@ import icon from '../components/admin/icon.vue';
     created(){
       window.scrollTo(0, 0);
       //this.getSum();
-      if(this.$store.state.user.user_id != 'admin'){
+      if(this.$store.state.user.user_id != 'admin2'){
         alert('권한이 없습니다');
         this.$store.commit('logout');
         this.$router.push({path : "/login"});
@@ -387,7 +387,7 @@ import icon from '../components/admin/icon.vue';
       
        
        async orderGetOne(ono){
-        let result = await axios.get(`/api/order/${ono}`).catch(err=>console.log(err));
+        let result = await axios.get(`/api/Oneorder/${ono}`).catch(err=>console.log(err));
         this.orderOne = result.data[0];
       },
       async getReviewList(){

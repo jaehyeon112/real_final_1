@@ -2,7 +2,7 @@
     <div class="container-fluid" style:width="50px">
     <div class="row">
         <side/>
-    <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+    <main class="col-md-9 col-lg-10 px-md-4">
     <v-card
       flat
       title="리뷰 리스트"
@@ -109,4 +109,10 @@
         }
       }
     }
-  </script>
+</script>
+<style scoped>
+.col-md-9 {
+  margin: 0 auto;
+  padding: 10px;
+}
+</style>
