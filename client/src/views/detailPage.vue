@@ -149,7 +149,6 @@
 
                                        {{ review.review_content }}
                                     </span>
-                                  
                                  </v-row>
                                  <v-row justify="center" >
                                     <v-col cols="8" style="width:500px">
@@ -162,7 +161,7 @@
                      <span v-else><v-btn class="ma-2" variant="text" icon="mdi-thumb-up" style="color: black;" @click="upCnt(review.review_no)"><span class="mdi mdi-thumb-up-outline"></span></v-btn>{{ review.like_cnt }}</span>
                                           </v-col>
                                           <v-col>
-                                             <span> <v-btn class="ma-2" variant="text" icon="mdi-thumb-down" color="red-lighten-2">신고</v-btn></span>
+                                             <span> <v-btn class="ma-2" variant="text" icon="mdi-thumb-down" color="red-lighten-2" @click="report(review.review_no)">신고</v-btn></span>
                                           </v-col>
                                        </v-row>
                                     </v-col>
@@ -299,6 +298,21 @@ export default {
         return text.substring(0, maxLength) + '...더보기';
       }
       return text;
+    }
+    ,
+    async report(rNo){
+      if(this.$store.state.user.user_id == null){
+         alert('로그인 후 이용할 수 있습니다.')
+         return
+      }
+      let obj = {
+         param : {
+            report_status : 'p1',
+            report_reason : 'q1',
+            review_no : rNo
+         }
+      }
+      let a = await axios.get('/api/reviewreport')
     }
       ,
       cul(i){

@@ -1760,3 +1760,16 @@ app.get('/mainreview',
   async (req, res) => {
     res.send(await mysql.query('test', 'mainReview'))
   })
+
+app.post('/reviewreport', async (req, res) => {
+  let data = req.body.param
+  let query = `insert into review_report set ?`
+  let result = await mysql.query2(query, data)
+  res.send(result);
+
+})
+
+app.get('/reviewreport', async (req, res) => {
+  let query = `select * from review_report where uwer_id = ?`
+  res.send(await mysql.query2(query, req.session.user_id))
+})
