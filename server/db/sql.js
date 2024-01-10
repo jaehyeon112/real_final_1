@@ -427,7 +427,7 @@ let delivery = {
 }
 //찜테이블
 let like = {
-  likeInfo: `select* from likes where user_id=? and prod_no=?`,
+  likeInfo: `select * from likes where user_id = ? and prod_no=?`,
   likeInsert: `insert into likes set?`,
   likeDel: `delete from likes where user_id=? and prod_no =?`,
   likeList: `select * from product p right join likes l on p.prod_no = l.prod_no where user_id=?`

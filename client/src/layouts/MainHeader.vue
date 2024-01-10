@@ -61,7 +61,7 @@
       
     </div>
     <div class="col">
-      <router-link class="nav-custom" to="/">소개</router-link>
+      <router-link class="nav-custom" to="/intro">소개</router-link>
     </div>
     <div class="col">
       <router-link class="nav-custom" to="/menu/new">신제품</router-link>

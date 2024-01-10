@@ -359,7 +359,7 @@ export default {
             reviewList:[],
             inquireList:[],
             counter:1,
-            isShow:false,
+            isShow:'',
             likeState1:false,
             sheet:false,
             isSoldOut: false,
@@ -445,14 +445,15 @@ export default {
                                   
         },
         async getLikes(){
-         if(this.$store.state.user.user_id ==null){
+         if(this.$store.state.user.user_id == null){
             return;
          }
-        let list = await axios.get(`/api/prodLike/${this.pno}`)
+         console.log(this.$store.state.user.user_id)
+         console.log('================')
+        let list = await axios.get(`/api/prodLike/${this.$store.state.user.user_id}/${this.pno}`)
                                   .catch(err=>console.log(err));
+            console.log(list)
             this.likeList =list.data
-            console.log(list.data + "?")
-            console.log(this.likeList)
             if(list.data.length == 0 ){
                console.log('찜안한상태'+list.data)
                this.isShow= false;
@@ -686,7 +687,7 @@ export default {
             return;
          }
             if(this.isShow == true ){ //찜한상태라는 말
-               let dellike = await axios.delete(`/api//DelprodLike/${this.$store.state.user.user_id}/${this.pno}`)
+               let dellike = await axios.delete(`/api/DelprodLike/${this.$store.state.user.user_id}/${this.pno}`)
                                        .catch(err=>console.log(err));
                   if(dellike.data.affectedRows>0){                        
                      alert('삭제성공')

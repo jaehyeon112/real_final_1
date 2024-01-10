@@ -1645,10 +1645,14 @@ app.delete("/DelprodLike/:id/:pno", async (req, res) => {
   console.log(datas);
   res.send(await mysql.query("like", "likeDel", datas))
 });
-app.get("/prodLike/:pno", async (req, res) => {
-  let datas = [req.session.user_id, req.params.pno]
-  res.send(await mysql.query("like", "likeInfo", datas))[0]
+
+app.get("/prodLike/:id/:pno", async (req, res) => {
+  let datas = [req.params.id, Number(req.params.pno)]
+  console.log(datas)
+  let aa = await mysql.query("like", "likeInfo", datas)
+  res.send(aa)
 });
+
 app.get("/prodLikes", async (req, res) => {
   let id = req.session.user_id
   res.send(await mysql.query("like", "likeList", id))
