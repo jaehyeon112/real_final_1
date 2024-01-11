@@ -401,14 +401,14 @@ let orders = {
   updateCart: `update cart set quantity=quantity+? where prod_no =? and user_id=?;`,
   comparisonCart: `select * from cart where user_id=?`,
   detailInfo: `  select distinct file_name,format(avg(review_grade),1) as star,count(review_grade) as total, p.* from product p left join order_detail d on p.prod_no = d.prod_no
-  left join review r  on r.detail_order_no = d.order_detail_no left join file f on(p.prod_no = f.prod_no) where p.prod_no = ? group by  d.prod_no order by f.orders;`,
+  left join review r  on r.detail_order_no = d.order_detail_no left join file f on(p.prod_no = f.prod_no) where p.prod_no = ?  and f.orders='s0' group by  d.prod_no order by f.orders;`,
 
-  detailInfoImage: `select file_name, p.* from product p 
+  detailInfoImage: `select distinct file_name, p.* from product p 
   left join order_detail d on p.prod_no = d.prod_no
     left join review r  on r.detail_order_no = d.order_detail_no 
-    left join file f on(p.prod_no = f.prod_no) where p.prod_no = 20
+    left join file f on(p.prod_no = f.prod_no) where p.prod_no = ?
     order by f.orders
-      limit 5;`,
+      ;`,
 
   //detailOrderLists:`select * from order_detail o1 left join orders o2 on o1.order_no = o2.order_no where o1.order_no =? and user_id = ?`,//주문창에서 상세주문내역으로 이동시 불러올 값
   orderList: `select fi.file_name,ord.order_date, dord.order_detail_no, ord.delivery_charge, ord.total_payment, ord.real_payment, ord.payment_no, ord.order_no, group_concat(prod_name) prod_name_list, ord.order_status, ord.point_use , dord.order_quantity, dord.prod_no

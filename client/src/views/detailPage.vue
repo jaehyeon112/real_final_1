@@ -6,6 +6,7 @@
          <div class="container px-4 px-lg-5 my-5">
             <div class="row gx-4 gx-lg-5">
                <div class="col-md-4">
+                  {{ productInfo.file_name }}
                   <v-img class="main1" :src="`/api/test/`+ productInfo.file_name"></v-img>
                   <v-img style="float:left; margin:10px" v-for="(item,idx) in Img" :key="idx" width="100" :src="`/api/test/`+item.file_name"></v-img>
                </div>
@@ -368,7 +369,8 @@ export default {
       inquireList:[]
       ,Img : [],
       totalPrice: 0,
-      detailImage : ''
+      detailImage : '',
+
         }
     },
     created(){ 
@@ -459,7 +461,6 @@ export default {
             }
 
             let info2 = await axios.get(`/api/detailProd/${this.pno}`)
-            
             this.Img = info2.data
             if(this.Img.length == 5){
                this.detailImage = this.Img[4].file_name;
