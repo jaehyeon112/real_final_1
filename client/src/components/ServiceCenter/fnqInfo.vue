@@ -64,7 +64,10 @@ export default {
 }
 </script>
 <style scoped>
-.td{
-    background-color: #FFB300;
+ table *{
+        text-align: center;
+    }
+    th{
+    background-color: #FFA726;
 }
 </style>

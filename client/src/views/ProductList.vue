@@ -124,6 +124,7 @@
                     let result = await axios.patch(`/api/prod/${pno}`).catch(err=>console.log(err));
                     if(result.data.affectedRows==1){
                         alert('상품이 품절되었습니다');
+                        this.prodList(this.startNum);
                     }else{
                         alert('삭제실패'); 
                     }

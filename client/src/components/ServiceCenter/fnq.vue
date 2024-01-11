@@ -1,5 +1,9 @@
 <template>
     <div>
+        <br>
+        <br>
+        <br>
+        <br>
         <div class="container">
         <table class="table table-hover">
             <thead>
@@ -53,9 +57,12 @@ export default {
 }
 </script>
 <style scoped>
-    table *{
+  table *{
         text-align: center;
     }
+    th{
+    background-color: #FFA726;
+}
 </style>
 
   
