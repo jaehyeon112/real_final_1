@@ -462,7 +462,7 @@ let like = {
 let inquire = {
   myInquireList: `select * from inquire where user_id=?`,
   inquireListP: `select * from inquire i join order_detail o on i.order_detail_no=o.order_detail_no where prod_no=?`,
-  inquireInfo: `select * from inquire where inquire_no=?`,
+  inquireInfo2: `select * from inquire where inquire_no=?`,
   inquireInsert: `insert into inquire set?`,
   inquireUpdate: `update inquire set? where user_id=? and inquire_no=?`,
   inquireAnswer: `select * from reply where inquire_no=?`,
@@ -475,7 +475,7 @@ let member = {
 }
 let notice = {
   noticeList: `select * from notice order by importance`,
-  noticeInfo: `select * from notice where notcie_no=?;`
+  noticeInfo: `select * from notice where notice_no=?;`
 }
 let fnq = {
   fnqList: `select * from fnq `,

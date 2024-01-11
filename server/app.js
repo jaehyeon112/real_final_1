@@ -1749,9 +1749,9 @@ app.get("/myInquire/:id", async (req, res) => {
   let id = req.params.id;
   res.send(await mysql.query("inquire", "myInquireList", id))
 })
-app.get("/inquire/:ino", async (req, res) => {
-  let ino = Number(req.params.ino)
-  res.send(await mysql.query("inquire", "inquireInfo", ino))
+app.get("/Myinquires/:ino", async (req, res) => {
+  let ino = req.params.ino;
+  res.send(await mysql.query("inquire", "inquireInfo2", ino))
 })
 app.post("/inquire", async (req, res) => {
   let data = req.body.param
@@ -1786,16 +1786,17 @@ app.get("/photoInq/:ino", async (req, res) => {
 app.get("/notice", async (req, res) => {
   res.send(await mysql.query("notice", "noticeList"))
 })
-app.get("/notice/:nno", async (req, res) => {
-  let nno = req.params.nno
+app.get("/Mynotice/:nno", async (req, res) => {
+  let nno = Number(req.params.nno);
   res.send(await mysql.query("notice", "noticeInfo", nno))
 })
 app.get("/fnq", async (req, res) => {
   res.send(await mysql.query("fnq", "fnqList"))
 })
-app.get("/fnq/:fno", async (req, res) => {
+app.get("/fnqInfo/:fno", async (req, res) => {
   let fno = req.params.fno
-  res.send(await mysql.query("fnq", "fnqInfo"))
+  res.send(await mysql.query("fnq", "fnqInfo",fno));
+  console.log('현재 : ',fno)
 })
 
 
