@@ -6,7 +6,6 @@
          <div class="container px-4 px-lg-5 my-5">
             <div class="row gx-4 gx-lg-5">
                <div class="col-md-4">
-                  {{ productInfo.file_name }}
                   <v-img class="main1" :src="`/api/test/`+ productInfo.file_name"></v-img>
                   <v-img style="float:left; margin:10px" v-for="(item,idx) in Img" :key="idx" width="100" :src="`/api/test/`+item.file_name"></v-img>
                </div>
@@ -283,7 +282,7 @@
                      <th>내용</th>
                      <th>작성일자</th>
                   </tr>
-                  <tr :key="idx" v-for="(inquire, idx) in inquireList">
+                  <tr :key="idx"  v-for="(inquire, idx) in inquireList">
                      <td> {{ inquire.inquire_no }}</td>
                      <td  class="text-center " v-if="inquire.inquire_category=='j1'">상품문의</td>
                      <td  class="text-center "  v-else-if="inquire.inquire_category=='j2'">배송문의</td>
@@ -293,8 +292,9 @@
                      <td> {{ inquire.inquire_title }}</td>
                      <td> {{ inquire.inquire_content }}</td>
                      <td> {{ $dateFormat(inquire.create_date, 'yyyy년MM월dd일')}}</td>
-                     
                   </tr>
+                  
+                  <td v-if="inquireList.length==0"> 해당 문의가 없습니다.</td>
             </table>
             </div>
             
