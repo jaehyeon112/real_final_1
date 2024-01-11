@@ -18,7 +18,7 @@
               <dl>배송비: {{ order.delivery_charge }}</dl>
               <dl>결제방법: {{ order.payment_no }}</dl>
               
-              {{ order.order_quantity }} 수량
+              구매 수량 {{ order.order_quantity }} 
               <dl v-if="order.delivery == null">
                 <dl v-if="order.order_status =='c1'">진행상태: 주문완료</dl>
                 <dl v-else-if="order.order_status =='c2'">진행상태: 상품준비중</dl>
@@ -26,7 +26,7 @@
                 <dl v-else>진행상태: 출고완료</dl>
               </dl>
               <dl v-else>
-                <dl v-if="order.delivery == 'd1'">진행상태: 배송중</dl>
+                <dl v-if="order.delivery == 'd4'">진행상태: 배송중</dl>
                 <dl v-else>진행상태: 배송완료</dl>
               </dl>
               <dl><v-btn v-model="order.order_status" color="#FFB300" class="custom-button" @click="showMenu(order.order_no)" :disabled="order.order_status != 'c1'">주문취소</v-btn></dl>
