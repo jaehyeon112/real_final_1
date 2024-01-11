@@ -10,9 +10,9 @@ import Header from '../layouts/AdminHeader.vue';
 import Footer from '../layouts/MainFooter.vue';
 export default {
     components : {
-    Header,
-    Footer
-  },
+      Header,
+      Footer
+    },
   methods:{
     showNotification(message) {
       // 사용자가 알림을 허용했는지 확인
