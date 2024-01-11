@@ -42,7 +42,7 @@ export default {
                                    .catch(err => console.log(err))).data;       
         },
         goToDetail(fnqNo){
-            this.$router.push({path :'/serviceCenter/fnqInfo', query : {fnqNo : fnqNo}});
+            this.$router.push({path :'qnaInfo', query : {fnqNo : fnqNo}});
         },
         getDateFormat(date){
             return this.$dateFormat(date,'yyyy년MM월dd일');

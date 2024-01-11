@@ -1,4 +1,4 @@
-import admin from '@/views/AdminHome.vue';
+import admin from '../views/AdminHome.vue';
 import Adminlogin from '../components/admin/AdminLoginForm.vue';
 import adminMain from "@/views/AdminMain.vue";
 import userList from "@/views/UserList.vue";

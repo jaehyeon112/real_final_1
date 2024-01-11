@@ -75,13 +75,13 @@ export default {
     methods: {
         async getInquireInfo() {
             console.log("인포"+this.searchNo)
-           let result = await axios.get(`/api/inquire/${this.searchNo}`) //sql.js 단건조회 경로 그대로 가져오기 api붙여주는 이유 proxy와 관련
+           let result = await axios.get(`/api/Myinquires/${this.searchNo}`) //sql.js 단건조회 경로 그대로 가져오기 api붙여주는 이유 proxy와 관련
                                     .catch(err=>{
                                         console.log(err)
                                     })      
-            this.inquireInfo =result.data[0];
-            console.log(this.inquireInfo)                 
-            console.log(result.data)                 
+                                    this.inquireInfo =result.data[0];
+                                    console.log('현재 inquire',this.inquireInfo)                 
+                                    console.log('현재 데이터',result.data[0])                 
         },
         
         goToUpdateForm(no) { //단건조회랑 수정을 같이 쓰는 이유 //vue에서 얘는 페이지가 바뀌는거다 데이터 불러오는 서버통신은 그 후의 문제다 페이지 바뀌는거 때문에 axios안쓴다

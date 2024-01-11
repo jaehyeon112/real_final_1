@@ -28,7 +28,7 @@ import myInquire from "@/components/ServiceCenter/inquire.vue";
 import myInquireInfo from "@/components/ServiceCenter/inquireInfo.vue";
 import qnaList from "@/components/ServiceCenter/fnq.vue";
 import qnaInfo from "@/components/ServiceCenter/fnqInfo.vue";
-import noticeList from "@/components/ServiceCenter/notice.vue";
+import notissss from "../components/ServiceCenter/notice.vue";
 import noticeInfo from "@/components/ServiceCenter/noticeInfo.vue";
 import reviewForm from "../views/ReviewForm.vue";
 import inquireForm from "../views/inquireForm.vue";
@@ -112,6 +112,11 @@ export default {
       component: join
     },
     {
+      path: "join",
+      name: "join",
+      component: join
+    },
+    {
       path: "finding",
       name: "finding",
       component: finding
@@ -146,18 +151,19 @@ export default {
       path: "serviceCenter",
       name: "serviceCenter",
       component: serviceCenter,
-      children: [{
-          path: "qnaList", // 
+      children: [
+        {
+          path: "qnaList",
           name: "qnaList",
           component: qnaList
         },
         {
-          path: "noticeList",
-          name: "noticeList",
-          component: noticeList
+          path: "notissss",
+          name: "notissss",
+          component: notissss
         },
         {
-          path: "qnaInfo", //  
+          path: "qnaInfo",
           name: "qnaInfo",
           component: qnaInfo
         },

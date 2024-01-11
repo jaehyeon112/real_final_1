@@ -102,7 +102,7 @@ async function sendEmail(to, subject, body) {
     }
   });
   const mailOptions = {
-    from: `yedam1조 Hompage명 <${process.env.GMAIL_OAUTH_USER}>`,
+    from: `yedam1 JOYMEAL <${process.env.GMAIL_OAUTH_USER}>`,
     to,
     subject,
     text: body
@@ -166,8 +166,8 @@ app.post('/phonecheck', async (req, res) => {
   const coolsms = require('coolsms-node-sdk').default;
   async function printTokenResult(phone, token) {
 
-    const messageService = new coolsms("NCSX69ZDDZ3AMPOA", "RTFTFKLPESGNPPFMBL0I88LTS2CHRNET");
-
+    const messageService = new coolsms("NCSFCFI7TO43OVAC", "RIIYNSOEI8CXRA71EI47IOIV5YD9O6NC");
+    
     const result = await messageService
       .sendOne({
         to,
@@ -618,6 +618,12 @@ app.post("/refundInsert", async (request, res) => { // orders 등록
   res.send((await mysql.query("test", "refundInsert", data)));
 });
 
+
+app.post("/joinCouponInsert", async (request, res) => { // 가입축하쿠폰 등록
+  let data = request.body.param;
+  res.send((await mysql.query("test", "joinCouponInsert", data)));
+});
+
 //서영희-회원관리
 app.get("/user", async (req, res) => {
   let data = await mysql.query("admin", "AlluserList");
@@ -904,6 +910,14 @@ app.post("/join/joinIn", async (req, res) => {
   }
 
 });
+
+//회원가입 > 가입축하쿠폰 지급하기 (z1)
+app.post("/joincoupon", async(req, res) => {
+  let data = req.body.param;
+  let result = await mysql.query("user", "joinCoupon", data);
+  res.send(result);
+    console.log(result);
+})
 
 
 app.get('/logout', async (req, res) => {
@@ -1735,9 +1749,9 @@ app.get("/myInquire/:id", async (req, res) => {
   let id = req.params.id;
   res.send(await mysql.query("inquire", "myInquireList", id))
 })
-app.get("/inquire/:ino", async (req, res) => {
-  let ino = Number(req.params.ino)
-  res.send(await mysql.query("inquire", "inquireInfo", ino))
+app.get("/Myinquires/:ino", async (req, res) => {
+  let ino = req.params.ino;
+  res.send(await mysql.query("inquire", "inquireInfo2", ino))
 })
 app.post("/inquire", async (req, res) => {
   let data = req.body.param
@@ -1772,16 +1786,17 @@ app.get("/photoInq/:ino", async (req, res) => {
 app.get("/notice", async (req, res) => {
   res.send(await mysql.query("notice", "noticeList"))
 })
-app.get("/notice/:nno", async (req, res) => {
-  let nno = req.params.nno
+app.get("/Mynotice/:nno", async (req, res) => {
+  let nno = Number(req.params.nno);
   res.send(await mysql.query("notice", "noticeInfo", nno))
 })
 app.get("/fnq", async (req, res) => {
   res.send(await mysql.query("fnq", "fnqList"))
 })
-app.get("/fnq/:fno", async (req, res) => {
+app.get("/fnqInfo/:fno", async (req, res) => {
   let fno = req.params.fno
-  res.send(await mysql.query("fnq", "fnqInfo"))
+  res.send(await mysql.query("fnq", "fnqInfo",fno));
+  console.log('현재 : ',fno)
 })
 
 

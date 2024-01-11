@@ -10,9 +10,9 @@ import Header from '../layouts/AdminHeader.vue';
 import Footer from '../layouts/MainFooter.vue';
 export default {
     components : {
-    Header,
-    Footer
-  },
+      Header,
+      Footer
+    },
   methods:{
     showNotification(message) {
       // 사용자가 알림을 허용했는지 확인
@@ -23,13 +23,7 @@ export default {
         })}}
   },
   created() {
-    if(this.$store.state.user.user_id == 'admin2'){
-      this.$socket.emit('joinRoom', 'ADMIN');
-      this.$router.push({path : "/admin/Main"})
-    }else{
-      this.$router.push({path : "/admin/Adminlogin"});
-      this.$store.commit('logout');
-    }
+   
     this.$socket.on('test', (m)=>{
         this.showNotification(m);
       })
@@ -48,7 +42,13 @@ export default {
       if (Notification.permission !== 'granted') {
       Notification.requestPermission();
     }
-    
+    if(this.$store.state.user.user_id == 'admin2'){
+      this.$socket.emit('joinRoom', 'ADMIN');
+      this.$router.push({path : "/admin/Main"})
+    }else{
+      this.$router.push({path : "/admin/Adminlogin"});
+      this.$store.commit('logout');
+    }
   },
 
 }

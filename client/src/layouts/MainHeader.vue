@@ -61,9 +61,6 @@
       
     </div>
     <div class="col">
-      <router-link class="nav-custom" to="/intro">소개</router-link>
-    </div>
-    <div class="col">
       <router-link class="nav-custom" to="/menu/new">신제품</router-link>
     </div>
     <div class="col">
@@ -149,6 +146,7 @@ methods: {
   logout(){
     alert('로그아웃 되었습니다~')
     this.$store.commit('logout');
+    this.$store.commit('kakaoLogout');
   },
 
 //마이페이지 안떠서 임시로좀 쓸게요 - 회원탈퇴

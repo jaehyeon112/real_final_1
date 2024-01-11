@@ -31,7 +31,7 @@ export default {
     
 
    
-    // this.$router.push({ path: "/main" });
+    this.$router.push({ path: "/main" });
   },mounted(){
     //알람 표시
      

@@ -5,7 +5,7 @@
     @mouseover="showCategoryList"
     @mouseleave="hideCategoryList"
   >
-    <span>카테고리</span>
+    <span style="cursor: pointer;">카테고리</span>
     <div v-if="showCategory" class="category-list">
       <!-- 카테고리?  -->
       <ul>
@@ -29,7 +29,7 @@
         <li class="test"
         @mouseenter="showSecondCategoryList2"
           @mouseleave="hideSecondCategoryList2">
-          <span class="nav-custom" >갑자기 땡긴다면?</span>
+          <span class="nav-custom"  style="cursor: pointer" >갑자기 땡긴다면?</span>
         </li>
         <li class="test">
           <router-link class="nav-custom" to="/menu/sale">특가</router-link>
