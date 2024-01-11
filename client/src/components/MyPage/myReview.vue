@@ -31,6 +31,9 @@
                     </tr>
                 </tbody>
             </table>
+            <v-container v-if="reviewList.length!=0">
+          <page ref="pagination1" @changePage="changePage" :list="totalList" :totals="5"></page>
+        </v-container>
         </div>
         <p v-else>등록된 리뷰가 없습니다</p>
     </div>
@@ -41,17 +44,26 @@ import axios from 'axios';
 export default {
     data(){
         return {
-            reviewList : []
+            reviewList : [],
+            totalList : '',
+            starNo : 0
         };
     },
     created(){
-        this.getReviewList();
+        this.total()
+        this.getReviewList(this.starNo);
     },
     methods : {
-        async getReviewList(){
-            
-            this.reviewList = (await axios.get(`/api/myReview`)
+        async total(){
+            let datas = (await axios.get(`/api/myReviews`)
                                    .catch(err => console.log(err))).data;
+                                   this.totalList = datas;
+        },
+        async getReviewList(no){
+            
+            this.reviewList = (await axios.get(`/api/myReviews/${no}`)
+                                   .catch(err => console.log(err))).data;
+                                   this.total();
         },
         
         async deleteReview(no){
@@ -71,8 +83,11 @@ export default {
         return text.substring(0, maxLength) + '...더보기';
       }
       return text;
-    }       
+    } ,
+    async changePage(no) {
+        this.getReviewList(no)
     }
+}
 }
 </script>
 

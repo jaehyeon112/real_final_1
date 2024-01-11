@@ -82,6 +82,9 @@ export default{
     created(){
         this.getMember();
         //this.getNextMontPoint();
+        if(this.$store.state.user.user_id== null){
+            this.$router.push('/login')      
+        }
     },
     watch: {
        
@@ -99,7 +102,7 @@ export default{
          
                console.log(`${this.$store.state.user.user_id}`)
                console.log(this.member)
-            this.$router.push('/myPage/myOrderList')      
+            
         },
         goTodelete(){
             this.$router.push('/withdrawal')

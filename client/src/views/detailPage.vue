@@ -282,7 +282,7 @@
                      <th>내용</th>
                      <th>작성일자</th>
                   </tr>
-                  <tr :key="idx" v-for="(inquire, idx) in inquireList">
+                  <tr :key="idx"  v-for="(inquire, idx) in inquireList">
                      <td> {{ inquire.inquire_no }}</td>
                      <td  class="text-center " v-if="inquire.inquire_category=='j1'">상품문의</td>
                      <td  class="text-center "  v-else-if="inquire.inquire_category=='j2'">배송문의</td>
@@ -292,8 +292,9 @@
                      <td> {{ inquire.inquire_title }}</td>
                      <td> {{ inquire.inquire_content }}</td>
                      <td> {{ $dateFormat(inquire.create_date, 'yyyy년MM월dd일')}}</td>
-                     
                   </tr>
+                  
+                  <td v-if="inquireList.length==0"> 해당 문의가 없습니다.</td>
             </table>
             </div>
             
@@ -368,7 +369,8 @@ export default {
       inquireList:[]
       ,Img : [],
       totalPrice: 0,
-      detailImage : ''
+      detailImage : '',
+
         }
     },
     created(){ 
@@ -459,7 +461,6 @@ export default {
             }
 
             let info2 = await axios.get(`/api/detailProd/${this.pno}`)
-            
             this.Img = info2.data
             if(this.Img.length == 5){
                this.detailImage = this.Img[4].file_name;
@@ -474,8 +475,6 @@ export default {
          if(this.$store.state.user.user_id == null){
             return;
          }
-         console.log(this.$store.state.user.user_id)
-         console.log('================')
         let list = await axios.get(`/api/prodLike/${this.$store.state.user.user_id}/${this.pno}`)
                                   .catch(err=>console.log(err));
             console.log(list)

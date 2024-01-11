@@ -33,11 +33,11 @@
                                 style="white-space: pre-wrap;border:none;background-color: white;"></pre>
                         </td>
                     </tr>
-                    <tr>
+                    <!-- <tr>
                         <td colspan="6" class="text-center">
-                            <button class="btn btn-xs btn-info" @click="goToUpdateForm(inquireInfo.inquire_no)">수정</button><!-- 클릭 이벤트는 이벤트객체가 넘어온다~ 근데 그게 필요없다그래서 뭘 받아올지 명시하는게 필요하다-->
+                            <button class="btn btn-xs btn-info" @click="goToUpdateForm(inquireInfo.inquire_no)">수정</button>클릭 이벤트는 이벤트객체가 넘어온다~ 근데 그게 필요없다그래서 뭘 받아올지 명시하는게 필요하다
                         </td>
-                    </tr>
+                    </tr> -->
                 </tbody>
             </table>
         </div>

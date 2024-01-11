@@ -26,7 +26,6 @@
     <v-container>
       <pagination  ref="pagination1" @changePage="changePage" v-bind:list="totalList" :totals="totals" ></pagination>
     </v-container>
-    <v-btn @click="socketTest">우하하</v-btn>
   </div>
 </template>
 

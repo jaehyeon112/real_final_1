@@ -76,6 +76,9 @@ HAVING hotItem > 1 and avg_grade > 4
 ORDER BY hotItem DESC
 limit ?, 6;
 `,
+
+  // 회원가입과 동시에 가입축하쿠폰 지급
+  joinCouponInsert : `INSERT INTO coupon set ?`,
   // 추가 배송지 
   adddeliveryList: `select * from add_delivery where user_id =?`,
 
@@ -328,7 +331,8 @@ let admin = {
 //예빈
 
 let reviews = {
-  myReview: `select * from review where user_id=? `, //마이페이지에서 내가 작성한 리뷰 리스트
+  AllmyReview: `select * from review where user_id=?`, //마이페이지에서 내가 작성한 리뷰 리스트
+  myReview: `select * from review where user_id=? limit ?,5 `, //마이페이지에서 내가 작성한 리뷰 리스트
   reviewInfo: `select * from review r left join file f on r.review_no = f.review_no where r.user_id=? and r.review_no=?`, //마이페이지 리뷰하나 보기
   //orderNoReview: `select * from review where user_id=?`,
   //서영희
@@ -404,14 +408,14 @@ let orders = {
   updateCart: `update cart set quantity=quantity+? where prod_no =? and user_id=?;`,
   comparisonCart: `select * from cart where user_id=?`,
   detailInfo: `  select distinct file_name,format(avg(review_grade),1) as star,count(review_grade) as total, p.* from product p left join order_detail d on p.prod_no = d.prod_no
-  left join review r  on r.detail_order_no = d.order_detail_no left join file f on(p.prod_no = f.prod_no) where p.prod_no = ? group by  d.prod_no order by f.orders;`,
+  left join review r  on r.detail_order_no = d.order_detail_no left join file f on(p.prod_no = f.prod_no) where p.prod_no = ?  and f.orders='s0' group by  d.prod_no order by f.orders;`,
 
-  detailInfoImage: `select file_name, p.* from product p 
+  detailInfoImage: `select distinct file_name, p.* from product p 
   left join order_detail d on p.prod_no = d.prod_no
     left join review r  on r.detail_order_no = d.order_detail_no 
-    left join file f on(p.prod_no = f.prod_no) where p.prod_no = 20
+    left join file f on(p.prod_no = f.prod_no) where p.prod_no = ?
     order by f.orders
-      limit 5;`,
+      ;`,
 
   //detailOrderLists:`select * from order_detail o1 left join orders o2 on o1.order_no = o2.order_no where o1.order_no =? and user_id = ?`,//주문창에서 상세주문내역으로 이동시 불러올 값
   orderList: `select fi.file_name,ord.order_date, dord.order_detail_no, ord.delivery_charge, ord.total_payment, ord.real_payment, ord.payment_no, ord.order_no, group_concat(prod_name) prod_name_list, ord.order_status, ord.point_use , dord.order_quantity, dord.prod_no

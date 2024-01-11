@@ -22,7 +22,7 @@
               <dl v-if="order.delivery == null">
                 <dl v-if="order.order_status =='c1'">진행상태: 주문완료</dl>
                 <dl v-else-if="order.order_status =='c2'">진행상태: 상품준비중</dl>
-                <dl v-else-if="order.order_status == 'c4'">진행상태: 주문취소</dl>
+                <dl v-else-if="order.order_status == 'c3'">진행상태: 주문취소</dl>
                 <dl v-else>진행상태: 출고완료</dl>
               </dl>
               <dl v-else>
