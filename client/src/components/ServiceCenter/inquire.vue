@@ -15,7 +15,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr v-if="inquireList.length ==0" > <td>문의한 내역이 존재하지 않습니다</td></tr>
+                <tr v-if="this.inquireList.length == 0" ><td>문의한 내역이 존재하지 않습니다</td></tr>
                 <tr  v-else :key="i" v-for="(inquire, i) in inquireList" @click="goToDetail(inquire.inquire_no)">
                     
                     

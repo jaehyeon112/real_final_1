@@ -1630,9 +1630,14 @@ app.get("/detailReview/:pno", async (request, response) => {
   response.send(list);
 })
 //마이페이지에서 리뷰목록
-app.get("/myReview", async (request, response) => {
-  let id = request.session.user_id
+app.get("/myReviews/:limit", async (request, response) => {
+  let id = [request.session.user_id,Number(request.params.limit)]
   let list = await mysql.query('reviews', 'myReview', id)
+  response.send(list);
+})
+app.get("/myReviews", async (request, response) => {
+  let id = request.session.user_id
+  let list = await mysql.query('reviews', 'AllmyReview', id)
   response.send(list);
 })
 //리뷰등록 + (포인트 지급은 위에 참고)
