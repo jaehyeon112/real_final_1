@@ -17,7 +17,7 @@
           @mouseleave="hideSecondCategoryList"
           class="test"
         >
-          <span class="nav-custom" to="/menu/meal">밀키트</span>
+          <span class="nav-custom" to="/menu/meal"  style="cursor: pointer">밀키트</span>
         </li>
 
         <li class="test">
