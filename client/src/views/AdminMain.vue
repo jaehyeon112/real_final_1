@@ -234,7 +234,8 @@
         >
           <td>{{ review.review_no }}</td>
           <td>{{ review.user_id }}</td>
-          <td>{{ review.report_reason }}</td>
+          <td v-if="review.report_reason=='q1'">욕설 및 비방</td>
+          <td v-if="review.report_reason=='q2'">광고성 리뷰</td>
           <td>{{ $dateFormat(review.report_date,'yyyy년 MM월 dd일') }}</td>
           <td v-if="review.report_status=='p1'">{{this.reviews='새로운 신고건'}}</td>
           <td v-else-if="review.report_status=='p2'">신고처리완료</td>
