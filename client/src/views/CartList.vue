@@ -373,7 +373,7 @@ export default {
       deliveryPrice() {
         for (let i = 0; i < this.cartList.length; i++) {
             if(this.cartList[i].cart_checkbox == 1){
-              this.delivery = this.discount < 40000 ? 3000 : 0;
+              this.delivery = this.total < 40000 ? 3000 : 0;
             }
         }
       },

@@ -5,13 +5,13 @@
         <div class="row text-center d-flex justify-content-center pt-2">
           <div class="col-md-2">
             <h6 class="text-uppercase font-weight-bold">
-              <router-link to="/terms" class="text-white">이용약관</router-link>
+              <router-link to="/main" class="text-white">이용약관</router-link>
             </h6>
           </div>
 
           <div class="col-md-2">
             <h6 class="text-uppercase font-weight-bold">
-              <router-link to="/team" class="text-white">팀소개</router-link>
+              <router-link to="/main" class="text-white">팀소개</router-link>
             </h6>
           </div>
         </div>

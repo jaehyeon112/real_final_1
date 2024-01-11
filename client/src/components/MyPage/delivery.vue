@@ -29,12 +29,12 @@
                     <div><p>배송지 이름</p></div>
                     <v-text-field  variant="outlined" style="background-color:antiquewhite ;" v-model="delivery.delivery_name" ></v-text-field>
                 
-                    <div><v-btn @click="search()">우편번호 찾기</v-btn></div>
+                    <div><v-btn @click="search">우편번호 찾기</v-btn></div>
                     <hr>
                     <v-text-field  variant="outlined" placeholder="우편번호" style="background-color:antiquewhite " v-model="delivery.delivery_postcode" />
                     
                     <v-text-field  variant="outlined" id="roadAddress" placeholder="도로명주소" style="background-color:antiquewhite " v-model="delivery.delivery_address"/>
-                    <!-- <span id="guide" style="color:#000;display:none"></span> -->
+                    <span id="guide" style="color:#000;display:none" hidden></span>
                     <v-text-field variant="outlined" id="detailAddress" placeholder="상세주소" style="background-color:antiquewhite " v-model="delivery.delivery_detail_address"/>
                     
             </v-row>
@@ -171,8 +171,10 @@ export default {
       } ,            
     //주소api
     search(){ //@click을 사용할 때 함수는 이렇게 작성해야 한다.
-            const vueObj = this;
+           
 
+            const vueObj = this;
+          
             new window.daum.Postcode({
             oncomplete: (data) => { //function이 아니라 => 로 바꿔야한다.
                 // 팝업에서 검색결과 항목을 클릭했을때 실행할 코드를 작성하는 부분.
@@ -199,6 +201,7 @@ export default {
                 // 우편번호와 주소 정보를 해당 필드에 넣는다.
                 vueObj.delivery.delivery_postcode = data.zonecode;
                 vueObj.delivery.delivery_address = roadAddr;
+
                 //vueObj.userInfo.AddressJ = data.jibunAddress;
                 
                 // 참고항목 문자열이 있을 경우 해당 필드에 넣는다.

@@ -131,13 +131,13 @@
   
   <br>
    <v-divider class="mt-4"></v-divider>
-          <div class="group">
+          <div class="group" v-if="mode!='edit'">
             <input id="check" type="checkbox" class="check"  v-model="userInfo.allCh" @change="updateAll">
             <label for="check"><span class="icon"></span> 전체 동의합니다.</label>
           </div>
   <!-- -->
   
-      <div class="group">
+      <div class="group" v-if="mode!='edit'">
             <input id="check1" type="checkbox" class="check"   v-model="userInfo.ch1"  @change="updateCheck">
             <label for="check1"><span class="icon"></span>
              <v-dialog width="500">
@@ -191,7 +191,7 @@
       </div>
   
   
-          <div class="group">
+          <div v-if="mode!='edit'" class="group">
             <input id="check2" type="checkbox" class="check"   v-model="userInfo.ch2"  @change="updateCheck">
             <label for="check2"><span class="icon"></span> 
             <v-dialog width="500">
@@ -629,20 +629,19 @@
             to :  this.userInfo.user_email,
             subject : "이메일 인증 메일입니다.",
             body : num
-          
         }
-  
-        let result = await axios.post(`/api/send-email`, data);
-        console.log(result);
-           if(result.data.status == "200" ){
-            alert('이메일로 인증번호 보내기 성공');
-            this.isEmailSent = true;
-            return;
-         }else{
-            alert('이메일 인증번호 보내기');
-            this.isEmailSent = true;
-            return;
-          }
+        
+        // let result = await axios.post(`/api/send-email`, data);
+        // console.log(result);
+        //    if(result.data.status == "200" ){
+        //     alert('이메일로 인증번호 보내기 성공');
+        //     this.isEmailSent = true;
+        //     return;
+        //  }else{
+        //     alert('이메일 인증번호 보내기');
+        //     this.isEmailSent = true;
+        //     return;
+        //   }
       },
   
       //
@@ -671,7 +670,7 @@
     let data = {
          "param" : {
             to :  this.userInfo.user_tel,
-            from : "01047443288",
+            from : "01088988034",
             text : phoneNum
          }
         }

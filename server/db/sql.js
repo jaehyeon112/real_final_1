@@ -78,7 +78,7 @@ limit ?, 6;
 `,
 
   // 회원가입과 동시에 가입축하쿠폰 지급
-  joinCouponInsert : `INSERT INTO coupon set ?`,
+  joinCouponInsert: `INSERT INTO coupon set ?`,
   // 추가 배송지 
   adddeliveryList: `select * from add_delivery where user_id =?`,
 
@@ -163,7 +163,7 @@ let user = {
   //회원가입
   joinIn: `INSERT INTO user SET ?`,
   //회원가입하고 쿠폰지급! 
-  joinCoupon : `Insert INTO coupon SET ?`,
+  joinCoupon: `Insert INTO coupon SET ?`,
 
 
   // 이메일 중복체크용

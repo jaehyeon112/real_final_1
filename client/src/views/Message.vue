@@ -30,7 +30,7 @@
             size="128"
           ></v-icon>
 
-          <div class="text-h4 font-weight-bold">{{ $route.params.message}}</div>
+          <div class="text-h6 font-weight-bold">{{ $route.params.message}}</div>
         </div>
 
         <v-divider></v-divider>
