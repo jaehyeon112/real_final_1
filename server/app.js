@@ -618,6 +618,12 @@ app.post("/refundInsert", async (request, res) => { // orders 등록
   res.send((await mysql.query("test", "refundInsert", data)));
 });
 
+
+app.post("/joinCouponInsert", async (request, res) => { // 가입축하쿠폰 등록
+  let data = request.body.param;
+  res.send((await mysql.query("test", "joinCouponInsert", data)));
+});
+
 //서영희-회원관리
 app.get("/user", async (req, res) => {
   let data = await mysql.query("admin", "AlluserList");
