@@ -51,11 +51,12 @@
                     <upload :numbers=this.nums @info="info" @text="text"/>
                     <v-btn v-show="this.nums==i" @click="this.nums=this.nums+1">+</v-btn><v-btn v-show="this.nums==i&&this.nums!=1" @click="this.nums=this.nums-1">-</v-btn>
                   </div>
-                  <div v-for="idx in file">첨부파일 : {{ idx }}<p @click="delMultiple(idx)">삭제</p></div>
+                  <div v-for="idx in file">첨부파일 : {{ idx }}<p @click="RealRemove(idx)">삭제</p></div>
+                  <div v-for="idx in newfile">첨부파일 : {{ idx }}<p @click="delMultiple(idx)">삭제</p></div>
                   <!--기존에 있던 사진 삭제-->
                   <div v-show="open==true" v-for="idx in photo"><img id="ima" :src="getPath(idx)" style="position: relative;height=300"><p @click="RealRemove(idx)">삭제</p></div>
                   <!--새로 추가된 사진 삭제-->
-                  <div v-show="open==true" v-for="idx in newPhoto"><img id="ima" :src="getPath(idx)" style="position: relative;height=300"><p @click="delPhoto(idx)">새로운사진삭제</p></div>
+                  <div v-show="open==true" v-for="idx in newPhoto"><img id="ima" :src="getPath(idx)" style="position: relative;height=300"><p @click="delPhoto(idx)">삭제</p></div>
                   <v-btn @click="showing" v-show="photo.length>0||newPhoto.length>0">사진보기</v-btn>
                 </div>
                 
@@ -127,6 +128,7 @@ export default {
           photo : [],
           newPhoto : [],
           file : [],
+          newfile : [],
           open : false,
           nums : 1,
           delWord : '',
@@ -193,15 +195,15 @@ export default {
               if(result.data.affectedRows > 0){
                 alert('수정성공!');
 
-                for(let i=0;i<this.file.length;i++){
+                for(let i=0;i<this.newfile.length;i++){
                   this.ods = 's'+i
                   let photos = {
                     param : {
                       "file_category" : 'r3',
-                      "file_name" : this.file[i],
+                      "file_name" : this.newfile[i],
                       "orders" : this.ods,
                       "prod_no" : this.prodNo,
-                      "path" : 'uploads\\'+this.file[i],
+                      "path" : 'uploads\\'+this.newfile[i],
                       "types" : 'text'
                     }
                   }
@@ -256,15 +258,15 @@ export default {
             let result = await axios.post(`/api/prod`,data).catch(err=>console.log(err));
             if(result.data.affectedRows > 0){
               alert('등록성공!');
-              for(let i=0;i<this.file.length;i++){
+              for(let i=0;i<this.newfile.length;i++){
                   this.ods = 's'+i
                   let photos = {
                     param : {
                       "file_category" : 'r3',
-                      "file_name" : this.file[i],
+                      "file_name" : this.newfile[i],
                       "orders" : this.ods,
                       "prod_no" : this.prodNo,
-                      "path" : 'uploads\\'+this.file[i],
+                      "path" : 'uploads\\'+this.newfile[i],
                       "types" : 'text'
                     }
                   }

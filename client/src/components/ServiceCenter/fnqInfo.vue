@@ -53,10 +53,10 @@ export default {
     },
     methods: {
         async getQnoInfo() {
-           let result = await axios.get(`/api/fnq/${this.searchNo}`) //sql.js 단건조회 경로 그대로 가져오기 api붙여주는 이유 proxy와 관련
+           let result = await axios.get(`/api/fnqInfo/${this.searchNo}`) //sql.js 단건조회 경로 그대로 가져오기 api붙여주는 이유 proxy와 관련
                                     .catch(err=>{
                                         console.log(err)
-                                    })      
+                                    });
             this.fnqInfo =result.data[0];                
         },
         

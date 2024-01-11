@@ -7,9 +7,9 @@
                         <th scope="col" class="text-center table-warning">작성자</th>
                         <td scope="col" class="text-center " >조이밀♡</td>
                         <th scope="col" class="text-center table-warning">작성일</th>
-                        <td scope="col" class="text-center">{{ $dateFormat(noticeInfo.write_date,'yyyy년 MM월 dd일')}}</td> <!--$DateFormat-->
+                        <td scope="col" class="text-center">{{ $dateFormat(noticeInfo.notice_writedate,'yyyy년 MM월 dd일')}}</td> <!--$DateFormat-->
                         <th scope="col" class="text-center table-warning">조회수</th>
-                        <td scope="col" class="text-center">{{ noticeInfo.notice_view }}</td>
+                        <td scope="col" class="text-center">{{ noticeInfo.notice_views }}</td>
                     </tr>
 
                     <tr>
@@ -65,14 +65,18 @@ export default {
     // },
     created() { 
         this.searchNo = this.$route.query.noticeNo;
-        this.getNoticeInfo();
+        if(this.searchNo>0){
+            this.getNoticeInfo();
+        }
     },
     methods: {
         async getNoticeInfo() {
-           let result = await axios.get(`/api/notice/${this.searchNo}`) //sql.js 단건조회 경로 그대로 가져오기 api붙여주는 이유 proxy와 관련
+            console.log(this.searchNo)
+           let result = await axios.get(`/api/Mynotice/${this.searchNo}`) //sql.js 단건조회 경로 그대로 가져오기 api붙여주는 이유 proxy와 관련
                                     .catch(err=>{
                                         console.log(err)
-                                    })      
+                                    })     
+                                    console.log(result.data) 
             this.noticeInfo =result.data[0];                
         },
         

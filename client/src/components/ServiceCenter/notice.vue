@@ -16,10 +16,10 @@
                 <tr  :key="i" v-for="(notice, i) in noticeList" @click="goToDetail(notice.notice_no)">
                     <td>{{ notice.notice_no }}</td>
                     <td >{{ notice.notice_title }}</td>
-                    <td>{{ notice.notice_content }}</td>
-                    <td>{{ getDateFormat(notice.write_date) }}</td>
+                    <td class="cur">{{ notice.notice_content }}</td>
+                    <td>{{ $dateFormat(notice.notice_writedate,'yyyy년 MM월 dd일') }}</td>
                     <td>조이밀♡</td>
-                    <td>{{ notice.notice_view }}</td>
+                    <td>{{ notice.notice_views }}</td>
                 </tr>
             </tbody>
         </table>
@@ -43,11 +43,16 @@ export default {
     
     methods : {
         async getNoticeList(){
-            this.inquireList = (await axios.get('/api/notice')
-                                   .catch(err => console.log(err))).data;
+            let result = (await axios.get('/api/notice').catch(err => console.log(err)));
+            for(let i=0;i<result.data.length;i++){
+                if(result.data[i].notice_content.length>10){
+                    result.data[i].notice_content = result.data[i].notice_content.substring(0,10)+'...더보기';
+                }
+            }                                   
+            this.noticeList = result.data;
         },
         goToDetail(noticeNo){
-            this.$router.push({path :'/serviceCenter/noticeInfo', query : {noticeNo : noticeNo}});
+            this.$router.push({name : 'noticeInfo', query : {noticeNo : noticeNo}});
         },
         getDateFormat(date){
             return this.$dateFormat(date,'yyyy년MM월dd일');
@@ -60,5 +65,8 @@ export default {
 <style scoped>
     table *{
         text-align: center;
+    }
+    .cur{
+        cursor: pointer;
     }
 </style>

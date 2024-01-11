@@ -154,7 +154,8 @@ export default {
                       "file_name" : this.photo[i],
                       "orders" : this.ods,
                       "review_no" : this.reviewInfo.review_no,
-                      "path" : 'uploads\\'+this.photo[i]
+                      "path" : 'uploads\\'+this.photo[i],
+                      "types":'photo'
                     }
                   }
                   let result1 = axios.post("/api/photo",ph).catch(err=>console.log(err));
