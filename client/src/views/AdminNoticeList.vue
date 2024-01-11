@@ -96,7 +96,7 @@
             },
             async changePage(no) {
                 let list = await axios.get(`/api/notice/${this.order}/${no}/${this.nums}`).catch(err=>console.log(err));
-                for(let i=0;i<result.data.length;i++){
+                for(let i=0;i<list.data.length;i++){
                     if(list.data[i].notice_content.length>10){
                         list.data[i].notice_content = list.data[i].notice_content.substring(0,10)+' ... 더보기';
                     }
@@ -129,9 +129,12 @@
                 console.log('실행..'+this.re1,this.re2)
 
             let list = await axios.get(`/api/notice/${this.re1}/${this.re2}/${this.order}/${this.startNum}/${this.nums}`).catch(err=>console.log(err));
-            let result = list.data;
-            console.log(result)
-            this.noticeList = result;
+            for(let i=0;i<list.data.length;i++){
+                    if(list.data[i].notice_content.length>10){
+                        list.data[i].notice_content = list.data[i].notice_content.substring(0,10)+' ... 더보기';
+                    }
+                }
+            this.noticeList = list.data;
             },
             modNotice(no){
                this.$router.push({path : "insertNotice", query : {no : no}}) 
