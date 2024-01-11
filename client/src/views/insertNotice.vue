@@ -114,7 +114,7 @@ export default {
                   }
                   let result1 = await axios.post("/api/photo",photos).catch(err=>console.log(err));
                   if(result1.data.affectedRows>0){
-                    alert('테이블ㅇㅔ 파일추가');
+                    console.log('성공')
                   }else{
                     alert('테이블ㅇㅔ 실패');
                   }
@@ -133,7 +133,7 @@ export default {
                   }
                   let result1 = await axios.post("/api/photo",ph).catch(err=>console.log(err));
                   if(result1.data.affectedRows>0){
-                    alert('테이블ㅇㅔ 사진추가');
+                    console.log('성공')
                   }else{
                     alert('테이블ㅇㅔ 실패');
                   }
@@ -166,7 +166,7 @@ export default {
                   }
                   let result1 = await axios.post("/api/photo",photos).catch(err=>console.log(err));
                   if(result1.data.affectedRows>0){
-                    alert('테이블ㅇㅔ 파일추가');
+                    console.log('성공')
                   }else{
                     alert('테이블ㅇㅔ 실패');
                   }
@@ -185,7 +185,7 @@ export default {
                   }
                   let result1 = await axios.post("/api/photo",ph).catch(err=>console.log(err));
                   if(result1.data.affectedRows>0){
-                    alert('테이블ㅇㅔ 사진추가');
+                    console.log('성공')
                   }else{
                     alert('테이블ㅇㅔ 실패');
                   }
