@@ -184,6 +184,9 @@ import side from '../components/admin/SideBar.vue';
                     let result = await axios.post(`/api/fnq`,data).catch(err=>console.log(err));
                     if(result.data.affectedRows==1){
                         alert('자주하는 질문이 되었습니다!');
+                        this.category = '',
+                        this.title = '',
+                        this.content = '',
                         this.modalCheck=false;
                         this.getdelList();
                         this.getordList();

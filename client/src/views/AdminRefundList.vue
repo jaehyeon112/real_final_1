@@ -242,8 +242,10 @@
 .modal-wrap {
     z-index: 100;
     position: fixed;
-    width: 100%;
-    height: 100%;
+    top:5%;
+    left:50%;
+    width: 600px;
+    height: 500px;
     background: rgba(0, 0, 0, 0.4);
   }
   .modal-container {
@@ -252,8 +254,8 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 600px;
-    height: 900px;
+    width: 100%;
+    height: 100%;
     background: #fff;
     border-radius: 10px;
     padding: 10px;
@@ -263,6 +265,7 @@
     z-index: 1000;
     border: 1px solid;
     text-align: center;
+    height: 800px;
   }
   .modal-btn button{
     z-index: 1000;
