@@ -146,6 +146,7 @@ methods: {
   logout(){
     alert('로그아웃 되었습니다~')
     this.$store.commit('logout');
+    this.$store.commit('kakaoLogout');
   },
 
 //마이페이지 안떠서 임시로좀 쓸게요 - 회원탈퇴

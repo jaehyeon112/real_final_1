@@ -30,8 +30,7 @@
               <table class="table">
                 <tr>
                   <th>주문완료</th>
-                  <td v-if="counting.orderNo>0" style="color: red;"><RouterLink to="/admin/orderList">{{counting.orderNo}}건</RouterLink></td>
-                  <td v-else-if="counting.orderNo = 0" style="color: black;"><RouterLink to="/admin/orderList">{{counting.orderNo}}건</RouterLink></td>
+                    <RouterLink to="/admin/orderList">{{counting.orderNo}}건</RouterLink>
                 </tr>
                 <tr>
                   <th>배송 준비중</th>
@@ -321,8 +320,8 @@ import icon from '../components/admin/icon.vue';
         reviewList : [],
         inquireList : [],
         orderOne : [],
-        counting : '',
-        dialog : true
+        counting : {},
+        dialog : true,
       }
     },
 
@@ -336,7 +335,7 @@ import icon from '../components/admin/icon.vue';
     },
     created(){
       window.scrollTo(0, 0);
-      //this.getSum();
+     
       if(this.$store.state.user.user_id != 'admin2'){
         alert('권한이 없습니다');
         this.$store.commit('logout');
@@ -356,12 +355,6 @@ import icon from '../components/admin/icon.vue';
         let date = new Date();
         let month = ('0'+(date.getMonth()+1)).slice(-2);
         return month;
-      },
-      async getSum(){
-        let result = await axios.get(`/api/sum`).catch(err=>console.log(err));
-        for(let i=0;i<result.data.length;i++){
-          this.datas.push(result.data[i]);
-        }
       },
       async getCounting(){
         let result = await axios.get(`/api/counting`).catch(err=>console.log(err));
@@ -383,11 +376,7 @@ import icon from '../components/admin/icon.vue';
           this.orderList = result.data;
         }
        },
-
-      
-      
-       
-       async orderGetOne(ono){
+      async orderGetOne(ono){
         let result = await axios.get(`/api/Oneorder/${ono}`).catch(err=>console.log(err));
         this.orderOne = result.data[0];
       },
