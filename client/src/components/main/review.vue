@@ -60,7 +60,6 @@ export default {
      async getReview(){
       const response = await axios.get('/api/mainreview');
       this.review = response.data[0]
-      console.log(this.review);
       if(this.review.review_content.length > 25){
         this.review.review_content = this.review.review_content.substring(0, 25) + ' ...더보기'
       }

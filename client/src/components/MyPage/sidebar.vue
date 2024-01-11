@@ -72,7 +72,6 @@ export default{
     
 
     goupdate() {
-      console.log(this.$store.state.kakaoId.id); 
       
       if (this.$store.state.user.user_id) {
         // 로그인된 아이디가 있으면 회원 정보 수정 페이지로 이동

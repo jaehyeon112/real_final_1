@@ -475,8 +475,6 @@ export default {
          if(this.$store.state.user.user_id == null){
             return;
          }
-         console.log(this.$store.state.user.user_id)
-         console.log('================')
         let list = await axios.get(`/api/prodLike/${this.$store.state.user.user_id}/${this.pno}`)
                                   .catch(err=>console.log(err));
             console.log(list)
