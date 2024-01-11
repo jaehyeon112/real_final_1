@@ -4,7 +4,7 @@
         v-slot="{ isHovering, props }"
         open-delay="200"
       >
-    <v-card 
+    <v-card style="cursor: pointer"
     
     :elevation="isHovering ? 16 : 2"
           :class="{ 'on-hover': isHovering }"
@@ -31,7 +31,7 @@
               <v-card-text>
                 <v-row >
                   <v-col>
-                    <v-img width="50" height="50" :src="`api/test/`+ prodList.file_name"></v-img>
+                    <v-img width="50" height="50" :src="`/api/test/`+ prodList.file_name"></v-img>
                   </v-col>
                   <v-col cols="auto">
                     <span>{{prodList.prod_name}}</span>
