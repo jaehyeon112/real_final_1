@@ -331,7 +331,8 @@ let admin = {
 //예빈
 
 let reviews = {
-  myReview: `select * from review where user_id=? `, //마이페이지에서 내가 작성한 리뷰 리스트
+  AllmyReview: `select * from review where user_id=?`, //마이페이지에서 내가 작성한 리뷰 리스트
+  myReview: `select * from review where user_id=? limit ?,5 `, //마이페이지에서 내가 작성한 리뷰 리스트
   reviewInfo: `select * from review r left join file f on r.review_no = f.review_no where r.user_id=? and r.review_no=?`, //마이페이지 리뷰하나 보기
   //orderNoReview: `select * from review where user_id=?`,
   //서영희
