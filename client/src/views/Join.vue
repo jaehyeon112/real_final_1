@@ -8,8 +8,8 @@
     <!-- <label for="tab-2" class="tab" >Sign Up</label> -->
     <div class="login-form">
       <div class="sign-up-htm">
-        <p>{{ $store.state.kakaoId != '' ? '카카오로로그인함' : '걍로그인함' }}</p> 
-        {{ $store.state.kakaoId }}
+        <!-- <p>{{ $store.state.kakaoId != '' ? '카카오로로그인함' : '걍로그인함' }}</p> 
+        {{ $store.state.kakaoId }} -->
 
         <!-- 회원 수정 시 id랑 이름은 readonly로 수정못하게 해야함 -->
         <div class="group" v-if="!$store.state.kakaoId">
@@ -646,15 +646,19 @@ passwordValid() {
 
       let result = await axios.post(`/api/send-email`, data);
       console.log(result);
-         if(result.data.status == "200" ){
-          alert('이메일로 인증번호 보내기 성공');
-          this.isEmailSent = true;
-          return;
-       }else{
-          alert('이메일 인증번호 보내기');
-          this.isEmailSent = true;
-          return;
-        }
+      alert('이메일로 인증번호 보내기 ');
+       this.isEmailSent = true;
+
+       
+      //    if(result.data.status == "200" ){
+      //     alert('이메일로 인증번호 보내기 성공');
+      //     this.isEmailSent = true;
+      //     return;
+      //  }else{
+      //     alert('이메일 인증번호 보내기');
+      //     this.isEmailSent = true;
+      //     return;
+      //   }
     },
 
     //

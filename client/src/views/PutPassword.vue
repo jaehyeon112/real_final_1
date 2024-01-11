@@ -4,6 +4,7 @@
       <div class= "field" > <label for="password">비밀번호:</label>  
       <v-text-field
         v-model="user_password"
+        type ="password"
         :rules="rules"
         label="password"
       ></v-text-field>

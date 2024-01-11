@@ -23,21 +23,21 @@
       <v-col cols="12">
         <div class="field">
           <label for="email">이메일 :</label>
-          <v-text-field v-model="user_email" label="email" :rules="lastNameRules"></v-text-field>
+          <v-text-field v-model="user_email" label="email" ></v-text-field>
         </div>
       </v-col>
 
             <v-col cols="12">
         <div class="field" v-if="selectedOption === 'findPwd'">
           <label for="phone"> Tel :</label>
-          <v-text-field v-model="user_tel" label="tel" :rules="lastNameRules"></v-text-field>
+          <v-text-field v-model="user_tel" label="tel" ></v-text-field>
         </div>
       </v-col>
 
       <v-col cols="12" v-if="selectedOption === 'findPwd'">
         <div class="field">
           <label for="id">ID :</label>
-          <v-text-field v-model="user_id" label="userid" :rules="lastNameRules"></v-text-field>
+          <v-text-field v-model="user_id" label="ID" ></v-text-field>
         </div>
       </v-col>
 
@@ -129,7 +129,7 @@ import axios from 'axios'
                  let data = {
                       "param" : {
                           to :  this.user_tel,
-                          from : "01088988034",
+                          from : "01088988034", 
                           text : num
                       }
                       }
