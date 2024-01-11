@@ -21,9 +21,9 @@
                 <tbody>
                     <tr  :key="i" v-for="(review, i) in reviewList" @click="goToDetail(review.review_no)">
                         <td>{{ review.review_no}}</td>
-                        <td>{{ formatText(review.review_title ) }}</td>
+                        <td class="cur" >{{ formatText(review.review_title ) }}</td>
                         <td>{{ review.detail_order_no}}</td>
-                        <td>{{ formatText(review.review_content) }}</td>
+                        <td class="cur" >{{ formatText(review.review_content) }}</td>
                         <td>{{ review.review_grade }}</td>
                         <td>{{ $dateFormat(review.review_writedate,'yyyy년MM월dd일') }}</td>
                         <td>{{ review.like_cnt}}</td>
@@ -99,6 +99,9 @@ table *{
    
 th{
     background-color: #FFA726;
+}
+.cur{
+    cursor: pointer;
 }
 
 </style>

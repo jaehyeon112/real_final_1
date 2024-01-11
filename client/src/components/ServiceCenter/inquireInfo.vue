@@ -92,7 +92,10 @@ export default {
 </script>
 
 <style scoped>
-th{
+ table *{
+        text-align: center;
+    }
+    th{
     background-color: #FFA726;
 }
 </style>
