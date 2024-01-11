@@ -13,7 +13,7 @@
             <label for="pass" class="label">PASSWORD</label>
             <input id="pass" type="password" class="input" data-type="password" v-model="user_password">
           </div>
-  
+   <div v-if="isBlocked">남은 차단 시간: {{ remainingBlockTime }}초</div>
       <div style="line-height:180%">
         <v-row>
           <v-col class="text-right">
@@ -23,10 +23,10 @@
         </v-row> 
       </div>
 
-          <div class="group" style="line-height:130%">
-            <input type="submit" class="button" @click="doLogin()" value="SIGN UP">
+          <div class="group" style="line-height:130%;  margin-top: 10px;">
+            <input type="submit" class="button" color="orange" @click="doLogin()" value="SIGN UP">
             <!-- 추가: 남은 차단 시간 표시 -->
-          <div v-if="isBlocked">남은 차단 시간: {{ remainingBlockTime }}초</div>
+         
 
           </div>
   
@@ -38,12 +38,12 @@
           <v-col class="text-center">
             <div
               id="custom-login-btn" @click="kakaoLogin()">
-              <a><img src="https://cdn.imweb.me/thumbnail/20220403/a8e484f2dfe39.png" width="35" alt="카카오 로그인 버튼"></a>
+              <a><img src="https://cdn.imweb.me/thumbnail/20220403/a8e484f2dfe39.png" width="30" alt="카카오 로그인 버튼"></a>
             </div>
           </v-col>
           
           <v-col class="text-right">
-            <v-btn color="green" class="headline" block a href="join">Join</v-btn>
+           <v-btn color="green" class="headline"  block @click="goToJoin()"> Join</v-btn>
           </v-col>
         </v-row>
 
@@ -64,14 +64,7 @@
       
           </div>
    -->
-        <!-- <div>
-        <router-link to="/finding" class="button"> 아이디비번찾기페이지로 </router-link> 
-        <router-link to="/test" class="button"> test 페이지로 </router-link> 
-        <router-link to="/putpass" class="button"> 비번입력창 </router-link> 
-        <router-link to="/withdrawal" class="button"> 탈퇴페이지 </router-link> 
-        
-        </div>   -->
-   <div> <v-btn @click="kakaoLogout()">카카오 로그아웃</v-btn></div>
+
         </div>
   
       </div>
@@ -107,6 +100,11 @@
   
   
     methods: {
+
+      // 회원가입 버튼
+       goToJoin(){
+        this.$router.push({name : 'join'})
+       },
   
   //Login 버튼
 
@@ -143,7 +141,7 @@
 
           if (this.failedAttempts >=  5) {
             this.isBlocked = true;
-            this.remainingBlockTime = 20; // 차단 시간(초) 설정
+            this.remainingBlockTime = 10; // 차단 시간(초) 설정
             const timer = setInterval(() => {
               if (this.remainingBlockTime > 0) {
                 this.remainingBlockTime--;
@@ -246,10 +244,7 @@ this.$socket.emit('authenticate', token);
       }
   }, //doLogin
   
-  
-  
-  
-  
+ 
   
   // 카카오
   kakaoLogin() {
@@ -280,17 +275,15 @@ this.$socket.emit('authenticate', token);
           
           console.log("카카오 악시오스 데이터 result ")
 
-
-  
-
+          this.$router.push({ name: 'realmain'  });
           let myKakao = res.id; // 3244970366
           console.log("myKakao");
           console.log(myKakao);
 
           if(result.data.length == 0){
-            alert(this.$store.state.kakaoId+'db에 카카오 아이디 회원 없는상태')
-
-          this.$router.push({ name: 'join' , params : { id : res.id , name : nickname } });
+            // alert(this.$store.state.kakaoId+'db에 카카오 아이디 회원 없는상태')
+          this.$router.push({ name: 'realmain'  });   
+          //this.$router.push({ name: 'join' , params : { id : res.id , name : nickname } });
         } else {
           this.$store.commit('kakaoLogin', res.id)
             this.$store.state.user.user_name = res.id
@@ -328,8 +321,6 @@ this.$socket.emit('authenticate', token);
     },
     
 
-
-  
     } //methods
   };
   </script>
@@ -348,7 +339,9 @@ this.$socket.emit('authenticate', token);
   .clearfix:after{clear:both;display:block}
   a{color:inherit;text-decoration:none}
   
-  
+  #custom-login-btn{
+    cursor: pointer;
+  }
     .login-wrap{
       width:100%;
       margin:auto;

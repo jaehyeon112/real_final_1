@@ -112,6 +112,11 @@ export default {
       component: join
     },
     {
+      path: "join",
+      name: "join",
+      component: join
+    },
+    {
       path: "finding",
       name: "finding",
       component: finding

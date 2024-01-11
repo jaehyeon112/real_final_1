@@ -102,7 +102,7 @@ async function sendEmail(to, subject, body) {
     }
   });
   const mailOptions = {
-    from: `yedam1조 Hompage명 <${process.env.GMAIL_OAUTH_USER}>`,
+    from: `yedam1 JOYMEAL <${process.env.GMAIL_OAUTH_USER}>`,
     to,
     subject,
     text: body
@@ -166,8 +166,8 @@ app.post('/phonecheck', async (req, res) => {
   const coolsms = require('coolsms-node-sdk').default;
   async function printTokenResult(phone, token) {
 
-    const messageService = new coolsms("NCSX69ZDDZ3AMPOA", "RTFTFKLPESGNPPFMBL0I88LTS2CHRNET");
-
+    const messageService = new coolsms("NCSFCFI7TO43OVAC", "RIIYNSOEI8CXRA71EI47IOIV5YD9O6NC");
+    
     const result = await messageService
       .sendOne({
         to,
@@ -904,6 +904,14 @@ app.post("/join/joinIn", async (req, res) => {
   }
 
 });
+
+//회원가입 > 가입축하쿠폰 지급하기 (z1)
+app.post("/joincoupon", async(req, res) => {
+  let data = req.body.param;
+  let result = await mysql.query("user", "joinCoupon", data);
+  res.send(result);
+    console.log(result);
+})
 
 
 app.get('/logout', async (req, res) => {

@@ -159,6 +159,9 @@ let user = {
 
   //회원가입
   joinIn: `INSERT INTO user SET ?`,
+  //회원가입하고 쿠폰지급! 
+  joinCoupon : `Insert INTO coupon SET ?`,
+
 
   // 이메일 중복체크용
   duplicateEmail: `select user_email from user where user_email = ?`,

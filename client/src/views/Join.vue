@@ -8,22 +8,26 @@
     <!-- <label for="tab-2" class="tab" >Sign Up</label> -->
     <div class="login-form">
       <div class="sign-up-htm">
-        <p>{{ $store.state.kakaoId != '' ? '카카오로로그인함' : '걍로그인함' }}</p> 
-        {{ $store.state.kakaoId }}
+        <!-- <p>{{ $store.state.kakaoId != '' ? '카카오로로그인함' : '걍로그인함' }}</p> 
+        {{ $store.state.kakaoId }} -->
 
         <!-- 회원 수정 시 id랑 이름은 readonly로 수정못하게 해야함 -->
         <div class="group" v-if="!$store.state.kakaoId">
           <label for="user" class="label"> ID </label>
       
           <div>
-          <input  id="user" type="text" class="input" v-model="userInfo.user_id" :readonly="mode =='edit'" autofocus placeholder="영문+숫자 조합 6자이상 11자 이하" 
+          <input  id="user" type="text" class="input" v-model="userInfo.user_id" :readonly="mode =='edit'" autofocus placeholder="영문+숫자 조합 6자이상 11자 이하"  
+          :style="{
+      backgroundColor: mode === 'edit' ? '#eee' : '#eee',
+      border: mode === 'edit' ? '2px solid #ccc' : none,
+      color: mode === 'edit' ? 'gray' : 'black',
+      cursor: mode === 'edit' ? 'not-allowed' : 'auto'  // 커서를 비활성화하는 부분
+    }"
            ></div>
-          <div>
+          <div v-if="mode !== 'edit'">
           <v-btn type="button" v-if="!validId " @click="checkId(userInfo.user_id)">중복체크</v-btn >
            <p v-if="validId" style="color: green;">사용 가능한 아이디입니다.</p>
            <div v-if="!userInfo.user_id && !isFieldValid.user_id" class="error-message"  :style="{ color: 'red' }">{{ fieldErrorMessages.user_id }}</div>
-
-           
         </div>
 
         </div>
@@ -47,7 +51,12 @@
 
         <div class="group">
           <label for="name" class="label" > Name </label>
-          <input id="name" type="text" class="input" v-model="userInfo.user_name" :readonly="mode =='edit'">
+          <input id="name" type="text" class="input" v-model="userInfo.user_name" :readonly="mode =='edit'"  :style="{
+            backgroundColor: mode === 'edit' ? '#eee' : '#eee',
+      border: mode === 'edit' ? '2px solid #ccc' : none,
+            color: mode === 'edit' ? 'gray' : 'black',
+            cursor: mode === 'edit' ? 'not-allowed' : 'auto'  // 커서를 비활성화
+    }">
               <div v-if="!userInfo.user_name &&!isFieldValid.user_name" class="error-message"  :style="{ color: 'red' }">{{ fieldErrorMessages.user_name }}</div>
         </div>
 
@@ -72,7 +81,7 @@
 
             <div v-if="!userInfo.email_domain && !isFieldValid.email_domain" class="error-message"  :style="{ color: 'red' }">{{ fieldErrorMessages.email_domain }}</div>
       <v-btn type="button" @click="checkEmail"> 이메일 중복확인</v-btn>
-      <v-btn type="button" @click="sendVerificationEmail"> 이메일 인증 메일 전송</v-btn>
+      <v-btn v-if="isEmailAvailable" type="button" @click="sendVerificationEmail" > 이메일 인증 메일 전송</v-btn>
     </div>
 
 
@@ -131,14 +140,14 @@
         <div v-if="!userInfo.birth&& !isFieldValid.birth" class="error-message"  :style="{ color: 'red' }">{{ fieldErrorMessages.birth }}</div>
 
 <br>
- <v-divider class="mt-4"></v-divider>
-        <div class="group">
+ <v-divider class="mt-4" v-if="mode !== 'edit'"></v-divider>
+        <div class="group" v-if="mode !== 'edit'">
           <input id="check" type="checkbox" class="check"  v-model="userInfo.allCh" @change="updateAll">
           <label for="check"><span class="icon"></span> 전체 동의합니다.</label>
         </div>
 <!-- -->
 
-    <div class="group">
+    <div class="group" v-if="mode !== 'edit'">
           <input id="check1" type="checkbox" class="check"   v-model="userInfo.ch1"  @change="updateCheck">
           <label for="check1"><span class="icon"></span>
            <v-dialog width="500">
@@ -191,8 +200,7 @@
           </label>
     </div>
 
-
-        <div class="group">
+        <div class="group" v-if="mode !== 'edit'">
           <input id="check2" type="checkbox" class="check"   v-model="userInfo.ch2"  @change="updateCheck">
           <label for="check2"><span class="icon"></span> 
           <v-dialog width="500">
@@ -245,11 +253,6 @@
 기타 새로운 서비스, 신상품이나 이벤트 정보 안내
 단, 이용자의 기본적 인권 침해의 우려가 있는 민감한 개인정보(인종 및 민족, 사상 및 신조, 출신지 및 본적지, 정치적 성향 및 범죄기록, 건강상태 등)는 수집하지 않습니다.
 
-4. 수집하는 개인정보 항목
-
-본 사이트는 회원가입, 상담, 서비스 신청 등을 위해 아래와 같은 개인정보를 수집하고 있습니다. 
-1) 개인정보 수집방법 : 홈페이지(회원가입)
-2) 수집항목 : 이름 , 생년월일 , 성별 , 로그인ID , 비밀번호 , 전화번호 , 주소 , 휴대전화번호 , 이메일 , 주민등록번호 , 접속 로그 , 접속 IP 정보 , 결제기록
 </pre>
                   </v-card-text>
 
@@ -306,6 +309,7 @@ export default {
 
       isAnyFieldEmpty : false,
 
+      isEmailAvailable : false, //이메일 사용가능여부
 
       //회원가입 v-model
       userInfo : {
@@ -395,16 +399,20 @@ export default {
 
 
   created() {
+    console.log('userInfo in created hook:', this.userInfo);
     // $route.params.id로 전달된 파라미터에 접근
     this.oneUserId = this.$route.query.user_id;
     
 
     // userId가 존재하면 회원 수정 모드로 변경
     if (this.oneUserId) {
+      
       this.mode = 'edit';
       this.getUserInfo();
       // 기존정보 불러오거나 수정작업 수행하기.
       this.isUpdated = true;
+     
+      console.log('userInfo.ch1 after setting in created:', this.userInfo.ch1);
     }
     console.log(this.$route.params.id)
 
@@ -417,6 +425,8 @@ export default {
       this.userInfo.user_id = this.$store.state.kakaoId2
       this.userInfo.user_name = this.$route.params.name;
   }
+
+  
    
   }, //created
 computed: {
@@ -592,10 +602,7 @@ passwordValid() {
         return;
       }
 
-  //      if (!this.userInfo.user_email.trim()) {
-  //   alert(`이메일을 입력해주세요`);
-  //   return;
-  // }
+
 
   if (!this.userInfo.user_emailid || (!this.userInfo.email_domain && !this.userInfo.direnct_input_domain)) {
     alert(`이메일 아이디와 도메인을 모두 입력하세요! `);
@@ -615,6 +622,7 @@ passwordValid() {
       alert(`중복된 이메일 입니다.`);
     } else {
       alert(`사용가능한 이메일입니다.`);
+      this.isEmailAvailable = true;
     }
   } catch (err) {
     console.log(err);
@@ -638,15 +646,19 @@ passwordValid() {
 
       let result = await axios.post(`/api/send-email`, data);
       console.log(result);
-         if(result.data.status == "200" ){
-          alert('이메일로 인증번호 보내기 성공');
-          this.isEmailSent = true;
-          return;
-       }else{
-          alert('이메일 인증번호 보내기');
-          this.isEmailSent = true;
-          return;
-        }
+      alert('이메일로 인증번호 보내기 ');
+       this.isEmailSent = true;
+
+       
+      //    if(result.data.status == "200" ){
+      //     alert('이메일로 인증번호 보내기 성공');
+      //     this.isEmailSent = true;
+      //     return;
+      //  }else{
+      //     alert('이메일 인증번호 보내기');
+      //     this.isEmailSent = true;
+      //     return;
+      //   }
     },
 
     //
@@ -675,7 +687,7 @@ passwordValid() {
   let data = {
        "param" : {
           to :  this.userInfo.user_tel,
-          from : "01047443288",
+          from : "01088988034",
           text : phoneNum
        }
       }
@@ -729,6 +741,7 @@ checkAge(){
   async joinInsert(){
     //필드 채워진거 확인
     this.isAnyFieldEmpty = false;  // 초기화
+
      for(let field in this.isFieldValid){
       if(!this.userInfo[field]){
         this.isFieldValid[field] = false;
@@ -738,6 +751,7 @@ checkAge(){
         this.isFieldValid[field] = true;
       }
      }
+    this.isAnyFieldEmpty = !this.isAnyFieldEmpty; // 객체나 배열을 교체하여 변경 알림
 
      // user_password와 userChPass 추가
 if (!this.$store.state.kakaoId) {
@@ -778,6 +792,7 @@ if (!this.$store.state.kakaoId) {
     !this.userInfo.ch1 ||
     !this.userInfo.ch2
     ){
+      this.isAnyFieldEmpty = true;
     alert('모든 필드를 입력해주세요.');
     return;
   }
@@ -788,14 +803,12 @@ if (!this.$store.state.kakaoId) {
   if(!this.isAgeValid){
      this.errorMessage = "14세 미만 가입 불가"
     alert(`14세 미만 가입 불가! `)
+    this.isAnyFieldEmpty = true;
     return;
   }
 
-  // 비밀번호 암호화
+ 
 
-  
-
-    
     
     let data = {
 
@@ -826,6 +839,9 @@ if (!this.$store.state.kakaoId) {
       alert('가입 실패');
       return;
   }
+
+ 
+
   },
   
 
@@ -1019,6 +1035,7 @@ a{color:inherit;text-decoration:none}
 .login-html .sign-up,
 .login-form .group .check{
   display:none;
+ 
 }
 .login-html .tab,
 .login-form .group .label,
@@ -1113,6 +1130,7 @@ a{color:inherit;text-decoration:none}
   transform:scale(0) rotate(0);
 }
 .login-form .group .check:checked + label{
+  
   color:#1e0303;
 }
 .login-form .group .check:checked + label .icon{
@@ -1120,6 +1138,8 @@ a{color:inherit;text-decoration:none}
 }
 .login-form .group .check:checked + label .icon:before{
   transform:scale(1) rotate(45deg);
+  
+
 }
 .login-form .group .check:checked + label .icon:after{
   transform:scale(1) rotate(-45deg);
@@ -1131,10 +1151,11 @@ a{color:inherit;text-decoration:none}
   transform:rotate(0);
 }
 
-css
+
 /* 체크박스 크기 변경 */
 .check {
   transform: scale(1.5); /* 원하는 크기로 조절 */
+  border : 1px solid;
 }
 
 /* 전체 동의합니다 라벨 텍스트 크기 변경 */
@@ -1148,9 +1169,8 @@ css
 }
 
  .disabled-button {
-    background-color: grey; /* 원하는 회색 색상으로 변경 가능 */
-    cursor: not-allowed;
-    /* 기타 필요한 스타일 조절 가능 */
+    background : grey;
+    
   }
 
 .hr{
