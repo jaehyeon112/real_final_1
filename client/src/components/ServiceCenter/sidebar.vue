@@ -12,15 +12,16 @@
             </router-link>
           </li>
           <li>
-            <router-link to="/myPage/myInquire" class="nav-link text-white">
-              1:1문의
-            </router-link>
-          </li>
-          <li>
-            <button @click="goto">
+            <button @click="goto" class="nav-link" aria-current="page">
               공지사항
             </button>
           </li>
+          <li>
+            <router-link to="/myPage/myInquire" class="nav-link" aria-current="page">
+              1:1문의
+            </router-link>
+          </li>
+          
         </ul>
         <hr>
     </div>
