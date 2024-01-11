@@ -1,9 +1,9 @@
 <template>
     <div >
-       <br>
-       <br>
-       <br>
-       <br>
+        <br>
+        <br>
+        <br>
+        <br>
         <div v-if="reviewList.length != 0">
             <table class="table ">
                 <thead>
@@ -31,9 +31,9 @@
                     </tr>
                 </tbody>
             </table>
-            <v-container v-if="reviewList.length!=0">
-          <page ref="pagination1" @changePage="changePage" :list="totalList" :totals="5"></page>
-        </v-container>
+            <v-container>
+                <page ref="pagination1" @changePage="changePage" :list="totalList" :totals="5"></page>
+            </v-container>
         </div>
         <p v-else>등록된 리뷰가 없습니다</p>
     </div>
@@ -58,6 +58,7 @@ export default {
             let datas = (await axios.get(`/api/myReviews`)
                                    .catch(err => console.log(err))).data;
                                    this.totalList = datas;
+                                   console.log(datas)
         },
         async getReviewList(no){
             

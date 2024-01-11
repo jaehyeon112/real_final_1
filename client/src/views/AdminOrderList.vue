@@ -39,13 +39,15 @@
           <td>{{ order.recipient }}</td>
           <td>{{ $wonComma(order.total_payment)+'원' }}</td>
           <td>{{ $wonComma(order.real_payment)+'원' }}</td>
-          <td>{{ order.payment_method }}</td>
+          <td v-if="order.payment_method=='h1'">신용카드</td>
+          <td v-else-if="order.payment_method=='h2'">카카오페이</td>
+          <td v-else>토스페이</td>
           <td v-if="order.order_status=='c1'">{{this.alarm='주문완료'}}</td>
           <td v-else-if="order.order_status=='c2'">상품준비중</td>
           <td v-else-if="order.order_status=='c3'">출고완료</td>
           <td v-else-if="order.order_status=='c4'" style="color: red;">취소신청</td>
           <td v-if="order.order_status=='c1'"><v-btn type="button" @click="this.orderStatus='c2',this.orderGetOne(order.order_no),modalCheck2=true">주문상세보기</v-btn>   <v-btn type="button" @click="modalCheck=true,this.orderNo=order.order_no,this.phoneNo=order.phone">주문취소 신청</v-btn></td>
-          <td v-else-if="order.order_status=='c2'"><v-btn type="button" @click="this.num=idx">상품 출고하기</v-btn><p v-if="idx==this.num">운송장번호 : <input type="number" v-model="deliveryNum"><v-btn @click="this.orderStatus='c3',changeStatus(order.order_no)">배송출발</v-btn></p></td>
+          <td v-else-if="order.order_status=='c2'"><v-btn type="button" @click="isTrue(idx)">상품 출고하기</v-btn><p v-if="idx==this.num">운송장번호 : <input type="number" v-model="deliveryNum"><v-btn @click="this.orderStatus='c3',changeStatus(order.order_no)">배송출발</v-btn></p></td>
           <td v-else-if="order.order_status=='c3'"><v-btn @click="goto2">배송목록 가기</v-btn></td>
           <td v-else-if="order.order_status=='c4'"><v-btn @click="goto">취소목록 가기</v-btn></td>
         </tr>
@@ -168,7 +170,7 @@
                 modalCheck: false,
                 orders : '',
                 orderStatus : '',
-                startNo : '2000-01-01',
+                startNo : this.dateFormat('','yyyy-MM-dd'),
                 lastNo : this.dateFormat('','yyyy-MM-dd'),
                 orderList : [],
                 startNum : 0,
@@ -180,7 +182,7 @@
                 deliveryNum : '',
                 phoneNo : '',
                 accessToken : '',
-              num : ''
+                num : 0
             }
         },
         components : {
@@ -259,6 +261,7 @@
                 let total = await axios.get(`/api/order`).catch((err) => {
                     console.log(err);
                 });
+                console.log(total.data)
                 this.totalList = total.data;
             },
             getAccessToken() {
@@ -300,19 +303,19 @@
                 this.total();
             },
             async changePage(no) {
-              if(this.startNo==''&&this.lastNo==''&&this.orders==''){
+              if(this.startNo==this.dateFormat('','yyyy-MM-dd')&&this.lastNo==this.dateFormat('','yyyy-MM-dd')&&this.orders==''){
                 this.getOrderList(no)
-              }else if(this.startNo!=''&&this.lastNo!=''&&this.orders==''){
-                this.orderDates(no);
-              }else if(this.startNo==''&&this.lastNo==''&&this.orders!=''){
+              }else if(this.startNo==this.dateFormat('','yyyy-MM-dd')&&this.lastNo==this.dateFormat('','yyyy-MM-dd')&&this.orders!=''){
                 this.orderState(this.orders,no);
+              }else{
+                this.orderDates(no);
               }
             },
             async orderDates(no){
               this.orders = '';
                 if(this.startNo>this.lastNo){
                     alert('날짜를 다시 확인해주세요');
-                    this.startNo = '2000-01-01';
+                    this.startNo = this.dateFormat('','yyyy-MM-dd');
                     this.lastNo = this.dateFormat('','yyyy-MM-dd');
                 }else if(this.startNo==''||this.lastNo==''){
                     alert('날짜가 비어있습니다.')
@@ -324,7 +327,7 @@
                     this.orderList = list.data;
                     if(this.totalList.length==0||this.orderList.length==0){
                         alert('존재하는 데이터가 없습니다!');
-                        this.startNo = '2000-01-01',
+                        this.startNo = this.dateFormat('','yyyy-MM-dd'),
                         this.lastNo = this.dateFormat('','yyyy-MM-dd'),
                         this.getOrderList(no);
                     }else{
@@ -338,9 +341,12 @@
                 let result = await axios.get(`/api/Oneorder/${ono}`).catch(err=>console.log(err));
                 this.orderOne = result.data[0];
             },
+            isTrue(i){
+              this.num = i
+            },
             refresh(){
                 this.getOrderList(this.startNum);
-                this.startNo = '2000-01-01',
+                this.startNo = this.dateFormat('','yyyy-MM-dd'),
                 this.lastNo = this.dateFormat('','yyyy-MM-dd'),
                 this.orders = ''
             },
@@ -391,7 +397,7 @@
                 this.orderList = result.data;
                 if(this.totalList.length==0||this.orderList.length==0){
                     alert('존재하는 데이터가 없습니다!');
-                    this.startNo = '2000-01-01',
+                    this.startNo = this.dateFormat('','yyyy-MM-dd'),
                     this.lastNo = this.dateFormat('','yyyy-MM-dd'),
                     this.getOrderList(no);
                 }else{
@@ -412,7 +418,7 @@
               if(this.orders==''){
                 return;
               }
-              this.startNo = '2000-01-01',
+              this.startNo = this.dateFormat('','yyyy-MM-dd'),
               this.lastNo = this.dateFormat('','yyyy-MM-dd'),
               this.orderState(this.orders,this.startNum);
             }

@@ -209,7 +209,7 @@ export default {
                   }
                   let result1 = await axios.post("/api/photo",photos).catch(err=>console.log(err));
                   if(result1.data.affectedRows>0){
-                    alert('테이블ㅇㅔ 사진추가');
+                    console.log('good')
                   }else{
                     alert('테이블ㅇㅔ 실패');
                   }
@@ -228,7 +228,7 @@ export default {
                   }
                   let result1 = await axios.post("/api/photo",ph).catch(err=>console.log(err));
                   if(result1.data.affectedRows>0){
-                    alert('테이블ㅇㅔ 사진추가');
+                    console.log('good')
                   }else{
                     alert('테이블ㅇㅔ 실패');
                   }
@@ -272,7 +272,7 @@ export default {
                   }
                   let result1 = await axios.post("/api/photo",photos).catch(err=>console.log(err));
                   if(result1.data.affectedRows>0){
-                    alert('테이블ㅇㅔ 파일추가');
+                    console.log('good')
                   }else{
                     alert('테이블ㅇㅔ 실패');
                   }
@@ -291,7 +291,7 @@ export default {
               }
               let result1 = await axios.post("/api/photo",photos).catch(err=>console.log(err));
               if(result1.affectedRows>0){
-                alert('테이블ㅇㅔ 사진추가')
+                console.log('good')
               }else{
                 alert('실패...')
               }
@@ -330,7 +330,7 @@ export default {
             console.log('현재파일'+encodedFileName)
             let list = await axios.delete(`/api/photo/${encodedFileName}`).catch((error) => {console.error(error)});
             if(list.data.affectedRows>0){
-              alert('테이블에서 삭제완료');
+              console.log('good')
               this.photoList(this.prodNo);
             }
           },

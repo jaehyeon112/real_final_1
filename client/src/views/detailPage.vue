@@ -114,9 +114,7 @@
                <hr>
             </div>
             <!--상세정보?-->
-               <div class=" px-4 px-lg-5 my-5" style="text-align:center;" id="detail">
-                  <v-img :src="`/api/test/${detailImage}`"></v-img>
-               </div>
+                  <v-img class="phos2" :src="`/api/test/${detailImage}`"></v-img>
 
             <span style="font-weight: bold;">상품리뷰</span> <span style="color:coral">{{ reviewList.length+"건" }}</span>
             <hr>
@@ -849,5 +847,9 @@ export default {
    }
    .main1{
       width:500px
+   }
+   .phos2{
+      margin: auto;
+      width : 70%
    }
 </style>
