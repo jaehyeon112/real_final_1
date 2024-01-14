@@ -75,8 +75,7 @@
   const dialog = ref(true)
 
       const message = route.params.message
-      console.log(message);
-      console.log('message 에서 : ',  JSON.stringify(message));
+    
 
 </script>
 

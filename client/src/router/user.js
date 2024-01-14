@@ -12,7 +12,6 @@ import intro from '@/views/intro.vue';
 import putpass from "../views/PutPassword.vue";
 import message from "../views/Message.vue";
 import changePass from "../views/ChangePass.vue"
-import test from "../views/test.vue";
 import serviceCenter from "@/views/ServiceCenter.vue";
 import myPage from "@/views/MyPage.vue";
 import detailPage from "@/views/detailPage.vue";
@@ -142,11 +141,7 @@ export default {
       name: "changePass",
       component: changePass
     },
-    {
-      path: "test",
-      name: "test",
-      component: test
-    },
+
     {
       path: "serviceCenter",
       name: "serviceCenter",

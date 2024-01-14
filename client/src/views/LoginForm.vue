@@ -25,16 +25,13 @@
 
           <div class="group" style="line-height:130%;  margin-top: 10px;">
             <input type="submit" class="button" color="orange" @click="doLogin()" value="SIGN UP">
-            <!-- 추가: 남은 차단 시간 표시 -->
-         
-
           </div>
   
          <v-divider class="mt-4"></v-divider>
 
           <div class="foot-lnk">
          
-     <v-row justify="center" align="center"> <!-- Center both the image and Join button -->
+     <v-row justify="center" align="center">
           <v-col class="text-center">
             <div
               id="custom-login-btn" @click="kakaoLogin()">
@@ -47,23 +44,9 @@
           </v-col>
         </v-row>
 
-            <!-- <router-link to="/join"> <v-btn squared variant="success" a href="join">회원가입</v-btn></router-link> -->
-  
+          
           </div>
 
-          <!-- <div class="foot-lnk" >
-  
-        <a id="custom-login-btn" @click="kakaoLogin()">
-        <router-link to="/join">카카오회원가입하고회원가입페이지로<img
-          src="https://k.kakaocdn.net/14/dn/btroDszwNrM/I6efHub1SN5KCJqLm1Ovx1/o.jpg"
-          width="222"
-          alt="카카오 로그인 버튼"
-        /></router-link></a>
-        <div><v-btn @click="kakaoLogout()">카카오 로그아웃</v-btn></div>
-  
-      
-          </div>
-   -->
 
         </div>
   
@@ -93,7 +76,7 @@
           user_password : "",
           failedAttempts: 0,
           isBlocked: false,
-          remainingBlockTime: 0, // 추가: 남은 차단 시간 변수
+          remainingBlockTime: 0, // 남은 차단 시간 
       }
     },
   
@@ -150,7 +133,7 @@
                 this.failedAttempts = 0;
                 clearInterval(timer);
               }
-            }, 1000); // 1초 간격으로 타이머 업데이트
+            }, 1000); // 1초 간격 타이머 업데이트
             alert(`로그인이 5회 실패하여 ${this.remainingBlockTime}초 동안 차단되었습니다.`);
           } else {
             alert("ID나 Password 확인하기!");
@@ -276,14 +259,14 @@ this.$socket.emit('authenticate', token);
           console.log("카카오 악시오스 데이터 result ")
 
           this.$router.push({ name: 'realmain'  });
-          let myKakao = res.id; // 3244970366
+          let myKakao = res.id; 
           console.log("myKakao");
           console.log(myKakao);
 
           if(result.data.length == 0){
-            // alert(this.$store.state.kakaoId+'db에 카카오 아이디 회원 없는상태')
+            
           this.$router.push({ name: 'realmain'  });   
-          //this.$router.push({ name: 'join' , params : { id : res.id , name : nickname } });
+          
         } else {
           this.$store.commit('kakaoLogin', res.id)
             this.$store.state.user.user_name = res.id

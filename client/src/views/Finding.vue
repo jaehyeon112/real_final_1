@@ -27,12 +27,6 @@
         </div>
       </v-col>
 
-            <v-col cols="12">
-        <div class="field" v-if="selectedOption === 'findPwd'">
-          <label for="phone"> Tel :</label>
-          <v-text-field v-model="user_tel" label="tel" ></v-text-field>
-        </div>
-      </v-col>
 
       <v-col cols="12" v-if="selectedOption === 'findPwd'">
         <div class="field">
@@ -82,15 +76,12 @@ import axios from 'axios'
       async findIdPass(){
 
         if(this.selectedOption == 'findId'){
-          //const result = await axios.get(`/api/find/findId/${this.user_name}/${this.user_email}/${this.user}`)
+        
           const result = await axios.get(`/api/find/findid/${this.user_name}/${this.user_email}`)
                                     .catch(err => console.log(err))
-          console.log(result.data);
-          console.log(result.data[0]);
-
 
           let uid = result.data[0]
-          console.log('uid in findingvue : ', uid); 
+        
 
           if(uid != null){
             this.$router.push({name : 'message', params : {message: `찾으신 아이디는 " ${uid.user_id} " 입니다`}})
@@ -102,20 +93,16 @@ import axios from 'axios'
         } else if(this.selectedOption == 'findPwd'){
           const result2 = await axios.get(`/api/find/findPass/${this.user_name}/${this.user_email}/${this.user_id}`)
                                               .catch(err => console.log(err))
-          console.log(result2.data);
-          console.log(result2.data[0]);
-
+         
           let upass = result2.data[0];
           if(upass != null){
 
          
-                //이메일에 랜덤값 보내서 이 랜덤값이랑 일치하는지 확인
+           
                 
-                let num = JSON.stringify(Math.ceil((Math.random()*100000000)+1))
+                let num = JSON.stringify(Math.ceil((Math.random()*10000)+1))
                 this.no = num;
-                console.log(num);
 
-/*
                 let data = {
                 
                     to :  this.user_email,
@@ -123,66 +110,23 @@ import axios from 'axios'
                     body : `비밀번호 변경을 위한 인증번호 : ${num}`
                   
                 }
-                */
 
-
-                 let data = {
-                      "param" : {
-                          to :  this.user_tel,
-                          from : "01088988034", 
-                          text : num
-                      }
-                      }
-
- let result = await axios.post(`/api/phonecheck`, data);
- if(result.data.statusCode == "2000" ){
-          alert('휴대폰 인증번호 보내기 성공');
-       
-       const newMsg = prompt('인증번호를 입력해주세요')
-                      console.log('confirm창', newMsg)
-                      if(newMsg == this.no){
-                        this.$router.push({path : 'changePass', query: {user_id : this.user_id}})
-                      }else{
-                        alert(`인증번호가 일치하지 않습니다.`)
-                      }
-          
-          return;
-       }else{
-          alert('휴대폰 인증번호 보내기 ');
-         const newMsg = prompt('인증번호를 입력해주세요')
-                      console.log('confirm창', newMsg)
-                      if(newMsg == this.no){
-                        this.$router.push({path : 'changePass', query: {user_id : this.user_id}})
-                      }else{
-                        alert(`인증번호가 일치하지 않습니다.`)
-                      }
-  
-          return;
-        }
-/*
                 let result = await axios.post(`/api/send-email`, data);
-                console.log('email result:', result);
-                console.log(result.data);
+          
                   if(result.status == "200" ){
                     alert('이메일로 인증번호 보내기 성공');
-                    //this.isEmailSent = true;
-                    //this.$router.push({path : 'emailnum'})
+              
 
                     const newMsg = prompt('인증번호를 입력해주세요')
-                      console.log('confirm창', newMsg)
+                      
                       if(newMsg == this.no){
                         this.$router.push({path : 'changePass', query: {user_id : this.user_id}})
                       }else{
                         alert(`인증번호가 일치하지 않습니다. 이메일 다시 한번 확인해주세요.`)
                       }
-
                     }
-                
-                    return;
 
-
-*/
-                    
+                    return;           
                 }else{
                     alert(' 인증번호 보내기 실패');
                     
@@ -198,7 +142,6 @@ import axios from 'axios'
         }, //end findpass
 
             changeMessage (emailNum) {
-                    // data의 msg를  받은 새로운 value로 update
                       this.no = emailNum;
                     }
       } 

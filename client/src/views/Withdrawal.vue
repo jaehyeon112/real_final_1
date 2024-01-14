@@ -109,7 +109,7 @@ export default {
     if (confirm('탈퇴 시 30일 간 재가입이 불가능합니다. 정말 탈퇴하시겠습니까?')) {
       try {
         let result = await axios.put(`/api/updateoutuser/${data.param.user_id}`);
-        console.log(result);
+     
 
         let result2 = await axios.post(`/api/insertwithdrawal`, data);
 
