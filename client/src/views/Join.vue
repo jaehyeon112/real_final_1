@@ -5,14 +5,14 @@
       <h2 class="font-weight-bold">{{ mode === 'edit' ? '회원 정보 수정' : '회원 가입' }}</h2>
        <v-divider class="mt-4"></v-divider>
       <input id="tab-2" type="radio" name="tab" class="sign-up">
-      <!-- <label for="tab-2" class="tab" >Sign Up</label> -->
+     
       <div class="login-form">
         <div class="sign-up-htm">
   
-          <!-- 회원 수정 시 id랑 이름은 readonly로 수정못하게 해야함 -->
+          
           <div class="group" v-if="!$store.state.kakaoId">
             <label for="user" class="label"> ID </label>
-            <!-- <p>{{ $store.state.kakaoId != '' ? '카카오로로그인함' : '걍로그인함' }}</p> -->
+            
         
             <div>
             <input  id="user" type="text" class="input" v-model="userInfo.user_id" :readonly="mode =='edit'" autofocus placeholder="영문+숫자 조합 6자이상 11자 이하" 
@@ -28,16 +28,16 @@
           </div>
   
           <div class="group" v-if="!$store.state.kakaoId">
-            <!-- type 두개 password로 바꾸기 -->
+           
             <label for="pass" class="label">Password</label>
-            <input id="pass" type="text" class="input" data-type="text" maxlength=16 v-model="userInfo.user_password" @blur="passwordValid" v-bind:="isUpdated">
+            <input id="pass" type="password" class="input" data-type="text" maxlength=16 v-model="userInfo.user_password" @blur="passwordValid" v-bind:="isUpdated">
             <div v-if="!passwordValidFlag"  style="color: red;">
               유효하지 않은 비밀번호 입니다.
             </div>
           </div>
           <div class="group" v-if="!$store.state.kakaoId">
             <label for="pass" class="label"> Password CHECK</label>
-            <input id="pass" type="text" class="input" data-type="text" maxlength=16 v-model="userInfo.userChPass" @blur="passwordCheckValid">
+            <input id="pass" type="password" class="input" data-type="text" maxlength=16 v-model="userInfo.userChPass" @blur="passwordCheckValid">
             
               <div v-if="!passwordCheckFlag"  style="color: red;">
                 비밀번호가 동일하지 않습니다.
@@ -62,7 +62,7 @@
       <span>@</span>
         <select v-model="userInfo.email_domain" class="input">
           <option disabled value="">도메인 선택</option>
-          <option>직접입력</option> <!-- 입력할 수 있게 바꾸기! -->
+          <option>직접입력</option> 
           <option>gmail.com</option>
           <option>naver.com</option>
           <option>daum.net</option> 
@@ -90,7 +90,7 @@
             <div v-if="!userInfo.user_tel && !isFieldValid.user_tel" class="error-message"  :style="{ color: 'red' }">{{ fieldErrorMessages.user_tel }}</div>
           </div>
   
-  <!-- ** 휴대폰인증번호 입력칸 해야됨-->
+
           <div class="group" v-if="isTextSent">
             <label for="tel" class="label">인증번호입력하기</label>
             <input id="tel" type="text" class="input" v-model="userInfo.verificationText" placeholder="인증 번호를 입력하세요">
@@ -105,10 +105,10 @@
                <v-btn @click="search()">우편번호 찾기</v-btn><br>
                 <input type="text" id="postcode"  class="input" placeholder="우편번호" v-model="userInfo.postcode" v-bind:="isUpdated">
                 
-                <!-- 도로명주소 -->
+                
                       <input type="text" id="roadAddress" class="input" placeholder="도로명주소" v-model="userInfo.address" v-if="!isJibunAddressSelected" v-bind:="isUpdated">
   
-                <!-- 지번주소 -->
+               
                  <input type="text" id="jibunAddress" class="input" placeholder="지번주소" v-model="userInfo.address" v-if="isJibunAddressSelected" v-bind:="isUpdated">
                 <span id="guide" style="color:#000;display:none"></span>
                 <input type="text" id="detailAddress"  class="input" placeholder="상세주소" v-model="userInfo.detail_address" v-bind:="isUpdated">
@@ -290,16 +290,16 @@
       return {
   
   
-        mode: 'sign-up', //모드에 따라서 가입창, 수정창 바뀜
-        isUpdated : false, // 수정?등록? => 수정일때 true
-        oneUserId : '', //수정용 - 개인 아이디찾으려고
+        mode: 'sign-up', 
+        isUpdated : false, 
+        oneUserId : '', 
   
         phoneNo : '',
         no : '', //이메일 인증번호
         isEmailSent : false, //이메일인증창
         isTextSent : false,
   
-        today : '', //생년월일 오늘날짜까지만 선택하게 하려고
+        today : '', //생년월일 오늘날짜까지만 
         isAgeValid : true,
   
         isAnyFieldEmpty : false,
@@ -381,7 +381,7 @@
   
     }, 
   
-    //렌더링이 완료된 후에 실행되니까...
+  
     mounted (){
       //오늘날짜 설정하기
       const now = new Date();
@@ -393,25 +393,22 @@
   
   
     created() {
-      // $route.params.id로 전달된 파라미터에 접근
+    
       this.oneUserId = this.$route.query.user_id;
   
   
-      // userId가 존재하면 회원 수정 모드로 변경
+     
       if (this.oneUserId) {
         this.mode = 'edit';
         this.getUserInfo();
-        // 기존정보 불러오거나 수정작업 수행하기.
+        
         this.isUpdated = true;
       }
   
-     // 카카오 사용자 ID가 있을 때만 ID 입력란을 자동으로 채움
+    
     if(this.$store.state.kakaoId) {
-        console.log('회원가입 created : 카톡로그인 회원가입폼')
-        console.log(this.$store.state.kakaoId);
       this.userInfo.user_id = this.$store.state.kakaoId;
       this.$store.commit('kakaoLogin', 'kakao') 
-      //this.$store.commit('kakaoLogin', this.userInfo.user_name) 
     }
      
     }, //created
@@ -430,7 +427,7 @@
   
   
     watch:{
-      // 아이디 입력값 변화 감지해서 변경되면 false로 설정
+      // 아이디 입력값 변화 감지, 변경되면 false로 
       'userInfo.user_id': function() {
           this.validId = false;
       },
@@ -461,8 +458,6 @@
     methods: {
   
       updateCheck(){
-        console.log("updateCheck function is called");
-         // ch1과 ch2가 모두 체크되면 allCh도 체크
         if (this.userInfo.ch1 && this.userInfo.ch2) {
           this.userInfo.allCh = true;
         } else {
@@ -472,7 +467,7 @@
       },
   
           updateAll() {
-        // 전체동의 체크/해제에 따라 약관1과 약관2도 업데이트
+       
         if (this.userInfo.allCh) {
           this.userInfo.ch1 = true;
           this.userInfo.ch2 = true;
@@ -482,31 +477,26 @@
         }
       },
   
-  
-  
-  
-      //아이디 중복체크: db에 아이디 있으면 중복되는 아이디 있다고 메세지 띄우기! 
       async checkId(id){
       let list;
   
        if(!this.userInfo.user_id.trim()){
-        console.log(id);
+        
         alert(`아이디를 입력해주세요`);
          this.validId = false;
        } else{
         let result = await axios.get(`/api/join-id/${id}`)
                     .catch(err => console.log(err));
                
-        //let list = result.data.length;
-        console.log(result.data);
+      
+      
         list = result.data;
-        console.log(list);
+        
        }
   
-        // 아이디 공백 입력시 경고창
+        
      
       
-      // 아이디가 대소문자 영어와 숫자로 6글자 이상 12자 이하로 이루어지지 않았을 경우 경고창
      if(!this.validation(id)){
         alert(`아이디는 영문 대소문자와 숫자로 6글자 이상 12자 이하로 구성해주세요`);
          this.validId = false;
@@ -522,8 +512,8 @@
   
     // 유효성 검사
     validation(id){
-      var ch = /^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z\d]{6,12}$/;  // 영어대소문자+숫자 6~12글자 정규표현식 쓰는 법.
-      return ch.test(id); // 정규표현식이랑 일치하는지-> t/f
+      var ch = /^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z\d]{6,12}$/;  
+      return ch.test(id); 
     },
   
   
@@ -554,7 +544,7 @@
     },
     
     validationPwd(pwd){
-      var pwdCh = /^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[^a-zA-Z0-9]).{8,}$/;  //영어대소문자, 숫자, 특수문자 all 포함 최소 8자 이상. 
+      var pwdCh = /^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[^a-zA-Z0-9]).{8,}$/; 
       return pwdCh.test(pwd);
     },
    
@@ -563,7 +553,7 @@
    //Email
   
       updateUserEmail: function() {
-        this.userInfo = this.userInfo || {};  //객체가 아니면 초기화 (changedRows 떄문에)
+        this.userInfo = this.userInfo || {};  
   
         if (this.userInfo.email_domain === '직접입력') {
        
@@ -588,10 +578,7 @@
           return;
         }
   
-    //      if (!this.userInfo.user_email.trim()) {
-    //   alert(`이메일을 입력해주세요`);
-    //   return;
-    // }
+  
   
     if (!this.userInfo.user_emailid || (!this.userInfo.email_domain && !this.userInfo.direnct_input_domain)) {
       alert(`이메일 아이디와 도메인을 모두 입력하세요! `);
@@ -601,10 +588,8 @@
     try {
       let result = await axios.get(`/api/join-email/${this.userInfo.user_email}`);
       
-      console.log(result);
-      console.log(result.data);
       let list = result.data;
-      console.log(list);
+    
   
   
       if (list.length >= 1) {
@@ -619,11 +604,11 @@
   
       //이메일 인증
       async sendVerificationEmail(){
-        //이메일에 랜덤값 보내서 이 랜덤값이랑 일치하는지 확인
+      
         
         let num = JSON.stringify(Math.ceil((Math.random()*10000)+1))
         this.no = num;
-        console.log(num);
+        
         let data = {
          
             to :  this.userInfo.user_email,
@@ -631,23 +616,23 @@
             body : num
         }
         
-        // let result = await axios.post(`/api/send-email`, data);
-        // console.log(result);
-        //    if(result.data.status == "200" ){
-        //     alert('이메일로 인증번호 보내기 성공');
-        //     this.isEmailSent = true;
-        //     return;
-        //  }else{
-        //     alert('이메일 인증번호 보내기');
-        //     this.isEmailSent = true;
-        //     return;
-        //   }
+         let result = await axios.post(`/api/send-email`, data);
+       
+            if(result.data.status == "200" ){
+             alert('이메일로 인증번호 보내기 성공');
+             this.isEmailSent = true;
+            return;
+          }else{
+             alert('이메일 인증번호 보내기');
+             this.isEmailSent = true;
+            return;
+          }
       },
   
-      //
+      
       verifyEmailNum(){
         if(this.userInfo.verificationCode == this.no){
-          console.log(this.no);
+         
           alert(`인증성공`);
           this.validEmailNum = true;
          
@@ -665,7 +650,7 @@
   
     let phoneNum = JSON.stringify(Math.ceil((Math.random()*10000)+1))
     this.phoneNo = phoneNum;
-      console.log(phoneNum);
+      
   
     let data = {
          "param" : {
@@ -676,7 +661,7 @@
         }
   
         let result = await axios.post(`/api/phonecheck`, data);
-          console.log(result);
+          
            if(result.data.statusCode == "2000" ){
             alert('휴대폰 인증번호 보내기 성공');
             this.isTextSent =true;
@@ -692,14 +677,13 @@
   
       verifyTextNum(){
         if(this.userInfo.verificationText == this.phoneNo){
-          console.log(this.phoneNo);
           alert(`인증성공`);
           this.validTextNum = true;
         
         }
       },
   
-  //생년월일 체크 - 14세미만 가입불가..
+  //생년월일 
   checkAge(){
     let birth = new Date(this.userInfo.birth);
   
@@ -734,7 +718,7 @@
         }
        }
   
-       // user_password와 userChPass 추가
+    
   if (!this.$store.state.kakaoId) {
     // 카카오로 로그인하지 않은 경우에만 비밀번호와 비밀번호 확인 필드 체크
     if (!this.userInfo.user_password || !this.userInfo.userChPass) {
@@ -748,7 +732,7 @@
   }
   
    
-  //필드가 모두 채워져 있는지 확인 - 일단! 나중ㅇ에 바꿔야함
+
     if (this.$store.state.kakaoId) {
       // 카카오로 로그인한 경우, 필요한 필드 초기화
       this.userInfo.user_password = '';
@@ -779,19 +763,14 @@
     }
   
   
-    //나이체크 - 만 14세미만 가입불가
+    //만 14세미만 가입불가
     if(!this.isAgeValid){
        this.errorMessage = "14세 미만 가입 불가"
       alert(`14세 미만 가입 불가! `)
       return;
     }
   
-    // 비밀번호 암호화
-  
-    
-  
-      
-      
+
       let data = {
   
         param : {
@@ -911,28 +890,14 @@
           async getUserInfo(){
               let result = await axios.get(`/api/selectid/${this.oneUserId}`)
                                       .catch(err => console.log(err));
-              console.log(this.oneUserId);
-              console.log(result);
-              console.log(result.data);
-              this.userInfo  = result.data[0];   
-              //console.log(result.data);
+              
               this.userInfo.birth = this.$dateFormat(this.userInfo.birth, 'yyyy-MM-dd');
   
               let email = this.userInfo.user_email;
-              console.log(email);
-              console.log(email.split('@'));
+              
               this.userInfo.user_emailid = email.split('@')[0];
               this.userInfo.email_domain =  email.split('@')[1];
-  
-              
-  
-              //this.userInfo.email = `${this.userInfo.emailid}@${this.userInfo.email_domain}`;
-              console.log("이메일뭐냐고");
-              console.log( this.userInfo.user_emailid);
-              console.log( this.userInfo.email_domain);
-              console.log( this.userInfo.user_email);
-                  console.log(this.userInfo);
-  
+
           },
   
     
@@ -957,14 +922,10 @@
   
           let result = await axios.put(`/api/join/${this.oneUserId}`, obj)
                                   .catch(err => console.log(err));
-            console.log('회원수정 result : ', result);                     
-            console.log(result);      
-           
+          
            if(result.data.changedRows > 0){
             alert(`수정성공! `)
-            console.log('changedRows')
-            console.log(result.data.changedRows);
-            //this.userInfo = result.data.changedRows;
+          
             this.$router.push({name : 'realmain'})
            }else{
             alert(`수정실패`)

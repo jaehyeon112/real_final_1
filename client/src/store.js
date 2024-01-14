@@ -44,9 +44,7 @@ const store = createStore({
       state.kakaoId2 = id;
     },
     async kakaoLogin(state, id) {
-      // app.js에 카카오아이디를 조건으로해서 select * from user where user_id = 카카오 아이디;
-      // a는 유저객체를 담고 있음. 그럼 그 유저객체를
-      // state.user = a
+
       state.kakaoId = id;
       console.log('스토어')
       console.log(state.kakaoId);
@@ -59,10 +57,9 @@ const store = createStore({
         };
 
         state.user.user_name = a.data[0].user_id;
-        // state.kakaoId = a;
-        // console.log(id + '/')
+   
         state.kakaoId = state.user.user_name;
-        // state.user.user_name = state.kakaoId
+      
       }
       console.log('카카오 axios')
       console.log(a);
@@ -74,9 +71,7 @@ const store = createStore({
     kakaoLogout(state) {
       state.kakaoId = ''
     },
-    // kakaoLogout(state) {
-    //   state.user.user_name = ''
-    // },
+
 
     async login(state, userInfo) {
       state.user = userInfo;
